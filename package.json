@@ -1,0 +1,20 @@
+{
+  "name": "jsgui3-html",
+  "main": "html.js",
+  "license": "MIT",
+  "dependencies": {
+    "deep-equal": "^1.0.1",
+    "fnl": "^0.0.3",
+    "htmlparser": "^1.7.7"
+  },
+  "engines": {
+    "node": ">=8.5.0"
+  },
+  "description": "Jsgui HTML generation and processing module (isomorphic, runs on client and server, few API requirements)",
+  "author": "James Vickers <james@metabench.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/metabench/jsgui3-html.git"
+  },
+  "version": "0.0.1"
+}
