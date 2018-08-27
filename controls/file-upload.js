@@ -69,12 +69,17 @@ class File_Upload extends Control {
 
         //var action;
 
+
+        /*
         if (spec.action) {
             this.action = spec.action;
 
         } else {
             this.action = '/upload/';
         }
+        */
+
+        this.action = spec.action || '/upload/';
         //this.set('action', action);
 
         //var action = this.get('action') || '/upload/';

@@ -782,13 +782,22 @@ table.grid td {
     width: 450px;
 }
 
+/* Want to set the grid size in CSS, and have it read by jsgui.
+Client side we can get the info through css API
+Server-side we need to look at parsed CSS object.
+
+
+*/
+
 div.grid {
     user-select: none;
     clear: both;
+    overflow: auto;
 }
 
 div.grid .header.row .cell {
-    text-align: center
+    text-align: center;
+    background-color: #ffeba8;
 }
 
 div.grid .row {
@@ -807,6 +816,10 @@ div.grid .row .cell {
     box-sizing: border-box;
     border-right: 1px solid #AAAAAA;
     border-bottom: 1px solid #999999;
+}
+
+div.grid .row .row-header.cell {
+    background-color: #ffeba8;
 }
 
 div.grid .row .cell.selected {

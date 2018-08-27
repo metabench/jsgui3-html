@@ -18,7 +18,7 @@
  */
 //"use strict";
 var jsgui = require('./html-core/html-core');
-const libpath = require('path');
+
 /*
 var str_arr_mapify = jsgui.str_arr_mapify;
 var get_a_sig = jsgui.get_a_sig;
@@ -44,13 +44,19 @@ if (typeof document === 'undefined') {
 
     var fs = require('fs');
     //let basic_css_path = libpath.resolve('./css/basic.css');
-
+    const libpath = require('path');
 
     let basic_css_path = libpath.join(__dirname, 'css', 'basic.css');
 
     console.log('__dirname', __dirname);
     console.log('basic_css_path', basic_css_path);
     var basic_css = fs.readFileSync(basic_css_path, 'utf8');
+
+    // Want the css strings.
+    // Want the css ASTs as well.
+
+    // Want to be able to get the CSS properties in order to have default sizes in some situations.
+    
 
     jsgui.css = {
         'basic': basic_css

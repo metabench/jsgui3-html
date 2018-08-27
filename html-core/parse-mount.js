@@ -1,4 +1,4 @@
-const htmlparser = require('htmlparser');
+//const htmlparser = require('htmlparser');
 
 // htmlparser2
 //  faster? used in cheerio (like jQuery)
@@ -48,6 +48,8 @@ const parse_mount = (html, context) => {
 
     */
 
+    /*
+
     var handler = new htmlparser.DomHandler((error, dom) => {
         if (error)
             throw 'err';
@@ -59,6 +61,7 @@ const parse_mount = (html, context) => {
     var parser = new htmlparser.Parser(handler);
     parser.write(html);
     parser.end();
+    */
 }
 //
 

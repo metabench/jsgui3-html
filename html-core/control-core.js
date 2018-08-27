@@ -2,17 +2,14 @@
  * Created by James on 16/09/2016.
  */
 
-/**
- * Created by James on 16/09/2016.
- */
 
 var jsgui = require('../lang/lang');
 var get_a_sig = jsgui.get_a_sig;
-var remove_sig_from_arr_shell = jsgui.remove_sig_from_arr_shell;
+//var remove_sig_from_arr_shell = jsgui.remove_sig_from_arr_shell;
 var each = jsgui.each;
 var clone = jsgui.clone;
 var Evented_Class = jsgui.Evented_Class;
-var Data_Value = jsgui.Data_Value;
+//var Data_Value = jsgui.Data_Value;
 var Data_Object = jsgui.Data_Object;
 var Collection = jsgui.Collection;
 var tof = jsgui.tof;
@@ -66,14 +63,14 @@ var style_input_handlers = {
 
 // Could also use proxies to set the style object from a string.
 
-
+// Could build a prototype with all the styles as a defineProperty type property
+//  
 
 var new_obj_style = () => {
 	//var style = new Evented_Class({});
 	//var style = {}
 
 	let style = new Evented_Class({});
-
 	style.__empty = true;
 
 	style.toString = () => {
@@ -83,7 +80,7 @@ var new_obj_style = () => {
 		each(style, (value, key) => {
 			//console.log('descriptor', Reflect.getOwnPropertyDescriptor(style, key));
 			//console.log('key', key);
-			if (key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger' && key != {}) {
+			if (key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger' && key !== {}) {
 				if (first) {
 					first = false;
 				} else {
@@ -93,22 +90,16 @@ var new_obj_style = () => {
 				//console.log('key', key);
 				//console.log('tof value ' + tof(value));
 				res.push(key + ': ' + value + ';');
-
 			}
-
-
 		});
-
 		return res.join('');
 	}
 
 	var res = new Proxy(style, {
 		set: (target, property, value, receiver) => {
 			//console.log('set style trap');
-
 			//console.log('target, property, value', target, property, value);
 			//console.trace();
-
 
 			target['__empty'] = false;
 			var old_value = target[property];
@@ -119,10 +110,9 @@ var new_obj_style = () => {
 			}
 
 			// raise an event somehow?
-
-			
 			style.raise('change', {
 				'key': property,
+				'name': property,
 				'old': old_value,
 				'new': value,
 				'value': value
@@ -143,37 +133,28 @@ var new_obj_style = () => {
 	return res;
 }
 
-
 // Intercept the changing of the style attribute.
 
 // Could code for the style with https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
 //  For the moment it works with proxy, it would probably be faster and more compatible to use property definition with getting and setting a style as a string.
 //   Would have clearer code too.
 
-
 class DOM_Attributes extends Evented_Class {
 	constructor(spec) {
 		super(spec);
-
 		//this._class = new Data_Value();
-
 		// Some kind of a CSS style class?
 
-
-
 		//var style = new_obj_style;
-
 		// Could use proxy object for setting style
-
 		this.style = new_obj_style();
-
 		this.style.on('change', e_change => {
-
 			// 
 
 			this.raise('change', {
 				'property': 'style',
 				'key': 'style',
+				'name': 'style',
 				//'key': e_change.key,
 				'value': this.style.toString()
 			})
@@ -243,7 +224,6 @@ Object.defineProperty(DOM_Attributes.prototype, 'class', {
 	set: function(value) { return this._class.set(value); }
 });
 */
-
 // 
 
 class Control_DOM extends Evented_Class {
@@ -252,7 +232,7 @@ class Control_DOM extends Evented_Class {
 		// Proxy the attributes, so that it raises an event for changes.
 		super();
 		var dom_attributes = new DOM_Attributes();
-		var that = this;
+		//var that = this;
 
 
 		// Proxy slows things down.
@@ -296,28 +276,15 @@ class Control_DOM extends Evented_Class {
 								target.style[kv[0]] = kv[1];
 							}
 						});
-
 						// raise style change event.
 						//  or dom attributes change
-
 						dom_attributes.raise('change', {
 							'property': property
 						});
-
-
-
-
 						// need to set the style items individually.
 						//  or create new style object now.
-
-
-
-
-
 					}
-
 					// if we are setting it with a string, we need to break up these parts
-
 					//console.trace();
 				} else {
 					var old_value = target[property];
@@ -325,21 +292,18 @@ class Control_DOM extends Evented_Class {
 					//console.log('pre raise change');
 					dom_attributes.raise('change', {
 						'key': property,
+						'name': property,
 						'old': old_value,
 						'new': value,
 						'value': value
 					});
 				}
-
-
 				return true;
 			},
 			get: (target, property, receiver) => {
-
 				// I'd like to have access to any arguments when
 				// the property being accessed here is a function
 				// that is being called
-
 				return target[property];
 			}
 		});
@@ -430,6 +394,14 @@ class Control_Background extends Evented_Class {
 	}
 }
 
+// Control_Size = size2d
+
+// further control-oriented JS types/classes would be useful.
+//  raising specific change properties.
+
+// 
+
+
 class Control_Core extends Data_Object {
 
 	constructor(spec, fields) {
@@ -455,7 +427,6 @@ class Control_Core extends Data_Object {
 		if (spec.__id) {
 			this.__id = spec.__id;
 		}
-		
 
 		//console.log('done Control_Core super');
 
@@ -474,7 +445,7 @@ class Control_Core extends Data_Object {
 
 		// TextNodes don't have attributes
 
-		this.dom = new Control_DOM();
+		let d = this.dom = new Control_DOM();
 
 		//this._background = 
 
@@ -490,7 +461,7 @@ class Control_Core extends Data_Object {
 
 				// Except may be better after all to use a Color class that can output to HTML better.
 
-				this.dom.attributes.style['background-color'] = evt.value;
+				d.attributes.style['background-color'] = evt.value;
 			}
 		});
 
@@ -508,6 +479,9 @@ class Control_Core extends Data_Object {
 				return _disabled;
 			},
 			set(value) {
+
+				// check that it's either true or false?
+
 
 				// However, should be stored as RGB or better a Color object.
 				//  Just [r, g, b] for the moment.
@@ -558,102 +532,104 @@ class Control_Core extends Data_Object {
 		// Have a Control_Size class?
 		//  have size getters and setters (with a proxy?)
 
-		
 
-		if (!this._abstract) {
-			var tagName = spec.tagName || spec.tag_name || 'div';
-			//this.set('dom.tagName', tagName);
-			this.dom.tagName = tagName;
-			this._icss = {};
-			//this._.dom = {'tagName': 'div'};
-			// Abstract controls won't have
 
-			// The DOM is a field that it should be getting from the control.
-			spec_content = spec.content;
-			if (spec_content) {
-				var tsc = tof(spec_content);
-				if (tsc == 'array') {
-					throw 'Content array not yet supported here.'
-				} else if (tsc == 'string' || tsc == 'control') {
-					this.content.add(spec_content);
-				}
+		//if (!this._abstract) {
+		var tagName = spec.tagName || spec.tag_name || 'div';
+		//this.set('dom.tagName', tagName);
+		d.tagName = tagName;
+		this._icss = {};
+		//this._.dom = {'tagName': 'div'};
+		// Abstract controls won't have
+
+		// The DOM is a field that it should be getting from the control.
+		spec_content = spec.content;
+		if (spec_content) {
+			var tsc = tof(spec_content);
+			if (tsc == 'array') {
+				throw 'Content array not yet supported here.'
+			} else if (tsc == 'string' || tsc == 'control') {
+				this.content.add(spec_content);
 			}
-
-			if (spec.el) {
-				//console.log('spec.el', spec.el);
-				//this.set('dom.el', spec.el);
-				this.dom.el = spec.el;
-				//console.log('this.dom.el', this.dom.el);
-				//console.log('this._.dom._.el', this._.dom._.el);
-				//throw 'stop';
-				this.dom.tagName = spec.el.tagName.toLowerCase();
-			}
-
-			var that = this;
-			var context = this.context || spec.context;
-			//console.log('context', context);
-			// 
-			if (context) {
-				if (context.register_control) context.register_control(this);
-			} else {
-				//console.trace('');
-				//throw 'Control requires context'
-
-				// I think the very first Control object's prototype or something that inherits from it does not have
-				//  a context at some stage.
-			}
-			if (spec['class']) {
-				this.add_class(spec['class']);
-				//this.dom.attrs.set('class', spec['class']);
-				this.dom.attrs['class'] = spec['class'];
-			}
-
-			//var content = this.content;
-			//content._parent = this;
-			// Content collection.
-
-			//var content = this.content = this.contents = new Collection({});
-			var content = this.content = new Collection({});
-
-			// Want something in the change event that indicates the bubble level.
-			//  It looks like the changes bubble upwards.
-
-			// Want a 'target' for the change event.
-
-			//var size = this.size;
-			/*
-			var set_dom_size = function(size) {
-				var width = size[0].join('');
-				var height = size[1].join('');
-
-				//console.log('width', width);
-				//console.log('height', height);
-
-				that.style({
-					'width': width,
-					'height': height
-				});
-			};
-			*/
-
-			if (spec.size) {
-				this.size = spec.size;
-			}
-
-			/*
-			var set_dom_color = function (color) {
-				var color_css_property = 'background-color';
-				// need to run output processor on the inernal color value
-				var out_color = output_processors['color'](color);
-				//console.log('out_color');
-				that.style(color_css_property, out_color);
-			};
-			*/
-
-			// This is where it sets the size to begin with.
-			//  Need the same for color.
-			//  Possibly need the same for a whole load of properties.
 		}
+
+		if (spec.el) {
+			//console.log('spec.el', spec.el);
+			//this.set('dom.el', spec.el);
+			d.el = spec.el;
+			//console.log('d.el', d.el);
+			//console.log('this._.dom._.el', this._.dom._.el);
+			//throw 'stop';
+			d.tagName = spec.el.tagName.toLowerCase();
+		}
+
+		//var that = this;
+		var context = this.context || spec.context;
+		//console.log('context', context);
+		// 
+		if (context) {
+			if (context.register_control) context.register_control(this);
+		} else {
+			//console.trace('');
+			//throw 'Control requires context'
+
+			// I think the very first Control object's prototype or something that inherits from it does not have
+			//  a context at some stage.
+		}
+		if (spec['class']) {
+			this.add_class(spec['class']);
+			//d.attrs.set('class', spec['class']);
+
+			console.log('removed probably erroneous dom class setting.');
+			//d.attrs['class'] = spec['class'];
+		}
+
+		//var content = this.content;
+		//content._parent = this;
+		// Content collection.
+
+		//var content = this.content = this.contents = new Collection({});
+		var content = this.content = new Collection({});
+
+		// Want something in the change event that indicates the bubble level.
+		//  It looks like the changes bubble upwards.
+
+		// Want a 'target' for the change event.
+
+		//var size = this.size;
+		/*
+		var set_dom_size = function(size) {
+			var width = size[0].join('');
+			var height = size[1].join('');
+
+			//console.log('width', width);
+			//console.log('height', height);
+
+			that.style({
+				'width': width,
+				'height': height
+			});
+		};
+		*/
+
+		if (spec.size) {
+			this.size = spec.size;
+		}
+
+		/*
+		var set_dom_color = function (color) {
+			var color_css_property = 'background-color';
+			// need to run output processor on the inernal color value
+			var out_color = output_processors['color'](color);
+			//console.log('out_color');
+			that.style(color_css_property, out_color);
+		};
+		*/
+
+		// This is where it sets the size to begin with.
+		//  Need the same for color.
+		//  Possibly need the same for a whole load of properties.
+		//}
 	}
 
 
@@ -686,12 +662,12 @@ class Control_Core extends Data_Object {
 
 		// just use the page_context to create the new controls from markup for the moment.
 
-		
+
 
 
 
 	}
-	
+
 
 	get background() {
 		return this._background;
@@ -722,11 +698,10 @@ class Control_Core extends Data_Object {
 
 		this._size = value;
 
+		//var width = value[0];
+		//var height = value[1];
 
-
-		var width = value[0];
-		var height = value[1];
-
+		let [width, height] = value;
 		//console.log('width', width);
 		//console.log('height', height);
 
@@ -734,6 +709,8 @@ class Control_Core extends Data_Object {
 			'width': width,
 			'height': height
 		});
+
+		// raise change size.
 
 		//console.log('pre raise resize');
 		this.raise('resize', {
@@ -812,6 +789,7 @@ class Control_Core extends Data_Object {
 		}
 	}
 
+	/*
 	'_get_amalgamated_style' (arr_contexts) {
 		return clone(this._.style);
 	}
@@ -853,6 +831,7 @@ class Control_Core extends Data_Object {
 			//}
 		}
 	}
+	*/
 
 	// 'ret' function - gets something if possible.
 	'has' (item_name) {
@@ -990,14 +969,20 @@ class Control_Core extends Data_Object {
 				//else if (key === 'raise') {} 
 				else if (key === 'style') {
 					item = dom_attrs[key];
+
+
+					let is = item.toString();
+					//console.log('item', item);
+					//console.log('item', item.toString());
 					//console.log('item.__empty', item.__empty);
-					if (!item.__empty && item.length > 0) {
-						arr.push(' ', key, '="', item, '"');
+
+					if (!item.__empty && is.length > 0) {
+						arr.push(' ', key, '="', is, '"');
 					}
 				} else {
 					item = dom_attrs[key];
 					//console.log('item', item);
-					arr.push(' ', key, '="', item, '"');
+					arr.push(' ', key, '="', item.toString(), '"');
 				}
 
 
@@ -1080,6 +1065,9 @@ class Control_Core extends Data_Object {
 		});
 	}
 
+
+
+	/*
 	'register_this_and_subels' () {
 		// iterate elements rather than controls.
 		let context = this.context;
@@ -1102,6 +1090,7 @@ class Control_Core extends Data_Object {
 			context.register_el(el);
 		});
 	}
+	*/
 
 	'iterate_this_and_subcontrols' (ctrl_callback) {
 		ctrl_callback(this);
@@ -1291,11 +1280,15 @@ class Control_Core extends Data_Object {
 			}
 		}
 
+		/*
 		if (this._internal_relative_div === true) {
 			return '<div class="relative">' + res.join('') + '</div>';
 		} else {
 			return res.join('');
 		}
+		*/
+
+		return res.join('');
 
 		//console.log('res', res);
 
@@ -1313,12 +1306,14 @@ class Control_Core extends Data_Object {
 		// I think having this avoids a recursion problem with _super calling itself.
 	}
 
+	/*
 	'wait' (callback) {
 		//console.log('wait');
 		setTimeout(() => {
 			callback();
 		}, 0);
 	}
+	*/
 	// could use aliases for style properties.
 
 	'visible' (callback) {
@@ -1341,6 +1336,8 @@ class Control_Core extends Data_Object {
 		}, callback);
 
 	}
+
+	/*
 
 	// possibly change name
 	'chain' (arr_chain, callback) {
@@ -1444,6 +1441,9 @@ class Control_Core extends Data_Object {
 			});
 		}
 	}
+	*/
+
+	/*
 	'transition' (value, callback) {
 		//var i = {};
 		//i[]
@@ -1458,7 +1458,7 @@ class Control_Core extends Data_Object {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
-		var that = this;
+		//var that = this;
 		var unshelled_sig = remove_sig_from_arr_shell(sig);
 		//if (remove_sig_from_arr_shell(sig))
 		//console.log('unshelled_sig ' + unshelled_sig);
@@ -1478,20 +1478,20 @@ class Control_Core extends Data_Object {
 			var map_values = a[1];
 			var callback = a[2];
 			var transition = {};
-			each(map_values, function (i, v) {
+			each(map_values, (v, i) => {
 				// set the transition style
 				transition[i] = duration_and_tf;
 			});
-			that.transition(transition);
+			this.transition(transition);
 
-			each(map_values, function (i, v) {
+			each(map_values, (v, i) => {
 				// set the transition style
 				//transition[i] = arr_duration_and_timing_function;
 
 				// use the style function to set the value
 				// and use a callback system here for when they are all done.
 
-				that.style(i, v);
+				this.style(i, v);
 			});
 
 			//this.transit(duration_and_tf, map_values, callback);
@@ -1504,20 +1504,21 @@ class Control_Core extends Data_Object {
 			//var transit_map = a[1];
 			var transition = {};
 
-			each(map_values, function (i, v) {
+			each(map_values, (v, i) => {
 				// set the transition style
 				transition[i] = duration_and_tf;
 			});
-			that.transition(transition);
-			each(map_values, function (i, v) {
+			this.transition(transition);
+			each(map_values, (v, i) => {
 				// set the transition style
 				//transition[i] = arr_duration_and_timing_function;
 				// use the style function to set the value
 				// and use a callback system here for when they are all done.
-				that.style(i, v);
+				this.style(i, v);
 			});
 		}
 	}
+	*/
 
 	// and also want to be able to output the property.
 	/*
@@ -1600,7 +1601,6 @@ class Control_Core extends Data_Object {
 					//console.log('2) !!new_content.context', !!new_content.context);
 					res = this.content.add(new_content);
 				}
-
 				new_content.parent = this;
 			}
 		}
@@ -1622,20 +1622,27 @@ class Control_Core extends Data_Object {
 		var content = target_parent.content;
 		content.insert(this, target_index);
 	}
+
+	/*
 	'toJSON' () {
 		var res = [];
 		res.push('Control(' + stringify(this._) + ')');
 		return res.join('');
 	}
+	*/
 
 	'style' () {
 
-		var a = arguments;
-		a.l = arguments.length;
-		var sig = get_a_sig(a, 1);
+		var a = arguments,
+			sig = get_a_sig(a, 1);;
+		a.l = a.length;
+		//var sig = get_a_sig(a, 1);
 		// For the moment, this should be a convenient way of updating the dom attributes style.
 
 		//  This could do the document update or not....
+
+		// No DOM modification here is best.
+		//  Have it listen to style / dom changes on activation.
 
 		var style_name, style_value, modify_dom = true;
 
@@ -1646,10 +1653,6 @@ class Control_Core extends Data_Object {
 
 			// maybe have some syntax for computed styles, such as .style('computed', style_name);
 			//  Or just don't have it, get it from the element if needed.
-
-
-
-
 			// Want to get a style value.
 			//  This could get fairly complicated when getComputedStyle is not around, in older browsers.
 
@@ -1657,30 +1660,33 @@ class Control_Core extends Data_Object {
 
 			// For the moment, will look at style of control property (need to develop that more).
 
-			var styleName = a[0];
+			style_name = a[0];
 			//console.log('get style ' + styleName);
 
 			var el = this.dom.el;
 
 			// Should probably return a copy of the style, not read from the DOM.
 
-			var res = getComputedStyle(el)[styleName];
+			var res = getComputedStyle(el)[style_name];
 			return res;
 		}
 		//console.log('style sig ' + sig);
 
 		if (sig == '[s,s,b]') {
-			var styleName = a[0], styleValue = a[1];
+			//styleName = a[0], styleValue = a[1];
 
 			// Modify dom by default if there is a DOM.
 
 
-			var modifyDom = a[2];
+			//modifyDom = a[2];
+
+			[style_name, style_value, modify_dom] = a;
 
 		};
 		if (sig == '[s,s]' || sig == '[s,n]') {
-			[styleName, styleValue] = a;
-			let d = this.dom, da = d.attrs;
+			[style_name, style_value] = a;
+			let d = this.dom,
+				da = d.attrs;
 			//var styleValue = a[1];
 
 			// Seems like we need to do style modifications on a string.
@@ -1699,14 +1705,19 @@ class Control_Core extends Data_Object {
 			// better to have a style object and then construct that on render. change dom attributes object.
 
 
-			if (d.el) d.el.style[styleName] = styleValue;
+			//if (d.el) d.el.style[styleName] = styleValue;
+			console.log("removed from core: if (d.el) d.el.style[styleName] = styleValue;");
+			//console.trace();
+
+			//  should have listener in other part that responds to the dom attributes change.
+
 			// needs to deal with the dom attribute's style name(s).
 
 			// Should be there already.
 			//  Could just be an object.
 			//  An OO style class could be useful
 
-			
+
 
 			if (da.style) {
 				//console.log('styleName', styleName);
@@ -1715,7 +1726,9 @@ class Control_Core extends Data_Object {
 				//console.log('this.dom.attrs.style', this.dom.attrs.style);
 				//console.log('tof(this.dom.attrs.style)', tof(this.dom.attrs.style));
 
-				da.style[styleName] = styleValue;
+				// Change should be raised by style proxy?
+
+				da.style[style_name] = style_value;
 				da.raise('change', {
 					'property': 'style',
 					'name': 'style',
@@ -1724,7 +1737,6 @@ class Control_Core extends Data_Object {
 			} else {
 				//this.dom.attrs.style = styleName + ':' + ''
 			}
-
 
 			// rebuild the css style???
 			//  May just be in the dom attributes as well.
@@ -1739,7 +1751,7 @@ class Control_Core extends Data_Object {
 			//var modifyDom = a[2];
 
 		};
-		if (styleName && typeof styleValue !== 'undefined') {
+		if (style_name && typeof style_value !== 'undefined') {
 			//var styleName = a[0];
 			//var styleValue = a[1];
 
@@ -1752,7 +1764,7 @@ class Control_Core extends Data_Object {
 			// will update the dom attributes string from the style?
 			//  will set an item in the inline_css_dict
 
-			this._icss[styleName] = styleValue;
+			this._icss[style_name] = style_value;
 
 			// then rebuild the dom attributes style from that one.
 
@@ -1770,11 +1782,13 @@ class Control_Core extends Data_Object {
 			})
 			//console.log('str_css', str_css);
 
-			if (modify_dom) {
-				//this.set('dom.attributes.style', str_css);
+
+			console.log('style dom modification removed');
+			//if (modify_dom) {
+			//this.set('dom.attributes.style', str_css);
 
 
-			}
+			//}
 		}
 		//var that = this;
 
@@ -1789,7 +1803,6 @@ class Control_Core extends Data_Object {
 			});
 
 			/*
-
 			var style = this.dom.attributes.style;
 			//var el = this.value('dom.el');
             var el = this.dom.el;
@@ -1801,18 +1814,25 @@ class Control_Core extends Data_Object {
 		}
 	}
 	'active' () {
+
 		var id = this._id();
 		var dom = this.dom;
 		//var dom = this._.dom;
 		var dom_attributes = dom.attributes;
 		//console.log('dom_attributes', dom_attributes);
 		//throw 'stop';
+		/*
 		dom_attributes['data-jsgui-id'] = new Data_Value({
 			'value': id
 		});
 		dom_attributes['data-jsgui-type'] = new Data_Value({
 			'value': this.__type_name
 		});
+		*/
+		dom_attributes['data-jsgui-id'] = id;
+		dom_attributes['data-jsgui-type'] = this.__type_name;
+
+
 		//var el = this._.el || dom._.el;
 		var el;
 		if (dom.el) {
@@ -1826,14 +1846,19 @@ class Control_Core extends Data_Object {
 			//console.log('el', el);
 			//console.log('el.nodeType', el.nodeType);
 
+			// Should be updated by listener.
+
+
+
 			if (el.nodeType === 1) {
-				el.setAttribute('data-jsgui-id', id);
-				el.setAttribute('data-jsgui-type', this.__type_name);
+				console.log('Removed dome update.');
+				//el.setAttribute('data-jsgui-id', id);
+				//el.setAttribute('data-jsgui-type', this.__type_name);
 			}
 		}
 		var tCtrl;
 
-		this.content.each(function (ctrl) {
+		this.content.each(ctrl => {
 			//console.log('active i', i);
 
 			tCtrl = tof(ctrl);
@@ -1861,15 +1886,15 @@ class Control_Core extends Data_Object {
 	'click' (handler) {
 		// Adding the click event listener... does that add it to the DOM?
 
-		this.add_event_listener('click', handler);
+		this.on('click', handler);
 	}
 	'hover' (fn_in, fn_out) {
-		this.add_event_listener('mouseover', function (e) {
+		this.on('mouseover', e => {
 			//console.log('hover mouseover');
 			fn_in();
 		})
 
-		this.add_event_listener('mouseout', function (e) {
+		this.on('mouseout', e => {
 			//console.log('hover mouseout');
 			fn_out();
 		})
@@ -1877,9 +1902,10 @@ class Control_Core extends Data_Object {
 	'add_class' (class_name) {
 		// Should have already set these up on activation.
 		//console.log('Control add_class ' + class_name);
-		var cls = this.dom.attrs['class'];
+		let da = this.dom.attrs,
+			cls = da['class'];
 		//console.log('cls ' + cls);
-		var el = this.dom.el;
+		//var el = this.dom.el;
 
 		//console.log('add_class el ' + el);
 		if (!cls) {
@@ -1894,7 +1920,7 @@ class Control_Core extends Data_Object {
 			//this.dom.attrs.set('class', class_name);
 			//this.dom.attrs['class'] = class_name;
 			//this.dom.attrs.set('class', class_name);
-			this.dom.attrs['class'] = class_name;
+			da['class'] = class_name;
 
 			// as well as that, need to have the class in the doc respond to this chaging.
 			//  event listener listening for dom changes will update this.
@@ -1902,19 +1928,21 @@ class Control_Core extends Data_Object {
 		} else {
 			var tCls = tof(cls);
 			//console.log('tCls ' + tCls);
+
+
 			if (tCls == 'object') {
 				//cls
 				cls[class_name] = true;
 				// then get the classes from the obj
 
 				var arr_class = [];
-				each(cls, function (i, v) {
+				each(cls, function (v, i) {
 					if (v) arr_class.push(i);
 				})
-				var str_class = arr_class.join(' ');
+				//var str_cls = arr_class.join(' ');
 				//el.className = str_class;
 				//this.dom.attrs.set('class', str_cls);
-				this.dom.attrs['class'] = str_cls;
+				da['class'] = arr_class.join(' ');
 			} else if (tCls == 'data_value') {
 				var val = cls.value();
 
@@ -1931,11 +1959,11 @@ class Control_Core extends Data_Object {
 				if (!already_has_class) {
 					arr_classes.push(class_name);
 				}
-				var str_cls = arr_classes.join(' ');
+				//var str_cls = arr_classes.join(' ');
 				//console.log('str_cls', str_cls);
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
-				this.dom.attrs['class'] = str_cls;
+				da['class'] = arr_classes.join(' ');
 
 				//this.add_class(val);
 				// And the DOM should update itself when one of these 'model' objects gets changed - depending on if its activated or not.
@@ -1946,7 +1974,7 @@ class Control_Core extends Data_Object {
 				var already_has_class = false,
 					l = arr_classes.length,
 					c = 0;
-				while (c < l & !already_has_class) {
+				while (c < l && !already_has_class) {
 					if (arr_classes[c] == class_name) {
 						already_has_class = true;
 					}
@@ -1955,11 +1983,11 @@ class Control_Core extends Data_Object {
 				if (!already_has_class) {
 					arr_classes.push(class_name);
 				}
-				var str_cls = arr_classes.join(' ');
+				//var str_cls = arr_classes.join(' ');
 				//console.log('add_class str_cls', str_cls);
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
-				this.dom.attrs['class'] = str_cls;
+				da['class'] = arr_classes.join(' ');
 				//this.dom.attrs['class'] = class_name;
 
 
@@ -1971,10 +1999,11 @@ class Control_Core extends Data_Object {
 
 	'remove_class' (class_name) {
 		//console.log('remove_class ' + class_name);
-		var cls = this.dom.attributes.class;
+		let da = this.dom.attrs,
+			cls = da['class'];
 		//console.log('cls', cls);
 
-		var el = this.dom.el;
+		//var el = this.dom.el;
 		//console.log('el.className', el.className);
 		if (cls) {
 			var tCls = tof(cls);
@@ -1985,18 +2014,18 @@ class Control_Core extends Data_Object {
 
 				// go through it again, building the class string...
 				var arr_class = [];
-				each(cls, function (i, v) {
+				each(cls, function (v, i) {
 					//if (v) arr_class.push(i);
-					if (i == class_name) cls[i] = false;
+					if (i === class_name) cls[i] = false;
 					if (cls[i]) arr_class.push(i);
 				})
-				var str_class = arr_class.join(' ');
+				//var str_class = arr_class.join(' ');
 				//this.add_class(str_cls);
 
 				//this.dom.attrs.set()
 				//this.dom.attrs.set('class', str_cls);
 
-				this.dom.attrs['class'] = str_cls;
+				da['class'] = arr_class.join(' ');
 
 
 				//el.className = str_class;
@@ -2019,12 +2048,12 @@ class Control_Core extends Data_Object {
 					c++;
 				}
 				//console.log('arr_res', arr_res);
-				var str_cls = arr_res.join(' ');
+				//var str_cls = arr_res.join(' ');
 				//console.log('str_cls', str_cls);
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
 
-				this.dom.attrs['class'] = str_cls;
+				da['class'] = arr_res.join(' ');
 
 
 
@@ -2043,20 +2072,20 @@ class Control_Core extends Data_Object {
 					c = 0;
 				//console.log('arr_classes', arr_classes);
 				while (c < l) {
-					if (arr_classes[c] != class_name) {
+					if (arr_classes[c] !== class_name) {
 						//already_has_class = true;
 						arr_res.push(arr_classes[c]);
 					}
 					c++;
 				}
 				//console.log('arr_res', arr_res);
-				var str_cls = arr_res.join(' ');
+				//var str_cls = arr_res.join(' ');
 				//console.log('str_cls ', str_cls);
 				//this.add_class(str_cls);
 
 				//this.dom.attrs.set('class', str_cls);
 
-				this.dom.attrs['class'] = str_cls;
+				da['class'] = arr_res.join(' ');
 
 				//console.log('str_cls ' + str_cls);
 			}
@@ -2065,12 +2094,12 @@ class Control_Core extends Data_Object {
 	}
 
 	'hover_class' (class_name) {
-		var that = this;
-		that.hover(function (e_in) {
-			that.add_class(class_name);
+		//var that = this;
+		this.hover(e_in => {
+			this.add_class(class_name);
 			//ctrl_key_close_quote.add_class(hover_class);
-		}, function (e_out) {
-			that.remove_class(class_name);
+		}, e_out => {
+			this.remove_class(class_name);
 			//ctrl_key_close_quote.remove_class(hover_class);
 		})
 
@@ -2091,7 +2120,7 @@ class Control_Core extends Data_Object {
 	// see 'ancestor' function.
 	'is_ancestor_of' (target) {
 		var t_target = tof(target);
-		console.log('t_target', t_target);
+		//console.log('t_target', t_target);
 
 		var el = this.dom.el;
 
@@ -2152,6 +2181,11 @@ class Control_Core extends Data_Object {
 	}
 
 	'remove' () {
+		// No, remove it from collection in parent.
+		//  Have DOM respond to that.
+
+		console.log('TO CHANGE: control-core.remove()');
+
 		var el = this.dom.el;
 		if (el) {
 			if (el.parentNode) {
@@ -2177,7 +2211,7 @@ class Control_Core extends Data_Object {
 		//console.log('cl ' + tof(cl));
 
 		var map_class_exclude = {
-			'bg-light-yellow': true,
+			//'bg-light-yellow': true,
 			'selected': true
 		}
 
@@ -2187,7 +2221,7 @@ class Control_Core extends Data_Object {
 
 		var res_content = res.content;
 
-		this.content.each(function (v, i) {
+		this.content.each((v, i) => {
 			//console.log('v ' + v);
 			//console.log('v ' + stringify(v));
 			//console.log('tof v ' + tof(v));
@@ -2252,6 +2286,7 @@ class Control_Core extends Data_Object {
 	//   Getters and setters would do the job better.
 
 
+	/*
 
 	get offset() {
 		var el = this.dom.el;
@@ -2262,8 +2297,9 @@ class Control_Core extends Data_Object {
 		this.style({
 			'left': a[0] + 'px',
 			'top': a[1] + 'px'
-		})
+		});
 	}
+	*/
 
 	/*
 	'offset'() {

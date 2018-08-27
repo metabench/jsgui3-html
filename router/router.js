@@ -1,9 +1,8 @@
-var url = require('url'),
+var url = require('url-parse'),
     jsgui = require('../lang/lang'),
-    os = require('os'),
-    http = require('http');
-
-var stringify = jsgui.stringify,
+    //os = require('os'),
+    //http = require('http');
+    stringify = jsgui.stringify,
     each = jsgui.each,
     arrayify = jsgui.arrayify,
     tof = jsgui.tof;
@@ -268,8 +267,6 @@ class Router {
 
         if (spec.name) this.name = spec.name;
 
-
-
         this.routing_tree = new Routing_Tree();
     }
     'start'(callback) {
@@ -289,8 +286,9 @@ class Router {
 
         //console.log('process rt', rt);
 
-        var url_parts = url.parse(req.url, true);
-        var splitPath = url_parts.path.substr(1).split('/');
+        var parsed_url = url(req.url, true);
+        //console.log('parsed_url', parsed_url);
+        var splitPath = parsed_url.pathname.substr(1).split('/');
 
         //console.log('req.url', req.url);
 
@@ -336,7 +334,6 @@ class Router {
                         console.log('1) no defined route result', splitPath);
 
                         // Some kind of 404 handler makes sense.
-
 
                         return false;
                     } else {

@@ -271,8 +271,6 @@ class Control extends Control_Core {
 
 
 	get size() {
-
-
 		if (this._size) {
 			return this._size;
 		} else {
@@ -356,6 +354,8 @@ class Control extends Control_Core {
 			}
 		}
 	}
+
+	// should be properties rather than functions. In core.
 	'border' () {
 		var a = arguments;
 		a.l = arguments.length;
@@ -583,7 +583,7 @@ class Control extends Control_Core {
 	'add_dom_event_listener' (event_name, fn_handler) {
 		//console.log('add_dom_event_listener', event_name, this.__id);
 		var listener = this._bound_events[event_name];
-		var that = this;
+		//var that = this;
 
 		var el = this.dom.el;
 
@@ -669,9 +669,10 @@ class Control extends Control_Core {
 			that = this;
 
 		if (sig === '[s,f]') {
-			var event_name = a[0];
+			//var event_name = a[0];
+			//var fn_handler = a[1];
 
-			var fn_handler = a[1];
+			let [event_name, fn_handler] = a;
 
 			// change is also a DOM event
 			//  that's a tricky one.
@@ -682,7 +683,7 @@ class Control extends Control_Core {
 			//console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
 
 
-			if (mapDomEventNames[a[0]]) {
+			if (mapDomEventNames[event_name]) {
 				//console.log('we have a DOM event: ' + event_name);
 				//console.log('pre call add_dom_event_listener from add_event_listener');
 				//console.log('this.dom.el', !!this.dom.el);
@@ -710,8 +711,7 @@ class Control extends Control_Core {
 
 		var a = arguments;
 		a.l = arguments.length;
-		var sig = get_a_sig(a, 1),
-			that = this;
+		var sig = get_a_sig(a, 1);
 		//console.log('control-enh add_event_listener sig', sig);
 
 		/*
@@ -1092,7 +1092,7 @@ class Control extends Control_Core {
 
 
 					// Malfunctioning now.
-					e_change.item.register_this_and_subels();
+					//e_change.item.register_this_and_subels();
 
 					e_change.item.register_this_and_subcontrols();
 

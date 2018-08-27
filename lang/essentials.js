@@ -6,7 +6,7 @@ var are_equal = require('deep-equal');
 
 if (typeof window === 'undefined') {
 	//exports.foo = {};
-	var Stream = require('stream');
+	//var Stream = require('stream');
 } else {
 	//window.foo = {};
 }
@@ -176,10 +176,16 @@ var tof = (obj, t1) => {
 					//console.log('twin ' + typeof window);
 					if (typeof window === 'undefined') {
 						//console.log('obj.length ' + obj.length);
-						if (obj instanceof Buffer) res = 'buffer';
 
-						if (obj instanceof Stream.Readable) res = 'readable_stream';
-						if (obj instanceof Stream.Writable) res = 'writable_stream';
+
+						// Buffer.from()`, `Buffer.alloc()`, and `Buffer.allocUnsafe()
+
+						if (obj && obj.readInt8) res = 'buffer';
+
+						//if (obj instanceof Buffer) res = 'buffer';
+
+						//if (obj instanceof Stream.Readable) res = 'readable_stream';
+						//if (obj instanceof Stream.Writable) res = 'writable_stream';
 					}
 
 

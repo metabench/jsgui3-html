@@ -9,7 +9,10 @@ var jsgui = require('../html-core/html-core');
 //  Have something with a similar API to Vectorious?
 //var Data_Grid = jsgui.Data_Grid;
 
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    tof = jsgui.tof,
+    def = jsgui.is_defined;
 var Control = jsgui.Control;
 
 var group = jsgui.group;
@@ -31,6 +34,7 @@ const mx_selectable = require('../control_mixins/selectable');
 
 // grid.set('data', ...);
 
+// row headers, column headers.
 
 // Has an underlying Data_Grid.
 //  Listens to and queries the Data_Grid.
@@ -41,7 +45,6 @@ const mx_selectable = require('../control_mixins/selectable');
 
 // Also want to indicate row and column labels.
 
-
 /*
  'fields': {
  'range': Array
@@ -50,7 +53,6 @@ const mx_selectable = require('../control_mixins/selectable');
 
 // For the moment, scrollable and holding the whole dataset would be best.
 //  Fine for thousands of records, maybe not millions.
-
 
 // Also need to make this scrollable.
 //  Describe size of view window, but allow scrolling to show the full data
@@ -72,6 +74,124 @@ class Grid extends Control {
     // maybe add before make would be better. add will probably be used more.
     constructor(spec, add, make) {
         spec = spec || {};
+
+        spec.size = spec.size || [320, 200];
+
+
+        // grid should have a default size?
+        //  would be nice to read this from css.
+
+        // or to compile css from values in JavaScript.
+        // Need to get grids working in a nice general purpose kind of way.
+
+        // define control property would be a useful function.
+
+        // .prop()
+        //  name, validation test,
+
+        // default...?
+
+        // default.
+
+        // Could make a language object extension module.
+        //  
+
+        // More work on control fields would help too.
+
+        let prop = (name, default_value, fn_validate) => {
+            let _prop_value;
+            Object.defineProperty(this, name, {
+                get() {
+                    return _prop_value;
+                },
+                set(value) {
+                    // value must be an array of length 2.
+                    if (fn_validate) {
+                        let val = fn_validate(value);
+                        if (val === true) {
+                            let old = _prop_value
+                            _prop_value = value;
+                            this.raise('change', {
+                                'name': name,
+                                'old': old,
+                                'value': value
+                            });
+                        } else {
+                            throw val;
+                        }
+                    } else {
+                        let old = _prop_value
+                        _prop_value = value;
+                        this.raise('change', {
+                            'name': name,
+                            'old': old,
+                            'value': value
+                        });
+                    }
+                }
+            });
+            if (def(spec[name])) {
+                _prop_value = spec[name];
+            } else {
+                _prop_value = default_value;
+            }
+        }
+
+        // and a field function.
+        //  like a prop, but sets the ._fields
+
+        let field = (name, default_value, fn_validate) => {
+            //prop(name, default_value, fn_validate);
+            let _prop_value;
+            Object.defineProperty(this, name, {
+                get() {
+                    return _prop_value;
+                },
+                set(value) {
+                    // value must be an array of length 2.
+                    if (fn_validate) {
+                        let val = fn_validate(value);
+                        if (val === true) {
+                            let old = _prop_value
+                            _prop_value = value;
+                            if (!this.el) {
+                                (this._fields = this._fields || {})[name] = value;
+                                //this._fields = this._fields || {};
+                                //this._fields[name] = value;
+                            }
+                            this.raise('change', {
+                                'name': name,
+                                'old': old,
+                                'value': value
+                            });
+                            
+                        } else {
+                            throw val;
+                        }
+                    } else {
+                        let old = _prop_value
+                        _prop_value = value;
+                        if (!this.el) {
+                            (this._fields = this._fields || {})[name] = value;
+                            //this._fields = this._fields || {};
+                            //this._fields[name] = value;
+                        }
+                        this.raise('change', {
+                            'name': name,
+                            'old': old,
+                            'value': value
+                        });
+                    }
+                }
+            });
+            if (def(spec[name])) {
+                
+                (this._fields = this._fields || {})[name] = _prop_value = spec[name];
+            } else {
+                _prop_value = default_value;
+            }
+        }
+
         spec.__type_name = spec.__type_name || 'grid';
         super(spec);
         //this.__type_name = 'grid';
@@ -79,7 +199,105 @@ class Grid extends Control {
         var spec_data = spec.data;
         this._arr_rows = [];
         var composition_mode = 'divs';
-        if (spec.grid_size) this.grid_size = spec.grid_size;
+
+        let _grid_size;
+        Object.defineProperty(this, 'grid_size', {
+            get() {
+                return _grid_size;
+            },
+            set(value) {
+                // value must be an array of length 2.
+                if (Array.isArray(value) && value.length === 2) {
+                    let old = _grid_size
+                    _grid_size = value;
+                    this.raise('change', {
+                        'name': 'grid_size',
+                        'old': old,
+                        'value': value
+                    });
+                } else {
+                    throw 'Invalid grid_size. Expected [x, y]';
+                }
+            }
+        });
+
+
+        if (spec.grid_size) _grid_size = spec.grid_size;
+
+
+        let _cell_size;
+        Object.defineProperty(this, 'cell_size', {
+            get() {
+                return _cell_size;
+            },
+            set(value) {
+                let old = _cell_size
+                _cell_size = value;
+                this.raise('change', {
+                    'name': 'cell_size',
+                    'old': old,
+                    'value': value
+                });
+            }
+        });
+
+        if (spec.cell_size) _cell_size = spec.cell_size;
+
+
+        // row headers property
+        // column headers property
+
+        // A translate property?
+        //  could be objects
+
+
+        field('column_headers', false);
+        field('row_headers', false);
+        prop('data', false);
+
+        this.map_cells = [];
+
+
+
+
+
+        // size prop
+        //  however, controls in general could do with an upgrade here.
+        //  sizes could still be undefined when not set and there is no element to measure the size of.
+
+        // size property should read from the DOM when there is the DOM - or have corresponding values at least.
+        //  (or not - could have dom size)
+
+        // need to measure border and possibly some other sizes.
+
+        // Part of an overhaul of css and styling?
+
+
+        // data property.
+
+        // if it's an array...
+
+        if (spec.data) {
+            let t_data = tof(spec.data);
+            if (t_data === 'array') {
+                let max_x = -1;
+                let y, x, ly, lx, arr = spec.data,
+                    arr_row;
+                ly = arr.length; // max_y = -1;
+
+                for (y = 0; y < ly; y++) {
+                    arr_row = arr[y];
+                    lx = arr_row.length;
+                    //if (y > max_y) max_y = y;
+                    if (lx > max_x) max_x = lx;
+                    for (x = 0; x < lx; x++) {
+                        // cell
+                    }
+                }
+                _grid_size = [max_x, ly];
+            }
+        }
+
 
         if (!spec.abstract && !spec.el) {
             var data;
@@ -123,7 +341,8 @@ class Grid extends Control {
 
             // column_data / columns property.
 
-            this._fields = {
+            this._fields = this._fields || {};
+            Object.assign(this._fields, {
                 'composition_mode': composition_mode,
                 'grid_size': this.grid_size
 
@@ -132,7 +351,9 @@ class Grid extends Control {
 
                 // 'all_columns': { width: 200px }
 
-            };
+            });
+
+            //this._fields = ;
         }
 
         // on resize, resize all of the cells.
@@ -144,23 +365,29 @@ class Grid extends Control {
 
             // then need to recalculate the cell sizes.
             //console.log('this.composition_mode', this.composition_mode);
-
             this.refresh_size();
-            
         });
     }
 
-    'refresh_size'() {
+    'refresh_size' () {
         if (this.composition_mode === 'divs') {
 
             // resize or refresh_grid_size
 
 
-            var num_columns = this.grid_size[0];
-            var num_rows = this.grid_size[1];
+            //var num_columns = this.grid_size[0];
+            //var num_rows = this.grid_size[1];
+
+            let [num_columns, num_rows] = this.grid_size[0];
+
             var cell_border_thickness = 1;
             var _2_cell_border_thickness = cell_border_thickness * 2;
-            var cell_size = [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+
+            // could be given the cell size.
+            // cell sizes by row. 
+            // if cell_size is already defined...
+
+            var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
             var that = this;
             var cell_v_border_thickness = 2;
 
@@ -177,11 +404,11 @@ class Grid extends Control {
         }
     }
 
-    'each_row'(cb_row) {
+    'each_row' (cb_row) {
         each(this._arr_rows, cb_row);
     }
 
-    'each_cell'(cb_cell) {
+    'each_cell' (cb_cell) {
         // want to return the cell position as an index
         each(this._arr_rows, (row, i_row) => {
 
@@ -193,61 +420,199 @@ class Grid extends Control {
             //each(row, cb_cell);
         });
     }
+    'get_cell' (x, y) {
 
-    'full_compose_as_divs'() {
+
+
+        //return this._arr_rows[y]
+    }
+
+    'full_compose_as_divs' () {
+
+
+        // Compose row and column headers here, if they are in use.
+
+        // row header width
+        // column header height
+        //  default of 32
+
+
+
+
+        // 
+
 
         // regular sizing. (default, cell size fits the screen size)
         // rows can have their widths set.
 
+        // maybe we don't have the grid size (yet)
+        //  grid_size could be a gettable / settable property
 
+        //var num_columns = this.grid_size[0];
+        //var num_rows = this.grid_size[1];
 
-        var num_columns = this.grid_size[0];
-        var num_rows = this.grid_size[1];
-
+        let [num_columns, num_rows] = this.grid_size;
         //console.log('this.size', this.size);
-
 
         //throw 'stop';
 
         // Nope, easier to use box-sizing internal or whatever css.
 
         var cell_border_thickness = 0;
-
-
         var _2_cell_border_thickness = cell_border_thickness * 2;
 
-        var cell_size = [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+        //console.log('this.cell_size', this.cell_size);
+
+        // need to know the row / column header sizes and if we are using them.
+        var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
         //console.log('cell_size', cell_size);
+
+        let row_width, row_height;
+
+        let row_header_width = this.cell_size[0];
+
+        //console.log('this.row_headers', this.row_headers);
+
+        if (this.cell_size) {
+            
+            //header_row.style('width', this.cell_size[0] * num_columns);
+            //header_row.style('height', this.cell_size[1]);
+
+            
+
+            if (this.row_headers) {
+                row_header_width = this.row_headers.width || row_header_width;
+                row_width = this.cell_size[0] * num_columns + row_header_width;
+                
+            } else {
+                row_width = this.cell_size[0] * num_columns;
+            }
+            row_height = this.cell_size[1];
+
+        } else {
+            //header_row.style('height', Math.floor(this.size[1] / num_rows));
+            row_height = Math.floor(this.size[1] / num_rows);
+        }
+
+        //console.log('row_header_width', row_header_width);
+
 
         var x, y;
 
-        for (y = 0; y < num_rows; y++) {
-            var row_container = new Control({
-                context: this.context//,
+        // compose the header row if we have one.
+        if (this.column_headers) {
+            let header_row = new Control({
+                context: this.context //,
                 //'class': 'row'
             });
-            //row_container.style.height = cell_size[1];
-            row_container.style('height', Math.floor(this.size[1] / num_rows));
-            row_container.add_class('row');
-            this._arr_rows.push(row_container);
-            this.add(row_container);
+            header_row.add_class('header');
+            header_row.add_class('row');
+
+            if (row_height) {
+                header_row.style('height', row_height);
+            }
+            if (row_width) {
+                header_row.style('width', row_width);
+            }
+
+
+            this.add(header_row);
+
+            if (this.row_headers) {
+                var cell = new Control({
+                    context: this.context,
+                    __type_name: 'gridcell', //,
+                    //'class': 'cell'
+                });
+                cell.add_class('grid-header');
+                cell.add_class('cell');
+                if (row_header_width) {
+                    cell.size = [row_header_width, cell_size[1]];
+                } else {
+                    cell.size = cell_size;
+                }
+                header_row.add(cell);
+            }
 
             for (x = 0; x < num_columns; x++) {
                 var cell = new Control({
                     context: this.context,
-                    __type_name: 'gridcell',//,
+                    __type_name: 'gridcell', //,
+                    //'class': 'cell'
+                });
+                cell.add_class('column-header');
+                cell.add_class('cell');
+
+                cell.size = cell_size;
+                //mx_selectable(cell);
+                header_row.add(cell);
+
+            }
+
+        }
+
+        for (y = 0; y < num_rows; y++) {
+            var row_container = new Control({
+                context: this.context //,
+                //'class': 'row'
+            });
+            //row_container.style.height = cell_size[1];
+            //if (this.cell_size) {
+            //    row_container.style('width', this.cell_size[0] * num_columns);
+            //    row_container.style('height', this.cell_size[1]);
+
+            //} else {
+            //    row_container.style('height', Math.floor(this.size[1] / num_rows));
+            // }
+
+            if (row_height) {
+                row_container.style('height', row_height);
+            }
+            if (row_width) {
+                row_container.style('width', row_width);
+            }
+
+            row_container.add_class('row');
+            this._arr_rows.push(row_container);
+            this.add(row_container);
+
+
+            // if we have a row header...
+
+            if (this.row_headers) {
+                var cell = new Control({
+                    context: this.context,
+                    __type_name: 'gridcell', //,
+                    //'class': 'cell'
+                });
+                cell.add_class('row-header');
+                cell.add_class('cell');
+                //cell.x = 
+
+                if (row_header_width) {
+                    cell.size = [row_header_width, cell_size[1]];
+                } else {
+                    cell.size = cell_size;
+                }
+                row_container.add(cell);
+            }
+
+            for (x = 0; x < num_columns; x++) {
+                var cell = new Control({
+                    context: this.context,
+                    __type_name: 'gridcell', //,
                     //'class': 'cell'
                 });
                 cell.add_class('cell');
+
                 cell.size = cell_size;
                 mx_selectable(cell);
                 row_container.add(cell);
-
             }
         }
     }
 
-    'full_compose_as_table'() {
+    'full_compose_as_table' () {
 
         //this.set('dom.tagName', 'table');
         this.dom.tagName = table;
@@ -274,9 +639,9 @@ class Grid extends Control {
             // console.log('range', range);
 
 
-            var x, y, max_x = range[0], max_y = range[1];
+            var x, y, max_x = range[0],
+                max_y = range[1];
             var ctrl_cell, ctrl_row;
-
             var size = this.size().value();
 
             //console.log('size', size);
@@ -289,24 +654,20 @@ class Grid extends Control {
             }
 
             if (size) {
-
                 tbody_params.size = [size[0][0], size[1][0]];
             }
 
 
             var tbody = new Control(tbody_params);
-
             this.add(tbody);
 
 
             for (y = 0; y <= max_y; y++) {
-
                 ctrl_row = new jsgui.tr({
                     'context': this.context
                 });
 
                 tbody.add(ctrl_row);
-
 
                 for (x = 0; x <= max_x; x++) {
                     ctrl_cell = new jsgui.td({
@@ -342,7 +703,7 @@ class Grid extends Control {
         //  meaning that when something is set with a Data_Grid, it does not wrap it in a Data_Value.
 
     }
-    'activate'() {
+    'activate' () {
         // May need to register Flexiboard in some way on the client.
 
         if (!this.__active) {
@@ -358,27 +719,24 @@ class Grid extends Control {
                 var _arr_rows = this._arr_rows = [];
                 this.content.each((v) => {
                     _arr_rows.push(v);
-                })
+                });
 
             }
             load_rows();
 
             //this.each_cell
 
-
             // load the cells
-            
+
             var load_cells = () => {
                 each(this._arr_rows, (row) => {
                     each(row.content._arr, (cell) => {
                         mx_selectable(cell);
                         //cell.selectable = cell.selectable;
-                    })
-                })
-            }
+                    });
+                });
+            };
             //load_cells();
-            
-
 
         }
 

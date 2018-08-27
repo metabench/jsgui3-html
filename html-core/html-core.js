@@ -153,7 +153,6 @@ var activate = function (context) {
                 var jsgui_id = el.getAttribute('data-jsgui-id');
                 // Give the HTML document an ID?
     
-    
                 //console.log('jsgui_id ' + jsgui_id);
                 if (jsgui_id) {
                     var ib = id_before__(jsgui_id);
@@ -663,8 +662,6 @@ class Blank_HTML_Document extends HTML_Document {
             // Maybe connecting control fields?
             //this.connect_fields(['head', 'body', 'title']);
         }
-
-
 
         //console.log('content ' + stringify(this.content));
 

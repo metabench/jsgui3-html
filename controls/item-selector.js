@@ -45,7 +45,11 @@ class Item_Selector extends Control {
         // selected_index
         // Could have Object assignproperies done here
         //  use local variables as true private variables.
-        if (spec.items) this.items = spec.items;
+        if (spec.items) {
+            this.items = spec.items
+        } else {
+            this.items = [];
+        }
         if (spec.loop) this.loop = spec.loop;
         //console.log('spec.item_index', spec.item_index);
         if (def(spec.item_index)) {
@@ -63,9 +67,10 @@ class Item_Selector extends Control {
         // A loop option.
         if (!spec.el) {
             this.compose_item_selector();
-
             this.finish_item_selector();
         }
+
+
     }
     finish_item_selector() {
         this.item_list.on('change', e_change => {
@@ -95,6 +100,8 @@ class Item_Selector extends Control {
         // In combo mode normally.
         // current_item
         // item_list
+
+
 
         let current_item_view = this.current_item_view = new Item_View({
             context: this.context,
