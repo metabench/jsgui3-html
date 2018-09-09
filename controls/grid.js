@@ -67,6 +67,81 @@ const mx_selectable = require('../control_mixins/selectable');
 //  In terms of layout and GUI
 //  In terms of data source
 
+let obj_field = (obj, spec, name, default_value, fn_validate) => {
+    //prop(name, default_value, fn_validate);
+    let _prop_value;
+    Object.defineProperty(obj, name, {
+        get() {
+            return _prop_value;
+        },
+        set(value) {
+            // value must be an array of length 2.
+            if (fn_validate) {
+                let val = fn_validate(value);
+                if (val === true) {
+                    let old = _prop_value
+                    _prop_value = value;
+                    if (!obj.el) {
+                        (obj._fields = obj._fields || {})[name] = value;
+                        //this._fields = this._fields || {};
+                        //this._fields[name] = value;
+                    }
+                    obj.raise('change', {
+                        'name': name,
+                        'old': old,
+                        'value': value
+                    });
+                    
+                } else {
+                    throw val;
+                }
+            } else {
+                let old = _prop_value
+                _prop_value = value;
+                if (!obj.el) {
+                    (obj._fields = obj._fields || {})[name] = value;
+                    //this._fields = this._fields || {};
+                    //this._fields[name] = value;
+                }
+                obj.raise('change', {
+                    'name': name,
+                    'old': old,
+                    'value': value
+                });
+            }
+        }
+    });
+    if (def(spec[name])) {
+        (obj._fields = obj._fields || {})[name] = _prop_value = spec[name];
+    } else {
+        _prop_value = default_value;
+    }
+}
+
+class Grid_Cell extends Control {
+    constructor(spec) {
+        (spec = spec || {}).__type_name = 'grid_cell';
+        super(spec);
+        this.add_class('cell');
+
+        obj_field(this, spec, 'x');
+        obj_field(this, spec, 'y');
+        obj_field(this, spec, 'data');
+
+        this.compose_grid_cell();
+
+    }
+    compose_grid_cell() {
+        // add a span
+        let o = {
+            context: this.context
+        };
+        if (this.data) o.text = this.data;
+        this.add(this.span = new jsgui.span(o));
+        
+    }
+}
+
 // Row_Headers
 // Column_Headers
 
@@ -221,9 +296,7 @@ class Grid extends Control {
             }
         });
 
-
         if (spec.grid_size) _grid_size = spec.grid_size;
-
 
         let _cell_size;
         Object.defineProperty(this, 'cell_size', {
@@ -256,10 +329,6 @@ class Grid extends Control {
         prop('data', false);
 
         this.map_cells = [];
-
-
-
-
 
         // size prop
         //  however, controls in general could do with an upgrade here.
@@ -428,23 +497,13 @@ class Grid extends Control {
     }
 
     'full_compose_as_divs' () {
-
-
         // Compose row and column headers here, if they are in use.
-
         // row header width
         // column header height
         //  default of 32
-
-
-
-
         // 
-
-
         // regular sizing. (default, cell size fits the screen size)
         // rows can have their widths set.
-
         // maybe we don't have the grid size (yet)
         //  grid_size could be a gettable / settable property
 
@@ -453,37 +512,25 @@ class Grid extends Control {
 
         let [num_columns, num_rows] = this.grid_size;
         //console.log('this.size', this.size);
-
         //throw 'stop';
-
         // Nope, easier to use box-sizing internal or whatever css.
 
         var cell_border_thickness = 0;
         var _2_cell_border_thickness = cell_border_thickness * 2;
 
         //console.log('this.cell_size', this.cell_size);
-
         // need to know the row / column header sizes and if we are using them.
         var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
         //console.log('cell_size', cell_size);
-
         let row_width, row_height;
-
         let row_header_width = this.cell_size[0];
-
         //console.log('this.row_headers', this.row_headers);
-
         if (this.cell_size) {
-            
             //header_row.style('width', this.cell_size[0] * num_columns);
             //header_row.style('height', this.cell_size[1]);
-
-            
-
             if (this.row_headers) {
                 row_header_width = this.row_headers.width || row_header_width;
                 row_width = this.cell_size[0] * num_columns + row_header_width;
-                
             } else {
                 row_width = this.cell_size[0] * num_columns;
             }
@@ -493,6 +540,8 @@ class Grid extends Control {
             //header_row.style('height', Math.floor(this.size[1] / num_rows));
             row_height = Math.floor(this.size[1] / num_rows);
         }
+
+        const data = this.data;
 
         //console.log('row_header_width', row_header_width);
 
@@ -514,8 +563,6 @@ class Grid extends Control {
             if (row_width) {
                 header_row.style('width', row_width);
             }
-
-
             this.add(header_row);
 
             if (this.row_headers) {
@@ -542,7 +589,6 @@ class Grid extends Control {
                 });
                 cell.add_class('column-header');
                 cell.add_class('cell');
-
                 cell.size = cell_size;
                 //mx_selectable(cell);
                 header_row.add(cell);
@@ -598,12 +644,29 @@ class Grid extends Control {
             }
 
             for (x = 0; x < num_columns; x++) {
-                var cell = new Control({
+
+                let o = {
                     context: this.context,
-                    __type_name: 'gridcell', //,
+                    x: x,
+                    y: y
+                    //,
+                    //__type_name: 'gridcell', //,
                     //'class': 'cell'
-                });
+                }
+
+                if (data) {
+                    //console.log('data', data);
+                    //console.log('[x, y]', [x, y]);
+                    o.data = data[y][x];
+                }
+
+                // Grid_Cell
+                var cell = new Grid_Cell(o);
                 cell.add_class('cell');
+
+                // and put the data in the cell.
+
+                // A grid cell class may work best.
 
                 cell.size = cell_size;
                 mx_selectable(cell);

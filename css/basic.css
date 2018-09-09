@@ -818,9 +818,13 @@ div.grid .row .cell {
     border-bottom: 1px solid #999999;
 }
 
+
+
 div.grid .row .row-header.cell {
     background-color: #ffeba8;
 }
+
+
 
 div.grid .row .cell.selected {
     float: left;
@@ -846,8 +850,15 @@ div.grid .row .cell span {
     /* top: 4px; */
     left: 5px;
     top: 1px;
-    font-size: 16pt;
+    font-size: 12pt;
+    line-height: 20px;
 }
+
+/*
+div.grid .row .cell span {
+    font-size: 12px;
+}
+*/
 
 .item-selector .item-view {
     width: 120px;
