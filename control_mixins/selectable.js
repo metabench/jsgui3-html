@@ -13,7 +13,6 @@ let selectable = (ctrl) => {
         // select_unique
 
         let click_handler = (e) => {
-
             //console.log('selectable click e', e);
 
             if (_selectable) {
@@ -25,9 +24,6 @@ let selectable = (ctrl) => {
                     ctrl.action_select_only();
                 }
             }
-
-
-
 
             //e.stopPropagation();
         }
@@ -54,16 +50,19 @@ let selectable = (ctrl) => {
                 _selectable = value;
                 // Handling the change may be best here though.
 
-                ctrl.deselect = ctrl.deselect || (() => {
-                    ctrl.find_selection_scope().deselect(ctrl);
-                })
+                
                 if (value === true) {
+
+                    ctrl.deselect = ctrl.deselect || (() => {
+                        let ss = ctrl.find_selection_scope();
+                        if (ss) ss.deselect(ctrl);
+                    });
 
                     ctrl.action_select_only = ctrl.action_select_only || (() => {
                         //console.log('action_select_only');
-                        var ss = this.find_selection_scope();
+                        let ss = this.find_selection_scope();
                         //console.log('ss', ss);
-                        ss.select_only(this);
+                        if (ss) ss.select_only(this);
 
                         //this.find_selection_scope().select_only(this);
                     })
@@ -112,9 +111,6 @@ let selectable = (ctrl) => {
                     //'new': _disabled,
                     'value': _selectable
                 });
-
-
-
             },
             enumerable: true,
             configurable: true

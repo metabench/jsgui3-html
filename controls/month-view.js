@@ -99,7 +99,7 @@ class Month_View extends Grid {
         // want a selector for .something. Select by class
         // selection_change event?
         //each(this.$('control'), control
-        let cells = this.$('gridcell');
+        let cells = this.$('grid_cell');
         //console.log('cells.length', cells.length);
         each(cells, cell => {
             //console.log('cell', cell);
@@ -135,153 +135,177 @@ class Month_View extends Grid {
         // want to go through all cells / controls.
     }
     compose_month_view() {
-        // go through the month in question.
-        // get date for 1st of that month
-        // Put rows into the header.
-        this.add_class('month-view');
-        //this.add_class('month');
-        let days_row = this._arr_rows[0];
-        days_row.add_class('days');
-        days_row.add_class('header');
-        //console.log('days_row.content', days_row.content);
-        //console.log('days_row.content._arr[0]', days_row.content._arr[0]);
 
-        // Creates new spans here.
-        //  At other points, we need to change the values in those spans.
-        // Consider composition of spans separate to filling their data in.
-        each(days_row.content._arr, (ctrl_header_cell, i) => {
-            //console.log('ctrl_header_cell', ctrl_header_cell);
-            let day_span = new jsgui.span({
-                'context': this.context,
-                'text': days[i]
+        this.refresh_month_view();
+        
+
+        let old = () => {
+            // go through the month in question.
+            // get date for 1st of that month
+            // Put rows into the header.
+            this.add_class('month-view');
+            //this.add_class('month');
+            let days_row = this._arr_rows[0];
+            days_row.add_class('days');
+            days_row.add_class('header');
+            //console.log('days_row.content', days_row.content);
+            //console.log('days_row.content._arr[0]', days_row.content._arr[0]);
+
+            // Creates new spans here.
+            //  At other points, we need to change the values in those spans.
+            // Consider composition of spans separate to filling their data in.
+            each(days_row.content._arr, (ctrl_header_cell, i) => {
+                //console.log('ctrl_header_cell', ctrl_header_cell);
+                /*
+                let day_span = new jsgui.span({
+                    'context': this.context,
+                    'text': days[i]
+                });
+                day_span.add_class('day');
+                ctrl_header_cell.add(day_span);
+                */
+                
             });
-            day_span.add_class('day');
-            ctrl_header_cell.add(day_span);
-        });
 
-        // Need to go through the days of the month, putting the number in the appropriate cell.
-        //  To start with, need to find the cell for the 1st of the month.
-        // this.rows[x]?
+            // Need to go through the days of the month, putting the number in the appropriate cell.
+            //  To start with, need to find the cell for the 1st of the month.
+            // this.rows[x]?
 
-        let cell_pos = [0, 1];
-        let ctrl_row = this._arr_rows[cell_pos[1]];
-        let advance_cell = () => {
-            //console.log('cell_pos', cell_pos);
-            //if no more in the control this._arr_rows...
-            if (cell_pos[0] === ctrl_row.content._arr.length - 1) {
+            let cell_pos = [0, 1];
+            let ctrl_row = this._arr_rows[cell_pos[1]];
+            let advance_cell = () => {
+                //console.log('cell_pos', cell_pos);
+                //if no more in the control this._arr_rows...
+                if (cell_pos[0] === ctrl_row.content._arr.length - 1) {
 
-                // have we reached the end now?
+                    // have we reached the end now?
 
-                if (cell_pos[1] < this._arr_rows.length - 1) {
-                    cell_pos[0] = 0;
-                    cell_pos[1]++;
-                    ctrl_row = this._arr_rows[cell_pos[1]];
+                    if (cell_pos[1] < this._arr_rows.length - 1) {
+                        cell_pos[0] = 0;
+                        cell_pos[1]++;
+                        ctrl_row = this._arr_rows[cell_pos[1]];
+                    } else {
+                        // it's on the last one. no more now.
+                        return false;
+                    }
                 } else {
-                    // it's on the last one. no more now.
-                    return false;
+                    cell_pos[0]++;
                 }
-            } else {
-                cell_pos[0]++;
+                return true;
             }
-            return true;
-        }
-        //console.log('this.year, this.month', this.year, this.month);
-        let d = new Date(this.year, this.month, 1);
-        //console.log('d', d);
-        // day of week
-        //  sunday is 0 from JS. I prefer monday to be 0
-        //console.log('d.getDay()', d.getDay());
+            //console.log('this.year, this.month', this.year, this.month);
+            let d = new Date(this.year, this.month, 1);
+            //console.log('d', d);
+            // day of week
+            //  sunday is 0 from JS. I prefer monday to be 0
+            //console.log('d.getDay()', d.getDay());
 
-        let got_day = d.getDay() - 1;
-        if (got_day < 0) got_day = 6;
-        //console.log('got_day', got_day);
+            let got_day = d.getDay() - 1;
+            if (got_day < 0) got_day = 6;
+            //console.log('got_day', got_day);
 
-        let day_name = days[got_day];
-        // need to progress until the position is aligned with the beginning of the week.
+            let day_name = days[got_day];
+            // need to progress until the position is aligned with the beginning of the week.
 
-        // A Cell control could be useful.
+            // A Cell control could be useful.
 
-        while (cell_pos[0] < got_day) {
-            //console.log('cell_pos[0]', cell_pos[0]);
-
-            let cell = ctrl_row.content._arr[cell_pos[0]];
-            let day_span = new jsgui.span({
-                context: this.context,
-                text: ''
-            });
-            cell.add(day_span);
-            cell.selectable = false;
-            cell.select_unique = true;
-
-            cell.background.color = bgc_disabled;
-            cell_pos[0]++;
-        }
-
-        // Still need to make sure it's within the month
-        //let date_of_month = 1;
-        let did_advance = true;
-
-        while (did_advance) {
-            //console.log('cell_pos[0]', cell_pos[0]);
-            let cell = ctrl_row.content._arr[cell_pos[0]];
-
-            let day_span = new jsgui.span({
-                context: this.context,
-                text: d.getDate() + ''
-            });
-            cell.add(day_span);
-            cell.selectable = true;
-            cell.select_unique = true;
-            cell.value = d.getDate();
-            cell._fields = cell._fields || {};
-            cell._fields.value = cell.value;
-
-            d.setDate(d.getDate() + 1);
-            did_advance = advance_cell() && d.getDate() !== 1;
-        }
-
-        while (cell_pos[0] <= 6) {
-            //console.log('cell_pos[0]', cell_pos[0]);
-            let cell = ctrl_row.content._arr[cell_pos[0]];
-
-            let day_span = new jsgui.span({
-                context: this.context,
-                text: ''
-            });
-            cell.add(day_span);
-            //cell.selectable = true;
-            cell.selectable = false;
-            cell.select_unique = true;
-
-            cell.background.color = bgc_disabled;
-            cell_pos[0]++;
-        }
-
-        if (cell_pos[1] < 6) {
-            cell_pos[0] = 0;
-            cell_pos[1] = 6;
-            ctrl_row = this._arr_rows[cell_pos[1]];
-            while (cell_pos[0] <= 6) {
+            while (cell_pos[0] < got_day) {
+                //console.log('cell_pos[0]', cell_pos[0]);
 
                 let cell = ctrl_row.content._arr[cell_pos[0]];
+
+                /*
 
                 let day_span = new jsgui.span({
                     context: this.context,
                     text: ''
                 });
                 cell.add(day_span);
+                */
                 cell.selectable = false;
                 cell.select_unique = true;
-                //cell.selectable = true;
 
-                //console.log('cell.selectable', cell.selectable);
-
-                //console.log('cell_pos[0]', cell_pos[0]);
-                ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
+                cell.background.color = bgc_disabled;
                 cell_pos[0]++;
             }
+
+            // Still need to make sure it's within the month
+            //let date_of_month = 1;
+            let did_advance = true;
+
+            while (did_advance) {
+                //console.log('cell_pos[0]', cell_pos[0]);
+                let cell = ctrl_row.content._arr[cell_pos[0]];
+
+                /*
+
+                let day_span = new jsgui.span({
+                    context: this.context,
+                    text: d.getDate() + ''
+                });
+                cell.add(day_span);
+
+                */
+                cell.selectable = true;
+                cell.select_unique = true;
+                cell.value = d.getDate();
+                cell._fields = cell._fields || {};
+                cell._fields.value = cell.value;
+
+                d.setDate(d.getDate() + 1);
+                did_advance = advance_cell() && d.getDate() !== 1;
+            }
+
+            while (cell_pos[0] <= 6) {
+                //console.log('cell_pos[0]', cell_pos[0]);
+                let cell = ctrl_row.content._arr[cell_pos[0]];
+
+                /*
+
+                let day_span = new jsgui.span({
+                    context: this.context,
+                    text: ''
+                });
+                cell.add(day_span);
+                */
+                //cell.selectable = true;
+                cell.selectable = false;
+                cell.select_unique = true;
+
+                cell.background.color = bgc_disabled;
+                cell_pos[0]++;
+            }
+
+            if (cell_pos[1] < 6) {
+                cell_pos[0] = 0;
+                cell_pos[1] = 6;
+                ctrl_row = this._arr_rows[cell_pos[1]];
+                while (cell_pos[0] <= 6) {
+
+                    let cell = ctrl_row.content._arr[cell_pos[0]];
+
+                    /*
+
+                    let day_span = new jsgui.span({
+                        context: this.context,
+                        text: ''
+                    });
+                    cell.add(day_span);
+                    */
+                    cell.selectable = false;
+                    cell.select_unique = true;
+                    //cell.selectable = true;
+
+                    //console.log('cell.selectable', cell.selectable);
+
+                    //console.log('cell_pos[0]', cell_pos[0]);
+                    ctrl_row.content._arr[cell_pos[0]].background.color = bgc_disabled;
+                    cell_pos[0]++;
+                }
+            }
+            // A delegate for on cell select?
         }
-        // A delegate for on cell select?
+        
     }
 
     // refresh_month_view
@@ -296,7 +320,7 @@ class Month_View extends Grid {
         let got_day = d.getDay() - 1;
         if (got_day < 0) got_day = 6;
         //console.log('got_day', got_day);
-        //console.log('got_day', got_day);
+        console.log('got_day', got_day);
 
         let day_name = days[got_day];
 
@@ -305,8 +329,7 @@ class Month_View extends Grid {
         let day = this.day;
 
         this.each_cell((cell, cell_pos) => {
-            //console.log('cell_pos', cell_pos);
-
+            console.log('cell_pos', cell_pos);
 
             let [x, y] = cell_pos;
             if (y > 0) {
@@ -314,14 +337,13 @@ class Month_View extends Grid {
                     if (x < got_day) {
                         cell.background.color = bgc_disabled;
                         cell.selectable = false;
+
+                        // only on client?
                         if (cell.deselect) cell.deselect();
                         cell.value = null;
                         // remove text in the span.
-
                         //cell.find('span')[0].text = '';
-
                         //console.log(cell.content._arr)
-
                         cell.iterate_this_and_subcontrols(ctrl => {
                             //console.log('ctrl', ctrl);
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
@@ -363,6 +385,7 @@ class Month_View extends Grid {
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
                             if (ctrl.dom.tagName === 'span') {
                                 d_ctrl = d.getDate();
+                                console.log('d_ctrl', d_ctrl);
                                 cell.value = d_ctrl;
                                 ctrl.text = d_ctrl + '';
                                 d.setDate(d.getDate() + 1);

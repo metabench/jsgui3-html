@@ -137,6 +137,13 @@ class Grid_Cell extends Control {
             context: this.context
         };
         if (this.data) o.text = this.data;
+
+        // causes problems with the month view.
+        //  possibly grid cell should contain a span anyway.
+
+        // Better if it has a span.
+        //  Don't add it in the Month_View Control
+
         this.add(this.span = new jsgui.span(o));
         
     }
@@ -314,6 +321,8 @@ class Grid extends Control {
             }
         });
 
+        //console.log('spec.cell_size', spec.cell_size);
+
         if (spec.cell_size) _cell_size = spec.cell_size;
 
 
@@ -424,9 +433,7 @@ class Grid extends Control {
 
             //this._fields = ;
         }
-
         // on resize, resize all of the cells.
-
         // on activate, will need to reconnect all of the cells.
 
         this.on('resize', (e_resize) => {
@@ -448,6 +455,8 @@ class Grid extends Control {
             //var num_rows = this.grid_size[1];
 
             let [num_columns, num_rows] = this.grid_size[0];
+
+            console.log('this.grid_size', this.grid_size);
 
             var cell_border_thickness = 1;
             var _2_cell_border_thickness = cell_border_thickness * 2;
@@ -520,10 +529,18 @@ class Grid extends Control {
 
         //console.log('this.cell_size', this.cell_size);
         // need to know the row / column header sizes and if we are using them.
+
+
+        //console.log('this.size', this.size);
+        //console.log('num_rows', num_rows);
+        //console.log('num_columns', num_columns);
+
         var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
         //console.log('cell_size', cell_size);
         let row_width, row_height;
-        let row_header_width = this.cell_size[0];
+        //console.log('this.cell_size', this.cell_size);
+        //let row_header_width = this.cell_size[0];
+        let row_header_width;
         //console.log('this.row_headers', this.row_headers);
         if (this.cell_size) {
             //header_row.style('width', this.cell_size[0] * num_columns);
@@ -543,7 +560,7 @@ class Grid extends Control {
 
         const data = this.data;
 
-        //console.log('row_header_width', row_header_width);
+        console.log('row_header_width', row_header_width);
 
 
         var x, y;
@@ -568,7 +585,7 @@ class Grid extends Control {
             if (this.row_headers) {
                 var cell = new Control({
                     context: this.context,
-                    __type_name: 'gridcell', //,
+                    __type_name: 'grid_cell', //,
                     //'class': 'cell'
                 });
                 cell.add_class('grid-header');
@@ -584,7 +601,7 @@ class Grid extends Control {
             for (x = 0; x < num_columns; x++) {
                 var cell = new Control({
                     context: this.context,
-                    __type_name: 'gridcell', //,
+                    __type_name: 'grid_cell', //,
                     //'class': 'cell'
                 });
                 cell.add_class('column-header');
@@ -628,7 +645,7 @@ class Grid extends Control {
             if (this.row_headers) {
                 var cell = new Control({
                     context: this.context,
-                    __type_name: 'gridcell', //,
+                    __type_name: 'grid_cell', //,
                     //'class': 'cell'
                 });
                 cell.add_class('row-header');
@@ -650,7 +667,7 @@ class Grid extends Control {
                     x: x,
                     y: y
                     //,
-                    //__type_name: 'gridcell', //,
+                    //__type_name: 'grid_cell', //,
                     //'class': 'cell'
                 }
 
@@ -687,7 +704,6 @@ class Grid extends Control {
         //console.log('t data', tof(data));
 
         var range = data.range;
-
         var value;
 
         // The Data_Grid could even contain a Data_Value in each cell.

@@ -2,6 +2,8 @@ var jsgui = require('../html-core/html-core');
 var Plus_Minus_Toggle_Button = require('./plus-minus-toggle-button');
 var Vertical_Expander = require('./vertical-expander');
 
+const mx_selectable = require('../control_mixins/selectable');
+
 var stringify = jsgui.stringify,
 	each = jsgui.each,
 	tof = jsgui.tof,
@@ -28,6 +30,7 @@ class Tree_Node extends Control {
 		if (!def(spec.expandable)) spec.expandable = true;
 
 		super(spec);
+		mx_selectable(this);
 		//console.log('2) spec', spec);
 		// Can take an image
 		// Can take some text.
@@ -219,7 +222,7 @@ class Tree_Node extends Control {
 			this.active();
 		}
 
-		this.selectable();
+		this.selectable = true;
 		//}
 	}
 	// I think a pre-render function would be useful.
@@ -234,7 +237,7 @@ class Tree_Node extends Control {
 
 	'activate' (el) {
 		super.activate(el);
-		this.selectable();
+		//this.selectable();
 
 		//console.log('activate Tree_Node');
 		// ctrl-fields not working?

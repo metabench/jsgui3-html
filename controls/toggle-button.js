@@ -22,6 +22,8 @@ var Control = jsgui.Control;
 //  Would be useful for a start/stop button.
 //  Toggle button toggling between two images.
 
+const { prop, field } = require('obext');
+
 // Can we have an abstraction that will handle a variety of images in a variety of contexts?
 //  We want to have SVGs that are suitable for start and stop.
 //  Want to make use of the right images or the right image abstractions.
@@ -73,7 +75,7 @@ class Toggle_Button extends Control {
         // And the Plus_Minus_Toggle_Button will extend this.
         //  The tree control will use that.
         //  Will listen to changes from the button.
-        var spec_state = spec.state, state, spec_states = spec.states, states;
+        //let spec_state = spec.state, state, spec_states = spec.states, states;
         // need to persist some fields to the client, but not as
         //var ctrl_fields = {};
         // Activate would set those values on the client-side.
@@ -93,23 +95,27 @@ class Toggle_Button extends Control {
         //   Multi-layout-mode may need to hold quite a variety of layouts, and render them differently.
         //    a variety of CSS classes will mean that the layout that gets rendered in HTML appears correct when rendered in the browser.
 
-        var that = this;
+        //var that = this;
         var active_fields;
         //console.log('spec.state', spec.state);
 
-        if (spec_state) {
+        field(this, 'states');
+        field(this, 'state');
+
+        if (spec.state) {
+
             //console.log('spec_state', spec_state);
             //if (spec_state == 'expanded' || spec_state == 'contracted') {
             //state = this.set('state', spec_state);
-            state = this.state = spec.state;
+            //state = this.state = spec.state;
             //console.log('\nstate', state);
             //console.log()
             // So it's a Data_Value when it's a string...
             // But when it's an array it's an array?
             //throw 'stop';
 
-            if (!active_fields) active_fields = {};
-            active_fields.state = state;
+            //if (!active_fields) active_fields = {};
+            //active_fields.state = state;
 
             // Have a control for its text.
             //var ctrl_text = new jsgui.textNode({'context': that.context, 'text': e_change.value});
@@ -124,28 +130,8 @@ class Toggle_Button extends Control {
             //  add control field?
             //  reference persistance
 
-            if (!spec.abstract && !spec.el) {
-                var span_state = new jsgui.span({ 'context': this.context, text: state });
-                //span_state.active();
-
-
-                // Add a new text node?
-
-
-
-                //span_state.add(state + '');
-
-                /*
-                span_state.add(new jsgui.Text_Node({
-                    context: this.context,
-                    text: state
-                }));
-                */
-
-
-                this.add(span_state);
-                this.span_state = span_state;
-            }
+            this.state = spec.state;
+            
             //that.add(state + '');
             //ctrl_fields['state'] = state;
             //} else {
@@ -154,9 +140,10 @@ class Toggle_Button extends Control {
         } else {
             //state = this.set('state', 'expanded');
         }
-        if (spec_states) {
+        if (spec.states) {
+            this.states = spec.states;
             //if (spec_state == 'expanded' || spec_state == 'contracted') {
-            states = this.states = spec_states;
+            //states = this.states = spec_states;
             // Should probably get the collection.
             //console.log('states', states);
             //console.log('tof states', tof(states));
@@ -164,8 +151,8 @@ class Toggle_Button extends Control {
             //throw 'stop';
             //states = this.set('states', spec_states);
             //state = this.set('state', spec_state);
-            if (!active_fields) active_fields = {};
-            active_fields.states = states;
+            //if (!active_fields) active_fields = {};
+            //active_fields.states = states;
             //ctrl_fields['state'] = state;
             //} else {
             //	throw 'spec.state expects "expanded" or "contracted".';
@@ -173,14 +160,40 @@ class Toggle_Button extends Control {
         } else {
             //state = this.set('state', 'expanded');
         }
+
+        if (!spec.abstract && !spec.el) {
+            var span_state = this.span_state = new jsgui.span({ 'context': this.context, text: this.state });
+            //span_state.active();
+
+            // Add a new text node?
+            //span_state.add(state + '');
+
+            /*
+            span_state.add(new jsgui.Text_Node({
+                context: this.context,
+                text: state
+            }));
+            */
+
+            this.add(span_state);
+            //this.span_state = span_state;
+        }
+
+        this.on('change', e_change => {
+            //console.log('Toggle_Button change', e_change);
+            this.span_state.text = e_change.value;
+        });
         //console.log('active_fields', active_fields);
-        if (active_fields && typeof document === 'undefined') {
-            this.dom.attributes['data-jsgui-fields'] = stringify(active_fields).replace(/"/g, "'");
+
+        
+        if (typeof document === 'undefined') {
+            //this.dom.attributes['data-jsgui-fields'] = stringify(active_fields).replace(/"/g, "'");
             this.dom.attributes['data-jsgui-ctrl-fields'] = stringify({
                 'span_state': this.span_state._id()
             }).replace(/"/g, "'");
             //this.set('dom.attributes.data-jsgui-fields', stringify(active_fields).replace(/"/g, "'"));
         }
+        
         //this.get('state').on('change', function(e_state_change) {
         //  console.log('e_state_change', e_state_change);
         //})
@@ -190,6 +203,11 @@ class Toggle_Button extends Control {
     }
     // a getter and setter for the state would work
 
+    // Could use the dynamic object extensions or whatever it is for this.
+    //  Listener that responds to state changes with DOM changes.
+
+    /*
+    
     get state() {
         return this._state;
     }
@@ -197,12 +215,12 @@ class Toggle_Button extends Control {
     set state(value) {
         var span_state = this.span_state;
         this._state = value;
-        var that = this;
+        //var that = this;
         //console.log('span_state', span_state);
         if (span_state) {
             span_state.clear();
             var tn_new_value = new jsgui.textNode({
-                'context': that.context,
+                'context': this.context,
                 'text': value
             });
             //console.log('');
@@ -213,6 +231,7 @@ class Toggle_Button extends Control {
             span_state.add(tn_new_value);
         }
     }
+    */
 
     'activate'() {
         //console.log('toggle button activate this.__active', this.__active);
@@ -220,7 +239,7 @@ class Toggle_Button extends Control {
             super.activate();
             
             // Need references?
-            var that = this;
+            //var that = this;
 
             /*
     
@@ -250,22 +269,25 @@ class Toggle_Button extends Control {
             */
             // .on
 
+            //console.log('pre setup click');
+
             this.on('click', e_click => {
                 //console.log('toggle button clicked');
                 // needs to toggle through states.
                 // Need to send the state field from the server to the client.
-                var state = that.state;
+                var state = this.state;
                 //console.log('state', state);
                 // And need to look at the states.
-                var states = that.states;
+                var states = this.states;
                 // Need to send the state field from the server to the client.
+                //console.log('state', state);
                 //console.log('states', states);
                 //State being stored as a Data_Object,
                 // States being stored as an Array?
                 // still, need to shift between them
                 var i_current_state;
                 if (tof(states) === 'array') {
-                    each(states, function (i_state, i) {
+                    each(states, (i_state, i) => {
                         //console.log('i_state', i_state);
                         //console.log('tof i_state', tof(i_state));
                         if (i_state == state) {
@@ -279,13 +301,14 @@ class Toggle_Button extends Control {
                     var str_next_state = states[i_next_state];
                     //console.log('str_next_state', str_next_state);
                     //state.set(str_next_state);
-                    
+
 
                     this.raise('toggle', {
                         'state': str_next_state
                     });
 
-                    that.state = str_next_state;
+
+                    this.state = str_next_state;
                     // needs to listen to the change in state
                     // field changes need to be observable
                     // need to listen for a change from the ctrl then.
