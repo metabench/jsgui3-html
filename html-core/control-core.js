@@ -510,16 +510,11 @@ class Control_Core extends Data_Object {
 					this.remove_class('disabled');
 				}
 			}
-		})
-
-
+		});
 
 		// then listen for background change.
 		//  we then change the dom attributes style background-color
 		//   then it automatically gets updated in the dom.
-
-
-
 
 		//var cf = this._ctrl_fields = this._ctrl_fields || {};
 		//var cf = this._fields = this._fields || {};
@@ -531,8 +526,6 @@ class Control_Core extends Data_Object {
 
 		// Have a Control_Size class?
 		//  have size getters and setters (with a proxy?)
-
-
 
 		//if (!this._abstract) {
 		var tagName = spec.tagName || spec.tag_name || 'div';
@@ -572,15 +565,13 @@ class Control_Core extends Data_Object {
 		} else {
 			//console.trace('');
 			//throw 'Control requires context'
-
 			// I think the very first Control object's prototype or something that inherits from it does not have
 			//  a context at some stage.
 		}
 		if (spec['class']) {
 			this.add_class(spec['class']);
 			//d.attrs.set('class', spec['class']);
-
-			console.log('removed probably erroneous dom class setting.');
+			//console.log('removed probably erroneous dom class setting.');
 			//d.attrs['class'] = spec['class'];
 		}
 
@@ -632,10 +623,8 @@ class Control_Core extends Data_Object {
 		//}
 	}
 
-
 	get html() {
 		// The rendered control.
-
 		return this.all_html_render();
 	}
 	set html(html) {
@@ -655,19 +644,11 @@ class Control_Core extends Data_Object {
 		//  create the internal controls.
 		//  set the properties of the control.
 		//  some would just be DOM attributes. Need to tell the difference.
-
 		// creation of inner controls...
-
 		// setting of HTML is not best to do right now.
-
 		// just use the page_context to create the new controls from markup for the moment.
 
-
-
-
-
 	}
-
 
 	get background() {
 		return this._background;
@@ -680,11 +661,9 @@ class Control_Core extends Data_Object {
 		return this._size;
 	}
 	set size(value) {
-
 		// format the value...
 
 		/*
-
 		var width = value[0].join('');
 		var height = value[1].join('');
 		*/
@@ -709,9 +688,7 @@ class Control_Core extends Data_Object {
 			'width': width,
 			'height': height
 		});
-
 		// raise change size.
-
 		//console.log('pre raise resize');
 		this.raise('resize', {
 			'value': value
@@ -729,22 +706,17 @@ class Control_Core extends Data_Object {
 			// maybe re-render, raise event?
 		}
 	}
-
 	// resizable...
 	//  more of an enhanced property.
-
 
 	//  with some it would be text or font or foreground color.
 	//   generally divs because they fill space consider it background.
 	// Could be a shortcut for .background.color
-
 	get color() {
 		// Could use some internal property system that's more developed. Can use proxied objects rather than fields.
-
 		//return this._color;
 		return this.background.color;
 	}
-
 	set color(value) {
 
 		// Don't really have input processors any longer.
@@ -878,23 +850,40 @@ class Control_Core extends Data_Object {
 		if (!dom_attrs) {
 			throw 'expecting dom_attrs';
 		} else {
+
+			if (this._) {
+				var keys = Object.keys(this._);
+				var key;
+				console.log('_ keys', keys);
+				for (var c = 0, l = keys.length; c < l; c++) {
+					key = keys[c];
+					if (key !== '_bound_events') {
+						//obj_ctrl_fields[key] = this._ctrl_fields[key]._id();
+						if (key instanceof Control_Core) {
+							//if (this._ctrl_fields && !this._ctrl_fields[key]) this._ctrl_fields[key] = this._[key];
+							(this._ctrl_fields = this._ctrl_fields || {})[key] = this._[key];
+						} else {
+							(this._fields = this._fields || {})[key] = this._[key];
+							//(this._fields && !this._fields[key]) this._fields[key] = this._[key];
+						}
+					}
+				}
+			}
+
 			if (this._ctrl_fields) {
 				// go through the control fields, putting together the data attribute that will be persited to the client.
-
 				// need to compose the string.
 
 				var obj_ctrl_fields = {};
-
 				var keys = Object.keys(this._ctrl_fields);
-
 
 				var key;
 				for (var c = 0, l = keys.length; c < l; c++) {
 					key = keys[c];
 					if (key !== '_bound_events') {
+						//console.log('this._ctrl_fields[key]', this._ctrl_fields[key]);
 						obj_ctrl_fields[key] = this._ctrl_fields[key]._id();
 					}
-
 				}
 
 				//each(this._ctrl_fields, function(ctrl_field, name) {
@@ -928,7 +917,6 @@ class Control_Core extends Data_Object {
 				//    'num_days': num_days
 				//}).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
 
-
 				let sf = stringify(this._fields).replace(/"/g, "'");
 				//console.log('sf', sf);
 
@@ -948,8 +936,6 @@ class Control_Core extends Data_Object {
 			//var _ = dom_attrs._;
 			var dom_attrs_keys = Object.keys(dom_attrs);
 			//var dom_attrs_keys = Reflect.ownKeys(dom_attrs);
-
-
 
 			// but now have a raise event key....
 

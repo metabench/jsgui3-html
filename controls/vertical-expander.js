@@ -7,6 +7,7 @@ var jsgui = require('../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
+const {prop, field} = require('obext');
 
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
@@ -20,12 +21,12 @@ class Vertical_Expander extends Control {
 	//],
 	//  and can have other fields possibly.
 
-
 	constructor(spec) {
+		spec.__type_name = 'vertical_expander';
 		super(spec);
 
 		this.add_class('vertical expander');
-		this.__type_name = 'vertical_expander';
+		//
 
 		// starts either open or closed.
 
@@ -34,17 +35,20 @@ class Vertical_Expander extends Control {
 
 		//var state = spec.state || 'open'
 
+		field(this, 'state');
+		field(this, 'states');
 
-		this.set('states', ['open', 'closed']);
+		//this.set('states', ['open', 'closed']);
 
-
-		let state = spec.state;
-		if (state === 'expanded') state = 'open';
-		if (state === 'contracted') state = 'closed';
-
-		this.set('state', state || 'open');
+		this.state = spec.state;
+		this.states = spec.states;
 
 
+		//let state = spec.state;
+		//if (state === 'expanded') state = 'open';
+		//if (state === 'contracted') state = 'closed';
+
+		//this.set('state', state || 'open');
 
 		//var span = new jsgui.span({
 		//	'context': this.context
@@ -54,22 +58,20 @@ class Vertical_Expander extends Control {
 		//this.add(span);
 
 	}
+	
 	'activate'() {
-		//console.log('Vertical Expander activate');
+		console.log('Vertical Expander activate');
         super.activate();
 
 		// I think that animation should be handled by Contol, just getting called here.
 		//  Will use css transitions where applicable.
 		// Listen to the state being changed.
 		// Then update the UI based on that
-		var that = this;
+		//var that = this;
 		var orig_height;
 
-
-		
-
-		var el = that.dom.el;
-		var ui_close = function() {
+		var el = this.dom.el;
+		var ui_close = () => {
 			var h = el.childNodes[0].offsetHeight;
 			//console.log('h', h);
 			orig_height = h;
@@ -91,8 +93,7 @@ class Vertical_Expander extends Control {
 			//  Then have the JSGUI style layer on top of that.
 		}
 
-
-		var ui_open = function() {
+		var ui_open = () => {
 			el.style.height = orig_height + 'px';
 
 			var fnTransitionEnd = function(e_end) {
@@ -104,10 +105,22 @@ class Vertical_Expander extends Control {
 			el.addEventListener('transitionend', fnTransitionEnd, false);
 
 			// when the transition has completed, make the overflow visible.
-
-
 			//el.style.overflow = 'visible';
 		}
+
+		this.on('change', e_change => {
+			var val = e_change.value;
+
+			if (val == 'closed') {
+				ui_close();
+			}
+
+			if (val == 'open') {
+				ui_open();
+			}
+		});
+
+		/*
 
 		var state = this.get('state');
 		state.on('change', function(e_change) {
@@ -124,6 +137,7 @@ class Vertical_Expander extends Control {
 				ui_open();
 			}
 		});
+		*/
 
 		// Going to be setting the height based on measured height of self / contents
 		//  May use css transitions. Possibly 'transit' function.
@@ -134,27 +148,29 @@ class Vertical_Expander extends Control {
 	'toggle'() {
 		// Will change the state.
 		console.log('vertical-expander toggle');
-		var state = this.state;
-		var v_state = state.value();
+		//var state = this.state;
+		//var v_state = state.value();
 		//console.log('state', state);
 
 		//console.log('tof state', tof(state));
 
-		if (v_state == 'open') {
+		if (this.state == 'open') {
 			//this.set('state', 'closed');
-			state.set('closed');
+			//state.set('closed');
+			this.state = 'closed';
 		}
-		if (v_state == 'closed') {
+		if (this.state == 'closed') {
 			//this.set('state', 'open');
-			state.set('open');
+			this.state = 'open';
 		}
 	}
-
 	'open'() {
-		this.state.set('open');
+		//this.state.set('open');
+		this.state = 'open';
 	}
 	'close'() {
-		this.state.set('closed');
+		//this.state.set('closed');
+		this.state = 'closed';
 	}
 	// Open, close, expand, contract
 	//  Could have a state variable as well.

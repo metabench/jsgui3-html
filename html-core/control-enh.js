@@ -938,7 +938,10 @@ class Control extends Control_Core {
 		let context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
 			//context.register_control(ctrl);
-			ctrl.activate();
+			if (ctrl.dom.el) {
+				ctrl.activate();
+			}
+			
 		});
 	}
 

@@ -19,6 +19,8 @@ class Plus_Minus_Toggle_Button extends Toggle_Button {
         // Set it so it only has two states
         //  '+' and '-'
 
+        spec.__type_name = 'plus_minus_toggle_button';
+
         spec.states = ['+', '-'];
         spec.state = spec.state || '-';
 

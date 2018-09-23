@@ -56,12 +56,9 @@ class Toggle_Button extends Control {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'toggle_button';
         super(spec);
-
         // fields not getting set up
-
         // need a jsgui2 way to initialise the fields, from a fields variable.
         //  can initialise the fields at each level in the code here, rather than all at once.
-
         //this.__type_name = 'toggle_button';
         this.add_class('toggle-button');
         // Always active?
@@ -102,8 +99,9 @@ class Toggle_Button extends Control {
         field(this, 'states');
         field(this, 'state');
 
-        if (spec.state) {
+        //console.log('spec', spec);
 
+        if (spec.state) {
             //console.log('spec_state', spec_state);
             //if (spec_state == 'expanded' || spec_state == 'contracted') {
             //state = this.set('state', spec_state);
@@ -129,9 +127,7 @@ class Toggle_Button extends Control {
             //  client add?
             //  add control field?
             //  reference persistance
-
             this.state = spec.state;
-            
             //that.add(state + '');
             //ctrl_fields['state'] = state;
             //} else {
@@ -162,30 +158,26 @@ class Toggle_Button extends Control {
         }
 
         if (!spec.abstract && !spec.el) {
+            //console.log('1) this.state', this.state);
             var span_state = this.span_state = new jsgui.span({ 'context': this.context, text: this.state });
             //span_state.active();
-
             // Add a new text node?
             //span_state.add(state + '');
-
             /*
             span_state.add(new jsgui.Text_Node({
                 context: this.context,
                 text: state
             }));
             */
-
             this.add(span_state);
             //this.span_state = span_state;
         }
 
         this.on('change', e_change => {
             //console.log('Toggle_Button change', e_change);
-            this.span_state.text = e_change.value;
+            if (this.span_state) this.span_state.text = e_change.value;
         });
         //console.log('active_fields', active_fields);
-
-        
         if (typeof document === 'undefined') {
             //this.dom.attributes['data-jsgui-fields'] = stringify(active_fields).replace(/"/g, "'");
             this.dom.attributes['data-jsgui-ctrl-fields'] = stringify({
@@ -193,7 +185,6 @@ class Toggle_Button extends Control {
             }).replace(/"/g, "'");
             //this.set('dom.attributes.data-jsgui-fields', stringify(active_fields).replace(/"/g, "'"));
         }
-        
         //this.get('state').on('change', function(e_state_change) {
         //  console.log('e_state_change', e_state_change);
         //})
@@ -241,6 +232,9 @@ class Toggle_Button extends Control {
             // Need references?
             //var that = this;
 
+            //console.log('this.states', this.states);
+            //console.log('this.state', this.state);
+
             /*
     
             // Only want jsgui wrappers in some places.
@@ -281,16 +275,17 @@ class Toggle_Button extends Control {
                 var states = this.states;
                 // Need to send the state field from the server to the client.
                 //console.log('state', state);
-                //console.log('states', states);
+                
                 //State being stored as a Data_Object,
                 // States being stored as an Array?
                 // still, need to shift between them
                 var i_current_state;
                 if (tof(states) === 'array') {
+                    //console.log('states', states);
                     each(states, (i_state, i) => {
                         //console.log('i_state', i_state);
                         //console.log('tof i_state', tof(i_state));
-                        if (i_state == state) {
+                        if (i_state === state) {
                             i_current_state = i;
                         }
                     })
@@ -299,6 +294,7 @@ class Toggle_Button extends Control {
                     var i_next_state = i_current_state + 1;
                     if (i_next_state == states.length) i_next_state = 0;
                     var str_next_state = states[i_next_state];
+                    //console.log('i_next_state', i_next_state);
                     //console.log('str_next_state', str_next_state);
                     //state.set(str_next_state);
 
