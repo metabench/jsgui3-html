@@ -1,17 +1,24 @@
 /**
  * Created by James on 16/09/2016.
  */
+
+// Functions to load a few of the most common functions as local variables
+
+
 var jsgui = require('../lang/lang');
-var is_ctrl = jsgui.is_ctrl;
+
+const {get_a_sig, each, tof, def} = jsgui;
+//var is_ctrl = jsgui.is_ctrl;
+
+/*
 var get_a_sig = jsgui.get_a_sig,
 	fp = jsgui.fp,
 	each = jsgui.each;
+	*/
 var Control_Core = require('./control-core');
 //var Resize_Handle = require('../controls/resize-handle')
-var tof = jsgui.tof;
-const def = jsgui.is_defined;
-// get_a_sig
-
+//var tof = jsgui.tof;
+//const def = jsgui.is_defined;
 
 const mx_selectable = require('../control_mixins/selectable');
 const mx_fast_touch_click = require('../control_mixins/fast-touch-click');
@@ -52,18 +59,13 @@ var desc = (ctrl, callback) => {
 
 var dom_desc = (el, callback) => {
 	// Possibly need to look at the element's node type.
-	//
 	callback(el);
-
 	var cns = el.childNodes;
-
 	var l = cns.length;
-
 	for (var c = 0; c < l; c++) {
 		dom_desc(cns[c], callback);
 	}
 }
-
 
 var mapDomEventNames = {
 	'change': true,
@@ -208,10 +210,6 @@ class Control extends Control_Core {
 			}
 		}
 		*/
-
-
-
-
 		//if (spec.is_selectable) {
 		//	this.selectable();
 		//}
@@ -263,7 +261,6 @@ class Control extends Control_Core {
 
 		}
 	}
-
 
 	set size(value) {
 
@@ -386,13 +383,9 @@ class Control extends Control_Core {
 		//  relative for layout?
 
 	}
-
 	'ghost' () {
 
 	}
-
-
-
 
 	/*
 	// can have different monomorphic versions.
@@ -497,11 +490,8 @@ class Control extends Control_Core {
 
 		var context = this.context;
 		var map_controls = context.map_controls;
-
 		var parent_control;
-
 		// does the control have a DOM node?
-
 		recursive_dom_iterate_depth(el, (el2) => {
 			//console.log('el ' + el);
 			var nt = el2.nodeType;
@@ -569,7 +559,6 @@ class Control extends Control_Core {
 			} else {
 				el.removeEventListener(event_name, listener, false);
 			}
-
 		}
 	}
 
@@ -648,19 +637,13 @@ class Control extends Control_Core {
 		});
 		document.body.appendChild(this.dom.el);
 	}
-
 	// not recursive
 	//  maybe call activate_individual?
-
 	//
-
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
-
-
 
 	'activate' (el) {
 		// Should really activate with a dom element.
-
 		if (!this.__active) {
 			this.__active = true;
 			if (!this.dom.el) {
@@ -670,7 +653,6 @@ class Control extends Control_Core {
 					this.dom.el = found_el;
 				}
 			}
-
 			//var el = this.dom.el;
 			if (!this.dom.el) {
 				//console.log('no el, this', this);
@@ -691,11 +673,8 @@ class Control extends Control_Core {
 			}
 		}
 	}
-
 	//'attach_unattached_dom_event_listeners'() {
-
 	//}
-
 	'activate_other_changes_listen' () {
 		//var el;
 		var dom_attributes = this.dom.attributes;
@@ -705,7 +684,6 @@ class Control extends Control_Core {
 			var property_name = e_change.name || e_change.key,
 				dval = e_change.value || e_change.new;
 			var t_dval = tof(dval);
-
 			if (t_dval == 'string' || t_dval == 'number') {
 				//el.setAttribute('style', dval);
 			} else {
@@ -718,7 +696,6 @@ class Control extends Control_Core {
 				el.setAttribute(property_name, dval);
 			}
 		});
-
 	}
 
 	'activate_this_and_subcontrols' () {
@@ -728,7 +705,6 @@ class Control extends Control_Core {
 			if (ctrl.dom.el) {
 				ctrl.activate();
 			}
-			
 		});
 	}
 
@@ -743,21 +719,17 @@ class Control extends Control_Core {
 		//console.log('map_controls', map_controls);
 		// content.on clear?
 		//  because they all will be changes.
-
 		let el = this.dom.el;
 		//let that = this;
 		// these events seem to get rid of the el reference.
 		// change, type = 'remove'?
 
-
 		this.content.on('change', (e_change) => {
 			let itemDomEl;
 			var type = e_change.name;
-
 			// remove content change...
 			//  could also swap it with other content.
 			//  could be removed & inserted together.
-
 			if (type === 'insert') {
 
 				//console.log('INSERT');
@@ -777,7 +749,6 @@ class Control extends Control_Core {
 						itemDomEl = retrieved_item_dom_el;
 					}
 					//if (itemDomEl) console.log('1) itemDomEl', itemDomEl);
-
 					// need to render the item ID in there too.
 					//var id = item._id();
 
@@ -786,7 +757,6 @@ class Control extends Control_Core {
 						if (context.map_els[item._id()]) {
 							itemDomEl = context.map_els[item._id()];
 						}
-
 					}
 					//console.log('2) itemDomEl', itemDomEl);
 					if (!itemDomEl) {
@@ -818,9 +788,7 @@ class Control extends Control_Core {
 						context.map_els[item._id()] = item.dom.el;
 					};
 				}
-
 				var t_item_dom_el = tof(itemDomEl);
-
 				if (t_item_dom_el === 'string') {
 					itemDomEl = document.createTextNode(itemDomEl);
 				}
@@ -872,7 +840,6 @@ class Control extends Control_Core {
 	// Defining X11 colors in a compressed way would be cool. Compressed data, goes to tensor / manifold nexus structure.
 	//  Enabling that manifold nexus structure to have string labels would help too.
 	//   Though could have an index of strings at numeric keys.
-
 
 	/*
 	'rec_desc_reattach_dom_events'() {

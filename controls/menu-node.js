@@ -1,8 +1,9 @@
 
 var jsgui = require('../html-core/html-core');
 
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
-var Control = jsgui.Control;
+const {stringify, each, tof, Control} = jsgui;
+//var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+//var Control = jsgui.Control;
 
 // Maybe we can just use 'item'.
 

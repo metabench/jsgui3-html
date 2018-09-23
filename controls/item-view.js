@@ -7,11 +7,14 @@ var Vertical_Expander = require('./vertical-expander');
 
 //function(jsgui, Plus_Minus_Toggle_Button, Vertical_Expander) {
 
+const {stringify, each, tof, def, Control} = jsgui;
+
+/*
 var stringify = jsgui.stringify,
 	each = jsgui.each,
 	tof = jsgui.tof;
 var Control = jsgui.Control;
-
+*/
 // Maybe reture this old code.
 
 // 'fields': [['name', 'string']],

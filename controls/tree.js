@@ -1,10 +1,15 @@
 // A box that contains a tree.
 //  While a tree can be put in a normal Control, will have some more functions / tools / controls for dealing with a tree, such as collapse_all etc.
 var jsgui = require('../html-core/html-core');
+/*
 var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof;
 var Control = jsgui.Control;
+*/
+
+const {stringify, each, tof, def, Control} = jsgui;
+
 const Panel = require('./panel');
 const Title_Bar = require('./title-bar');
 const Tree_Node = require('./tree-node');

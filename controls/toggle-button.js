@@ -15,9 +15,11 @@ define(["../../jsgui-html-enh"],
 //  Perhaps we just want to say a button is 'selectable'.
 
 var jsgui = require('../html-core/html-core');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
-var Control = jsgui.Control;
 
+//var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+//var Control = jsgui.Control;
+
+const {stringify, each, tof, def, Control} = jsgui;
 // Can the button contain an image?
 //  Would be useful for a start/stop button.
 //  Toggle button toggling between two images.

@@ -1,10 +1,15 @@
 var jsgui = require('../html-core/html-core');
+
+const {stringify, each, tof, Control, Data_Value} = jsgui;
+
+/*
 var stringify = jsgui.stringify,
     each = jsgui.each,
     def = jsgui.is_defined,
     tof = jsgui.tof;
 var Control = jsgui.Control;
 var Data_Value = jsgui.Data_Value;
+*/
 
 //var Data_Object = jsgui.Data_Object;
 
@@ -261,11 +266,11 @@ class Item extends Control {
         //var ctrl_secondary = new Control({
         //    'context': this.context
         //})
-        this.inner = new Control({
+        
+        this.add(this.inner = new Control({
             'context': this.context,
             'class': 'inner hidden'
-        })
-        this.add(this.inner);
+        }));
     }
 
     'iterate_sub_items' (cb_item, depth) {

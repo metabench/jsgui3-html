@@ -5,11 +5,15 @@ var Vertical_Expander = require('./vertical-expander');
 const mx_selectable = require('../control_mixins/selectable');
 const {prop, field} = require('obext');
 
+const {stringify, each, tof, def, Control} = jsgui;
+
+/*
 var stringify = jsgui.stringify,
 	each = jsgui.each,
 	tof = jsgui.tof,
 	def = jsgui.def;
 var Control = jsgui.Control;
+*/
 
 var fields = [
 	//['text', String]

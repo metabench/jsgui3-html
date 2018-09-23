@@ -4,7 +4,7 @@
 //if (typeof define !== 'function') { var define = require('amdefine')(module) }
 var jsgui = require('../html-core/html-core');
 
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+//var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
 const {prop, field} = require('obext');
@@ -71,21 +71,25 @@ class Vertical_Expander extends Control {
 		var orig_height;
 
 		var el = this.dom.el;
+		el.style.transition = 'height 0.5s linear';
 		var ui_close = () => {
 			var h = el.childNodes[0].offsetHeight;
 			//console.log('h', h);
 			orig_height = h;
 			el.style.height = orig_height + 'px';
-			el.style.overflow = 'hidden';
+			
 			// transition: width 3s linear;
 			//el.style.transition = 'height 0.08s linear';
-			el.style.transition = 'height 0.5s linear';
+			
 			//el.style['webkit-transition-property'] = 'height';
 			//el.style['webkit-transition-duration'] = '1s';
 			//el.style['webkit-transition-timing-function'] = 'linear';
 			//el.style['transition-delay'] = '2s';
 			// And to listen to the animation ending as well.
 			setTimeout(function() {
+				//console.log('should hide overflow');
+				//
+				el.style.overflow = 'hidden';
 				el.style.height = '0px';
 			}, 0);
 			// Better control over styles will help.
@@ -94,11 +98,11 @@ class Vertical_Expander extends Control {
 		}
 
 		var ui_open = () => {
-			el.style.height = orig_height + 'px';
 
 			var fnTransitionEnd = function(e_end) {
+				//console.log('e_end', e_end);
 				console.log('fnTransitionEnd');
-				el.style.overflow = 'visible';
+				//el.style.overflow = 'visible';
 				el.removeEventListener('transitionend', fnTransitionEnd)
 			}
 
@@ -106,6 +110,7 @@ class Vertical_Expander extends Control {
 
 			// when the transition has completed, make the overflow visible.
 			//el.style.overflow = 'visible';
+			el.style.height = orig_height + 'px';
 		}
 
 		this.on('change', e_change => {
@@ -147,7 +152,7 @@ class Vertical_Expander extends Control {
 	}
 	'toggle'() {
 		// Will change the state.
-		console.log('vertical-expander toggle');
+		//console.log('vertical-expander toggle');
 		//var state = this.state;
 		//var v_state = state.value();
 		//console.log('state', state);

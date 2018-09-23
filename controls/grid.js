@@ -8,14 +8,16 @@ var jsgui = require('../html-core/html-core');
 // A general purpose grid...
 //  Have something with a similar API to Vectorious?
 //var Data_Grid = jsgui.Data_Grid;
+const {stringify, each, tof, def, Control} = jsgui;
 
+/*
 var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof,
     def = jsgui.is_defined;
 var Control = jsgui.Control;
-
-var group = jsgui.group;
+*/
+//var group = jsgui.group;
 
 const mx_selectable = require('../control_mixins/selectable');
 // Not as complex, or designed to be as responsive to data as the Data_Grid.

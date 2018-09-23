@@ -1,9 +1,12 @@
 var jsgui = require('../html-core/html-core');
+
+/*
 var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof;
 var Control = jsgui.Control;
-
+*/
+const {stringify, each, tof, def, Control} = jsgui;
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
 
