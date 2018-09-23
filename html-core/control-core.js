@@ -854,7 +854,7 @@ class Control_Core extends Data_Object {
 			if (this._) {
 				var keys = Object.keys(this._);
 				var key;
-				console.log('_ keys', keys);
+				//console.log('_ keys', keys);
 				for (var c = 0, l = keys.length; c < l; c++) {
 					key = keys[c];
 					if (key !== '_bound_events') {
@@ -873,7 +873,6 @@ class Control_Core extends Data_Object {
 			if (this._ctrl_fields) {
 				// go through the control fields, putting together the data attribute that will be persited to the client.
 				// need to compose the string.
-
 				var obj_ctrl_fields = {};
 				var keys = Object.keys(this._ctrl_fields);
 
@@ -1015,9 +1014,7 @@ class Control_Core extends Data_Object {
 		//var dom = this.get('dom');
 		//var tagName = dom.get('tagName'),
 		var res;
-
 		var tagName = this.dom.tagName;
-
 		var noClosingTag = this.dom.noClosingTag;
 		//console.log(tof(noClosingTag));
 		//throw 'stop';
@@ -1050,14 +1047,10 @@ class Control_Core extends Data_Object {
 			context.register_control(ctrl);
 		});
 	}
-
-
-
 	/*
 	'register_this_and_subels' () {
 		// iterate elements rather than controls.
 		let context = this.context;
-
 		let iterate_els = (el, handler) => {
 			if (el.nodeType === 1) {
 				each(el.childNodes, cn => {
@@ -1068,9 +1061,7 @@ class Control_Core extends Data_Object {
 			}
 
 		}
-
 		iterate_els(this.dom.el, el => {
-
 			//let jsgui_id = el.getAttribute('data-jsgui-id');
 			//console.log('jsgui_id', jsgui_id);
 			context.register_el(el);
@@ -1160,38 +1151,16 @@ class Control_Core extends Data_Object {
 						if (c == 0) {
 							complete();
 						}
-
 					});
 				});
-
-
 			}
 		} else {
 			this.pre_all_html_render();
 			var dom = this.dom;
 			if (dom) {
-				// does it have innerHTML?
-				//  I think that will just be a content item that gets rendered anyway.
-				//console.log('has dom');
-
-				/*
-
-				 var beginning = this.renderBeginTagToHtml();
-				 var middle = this.all_html_render_internal_controls();
-				 var end = this.renderEndTagToHtml();
-				 var appendment = this.renderHtmlAppendment();
-
-				 res = [beginning, middle, end, appendment].join('');
-				 */
 				return [this.renderBeginTagToHtml(), this.all_html_render_internal_controls(), this.renderEndTagToHtml(), this.renderHtmlAppendment()].join('');
-				//throw ('stop');
 			}
 		}
-		//console.log('all_html_render ');
-		//if (this.pre_all_html_render) {
-		//
-		//}
-		//return res;
 	}
 
 	'render_content' () {
@@ -1241,19 +1210,10 @@ class Control_Core extends Data_Object {
 			//console.log('tn', tn);
 
 			if (tn == 'string') {
-				// escape the string.
-				//var output = jsgui.output_processors['string'](n);
-				//res.push(output);
 				res.push(jsgui.output_processors['string'](n));
 			}
 			if (tn == 'data_value') {
-				//var output = jsgui.output_processors['string'](n.get());
-
-
-				//res.push(jsgui.output_processors['string'](n._));
 				res.push(n._);
-
-
 			} else {
 				if (tn == 'data_object') {
 					//console.log('n', n);
@@ -1521,28 +1481,6 @@ class Control_Core extends Data_Object {
 	}
 	*/
 
-	// Just use .context?
-
-	/*
-	'page_context'(val) {
-		if (typeof val === 'undefined') {
-			// _.page_context should not be a function.
-			// how frequently does it need to be called?
-			//  is it being called too much?
-			//console.log('� this._.page_context ' + this._.page_context);
-			if (is_defined(this.page_context)) {
-				return this.page_context;
-			} else {
-				if (jsgui.page_context) {
-					return jsgui.page_context;
-				}
-			}
-		} else {
-			this._.page_context = val;
-		}
-	}
-	*/
-
 	// may change the controls access functions, but seems simple and OK for the moment to wrap them like this.
 
 	// will just be adding to the content.
@@ -1566,7 +1504,6 @@ class Control_Core extends Data_Object {
 
 			if (new_content) {
 				//console.log('!!new_content', !!new_content);
-
 				if (tnc === 'string') {
 
 				} else {
@@ -1588,6 +1525,11 @@ class Control_Core extends Data_Object {
 					res = this.content.add(new_content);
 				}
 				new_content.parent = this;
+
+				//console.log('this.__active', this.__active);
+				//if (this.__active) {
+				//	new_content.activate();
+				//}
 			}
 		}
 		return res;
@@ -1618,7 +1560,6 @@ class Control_Core extends Data_Object {
 	*/
 
 	'style' () {
-
 		var a = arguments,
 			sig = get_a_sig(a, 1);;
 		a.l = a.length;
@@ -1626,10 +1567,8 @@ class Control_Core extends Data_Object {
 		// For the moment, this should be a convenient way of updating the dom attributes style.
 
 		//  This could do the document update or not....
-
 		// No DOM modification here is best.
 		//  Have it listen to style / dom changes on activation.
-
 		var style_name, style_value, modify_dom = true;
 
 		if (sig == '[s]') {
@@ -1648,9 +1587,7 @@ class Control_Core extends Data_Object {
 
 			style_name = a[0];
 			//console.log('get style ' + styleName);
-
 			var el = this.dom.el;
-
 			// Should probably return a copy of the style, not read from the DOM.
 
 			var res = getComputedStyle(el)[style_name];
@@ -1692,7 +1629,7 @@ class Control_Core extends Data_Object {
 
 
 			//if (d.el) d.el.style[styleName] = styleValue;
-			console.log("removed from core: if (d.el) d.el.style[styleName] = styleValue;");
+			//console.log("removed from core: if (d.el) d.el.style[styleName] = styleValue;");
 			//console.trace();
 
 			//  should have listener in other part that responds to the dom attributes change.
@@ -1769,7 +1706,7 @@ class Control_Core extends Data_Object {
 			//console.log('str_css', str_css);
 
 
-			console.log('style dom modification removed');
+			//console.log('style dom modification removed');
 			//if (modify_dom) {
 			//this.set('dom.attributes.style', str_css);
 
@@ -1836,8 +1773,10 @@ class Control_Core extends Data_Object {
 
 
 
-			if (el.nodeType === 1) {
-				console.log('Removed dome update.');
+			if (el.nodeType === 1) { // element
+				//console.log('Removed dome update.');
+
+
 				//el.setAttribute('data-jsgui-id', id);
 				//el.setAttribute('data-jsgui-type', this.__type_name);
 			}

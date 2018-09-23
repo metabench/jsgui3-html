@@ -6,6 +6,9 @@ var Control = jsgui.Control;
 
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
+
+// obext field instead?
+
 var fields = [
     ['text', String]
 ];

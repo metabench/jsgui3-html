@@ -411,14 +411,9 @@ jsgui.span = class span extends Control {
         } else {
             this._text = '';
         }
-
         if (!spec.el) {
             this.compose_span();
         }
-
-        
-        
-        
 
         //this.typeName = pr.typeName;
         //this.tagName = 'p';
@@ -451,32 +446,54 @@ jsgui.span = class span extends Control {
 
     activate() {
         // get the text node reference?
-        let dtn = this.dom.el.childNodes[0];
+        let dtn;
 
-        if (!dtn) {
-            dtn = document.createTextNode('');   
-            this.dom.el.appendChild(dtn);
+        if (!this.dom.el) {
+            // Try to find the dom element amongst registered control elements.
+            //console.log('this.context', this.context);
+            //console.log('this.context.map_els', this.context.map_els);
+
+            let el = this.context.map_els[this._id()];
+            //console.log('el', el);
+            if (el) {
+                this.dom.el = el;
+            }
         }
 
-        // Add to array without raising event.
+        if (this.dom.el) {
+            dtn = this.dom.el.childNodes[0];
 
-        
-        let tn = this.tn = this.textNode = this.text_node = new textNode({
-            context: this.context,
-            node: dtn
-        });
-        this.content._arr.push(tn);
-        //this.add(tn);
-        
-        this.on('change', e => {
-            if (e.name === 'text') {
-
-                dtn.nodeValue = e.value;
-
-
-                
+            if (!dtn) {
+                dtn = document.createTextNode('');   
+                this.dom.el.appendChild(dtn);
             }
-        });
+    
+            // Add to array without raising event.
+    
+            
+            let tn = this.tn = this.textNode = this.text_node = new textNode({
+                context: this.context,
+                node: dtn
+            });
+            this.content._arr.push(tn);
+            //this.add(tn);
+            
+            this.on('change', e => {
+                if (e.name === 'text') {
+    
+                    dtn.nodeValue = e.value;
+                    
+                }
+            });
+        } else {
+
+            
+
+            console.log('span expected dom.el');
+        }
+        //let 
+
+        
 
 
 

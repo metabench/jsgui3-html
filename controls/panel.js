@@ -62,12 +62,15 @@ class Panel extends Control {
     //},
     'activate'() {
         // May need to register Flexiboard in some way on the client.
-        super.activate();
 
-        this.content.on('change', e => {
-            console.log('e', e);
-            console.log('this', this);
-        })
+        if (!this.__active) {
+            super.activate();
+            this.content.on('change', e => {
+                console.log('e', e);
+                console.log('this', this);
+            })
+        }
+        
     }
 }
 module.exports = Panel;

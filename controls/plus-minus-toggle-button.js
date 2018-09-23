@@ -18,40 +18,13 @@ class Plus_Minus_Toggle_Button extends Toggle_Button {
 
         // Set it so it only has two states
         //  '+' and '-'
-
         spec.__type_name = 'plus_minus_toggle_button';
-
         spec.states = ['+', '-'];
         spec.state = spec.state || '-';
 
         //console.log('spec.context', spec.context);
 
         super(spec);
-
-        //console.log('Plus_Minus_Toggle_Button context', this.context);
-
-        //this.add_class('plus-minus toggle-button');
-
-        // Has the states.
-        //  Is set with a state
-        //  Has different content per state.
-        //   Maybe have different controls that get toggled, give easy access to those controls.
-        //  An array or collection of controls. Toggles between them.
-
-
-        // A map of the states and their content controls.
-
-        // And the Plus_Minus_Toggle_Button will extend this.
-        //  The tree control will use that.
-        //  Will listen to changes from the button.
-
-
-        //var spec_state = spec.state, state, spec_states = spec.states, states;
-        //console.log('spec.state', spec.state);
-
-
-        //var state = this.set('state', spec.state);
-
         let state = this.state = spec.state;
 
         // Set should return the object it sets it as. Possibly a Data_Object.
@@ -79,11 +52,6 @@ class Plus_Minus_Toggle_Button extends Toggle_Button {
 		 this.add(state);
 		 };
 		 */
-
-
-
-
-
 
     }
 };

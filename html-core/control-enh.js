@@ -129,12 +129,7 @@ class Control extends Control_Core {
 		//throw 'stop';
 		spec = spec || {};
 
-
-
-
 		super(spec, fields);
-
-
 
 		if (spec.id) {
 			this.__id = spec.id;
@@ -145,9 +140,6 @@ class Control extends Control_Core {
 		if (spec.__type_name) {
 			this.__type_name = spec.__type_name;
 		}
-
-
-
 		//mx_selectable(this);
 
 		if (spec.el) {
@@ -157,18 +149,6 @@ class Control extends Control_Core {
 				var s_pre_parse = jgf.replace(/\[DBL_QT\]/g, '"').replace(/\[SNG_QT\]/g, '\'');
 				s_pre_parse = s_pre_parse.replace(/\'/g, '"');
 				var props = JSON.parse(s_pre_parse);
-
-				// selectable property...
-				//  a selectable property would help here.
-				//  would assign such a property.
-
-				//console.log('1) props', props);
-
-				//extend(spec, props);
-				//Object.assign(spec, props);
-
-				// but not selection_scope property.
-				//  if it's a number, it has that selection_scope object with the numeric id.
 
 				let exempt_prop_names = {
 					//'selection_scope': true
@@ -413,6 +393,8 @@ class Control extends Control_Core {
 
 
 
+
+	/*
 	// can have different monomorphic versions.
 
 	'set' (name, value) {
@@ -443,6 +425,7 @@ class Control extends Control_Core {
 			//super(name);
 		}
 	}
+	*/
 
 	// one mousedown elsewhere.
 
@@ -457,35 +440,24 @@ class Control extends Control_Core {
 	'one_mousedown_elsewhere' (callback) {
 		var body = this.context.body();
 
-		var that = this;
+		//var that = this;
 
 		var fn_mousedown = (e_mousedown) => {
 			// Maybe see if it's internal or external to the control
 
 			// Would be good to have that in the event.
 
-			var el = that.dom.el;
-
+			var el = this.dom.el;
 			var e_el = e_mousedown.srcElement || e_mousedown.target;
-
-
-
-
-
 			//console.log('one mousedown', e_mousedown);
 			//console.log('e_el', e_el);
 
 			// Want to see if the element clicked on is a descendant of this's el.
 
 			// is_contained_by
-
-
-			var iao = that.is_ancestor_of(e_el);
-
-			console.log('iao', iao);
-
+			var iao = this.is_ancestor_of(e_el);
+			//console.log('iao', iao);
 			e_mousedown.within_this = iao;
-
 			if (!iao) {
 				// raise the callback, disconnect the event.
 				console.log('pre body off');
@@ -503,40 +475,22 @@ class Control extends Control_Core {
 		//console.log('this.context', this.context);
 		var body = this.context.body();
 
-		var that = this;
-
+		//var that = this;
 		body.one('mousedown', (e_mousedown) => {
 			// Maybe see if it's internal or external to the control
 
 			// Would be good to have that in the event.
 
-			var el = that.dom.el;
+			var el = this.dom.el;
 
 			var e_el = e_mousedown.srcElement || e_mousedown.target;
-
-
-
-
-
-			//console.log('one mousedown', e_mousedown);
-			//console.log('e_el', e_el);
-
-			// Want to see if the element clicked on is a descendant of this's el.
-			var iao = that.is_ancestor_of(e_el);
-			//console.log('iao', iao);
-
+			var iao = this.is_ancestor_of(e_el);
 			e_mousedown.within_this = iao;
-
 			callback(e_mousedown);
-
 		});
 	}
-
-
-	// This may need to search inside for controls to be activated.
-	//  Need to get this to work with client-rendered content.
-
-
+	
+	// Activation of dynamically added content
 	'activate_recursive' () {
 		//console.log('activate_recursive');
 		var el = this.dom.el;
@@ -547,7 +501,6 @@ class Control extends Control_Core {
 		var parent_control;
 
 		// does the control have a DOM node?
-
 
 		recursive_dom_iterate_depth(el, (el2) => {
 			//console.log('el ' + el);
@@ -564,17 +517,9 @@ class Control extends Control_Core {
 					//throw 'stop';
 
 					var ctrl = map_controls[jsgui_id];
-
-					console.log('jsgui_id', jsgui_id);
-					console.log('!!ctrl', !!ctrl);
-
+					//console.log('jsgui_id', jsgui_id);
+					//console.log('!!ctrl', !!ctrl);
 					if (!ctrl.__active) ctrl.activate(el2);
-					//parent_control = ctrl;
-
-
-
-
-					//console.log('jsgui_type ' + jsgui_type);
 				}
 			}
 		})
@@ -584,27 +529,12 @@ class Control extends Control_Core {
 		//console.log('add_dom_event_listener', event_name, this.__id);
 		var listener = this._bound_events[event_name];
 		//var that = this;
-
 		var el = this.dom.el;
-
-		//console.log('el', el);
-		//console.trace();
-
 		if (el) {
-
 			var t_listener = tof(listener);
-			//console.log('t_listener', t_listener);
-			//console.log('listener', listener);
-			//console.log('pre el addEventListener');
-
-			//console.log('event_name', event_name);
-
-			// Can have an array of listeners for DOM events.
-
 			if (t_listener === 'array') {
 				//console.log('listener.length', listener.length);
 				//console.trace();
-
 				el.addEventListener(event_name, (e) => {
 					//console.log('this.disabled', this.disabled);
 					//console.log('this', this);
@@ -615,20 +545,8 @@ class Control extends Control_Core {
 							l(e);
 						})
 					}
-
 				}, false);
-
-				//each(listener, (listener) => {
-				//el.addEventListener(event_name, listener, false);
-				//});
 			} else {
-
-				// Don't fire it if the control is disabled...
-
-
-
-				//el.addEventListener(event_name, listener, false);
-
 				el.addEventListener(event_name, (e) => {
 					console.log('this.disabled', this.disabled);
 					if (!this.disabled) listener(e);
@@ -640,14 +558,9 @@ class Control extends Control_Core {
 
 	'remove_dom_event_listener' (event_name, fn_handler) {
 		var listener = this._bound_events[event_name];
-
 		var el = this.dom.el;
-
 		if (el) {
 			var t_listener = tof(listener);
-			//console.log('t_listener', t_listener);
-			//console.log('pre el addEventListener');
-
 			if (t_listener === 'array') {
 				//console.log('listener.length', listener.length);
 				each(listener, (listener) => {
@@ -665,116 +578,30 @@ class Control extends Control_Core {
 	'remove_event_listener' () {
 		var a = arguments;
 		a.l = arguments.length;
-		var sig = get_a_sig(a, 1),
-			that = this;
-
+		var sig = get_a_sig(a, 1);
 		if (sig === '[s,f]') {
 			//var event_name = a[0];
 			//var fn_handler = a[1];
 
 			let [event_name, fn_handler] = a;
-
-			// change is also a DOM event
-			//  that's a tricky one.
-			//  should make it easy to listen out for DOM changes.
-			// let's include it for the moment.
-			//console.log('a[0]', a[0]);
-
-			//console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
-
-
 			if (mapDomEventNames[event_name]) {
 				//console.log('we have a DOM event: ' + event_name);
 				//console.log('pre call add_dom_event_listener from add_event_listener');
 				//console.log('this.dom.el', !!this.dom.el);
 
 				// Want a way of recording that the event has been added to the DOM?
-
-
-
 				this.remove_dom_event_listener(event_name, fn_handler);
 				//super.add_event_listener.apply(that, arguments);
-
-
 			}
-
-
 		}
-
-		//super.apply(this, arguments);
-		//super(...arguments);
 		Control_Core.prototype.remove_event_listener.apply(this, arguments);
 
 	}
 
 	'add_event_listener' () {
-
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
-		//console.log('control-enh add_event_listener sig', sig);
-
-		/*
-		 var el = this.dom.el;
-		 if (el) {
-
-		 // Check if the element has that event listener...
-		 //  Maybe maintain a map within the control of which DOM s have been bound to the element.
-
-		 el.addEventListener(event_name, handler, false);
-		 }
-		 */
-
-		// In enh - with this only working post-activation?
-
-		// see http://www.w3schools.com/tags/ref_av_dom.asp
-		/*
-		 abort	Fires when the loading of an audio/video is aborted
-		 canplay	Fires when the browser can start playing the audio/video
-		 canplaythrough	Fires when the browser can play through the audio/video without stopping for buffering
-		 durationchange	Fires when the duration of the audio/video is changed
-		 emptied	Fires when the current playlist is empty
-		 ended	Fires when the current playlist is ended
-		 error	Fires when an error occurred during the loading of an audio/video
-		 loadeddata	Fires when the browser has loaded the current frame of the audio/video
-		 loadedmetadata	Fires when the browser has loaded meta data for the audio/video
-		 loadstart	Fires when the browser starts looking for the audio/video
-		 pause	Fires when the audio/video has been paused
-		 play	Fires when the audio/video has been started or is no longer paused
-		 playing	Fires when the audio/video is ready to play after having been paused or stopped for buffering
-		 progress	Fires when the browser is downloading the audio/video
-		 ratechange	Fires when the playing speed of the audio/video is changed
-		 seeked	Fires when the user is finished moving/skipping to a new position in the audio/video
-		 seeking	Fires when the user starts moving/skipping to a new position in the audio/video
-		 stalled	Fires when the browser is trying to get media data, but data is not available
-		 suspend	Fires when the browser is intentionally not getting media data
-		 timeupdate	Fires when the current playback position has changed
-		 volumechange	Fires when the volume has been changed
-		 waiting	Fires when the video stops because it needs to buffer the next frame
-
-		 abort
-		 canplay
-		 canplaythrough
-		 durationchange
-		 emptied
-		 ended
-		 error
-		 loadeddata
-		 loadedmetadata
-		 loadstart
-		 pause
-		 play
-		 playing
-		 progress
-		 ratechange
-		 seeked
-		 seeking
-		 stalled
-		 suspend
-		 timeupdate
-		 volumechange
-		 waiting
-		 */
 
 		// So, it should also bind the event to the control, so a listener will hear that.
 		// But does this apply itself???
@@ -796,20 +623,7 @@ class Control extends Control_Core {
 			var fn_handler;
 			if (a.l === 2) fn_handler = a[1];
 			if (a.l === 3) fn_handler = a[2];
-
-			// change is also a DOM event
-			//  that's a tricky one.
-			//  should make it easy to listen out for DOM changes.
-			// let's include it for the moment.
-			//console.log('Ctrl_Enh add_event_listener a[0]', a[0]);
-			//console.log('mapDomEventNames[a[0]]', mapDomEventNames[a[0]]);
-			//console.log('using_dom', using_dom);
-			//console.log('a', a);
 			if (mapDomEventNames[a[0]] && using_dom) {
-				//console.log('we have a DOM event: ' + event_name);
-				//console.log('pre call add_dom_event_listener from add_event_listener');
-				//console.log('this.dom.el', !!this.dom.el);
-				// Want a way of recording that the event has been added to the DOM?
 				this.add_dom_event_listener(event_name, fn_handler);
 				//super.add_event_listener.apply(that, arguments);
 			}
@@ -840,25 +654,15 @@ class Control extends Control_Core {
 
 	//
 
+	// Looks like reviewing / simplifying the activation code (again) will be necessary.
+
+
+
 	'activate' (el) {
 		// Should really activate with a dom element.
 
 		if (!this.__active) {
 			this.__active = true;
-			//console.log('el', el);
-			/*
-			if (el) {
-				//this.set('dom.el', el);
-				this.dom.el = el;
-			}
-			*/
-			// ok, so some of them stil have not elements set from activation.
-			//console.log('activate already this.dom.el', this.dom.el)
-
-			// activate subcontrols...
-
-
-
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this);
 				//console.log('found_el', found_el);
@@ -868,10 +672,7 @@ class Control extends Control_Core {
 			}
 
 			//var el = this.dom.el;
-
-
 			if (!this.dom.el) {
-
 				//console.log('no el, this', this);
 				//console.trace();
 				//throw 'expected el'
@@ -883,16 +684,11 @@ class Control extends Control_Core {
 				if ('ontouchstart' in document.documentElement) {
 					mx_fast_touch_click(this);
 				}
-
 				//console.log('this.selectable', this.selectable);
 				if (def(this.selectable)) {
 					mx_selectable(this);
-					//this.selectable = this.selectable;
 				}
 			}
-
-
-
 		}
 	}
 
@@ -903,15 +699,7 @@ class Control extends Control_Core {
 	'activate_other_changes_listen' () {
 		//var el;
 		var dom_attributes = this.dom.attributes;
-		//console.log('dom_attributes', dom_attributes);
-
 		var el = this.dom.el;
-		//if (dv_el) el = dv_el.value();
-
-		//console.log('dom_attributes.style', dom_attributes.style);
-
-		//dom_attributes.style.on('change', (e_change) {
-
 		dom_attributes.on('change', (e_change) => {
 			//console.log('dom_attributes e_change', e_change);
 			var property_name = e_change.name || e_change.key,
@@ -930,7 +718,6 @@ class Control extends Control_Core {
 				el.setAttribute(property_name, dval);
 			}
 		});
-
 
 	}
 
@@ -960,18 +747,11 @@ class Control extends Control_Core {
 		let el = this.dom.el;
 		//let that = this;
 		// these events seem to get rid of the el reference.
-
 		// change, type = 'remove'?
 
 
 		this.content.on('change', (e_change) => {
-			//console.log('content change', e_change);
-			//var itemDomEl;
-			//var el;
 			let itemDomEl;
-			//var dv_el = this.dom.el;
-			//console.log('that.__id', that.__id);
-			//if (dv_el) el = dv_el;
 			var type = e_change.name;
 
 			// remove content change...
@@ -993,15 +773,6 @@ class Control extends Control_Core {
 				if (t_ret === 'string') {
 					itemDomEl = retrieved_item_dom_el;
 				} else {
-					//console.log('item', item);
-					// Not so sure it's a Data_Value here.
-					//  It generally should be, but it may not always be.
-					//console.log('dv_item_dom_el', retrieved_item_dom_el);
-
-					//console.log('retrieved_item_dom_el', retrieved_item_dom_el);
-					//if (retrieved_item_dom_el) console.log('keys dv_item_dom_el', Object.keys(retrieved_item_dom_el));
-					//console.log('tof retrieved_item_dom_el', tof(retrieved_item_dom_el));
-					//throw 'stop';
 					if (retrieved_item_dom_el) {
 						itemDomEl = retrieved_item_dom_el;
 					}
@@ -1045,20 +816,7 @@ class Control extends Control_Core {
 						}
 						item.dom.el = itemDomEl;
 						context.map_els[item._id()] = item.dom.el;
-
-						//item.el = itemDomEl;
-
-						//e_change.item.set('dom.el', itemDomEl);
-
-						//if (window) {
-						//	item.activate(itemDomEl);
-						//}
-
 					};
-
-
-
-					//item.dom.el = retrieved_item_dom_el;
 				}
 
 				var t_item_dom_el = tof(itemDomEl);
@@ -1085,28 +843,10 @@ class Control extends Control_Core {
 				}
 				//console.log('!!itemDomEl', !!itemDomEl);
 				if (itemDomEl) {
-					//console.log('!!el', !!el);
-					//console.log('el', el);
-					//console.log('itemDomEl', itemDomEl);
 					e_change.item.active();
 					el.appendChild(itemDomEl);
-
-					// register this and subelements
-
-
-					// Malfunctioning now.
-					//e_change.item.register_this_and_subels();
-
 					e_change.item.register_this_and_subcontrols();
-
-					//console.log('e_change.item.dom.el', e_change.item.dom.el);
-
-					//e_change.item.dom.el = itemDomEl;
-					//
-
-					//console.log('');
-					//console.log('pre activate added item');
-					e_change.item.activate_this_and_subcontrols();
+					//e_change.item.activate_this_and_subcontrols();
 					//e_change.item.activate();
 				}
 
@@ -1120,12 +860,6 @@ class Control extends Control_Core {
 				//if (el) el.innerHTML = '';
 			}
 			if (type === 'remove') {
-
-				// removed from inside this.
-
-
-
-				//console.log('el ' + el);
 				if (e_change.value.dom.el) {
 					//el.innerHTML = '';
 					e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
@@ -1133,14 +867,6 @@ class Control extends Control_Core {
 				//if (el) el.innerHTML = '';
 			}
 		});
-
-
-		//(that => {
-
-		//})(this);
-
-
-		//console.log('2) content.length()', content.length());
 	}
 
 	// Defining X11 colors in a compressed way would be cool. Compressed data, goes to tensor / manifold nexus structure.
@@ -1163,13 +889,11 @@ class Control extends Control_Core {
 	'rec_desc_ensure_ctrl_el_refs' (el) {
 		el = el || this.dom.el;
 		var context = this.context;
-		var that = this;
+		//var that = this;
 		if (el) {
 			var c, l, cns;
 			var jsgui_id;
-
 			var map_els = {};
-
 			dom_desc(el, (el) => {
 				//console.log('dom_desc el', el);
 				if (el.getAttribute) {
@@ -1183,31 +907,23 @@ class Control extends Control_Core {
 					}
 				}
 			});
-
 			desc(this, (ctrl) => {
 				// ensure the control is registered with the context.
-				//console.log('desc ctrl', ctrl);
+				console.log('desc ctrl', ctrl);
 				var t_ctrl = tof(ctrl);
 				//console.log('t_ctrl', t_ctrl);
-				if (ctrl !== that && t_ctrl === 'control') {
+				if (ctrl !== this && t_ctrl === 'control') {
 					var id = ctrl._id();
 					//console.log('id', id);
 					// Seems like it's not in the map.
 					//console.log('map_els[id]', !!map_els[id]);
 					if (map_els[id]) {
-
-
-
 						if (ctrl.dom.el !== map_els[id]) {
 							ctrl.dom.el = map_els[id];
-
 							// attach the DOM events.
 							//console.log('ctrl.bound_event_handlers', ctrl.bound_event_handlers);
-
-
 						} else {
 							//console.log('Already in the map');
-
 							// Could rebind the events here?
 						}
 					}
@@ -1226,15 +942,12 @@ class Control extends Control_Core {
 	// page_context.register_node
 	// page_context.register_control
 
-
-
-
 	'rec_desc_activate' () {
-		desc(this, (ctrl) => {
+		desc(this, ctrl => {
 			// ensure the control is registered with the context.
 			//console.log('desc ctrl', ctrl);
 			var t_ctrl = tof(ctrl);
-
+			//console.log('t_ctrl', t_ctrl);
 			if (t_ctrl === 'control') {
 				ctrl.activate();
 			}
@@ -1242,11 +955,6 @@ class Control extends Control_Core {
 	}
 
 	'activate_content_controls' () {
-		// This could do with some enhancement, so that it automatically does a recursive activation.
-		// ensure content dom el refs
-		//  recursively ensures the DOM node references for the elements inside.
-
-
 		if (!this.dom.el) {
 			let found_el = this.context.get_ctrl_el(this);
 			//console.log('found_el', found_el);
@@ -1254,10 +962,7 @@ class Control extends Control_Core {
 				this.dom.el = found_el;
 			}
 		}
-
 		var el = this.dom.el;
-
-
 
 		if (el) {
 			var context = this.context;
@@ -1265,8 +970,6 @@ class Control extends Control_Core {
 			//var that = this;
 			var c, l;
 			//var my_content = this.content;
-
-
 
 			if (el.getAttribute) {
 				var str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
@@ -1321,12 +1024,10 @@ class Control extends Control_Core {
 										}
 									});
 								}
-
 								if (!found) {
 									content.add(cctrl);
 								}
-								//cctrl.activate();
-
+								cctrl.activate();
 								cctrl.parent = this;
 							}
 						}
@@ -1339,8 +1040,6 @@ class Control extends Control_Core {
 					}
 				}
 			}
-
-
 		} else {
 			console.trace();
 			console.log('missing el');
@@ -1349,8 +1048,6 @@ class Control extends Control_Core {
 	}
 
 	'activate_dom_attributes' () {
-		// Needs to get the class out of the DOM properly.
-		//console.log('activate_dom_attributes');
 		var el = this.dom.el;
 		//console.log('** el', el);
 		// may not have el....?
@@ -1359,101 +1056,32 @@ class Control extends Control_Core {
 		// 
 		var item, name, value;
 		if (el) {
-			//console.log('el', el);
-			// Activate from the element to JSGUI controls.
-
 			if (el.attributes) {
 				for (var i = 0, attrs = el.attributes, l = attrs.length; i < l; i++) {
-					//arr.push(attrs.item(i).nodeName);
 					item = attrs.item(i);
 					name = item.name;
 					value = item.value;
-					//console.log('name', name);
-
 					if (name == 'data-jsgui-id') {
 						// Handled elsewhere - not so sure it should be but won't change that right now.
 					} else if (name == 'data-jsgui-type') {
-						// ^
 					} else if (name == 'style') {
-						// Could have this in the style setter.
-						/*
-						var map_inline_css = this._icss;
-						var arr_style_items = value.split(';');
-						//console.log('arr_style_items', arr_style_items);
-						//each(arr_style_items)
-	
-						for (var c = 0, l2 = arr_style_items.length; c < l2; c++) {
-							//map_inline_css[]
-	
-							var style_item = arr_style_items[c];
-							//var style_item_name =
-							var arr_style_item = style_item.split(':');
-	
-							if (arr_style_item[0]) {
-								map_inline_css[arr_style_item[0]] = arr_style_item[1];
-							}
-						}
-						//} else if (name == 'data-jsgui-fields') {
-						// Should probably rely on using init a lot more now.
-						//    var str_properties = value;
-						//    if (str_properties) {
-						//    }
-						*/
 						dom_attributes[name] = value;
-
 					} else if (name == 'class') {
-						//console.log('need to DOM activate CSS class', value);
-						// Keeping it as a string.
 						dom_attributes[name] = value;
-
-
-						//    }
 					} else {
-						// set the dom attributes value... silent set?
-
-						//dom_attributes.set(name, value);
-
 						dom_attributes[name] = value;
 					}
 				}
 			}
-
-
-
-			// Activate from jsgui to the DOM.
-			//  Some DOM properties may not have been set.
-
-			//console.log('that.dom.attrs', that.dom.attrs);
-
-			//each(that.dom.attrs, (attr, i) => {
-			//console.log('attr', attr);
-			//console.log('i', i);
-			//})
-
-
 		}
 	}
 
 	'attach_dom_events' () {
-		// Attaches the bound events to the DOM.
-		//  Called after the control has been assigned an element.
-
-		//console.log('attach_dom_events');
-		var that = this;
-
 		each(this._bound_events, (handlers, name) => {
 			each(handlers, (handler) => {
-				//console.log('event name', name);
-				//console.log('handler', handler);
-				//console.trace();
-
-				// add_dom_event_listener
-				that.add_dom_event_listener(name, handler);
-
-				//that.add_event_listener(name, handler);
+				this.add_dom_event_listener(name, handler);
 			});
 		});
-
 	}
 
 	'hide' () {
@@ -1466,27 +1094,15 @@ class Control extends Control_Core {
 	}
 
 	'descendants' (search) {
-		// assembles a list of the descendents that match the search
-		//  (search by .__type_name)
-		// eg get a list of menu_node objects.
-		// basically need to recursively go through the descendents, with a callback in here, and see if they match the search.
-		// recursive iteration of the control(s)
-
 		var recursive_iterate = (ctrl, item_callback) => {
 			// callback on all of the child controls, and then iterate those.
 			//console.log('recursive_iterate');
 			var content = ctrl.content;
 			//console.log('content', content);
-
 			var t_content = tof(content);
-
 			//console.log('t_content', t_content);
-
 			if (t_content == 'collection') {
 				if (content.length() > 0) {
-
-					//console.log('content.length()', content.length());
-					// iterate through those child nodes as well.
 					content.each((item, i) => {
 						//console.log('item', item);
 						item_callback(item);
@@ -1498,12 +1114,8 @@ class Control extends Control_Core {
 		}
 		var arr_matching = [];
 		recursive_iterate(this, (item) => {
-			// see if the item matches the search
-
-			//console.log('cb item', item);
 			var item_type = item.__type_name;
 			//console.log('item_type', item_type);
-
 			if (item_type == search) {
 				arr_matching.push(item);
 			} else {
@@ -1530,182 +1142,7 @@ class Control extends Control_Core {
 		} else {
 			return false;
 		}
-
-		/*
-
-		if (this._parent) {
-			var ctrl_parent = this._parent._parent;
-			// the _parent is a Collection within the parent Control
-			if (!ctrl_parent) {
-				return false;
-			} else {
-				//console.log('ctrl_parent', ctrl_parent);
-				// does the parent match the type?
-
-				var parent_type = ctrl_parent.__type_name;
-				//console.log('parent_type', parent_type);
-
-				if (parent_type == search) {
-					return ctrl_parent;
-				} else {
-					return ctrl_parent.ancestor(search);
-				}
-			}
-		} else {
-			return false;
-		}
-		*/
 	}
-
-	/*
-	'context_menu'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-		var menu_def;
-		if (sig == '[o]' || sig == '[a]') {
-			menu_def = a[0];
-		}
-		//var Context_Menu = Context_Menu || require('./controls/advanced/context-menu');
-
-
-		var context_menu;
-		var that = this;
-		// Need it so that the context menu gets removed when it should.
-		//  Any mouseup event causes it to vanish.
-		var body = this.context.body;
-		//var ctrl_html_root = this.context.ctrl_document;
-		//console.log('ctrl_html_root', ctrl_html_root);
-		//var body = ctrl_html_root.body();
-		var show_context_menu = fp((a, sig) {
-			var pos;
-			if (sig == '[a]') {
-				// A position?
-				pos = a[0];
-			}
-			if (!context_menu) {
-				//console.log('creating new context menu');
-
-				//console.log('menu_def', menu_def);
-
-				context_menu = new Context_Menu({
-					'context': that.context,
-					'value': menu_def
-				});
-
-				if (pos) {
-					context_menu.style({
-						'left': (pos[0] - 1) + 'px',
-						'top': (pos[1] - 1) + 'px'
-					});
-
-				} else {
-					context_menu.style({
-						'left': '100px',
-						'top': '100px'
-					});
-
-				}
-				var context = that.context;
-			} else {
-
-				if (pos) {
-					context_menu.style({
-						'left': (pos[0] - 1) + 'px',
-						'top': (pos[1] - 1) + 'px'
-					});
-				} else {
-					context_menu.style({
-						'left': '100px',
-						'top': '100px'
-					});
-				}
-			}
-			setTimeout(() {
-				body.add(context_menu);
-				//console.log('pre activate context_menu._.content._arr.length ' + context_menu._.content._arr.length);
-				context_menu.activate();
-				context_menu.one_mousedown_anywhere((e_mousedown) {
-					//console.log('e_mousedown.within_this ' + e_mousedown.within_this);
-
-					if (!e_mousedown.within_this) {
-						context_menu.remove();
-					} else {
-						// maybe open a new level.
-
-						// And need to call the relevant context menu .
-
-						console.log('e_mousedown', e_mousedown);
-
-						var el_target = e_mousedown.target;
-						// the target control will have a jsgui id now.
-						//  we should be able to then go to its parent and get its menu node.
-						var context = that.context;
-						console.log('context', context);
-						var target_id = el_target.getAttribute('data-jsgui-id');
-						console.log('target_id', target_id);
-						var ctrl_target = context.map_controls[target_id];
-						console.log('ctrl_target', ctrl_target);
-						// want to be able to get an ancestor of type menu-node
-						var menu_node = ctrl_target.ancestor('menu_node');
-						console.log('menu_node', menu_node);
-						// and raise the menu_node select event.
-						menu_node.raise('select');
-						context_menu.remove();
-					}
-				});
-			}, 0);
-		});
-
-		this.on('contextmenu', (e_contextmenu) {
-			//console.log('e_contextmenu', e_contextmenu);
-			return false;
-			//console.log('e_click', e_click);
-		})
-
-		this.on('mousedown', (e_mousedown) {
-			//console.log('e_mousedown', e_mousedown);
-			var int_button = e_mousedown.which;
-			if (int_button == 3) {
-				e_mousedown.preventDefault();
-				window.event.returnValue = false;
-				return false;
-			}
-		});
-
-		this.on('mouseup', (e_mouseup) {
-			//console.log('e_mouseup', e_mouseup);
-			var int_button = e_mouseup.which;
-
-			if (int_button == 3) {
-				console.log('right button');
-				e_mouseup.preventDefault();
-				window.event.returnValue = false;
-				// Need to work out the position of the click.
-				// pageX, pageY
-				var pos = [e_mouseup.pageX, e_mouseup.pageY];
-				show_context_menu(pos);
-				return false;
-			}
-		})
-	}
-
-	*/
-	// make full height.
-	//  makes the control take the rest of the height of the window.
-	// Drag  as well...
-	//  Could make this accept the same params as the drag ,
-	//   but this version will be more flexible with more modes.
-	// Drag and drop could also be set up with simpler parameters and acts in the default way that .drag would do.
-
-
-	// internal relative div?
-	//  could have different kinds of internal structures.
-
-	// could have an internal grid 9.
-
-	// Could even include internal relative within the core, so they get rendered without (ever) being a control.
-	//  Adding and removing it and the contents could be easier if it's a rendering feature rather than a control.
-	//   The internal relative div would be a special case.
-
 
 };
 

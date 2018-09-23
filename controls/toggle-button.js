@@ -226,17 +226,15 @@ class Toggle_Button extends Control {
 
     'activate'() {
         //console.log('toggle button activate this.__active', this.__active);
+        //console.log('this', this);
         if (!this.__active) {
             super.activate();
-            
             // Need references?
             //var that = this;
-
             //console.log('this.states', this.states);
             //console.log('this.state', this.state);
 
             /*
-    
             // Only want jsgui wrappers in some places.
             // When getting a jsgui Data_Object or Control, we don't want it wrapped within its own Data_Object.
             var span_state = this.span_state;
@@ -257,7 +255,6 @@ class Toggle_Button extends Control {
                   //console.log('tof e_change.value', tof(e_change.value));
                   //console.log('');
                   //console.log('1) span_state.__id', span_state.__id);
-    
               }
             });
             */
@@ -298,11 +295,9 @@ class Toggle_Button extends Control {
                     //console.log('str_next_state', str_next_state);
                     //state.set(str_next_state);
 
-
                     this.raise('toggle', {
                         'state': str_next_state
                     });
-
 
                     this.state = str_next_state;
                     // needs to listen to the change in state

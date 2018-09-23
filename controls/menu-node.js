@@ -45,7 +45,7 @@ class Menu_Node extends Control {
         // Can take some text.
         //  That's all I'll have in the Menu node for now.
         this.__type_name = 'menu_node';
-        var that = this;
+        //var that = this;
         if (!this._abstract) {
             if (!spec.el) {
                 this.add_class('menu-node');
@@ -155,7 +155,6 @@ class Menu_Node extends Control {
 
         // need to do this recursively I think.
         //  could call this recursively on all nodes.
-
         //
 
         var inner_control = this.inner_control;
@@ -163,12 +162,8 @@ class Menu_Node extends Control {
         inner_control.content.each(function(v, i) {
             //console.log('i', i);
             //console.log('v', v);
-
-
-
             var tn = v.__type_name;
             //console.log('tn', tn);
-
             if (tn == 'menu_node') {
                 v.close_all();
             }
@@ -178,7 +173,6 @@ class Menu_Node extends Control {
         inner_control.hide();
         // this.silent?
         this.set('state', 'closed', true); // silent
-
 
     }
     'close'() {

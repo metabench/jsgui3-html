@@ -40,7 +40,7 @@ class Tree_Node extends Control {
 			var spec_state = spec.state,
 				state;
 
-			this.depth = spec.depth || 0;
+			//this.depth = spec.depth || 0;
 			//console.log('spec_state', spec_state);
 			if (spec_state === 'open' || spec_state === 'closed') {
 				this.state = spec_state;
@@ -109,19 +109,20 @@ class Tree_Node extends Control {
 					top_line.add(depth_block);
 				}
 			}
+			/*
 			rest_of_top_line = new Control(my({
 				'class': 'rest-of'
 			}));
 			top_line.add(rest_of_top_line);
+			*/
 			//var plus_minus = make(new Plus_Minus_Toggle_Button({}));
 			//top_line.add(plus_minus);
-
 			let plus_minus, inner_control;
 			let spec3 = {};
-			if (this.state === 'contracted') {
+			if (this.state === 'closed') {
 				spec3.state = '+';
 			}
-			rest_of_top_line.add(plus_minus = new Plus_Minus_Toggle_Button(my(spec3)));
+			top_line.add(plus_minus = new Plus_Minus_Toggle_Button(my(spec3)));
 
 			//plus_minus.hide();
 			//var img_src = ;
@@ -142,7 +143,7 @@ class Tree_Node extends Control {
 			//var text = this.text;
 			//console.log('this.text', this.text);
 			//span.add(text);
-			rest_of_top_line.add(new jsgui.span(my({
+			top_line.add(new jsgui.span(my({
 				text: this.text,
 				'class': 'text'
 			})));
@@ -191,28 +192,13 @@ class Tree_Node extends Control {
 					expander.state = this.state = 'open';
 				} else {
 					expander.state = this.state = 'closed';
-					plus_minus.hide();
+					//plus_minus.hide();
 					//expander.close();
 				}
 			} else {
 				//console.log('should hide plus_minus');
 				plus_minus.hide();
 			}
-
-			/*
-			var ctrl_fields = {
-				'toggle_button': plus_minus._id() //,
-				//'inner_control': inner_control._id()//,
-				//'expander': expander._id()
-			};
-			if (expander) {
-				ctrl_fields.inner_control = inner_control._id();
-				ctrl_fields.expander = expander._id();
-			}
-
-			//this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
-			this.dom.attributes['data-jsgui-ctrl-fields'] = stringify(ctrl_fields).replace(/"/g, "'");
-			*/
 
 			var ctrl_fields = this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
 				'toggle_button': plus_minus
@@ -223,8 +209,15 @@ class Tree_Node extends Control {
 			}
 
 			this.add_class('tree-node');
+
+			// only active on the server.
+			//  on the client, we don't need those extra references?
 			this.active();
 	}
+
+	// adding a node - need to set up its depth?
+
+
 	// I think a pre-render function would be useful.
 	//  Something that sets data-jsgui DOM attributes.
 
@@ -233,56 +226,72 @@ class Tree_Node extends Control {
 	// whenever something is added to the DOM, the nodes need to be registered.
 	//  within the page context
 
+	// Want automatic activation of any control that gets added.
+	//  Added to an active control.
+
+	// __is_active
+
+
 	'activate' (el) {
-		super.activate(el);
-		//this.selectable();
+		if (!this.__active) {
+			super.activate(el);
 
-		//console.log('activate Tree_Node');
-		// ctrl-fields not working?
-		// Need to listen to the toggle event of the plus minus toggle button
+			this.rec_desc_ensure_ctrl_el_refs();
+			//this.selectable();
 
-		// This will be done through the ctrl~_fields system.
-		//  Would like an easier way of setting that up.
-		var toggle_button = this.toggle_button;
-		//console.log('toggle_button', toggle_button);
+			//console.log('activate Tree_Node');
+			// ctrl-fields not working?
+			// Need to listen to the toggle event of the plus minus toggle button
 
-		var inner_control = this.inner_control;
-		var expander = this.expander;
-		//console.log('inner_control', inner_control);
+			// This will be done through the ctrl~_fields system.
+			//  Would like an easier way of setting that up.
+			var toggle_button = this.toggle_button;
+			//console.log('toggle_button', toggle_button);
 
-		if (expander) {
-			if (toggle_button) {
-				toggle_button.on('toggle', e_toggle => {
-					// set the expander state depending on the value.
-					// '-' state means open at that time.
-					let state = e_toggle.state;
-					if (state === '-') {
-						expander.open();
-						this.raise('expand');
-						this.raise('open');
-					} else {
-						//console.log('expander', expander);
-						//console.log('expander.close', expander.close);
-						//console.log('Object.keys(expander)', Object.keys(expander));
-						expander.close();
-						this.raise('contract');
-						this.raise('close');
-					}
-					//console.log('tree-node toggle e_toggle', e_toggle);
-					// need to expand or contract the
-					// need to expand or contract the inner control.
-					//  Mixins could be good for this type of functionality.
-					//  Something that enhances a Control without making a new Class.
-					//expander.toggle();
-				})
-			}
+			var inner_control = this.inner_control;
+			var expander = this.expander;
+			//console.log('inner_control', inner_control);
 
-			expander.on('change', e_change => {
-				if (e_change.name === 'state') {
-					//console.log('*state* e_change', e_change);
+			//console.log('expander', expander);
+			//console.log('toggle_button', toggle_button);
+
+			if (expander) {
+				if (toggle_button) {
+					toggle_button.on('toggle', e_toggle => {
+						// set the expander state depending on the value.
+						// '-' state means open at that time.
+						let state = e_toggle.state;
+						if (state === '-') {
+							expander.open();
+							this.raise('expand');
+							this.raise('open');
+						} else {
+							//console.log('expander', expander);
+							//console.log('expander.close', expander.close);
+							//console.log('Object.keys(expander)', Object.keys(expander));
+							expander.close();
+							this.raise('contract');
+							this.raise('close');
+						}
+						//console.log('tree-node toggle e_toggle', e_toggle);
+						// need to expand or contract the
+						// need to expand or contract the inner control.
+						//  Mixins could be good for this type of functionality.
+						//  Something that enhances a Control without making a new Class.
+						//expander.toggle();
+					})
+
+					//console.log('toggle_button.__active', toggle_button.__active);
 				}
-			});
+				//expander.on('change', e_change => {
+				//	if (e_change.name === 'state') {
+						//console.log('*state* e_change', e_change);
+				//	}
+				//});
+			}
 		}
+
+		
 
 	}
 }
