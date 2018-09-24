@@ -71,59 +71,65 @@ class Vertical_Expander extends Control {
 		var orig_height;
 
 		var el = this.dom.el;
-		el.style.transition = 'height 0.5s linear';
-		var ui_close = () => {
-			var h = el.childNodes[0].offsetHeight;
-			//console.log('h', h);
-			orig_height = h;
-			el.style.height = orig_height + 'px';
-			
-			// transition: width 3s linear;
-			//el.style.transition = 'height 0.08s linear';
-			
-			//el.style['webkit-transition-property'] = 'height';
-			//el.style['webkit-transition-duration'] = '1s';
-			//el.style['webkit-transition-timing-function'] = 'linear';
-			//el.style['transition-delay'] = '2s';
-			// And to listen to the animation ending as well.
-			setTimeout(function() {
-				//console.log('should hide overflow');
-				//
-				el.style.overflow = 'hidden';
-				el.style.height = '0px';
-			}, 0);
-			// Better control over styles will help.
-			//  Need the inline css layer.
-			//  Then have the JSGUI style layer on top of that.
-		}
 
-		var ui_open = () => {
+		if (el) {
+			el.style.transition = 'height 0.5s linear';
+			var ui_close = () => {
+				var h = el.childNodes[0].offsetHeight;
+				//console.log('h', h);
+				orig_height = h;
+				el.style.height = orig_height + 'px';
+				
+				// transition: width 3s linear;
+				//el.style.transition = 'height 0.08s linear';
+				
+				//el.style['webkit-transition-property'] = 'height';
+				//el.style['webkit-transition-duration'] = '1s';
+				//el.style['webkit-transition-timing-function'] = 'linear';
+				//el.style['transition-delay'] = '2s';
+				// And to listen to the animation ending as well.
+				setTimeout(function() {
+					//console.log('should hide overflow');
+					//
+					el.style.overflow = 'hidden';
+					el.style.height = '0px';
+				}, 0);
+				// Better control over styles will help.
+				//  Need the inline css layer.
+				//  Then have the JSGUI style layer on top of that.
+			}
 
-			var fnTransitionEnd = function(e_end) {
-				//console.log('e_end', e_end);
-				console.log('fnTransitionEnd');
+			var ui_open = () => {
+
+				var fnTransitionEnd = function(e_end) {
+					//console.log('e_end', e_end);
+					console.log('fnTransitionEnd');
+					//el.style.overflow = 'visible';
+					el.removeEventListener('transitionend', fnTransitionEnd)
+				}
+
+				el.addEventListener('transitionend', fnTransitionEnd, false);
+
+				// when the transition has completed, make the overflow visible.
 				//el.style.overflow = 'visible';
-				el.removeEventListener('transitionend', fnTransitionEnd)
+				el.style.height = orig_height + 'px';
 			}
 
-			el.addEventListener('transitionend', fnTransitionEnd, false);
+			this.on('change', e_change => {
+				var val = e_change.value;
 
-			// when the transition has completed, make the overflow visible.
-			//el.style.overflow = 'visible';
-			el.style.height = orig_height + 'px';
+				if (val == 'closed') {
+					ui_close();
+				}
+
+				if (val == 'open') {
+					ui_open();
+				}
+			});
+		} else {
+			console.log('WARNING: vertical_expander expected el to activate');
+			console.trace();
 		}
-
-		this.on('change', e_change => {
-			var val = e_change.value;
-
-			if (val == 'closed') {
-				ui_close();
-			}
-
-			if (val == 'open') {
-				ui_open();
-			}
-		});
 
 		/*
 

@@ -155,22 +155,25 @@ class Control extends Control_Core {
 				let exempt_prop_names = {
 					//'selection_scope': true
 				}
-				let props_to_apply = {};
+				//let props_to_apply = {};
 				each(props, (v, i) => {
 					if (exempt_prop_names[i]) {
 
 					} else {
-						props_to_apply[i] = v;
+						//props_to_apply[i] = v;
+						this[i] = v;
 					}
 				});
 
-				Object.assign(this, props_to_apply);
+				// object assign won't carry out set?
+
+				//Object.assign(this, props_to_apply);
 				
 				//console.log('2) this.selectable', this.selectable);
 			}
 
 			if (def(this.selection_scope)) {
-				this.selection_scope = this.context.new_selection_scope(this.selection_scope);
+				this.selection_scope = this.context.new_selection_scope(this);
 			}
 
 			var tn = spec.el.getAttribute('data-jsgui-type');
@@ -487,7 +490,6 @@ class Control extends Control_Core {
 	'activate_recursive' () {
 		//console.log('activate_recursive');
 		var el = this.dom.el;
-
 		var context = this.context;
 		var map_controls = context.map_controls;
 		var parent_control;
@@ -498,7 +500,6 @@ class Control extends Control_Core {
 			//console.log('nt ' + nt);
 			if (nt == 1) {
 				var jsgui_id = el2.getAttribute('data-jsgui-id');
-
 				//console.log('jsgui_id ' + jsgui_id);
 				if (jsgui_id) {
 					// Not so sure the control will exist within a map of controls.
@@ -531,7 +532,6 @@ class Control extends Control_Core {
 					e.ctrl = this;
 					if (!this.disabled) {
 						each(listener, l => {
-
 							l(e);
 						})
 					}
@@ -571,7 +571,6 @@ class Control extends Control_Core {
 		if (sig === '[s,f]') {
 			//var event_name = a[0];
 			//var fn_handler = a[1];
-
 			let [event_name, fn_handler] = a;
 			if (mapDomEventNames[event_name]) {
 				//console.log('we have a DOM event: ' + event_name);
@@ -647,7 +646,7 @@ class Control extends Control_Core {
 		if (!this.__active) {
 			this.__active = true;
 			if (!this.dom.el) {
-				let found_el = this.context.get_ctrl_el(this);
+				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id()];
 				//console.log('found_el', found_el);
 				if (found_el) {
 					this.dom.el = found_el;
@@ -668,7 +667,8 @@ class Control extends Control_Core {
 				}
 				//console.log('this.selectable', this.selectable);
 				if (def(this.selectable)) {
-					mx_selectable(this);
+					//console.log('activating mx_selectable');
+					//mx_selectable(this);
 				}
 			}
 		}
@@ -688,7 +688,6 @@ class Control extends Control_Core {
 				//el.setAttribute('style', dval);
 			} else {
 				//el.setAttribute('style', dval.value());
-
 				dval = dval.value();
 			}
 
@@ -785,29 +784,25 @@ class Control extends Control_Core {
 							itemDomEl = temp_el.childNodes[0];
 						}
 						item.dom.el = itemDomEl;
-						context.map_els[item._id()] = item.dom.el;
+						// map controls by el.
+						context.map_els[item._id()] = itemDomEl;
 					};
 				}
 				var t_item_dom_el = tof(itemDomEl);
 				if (t_item_dom_el === 'string') {
 					itemDomEl = document.createTextNode(itemDomEl);
 				}
-
-				if (!el) {
-
+				if (!itemDomEl) {
+					console.log('*** !itemDomEl this._id()', this._id());
 					/*
-
-					//console.log('*** that._id()', that._id());
+					//
 					var grandparent = that.parent().parent();
 					//console.log('grandparent', grandparent);
 					grandparent.rec_desc_ensure_ctrl_el_refs();
 					el = context.map_els[that._id()];
 					//console.log('el', el);
 					that.dom.el = el;
-
 					*/
-
-
 				}
 				//console.log('!!itemDomEl', !!itemDomEl);
 				if (itemDomEl) {
@@ -876,7 +871,7 @@ class Control extends Control_Core {
 			});
 			desc(this, (ctrl) => {
 				// ensure the control is registered with the context.
-				console.log('desc ctrl', ctrl);
+				//console.log('desc ctrl', ctrl);
 				var t_ctrl = tof(ctrl);
 				//console.log('t_ctrl', t_ctrl);
 				if (ctrl !== this && t_ctrl === 'control') {

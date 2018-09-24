@@ -43,7 +43,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		var count_deselected = 0;
 
 		var selected;
-		each(this.map_selected_controls, function (v, i) {
+		each(this.map_selected_controls, (v, i) => {
 
 			if (v && v !== ctrl) {
 				//selected = v.get('selected').value();
@@ -54,6 +54,7 @@ class Selection_Scope extends jsgui.Data_Object {
 				if (selected) {
 					//v.set('selected', false);
 					v.selected = false;
+					console.log("pre ctrl.remove_class('selected');");
 					v.remove_class('selected');
 					//v.raise('deselect');
 					v.raise('change', {
@@ -69,17 +70,28 @@ class Selection_Scope extends jsgui.Data_Object {
 			}
 		});
 		this.map_selected_controls = {};
-		this.map_selected_controls[ctrl._id()] = ctrl;
+
+		if (typeof ctrl._id === 'function') {
+			this.map_selected_controls[ctrl._id()] = ctrl;
+		} else {
+			console.log('typeof ctrl._id', typeof ctrl._id);
+		}
+
+		
 		// and then tell the control that it's selected.
 		// could possibly set a CSS flag.
 
 		if (!currently_selected) {
 			ctrl.selected = true;
 			//ctrl.raise('select');
+
+			/*
 			ctrl.raise('change', {
 				'name': 'selected',
 				'value': true
 			});
+			*/
+			console.log("pre ctrl.add_class('selected')");
 			ctrl.add_class('selected');
 			// selection scope event too...?
 
@@ -96,12 +108,16 @@ class Selection_Scope extends jsgui.Data_Object {
 	'deselect'(ctrl) {
 		if (ctrl.selected === true) {
 			ctrl.selected = false;
+			console.log("pre ctrl.remove_class('selected');");
 			ctrl.remove_class('selected');
 			//ctrl.raise('deselect');
+
+			/*
 			ctrl.raise('change', {
 				'name': 'selected',
 				'value': false
 			});
+			*/
 		}
 	}
 
@@ -120,6 +136,7 @@ class Selection_Scope extends jsgui.Data_Object {
 			//console.log('tv ' + tv);
 			if (tv == 'control') {
 				// TODO: Trigger 'deselect' events when selection changes to negitive
+				console.log("pre v.remove_class('selected')");
 				v.remove_class('selected');
 				//v.set('selected', false);
 				v.selected = false;
@@ -154,6 +171,7 @@ class Selection_Scope extends jsgui.Data_Object {
 				//  iterate_ancestors_in_selection_scope
 				//   looking for selected ancestor.
 				// find_selected_ancestor_in_scope
+				console.log("pre ctrl.add_class('selected')");
 				ctrl.add_class('selected');
 				msc[id] = ctrl;
 			}
@@ -179,6 +197,7 @@ class Selection_Scope extends jsgui.Data_Object {
 						//  iterate_ancestors_in_selection_scope
 						//   looking for selected ancestor.
 						// find_selected_ancestor_in_scope
+						console.log("pre ctrl.add_class('selected')");
 						ctrl.add_class('selected');
 						msc[id] = ctrl;
 					}
@@ -187,6 +206,7 @@ class Selection_Scope extends jsgui.Data_Object {
 			}
 			if (tsel == 'boolean') {
 				if (sel) {
+					console.log("pre ctrl.remove_class('selected')");
 					ctrl.remove_class('selected');
 					//ctrl.set('selected', false);
 					ctrl.selected = false;
@@ -204,6 +224,7 @@ class Selection_Scope extends jsgui.Data_Object {
 						//  iterate_ancestors_in_selection_scope
 						//   looking for selected ancestor.
 						// find_selected_ancestor_in_scope
+						console.log("pre ctrl.add_class('selected')");
 						ctrl.add_class('selected');
 						msc[id] = ctrl;
 					}

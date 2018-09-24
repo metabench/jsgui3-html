@@ -34,6 +34,7 @@ class Tree_Node extends Control {
 
 		super(spec);
 		mx_selectable(this);
+		
 		field(this, 'depth');
 		field(this, 'state', 'open');
 		this.expandable = spec.expandable;

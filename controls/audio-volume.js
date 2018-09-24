@@ -7,7 +7,7 @@ var v_subtract = jsgui.v_subtract;
 
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
-class Audio_Volume extends jsgui.Control {
+class Audio_Volume extends Control {
 	// fields... text, value, type?
 	//  type could specify some kind of validation, or also 'password'.
 
@@ -28,15 +28,12 @@ class Audio_Volume extends jsgui.Control {
 
 			// It's going to act as a drag handle for this.
 			//  The drag system will integrate with various bands / window positions.
-
 			// Maybe a property to say that it's dockable.
 
 			//var top_bar = new Control({
 			//	'context': this.context
 			//})
 			//top_bar.set('dom.attributes.class', 'title bar');
-
-
 			//this.add(top_bar);
 
 			var h_slider = add(Horizontal_Slider({

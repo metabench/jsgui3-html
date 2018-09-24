@@ -68,17 +68,15 @@ class Page_Context extends jsgui.Evented_Class {
         map_Controls['control'] = Control;
     }
 
-    'new_selection_scope'() {
+    'new_selection_scope'(ctrl) {
         // create the selection scope, with an assigned id
-
         var res = new Selection_Scope({
             'context': this,
             'id': this.selection_scope_id_counter++
         })
         this.selection_scopes[res.id] = res;
-
+        if (ctrl) ctrl.selection_scope = res;
         return res;
-
     }
 
     /*

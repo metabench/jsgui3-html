@@ -928,16 +928,13 @@ class Control_Core extends Data_Object {
 			}
 			var arr = [];
 			//var arr_dom = dom_attrs._arr;
-
 			//for (var c = 0, l = arr_dom.length; c < l; c++) {
 			//  arr.push(' ', c, '="', arr_dom[c], '"');
 			//}
 			//var _ = dom_attrs._;
 			var dom_attrs_keys = Object.keys(dom_attrs);
 			//var dom_attrs_keys = Reflect.ownKeys(dom_attrs);
-
 			// but now have a raise event key....
-
 			//console.log('dom_attrs_keys', dom_attrs_keys);
 			//throw 'stop';
 
@@ -945,9 +942,6 @@ class Control_Core extends Data_Object {
 			for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
 				key = dom_attrs_keys[c];
 				//console.log('key', key);
-
-
-
 				if (key == '_bound_events') {
 
 				}
@@ -969,8 +963,6 @@ class Control_Core extends Data_Object {
 					//console.log('item', item);
 					arr.push(' ', key, '="', item.toString(), '"');
 				}
-
-
 			}
 			//dom_attrs.each(function (i, v) {
 			//    arr.push(' ', i, '="', v, '"');
@@ -1127,7 +1119,6 @@ class Control_Core extends Data_Object {
 				callback(null, html);
 			} else {
 				var c = arr_waiting_controls.length;
-
 				var complete = () => {
 					//console.log('complete');
 					this.pre_all_html_render();
@@ -1225,7 +1216,6 @@ class Control_Core extends Data_Object {
 				//htm = n.all_html_render();
 			}
 		}
-
 		/*
 		if (this._internal_relative_div === true) {
 			return '<div class="relative">' + res.join('') + '</div>';
@@ -1493,7 +1483,6 @@ class Control_Core extends Data_Object {
 		var tnc = tof(new_content);
 		let res;
 		//console.log('control add content tnc', tnc);
-
 		if (tnc == 'array') {
 			let res = [];
 			each(new_content, (v) => {
@@ -1501,13 +1490,11 @@ class Control_Core extends Data_Object {
 			});
 			//res = new_content;
 		} else {
-
 			if (new_content) {
 				//console.log('!!new_content', !!new_content);
 				if (tnc === 'string') {
 
 				} else {
-
 					if (!new_content.context) {
 						//console.log('1) !!new_content.context', !!new_content.context);
 						//console.log('!!this.context', !!this.context);
@@ -1526,6 +1513,9 @@ class Control_Core extends Data_Object {
 				}
 				new_content.parent = this;
 
+
+
+				//register on event listen for add
 				//console.log('this.__active', this.__active);
 				//if (this.__active) {
 				//	new_content.activate();
@@ -1739,9 +1729,7 @@ class Control_Core extends Data_Object {
 	'active' () {
 
 		var id = this._id();
-		var dom = this.dom;
-		//var dom = this._.dom;
-		var dom_attributes = dom.attributes;
+		var dom = this.dom, dom_attributes = dom.attributes;
 		//console.log('dom_attributes', dom_attributes);
 		//throw 'stop';
 		/*
@@ -1765,18 +1753,12 @@ class Control_Core extends Data_Object {
 		if (el) {
 			//console.log('el', el);
 			//console.log('el.nodeType', el.nodeType);
-
 			//console.log('el', el);
 			//console.log('el.nodeType', el.nodeType);
-
 			// Should be updated by listener.
-
-
 
 			if (el.nodeType === 1) { // element
 				//console.log('Removed dome update.');
-
-
 				//el.setAttribute('data-jsgui-id', id);
 				//el.setAttribute('data-jsgui-type', this.__type_name);
 			}
@@ -1853,13 +1835,10 @@ class Control_Core extends Data_Object {
 		} else {
 			var tCls = tof(cls);
 			//console.log('tCls ' + tCls);
-
-
 			if (tCls == 'object') {
 				//cls
 				cls[class_name] = true;
 				// then get the classes from the obj
-
 				var arr_class = [];
 				each(cls, function (v, i) {
 					if (v) arr_class.push(i);
@@ -1889,22 +1868,21 @@ class Control_Core extends Data_Object {
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
 				da['class'] = arr_classes.join(' ');
-
 				//this.add_class(val);
 				// And the DOM should update itself when one of these 'model' objects gets changed - depending on if its activated or not.
-
-
 			} else if (tCls == 'string') {
 				var arr_classes = cls.split(' ');
 				var already_has_class = false,
 					l = arr_classes.length,
 					c = 0;
+				
 				while (c < l && !already_has_class) {
-					if (arr_classes[c] == class_name) {
+					if (arr_classes[c] === class_name) {
 						already_has_class = true;
 					}
 					c++;
 				}
+				console.log('already_has_class', already_has_class);
 				if (!already_has_class) {
 					arr_classes.push(class_name);
 				}
@@ -1912,10 +1890,9 @@ class Control_Core extends Data_Object {
 				//console.log('add_class str_cls', str_cls);
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
+				console.log('add arr_classes', arr_classes);
 				da['class'] = arr_classes.join(' ');
 				//this.dom.attrs['class'] = class_name;
-
-
 				// And the DOM should update itself when one of these 'model' objects gets changed - depending on if its activated or not.
 			}
 		}
@@ -1927,7 +1904,6 @@ class Control_Core extends Data_Object {
 		let da = this.dom.attrs,
 			cls = da['class'];
 		//console.log('cls', cls);
-
 		//var el = this.dom.el;
 		//console.log('el.className', el.className);
 		if (cls) {
@@ -1946,15 +1922,10 @@ class Control_Core extends Data_Object {
 				})
 				//var str_class = arr_class.join(' ');
 				//this.add_class(str_cls);
-
 				//this.dom.attrs.set()
 				//this.dom.attrs.set('class', str_cls);
-
 				da['class'] = arr_class.join(' ');
-
-
 				//el.className = str_class;
-
 				//console.log('str_class ' + str_class);
 			}
 			if (tCls == 'string') {
@@ -1977,20 +1948,14 @@ class Control_Core extends Data_Object {
 				//console.log('str_cls', str_cls);
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
-
+				console.log('remove arr_res', arr_res);
 				da['class'] = arr_res.join(' ');
-
-
-
 				//console.log('str_cls ' + str_cls);
 				//throw 'stop';
 			}
-
 			// and if it's a data value, do similar...
-
 			if (tCls == 'data_value') {
 				var cls2 = cls.value();
-
 				var arr_classes = cls2.split(' ');
 				var arr_res = [];
 				var l = arr_classes.length,
@@ -2007,11 +1972,8 @@ class Control_Core extends Data_Object {
 				//var str_cls = arr_res.join(' ');
 				//console.log('str_cls ', str_cls);
 				//this.add_class(str_cls);
-
 				//this.dom.attrs.set('class', str_cls);
-
 				da['class'] = arr_res.join(' ');
-
 				//console.log('str_cls ' + str_cls);
 			}
 
@@ -2085,7 +2047,6 @@ class Control_Core extends Data_Object {
 
 		var s = this.selection_scope;
 		//console.log('parent ' + parent);
-
 		var ps = this.parent.selection_scope;
 
 		if (s === ps) {
@@ -2094,15 +2055,12 @@ class Control_Core extends Data_Object {
 			var psel = this.parent.selected;
 			if (psel && psel.value && psel.value() == true) {
 				//throw 'stop';
-
 				return this.parent;
 			} else {
 				return this.parent.find_selected_ancestor_in_scope();
 			}
 		}
 		//throw 'stop';
-
-
 	}
 
 	'remove' () {
@@ -2163,15 +2121,12 @@ class Control_Core extends Data_Object {
 	'$match' (selector) {
 		// Does this match the selector?
 		let res = false;
-
-
 		let tn = this.__type_name;
 		if (tn) {
 			if (tn === selector) res = true;
 		}
 		return res;
 	}
-
 
 	// Want it to return an array of them.
 
@@ -2185,12 +2140,10 @@ class Control_Core extends Data_Object {
 		}
 
 		this.content.each(item => {
-
 			if (item.$) {
 				let nested_res = item.$(selector, handler);
 				Array.prototype.push.apply(res, nested_res);
 			}
-
 		});
 
 		return res;
@@ -2246,20 +2199,12 @@ class Control_Core extends Data_Object {
 	'clear' () {
 		// clear all the contents.
 		// ui should react to the change.
-
 		//return this.content.clear();
 		this.content.clear();
 		// ui seems not to react to this.
-
 		// remove all dom nodes?
-
 		// Or have a different part that responds to content events?
-
 		// content event handlers seem important.
-
-
-
-
 	}
 
 	'activate' () {

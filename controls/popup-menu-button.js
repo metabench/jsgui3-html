@@ -43,7 +43,7 @@ class Popup_Menu_Button extends Button {
 
 
         var context = this.context;
-        var that = this;
+        // that = this;
         // With name as a field, that field should get sent to the client...
 
         // Then will have the hidden menu that appears when the popup menu button is clicked.
@@ -89,9 +89,9 @@ class Popup_Menu_Button extends Button {
             });
             root_menu_item.add_class('popup-menu');
 
-            that.add(root_menu_item);
+            this.add(root_menu_item);
             root_menu_item.inner.add_class('popup-menu');
-            that.root_menu_item = root_menu_item;
+            this.root_menu_item = root_menu_item;
 
             // Then the inner part / the part that is hidden within the root node.
             // Show / hide the hidden area based on click or hover.
@@ -147,7 +147,6 @@ class Popup_Menu_Button extends Button {
             // It does not have a rendering phase at the moment when it's not being rendered on the server.
             //  Want small and to-the-point client-side rendering.
 
-
         }
 
 
@@ -171,7 +170,7 @@ class Popup_Menu_Button extends Button {
 
             //console.log('Popup_Menu_Button activate');
             // Need references?
-            var that = this;
+            //var that = this;
 
             //console.log('this.root_menu_item', this.root_menu_item);
 
@@ -189,7 +188,7 @@ class Popup_Menu_Button extends Button {
             //  Could leave a placeholder / comment in place of where the element used to be.
             //  Then swap them to go back.
 
-            this.state.on('change', function (e_change) {
+            this.state.on('change', (e_change) => {
                 //console.log('Popup_Menu_Button state change', e_change);
 
                 // Change it in the UI at this point.
@@ -213,7 +212,7 @@ class Popup_Menu_Button extends Button {
 
                     // Elsewhere could take account for menu being put into the body?
 
-                    that.one_mousedown_elsewhere((e_mousedown_elsewhere) => {
+                    this.one_mousedown_elsewhere((e_mousedown_elsewhere) => {
                         console.log('e_mousedown_elsewhere', e_mousedown_elsewhere);
                         /*
                         window.requestAnimationFrame(function () {
@@ -226,18 +225,13 @@ class Popup_Menu_Button extends Button {
 
                         setTimeout(function () {
                             //resolve(func.apply(null, args));
-                            that.i_state = 0;
-                            that.state.set('closed'); // closed
+                            this.i_state = 0;
+                            this.state.set('closed'); // closed
                         }, 300);
                         
 
                         // close it.
                         //console.log('pre close');
-
-
-
-                        
-
 
                     })
                 };
@@ -248,7 +242,7 @@ class Popup_Menu_Button extends Button {
             });
 
 
-            root_menu_item.on('click', function (e_click) {
+            root_menu_item.on('click', (e_click) => {
                 //console.log('root_menu_item clicked e_click', e_click);
 
                 // have a control target?
@@ -266,8 +260,8 @@ class Popup_Menu_Button extends Button {
                     new_i_state = 0;
                 }
 
-                that.i_state = new_i_state;
-                that.state.set(that.states[new_i_state]);
+                this.i_state = new_i_state;
+                this.state.set(that.states[new_i_state]);
                 //}
 
             });
@@ -283,7 +277,7 @@ class Popup_Menu_Button extends Button {
             root_menu_item.inner.content.each((inner_menu_item) => {
                 //console.log('inner_menu_item', inner_menu_item);
 
-                inner_menu_item.on('click', function (e_click) {
+                inner_menu_item.on('click', (e_click) => {
                     //console.log('root_menu_item clicked e_click', e_click);
 
                     // have a control target?
@@ -297,7 +291,7 @@ class Popup_Menu_Button extends Button {
                     //console.log('tof that.state', tof(that.state));
 
                     root_menu_item.state.set('closed');
-                    that.i_state = 0;
+                    this.i_state = 0;
                     //}
 
                 });
