@@ -11,7 +11,6 @@ var get_a_sig = jsgui.get_a_sig;
 
 var get_window_size = jsgui.get_window_size;
 
-
 const Selection_Scope = require('./selection-scope');
 // this is the enhanced HTML module.
 
@@ -40,7 +39,7 @@ class Page_Context extends jsgui.Evented_Class {
         var map_new_ids = {};
         // and have the objects registered within the context too.
         var map_objects = {};
-        var _get_new_typed_object_id = function (type_name) {
+        var _get_new_typed_object_id = (type_name) => {
             //console.log('map_new_ids', map_new_ids);
 
             if (!is_defined(map_new_ids[type_name])) {
@@ -55,9 +54,8 @@ class Page_Context extends jsgui.Evented_Class {
         }
 
         this.new_id = _get_new_typed_object_id;
-        this.set_max_ids = function (map_max_ids) {
-
-            each(map_max_ids, function (v, i) {
+        this.set_max_ids = (map_max_ids) => {
+            each(map_max_ids, (v, i) => {
                 map_new_ids[i] = v + 1;
             })
         }
@@ -69,13 +67,23 @@ class Page_Context extends jsgui.Evented_Class {
     }
 
     'new_selection_scope'(ctrl) {
+        //
         // create the selection scope, with an assigned id
         var res = new Selection_Scope({
             'context': this,
             'id': this.selection_scope_id_counter++
         })
         this.selection_scopes[res.id] = res;
-        if (ctrl) ctrl.selection_scope = res;
+        
+        if (ctrl) {
+            //console.log('core new_selection_scope ctrl._id()', ctrl._id());
+            ctrl.selection_scope = res;
+            if (!document) {
+                // 
+                ctrl._fields.selection_scope = res.id;
+            }
+        }
+        
         return res;
     }
 
@@ -132,7 +140,7 @@ class Page_Context extends jsgui.Evented_Class {
             // a map of keys and constructors values.
             var o = a[0];
             var map_Controls = this.map_Controls;
-            each(o, function (name, Constructor) {
+            each(o, (name, Constructor) => {
                 name = name.toLowerCase();
                 //console.log('name ' + name);
                 map_Controls[name] = Constructor;
@@ -166,9 +174,8 @@ class Page_Context extends jsgui.Evented_Class {
     'first_ctrl_matching_type' (type_name) {
         // Want to iterate through the controls.
         var res;
-        each(this.map_controls, function (ctrl, ctrl_id, fn_stop) {
+        each(this.map_controls, (ctrl, ctrl_id, fn_stop) => {
             //console.log('fn_stop', fn_stop);
-
             //console.log('ctrl', ctrl);
             //console.log('ctrl.__type_name', ctrl.__type_name);
 
@@ -284,11 +291,9 @@ class Page_Context extends jsgui.Evented_Class {
         var el_abs = el_ctr.childNodes[0];
 
         document.body.appendChild(el_abs);
-
         //ctrl_abs.set('el', el_abs);
         // within the context, we can make new controls and put them in the document.
         // an absolutely positioned div.
-
         this.ctrl_abs = ctrl_abs;
         //throw 'stop';
     }
@@ -313,9 +318,7 @@ class Page_Context extends jsgui.Evented_Class {
     /*
     'ensure_dock_placeholder': function(pos) {
         //console.log('Page Context ensure_dock_placeholder ' + pos);
-
         var fw = this.full_window;
-
         if (fw) {
             fw.ensure_dock_placeholder(pos);
         }

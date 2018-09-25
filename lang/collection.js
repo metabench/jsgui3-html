@@ -657,7 +657,7 @@ class Collection extends Data_Object {
             // don't consult the index system.
             var foundItems = [];
             // for each object we need to go deeper into the fields.
-            each(this, function (item, index) {
+            each(this, (item, index) => {
                 //console.log('index ' + index);
                 //console.log('item ' + stringify(item));
 
@@ -700,7 +700,7 @@ class Collection extends Data_Object {
 
                 if (tip2 === 'array') {
                     // possibly should be a collection
-                    each(ip2, function (v, i) {
+                    each(ip2, (v, i) => {
                         //console.log('v ' + stringify(v));
                         var matches = obj_matches_query_obj(v, query);
                         //console.log('matches ' + matches);
@@ -1859,7 +1859,7 @@ class Collection extends Data_Object {
 
 
     'load_array' (arr) {
-        var that = this;
+        //var that = this;
         //console.log('load_array arr ', (arr));
         // there could be a data type that this is expecting... a constraint?
         //  could have a data type constructor.
@@ -1876,7 +1876,7 @@ class Collection extends Data_Object {
         // 
 
         for (var c = 0, l = arr.length; c < l; c++) {
-            that.push(arr[c]);
+            this.push(arr[c]);
         }
         this.raise('load');
     }
@@ -1899,14 +1899,13 @@ class Collection extends Data_Object {
 
     'value' () {
         var res = [];
-        this.each(function (v, i) {
+        this.each((v, i) => {
             if (typeof v.value == 'function') {
                 //res[i] = v.value();
                 res.push(v.value());
             } else {
                 res.push(v);
             }
-
         });
         return res;
     }

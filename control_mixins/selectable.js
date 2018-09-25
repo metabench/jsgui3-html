@@ -13,8 +13,8 @@ let selectable = (ctrl) => {
 
 
     let click_handler = (e) => {
-        console.log('selectable click e', e);
-        if (ctrl.selectable) {
+        //console.log('selectable click e', e);
+        if (ctrl.selectable && !ctrl.selection_scope) {
             var ctrl_key = e.ctrlKey;
             var meta_key = e.metaKey;
             if (ctrl.select_unique && (ctrl_key || meta_key)) {
@@ -37,6 +37,15 @@ let selectable = (ctrl) => {
             let n = e_change.name,
                 value = e_change.value;
             // old selectable value too?
+
+            if (n === 'selected') {
+                if (value === true) {
+                    ctrl.add_class('selected');
+                } else {
+                    ctrl.remove_class('selected');
+                }
+            }
+
             if (n === 'selectable') {
                 if (value === true) {
 

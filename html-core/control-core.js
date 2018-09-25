@@ -1270,7 +1270,6 @@ class Control_Core extends Data_Object {
 		return this.style({
 			'opacity': 1
 		}, callback);
-
 	}
 
 	/*
@@ -1513,8 +1512,6 @@ class Control_Core extends Data_Object {
 				}
 				new_content.parent = this;
 
-
-
 				//register on event listen for add
 				//console.log('this.__active', this.__active);
 				//if (this.__active) {
@@ -1742,8 +1739,6 @@ class Control_Core extends Data_Object {
 		*/
 		dom_attributes['data-jsgui-id'] = id;
 		dom_attributes['data-jsgui-type'] = this.__type_name;
-
-
 		//var el = this._.el || dom._.el;
 		var el;
 		if (dom.el) {
@@ -1777,7 +1772,7 @@ class Control_Core extends Data_Object {
 	}
 	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope' () {
-		//console.log('find_selection_scope');
+		//console.log('find_selection_scope', this._id());
 		var res = this.selection_scope;
 		if (res) return res;
 		// look at the ancestor...
@@ -1840,7 +1835,7 @@ class Control_Core extends Data_Object {
 				cls[class_name] = true;
 				// then get the classes from the obj
 				var arr_class = [];
-				each(cls, function (v, i) {
+				each(cls, (v, i) => {
 					if (v) arr_class.push(i);
 				})
 				//var str_cls = arr_class.join(' ');
@@ -1882,7 +1877,7 @@ class Control_Core extends Data_Object {
 					}
 					c++;
 				}
-				console.log('already_has_class', already_has_class);
+				//console.log('already_has_class', already_has_class);
 				if (!already_has_class) {
 					arr_classes.push(class_name);
 				}
@@ -1890,7 +1885,7 @@ class Control_Core extends Data_Object {
 				//console.log('add_class str_cls', str_cls);
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
-				console.log('add arr_classes', arr_classes);
+				//console.log('add arr_classes', arr_classes);
 				da['class'] = arr_classes.join(' ');
 				//this.dom.attrs['class'] = class_name;
 				// And the DOM should update itself when one of these 'model' objects gets changed - depending on if its activated or not.
@@ -1915,7 +1910,7 @@ class Control_Core extends Data_Object {
 
 				// go through it again, building the class string...
 				var arr_class = [];
-				each(cls, function (v, i) {
+				each(cls, (v, i) => {
 					//if (v) arr_class.push(i);
 					if (i === class_name) cls[i] = false;
 					if (cls[i]) arr_class.push(i);
@@ -1948,7 +1943,7 @@ class Control_Core extends Data_Object {
 				//console.log('str_cls', str_cls);
 				//this.add_class(str_cls);
 				//this.dom.attrs.set('class', str_cls);
-				console.log('remove arr_res', arr_res);
+				//console.log('remove arr_res', arr_res);
 				da['class'] = arr_res.join(' ');
 				//console.log('str_cls ' + str_cls);
 				//throw 'stop';
@@ -2011,7 +2006,7 @@ class Control_Core extends Data_Object {
 
 		var el = this.dom.el;
 
-		var inner = function (target2) {
+		var inner = (target2) => {
 
 			if (target2 == el) {
 				return true;
@@ -2098,7 +2093,7 @@ class Control_Core extends Data_Object {
 			'selected': true
 		}
 
-		each(cl.split(' '), function (i, v) {
+		each(cl.split(' '), (v, i) => {
 			if (i && !map_class_exclude[i]) res.add_class(i);
 		})
 

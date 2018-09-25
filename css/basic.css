@@ -414,7 +414,6 @@ div.single-line.selected {
 }
 
 .tree-node {
-    /* height: 32px; */
     border-bottom: #CCCCCC;
     /* position: relative; */
     clear: both;
@@ -425,7 +424,10 @@ div.single-line.selected {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    max-width: 520px;
 }
+
+
 
 .tree-node img {}
 
@@ -483,6 +485,16 @@ div.single-line.selected {
     position: relative;
 }
 
+.tree-node.selected .top-line {
+
+    /* ABCDEF  DCEBFA  */
+    /* height: 22px; */
+    background-color: #DCEBFA;
+    box-sizing: border-box;
+    border: 1px solid #ABCDEF;
+
+}
+
 .tree-node .toggle-button {
     /* position: absolute; */
     position: absolute;
@@ -494,7 +506,13 @@ div.single-line.selected {
     top: 3px;
 }
 
-.tree-node span.text {
+.tree-node.selected .top-line span.text {
+    position: absolute;
+    left: 23px;
+    line-height: 22px;
+}
+
+.tree-node .top-line span.text {
     position: absolute;
     left: 24px;
     line-height: 24px;
