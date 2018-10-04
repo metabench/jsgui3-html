@@ -55,7 +55,6 @@ let selection_box_host = (ctrl) => {
     //console.log('selection_box_host', ctrl._id());
     //console.log('ctrl.select_unique', ctrl.select_unique);
     //console.trace();
-
     let click_handler = (e) => {
         //console.log('selectable click e', e);
         if (ctrl.selectable && !ctrl.selection_scope) {
@@ -73,18 +72,13 @@ let selection_box_host = (ctrl) => {
     field(ctrl, 'selection_box_host');
     ctrl.selection_box_host = true;
     // ctrl drag events
-
     // wrap the activation function?
     let old_activate = ctrl.activate;
     ctrl.activate = function (spec) {
         if (old_activate) {
             old_activate.call(this, spec);
         }
-
-
         // and a selection scope?
-
-
         // drag anywhere in the document?
         // create box
         // update box
@@ -112,7 +106,6 @@ let selection_box_host = (ctrl) => {
             // need to be able to set coords.
             //  give it the coords, it words out which is the top etc
             // box from coords
-
             // l,t,w,h box
             // ltwh_from_coords
             // coords_to_lt_wh
@@ -131,11 +124,9 @@ let selection_box_host = (ctrl) => {
             // md within uncovered control
             // a way to cancel the event too...
             //console.log('md', md);
-
             let main_boxes = ctrl.$('.main-box');
             //console.log('main_boxes', main_boxes);
             //console.log('main_boxes.length', main_boxes.length);
-
             let do_begin_selection_box = true;
 
             if (md.target.tagName.toLowerCase() === 'span') {
@@ -144,9 +135,7 @@ let selection_box_host = (ctrl) => {
 
             if (do_begin_selection_box) {
                 md_pos = md.pos;
-
-                console.log('***ctrl', ctrl);
-
+                //console.log('***ctrl', ctrl);
                 ctrl.find_selection_scope().deselect_all();
 
                 //console.log('md', md);
@@ -163,9 +152,7 @@ let selection_box_host = (ctrl) => {
                 var el = ctrl.dom.el;
                 var elpos2 = [el.offsetLeft, el.offsetTop];
 
-
                 // Search for the 'main-box' controls
-
                 // dot for the css class
 
                 isf = new jsgui.Intersection_Finder({
@@ -176,21 +163,9 @@ let selection_box_host = (ctrl) => {
                     //console.log('isf e_change', e_change);
                     if (e_change.name === 'intersections') {
                         let [intersecting, newly_intersecting, previously_intersecting] = e_change.value;
-                        //console.log('intersecting.length', intersecting.length);
-
-                        //console.log('newly_intersecting', newly_intersecting);
-                        //console.log('previously_intersecting', previously_intersecting);
-
-                        // select and deselect
-                        //  will need to search upwards for parents that are selectable
-
-                        // selectable parent
-                        //  find_parent('[selectable = true]')
-
                         each(newly_intersecting, ctrl => {
                             let sel = ctrl.closest(cmatch => {
                                 //console.log('cmatch', cmatch);
-
                                 return cmatch.selectable === true;
                             });
                             //console.log('sel', sel);
@@ -204,19 +179,6 @@ let selection_box_host = (ctrl) => {
                         //each(previously_intersecting, ctrl => ctrl.selected = false);
                     }
                 });
-
-                //console.log('elpos2', elpos2);
-                //console.log('md_offset_within_ctrl', md_offset_within_ctrl);
-                // pos of ctrl
-                // md.offset
-                // md offset pos
-                // md offset...
-                // offset within ctrl.
-                //md_pos = md.offset;
-                //console.log('ofs(md)', ofs(md));
-
-                // not yet, only once 
-
                 let selection_box = nsb(md.pos);
                 //console.log('selection_box', selection_box);
                 if (selection_box) {
@@ -229,15 +191,6 @@ let selection_box_host = (ctrl) => {
             }
 
         }, mm => {
-            //console.log('mm', mm);
-            //console.log('ofs(mm)', ofs(mm));
-            //console.log('selection_box', selection_box);
-
-            // mouse move offset from start
-            // mm offset within control
-
-            // could see total movement size.
-
             if (selection_box) {
                 mm_pos = mm.pos;
                 let ctrl_pos = ctrl.bcr()[0];
@@ -247,17 +200,6 @@ let selection_box_host = (ctrl) => {
                 //console.log('intersecting', intersecting);
                 selection_box.coords = [md_offset_within_ctrl, mm_offset_within_ctrl];
                 isf.coords = [md_pos, mm_pos];
-
-                /*
-                ctrl.content.each(subctrl => {
-                    console.log('subctrl', subctrl);
-                });
-                */
-
-                //ctrl.$('')
-
-                // find the controls covered by / intersecting the selection box
-                // positions of all controls / tree node controls that are covered by the selection box, within the selection scope.
             }
         }, mu => {
             //console.log('mu', mu);

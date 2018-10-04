@@ -1,6 +1,7 @@
 var jsgui = require('../lang/lang');
 var each = jsgui.each;
 var tof = jsgui.tof;
+const Control = require('./control');
 
 class Selection_Scope extends jsgui.Data_Object {
 	//var Selection_Scope = jsgui.Class.extend({
@@ -22,6 +23,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		var count_deselected = 0;
 
 		var selected;
+		//console.log('select_only this.map_selected_controls', this.map_selected_controls);
 		each(this.map_selected_controls, (v, i) => {
 			// Don't want to select the selection scope itself.
 			if (v && v !== ctrl && v !== this.control) {
@@ -31,6 +33,7 @@ class Selection_Scope extends jsgui.Data_Object {
 				}
 				//console.log('should have deselcted ' + v._id())
 			}
+			//console.log('v !== this.control', v !== this.control);
 			if (v === ctrl && v !== this.control) {
 				currently_selected = v.selected;
 			}
@@ -39,7 +42,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		if (typeof ctrl._id === 'function') {
 			this.map_selected_controls[ctrl._id()] = ctrl;
 		} else {
-			console.log('typeof ctrl._id', typeof ctrl._id);
+			//console.log('typeof ctrl._id', typeof ctrl._id);
 		}
 		// and then tell the control that it's selected.
 		// could possibly set a CSS flag.
@@ -56,7 +59,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		}
 	}
 	'deselect_all'() {
-		console.log('this.map_selected_controls', this.map_selected_controls);
+		//console.log('this.map_selected_controls', this.map_selected_controls);
 		each(this.map_selected_controls, (v, i) => {
 			// Don't want to select the selection scope itself.
 			if (v) {
@@ -83,9 +86,9 @@ class Selection_Scope extends jsgui.Data_Object {
 		var cs = ctrl.selection_scope;
 		var msc = this.map_selected_controls;
 		var that = this;
-		ctrl.get('content').each(v => {
-			var tv = tof(v);
-			if (tv == 'control') {
+		ctrl.content.each(v => {
+			//var tv = tof(v);
+			if (v instanceof Control) {
 				v.selected = false;
 				var id = v._id();
 				if (msc[id]) msc[id] = false;

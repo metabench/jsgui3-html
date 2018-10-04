@@ -8,12 +8,15 @@ let selectable = (ctrl) => {
 
     let click_handler = (e) => {
         //console.log('selectable click e', e);
+        //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
+        //console.log('ctrl.selectable', ctrl.selectable);
         if (ctrl.selectable && !ctrl.selection_scope) {
             var ctrl_key = e.ctrlKey;
             var meta_key = e.metaKey;
             if ((ctrl_key || meta_key)) {
                     ctrl.action_select_toggle();
             } else {
+                console.log('pre select only');
                 ctrl.action_select_only();
             }
         }
@@ -53,13 +56,15 @@ let selectable = (ctrl) => {
                     });
                     ctrl.action_select_only = ctrl.action_select_only || (() => {
                         //console.log('action_select_only');
-                        //let ss = ctrl.find_selection_scope();
+                        let ss = ctrl.find_selection_scope();
                         //console.log('ss', ss);
                         if (ss) ss.select_only(ctrl);
 
                         //this.find_selection_scope().select_only(this);
                     });
                     ctrl.action_select_toggle = ctrl.action_select_toggle || (() => {
+                        let ss = ctrl.find_selection_scope();
+                        //console.log('ss', ss);
                         ss.select_toggle(ctrl);
                     });
                     // ctrl.deselect();
