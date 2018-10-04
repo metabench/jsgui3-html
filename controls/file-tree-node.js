@@ -1,6 +1,8 @@
 const jsgui = require('../html-core/html-core');
 const Tree_Node = require('./tree-node');
 
+const mx_selection_box_host = require('../control_mixins/selection-box-host');
+
 class File_Tree_Node extends Tree_Node {
     constructor(spec) {
         /*
@@ -8,34 +10,31 @@ class File_Tree_Node extends Tree_Node {
             spec.text = spec.camera.name;
         }
         */
-
-
         // Could be a directory too?
-
         if (spec.file) {
             let file = spec.file;
             let filename = file.name;
             spec.text = file.name;
-            spec.__type_name = 'file_tree_node';
+            
         }
-
+        spec.__type_name = 'file_tree_node';
         spec.expandable = false;
 
         super(spec);
         this.add_class('file');
+
+        
+        
+        
+        
         // Camera could be a camera object that can provide data.
         //  On the client should go through a data service.
         //this.camera = spec.camera;
 
         //console.log('File_Tree_Node spec', spec);
 
-
-
-
-
         if (!spec.el) {
             let tn;
-
             /*
             this.add(tn = new Tree_Node({
                 context: this.context,

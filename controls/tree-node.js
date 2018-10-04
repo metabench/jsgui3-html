@@ -3,9 +3,18 @@ var Plus_Minus_Toggle_Button = require('./plus-minus-toggle-button');
 var Vertical_Expander = require('./vertical-expander');
 
 const mx_selectable = require('../control_mixins/selectable');
-const {prop, field} = require('obext');
+const {
+	prop,
+	field
+} = require('obext');
 
-const {stringify, each, tof, def, Control} = jsgui;
+const {
+	stringify,
+	each,
+	tof,
+	def,
+	Control
+} = jsgui;
 
 /*
 var stringify = jsgui.stringify,
@@ -88,136 +97,143 @@ class Tree_Node extends Control {
 		//}
 	}
 
-	'compose_tree_node' (spec) {
+	'compose_tree_node'(spec) {
 		//console.log('!!this.context', !!this.context);
-			//throw 'stop';
-			//let my = p => p.context = this.context;
-			let my = (p) => {
-				p.context = this.context;
-				return p;
+		//throw 'stop';
+		//let my = p => p.context = this.context;
+		let my = (p) => {
+			p.context = this.context;
+			return p;
+		}
+		const add = item => this.add(item);
+		const make = item => this.make(item);
+		// Old way of doing things...
+		//  allowed classes to be involked without new, meaning they were in a passive mode and held params describing them.
+		var top_line = add(new Control(my({
+			'class': 'top-line'
+		})));
+		let rest_of_top_line;
+		if (def(this.depth)) {
+			// add that many depth blocks
+			//console.log('this.depth', this.depth);
+			for (let c = 0; c < this.depth; c++) {
+				let depth_block = new Control(my({
+					'class': 'depth-block'
+				}))
+				top_line.add(depth_block);
 			}
-			const add = item => this.add(item);
-			const make = item => this.make(item);
-			// Old way of doing things...
-			//  allowed classes to be involked without new, meaning they were in a passive mode and held params describing them.
-			var top_line = add(new Control(my({
-				'class': 'top-line'
-			})));
-			let rest_of_top_line;
-			if (def(this.depth)) {
-				// add that many depth blocks
-				//console.log('this.depth', this.depth);
-				for (let c = 0; c < this.depth; c++) {
-					let depth_block = new Control(my({
-						'class': 'depth-block'
-					}))
-					top_line.add(depth_block);
+		}
+		/*
+		rest_of_top_line = new Control(my({
+			'class': 'rest-of'
+		}));
+		top_line.add(rest_of_top_line);
+		*/
+		//var plus_minus = make(new Plus_Minus_Toggle_Button({}));
+		//top_line.add(plus_minus);
+		let plus_minus, inner_control;
+		let spec3 = {};
+		if (this.state === 'closed') {
+			spec3.state = '+';
+		}
+		top_line.add(plus_minus = new Plus_Minus_Toggle_Button(my(spec3)));
+
+		var main_box = top_line.add(new Control(my({
+			'class': 'main-box'
+		})));
+
+		//plus_minus.hide();
+		//var img_src = ;
+
+		if (this.img_src) {
+			rest_of_top_line.add(new jsgui.img(my({
+				'dom': {
+					'attributes': {
+						'src': this.img_src
+					}
 				}
-			}
-			/*
-			rest_of_top_line = new Control(my({
-				'class': 'rest-of'
-			}));
-			top_line.add(rest_of_top_line);
-			*/
-			//var plus_minus = make(new Plus_Minus_Toggle_Button({}));
-			//top_line.add(plus_minus);
-			let plus_minus, inner_control;
-			let spec3 = {};
-			if (this.state === 'closed') {
-				spec3.state = '+';
-			}
-			top_line.add(plus_minus = new Plus_Minus_Toggle_Button(my(spec3)));
-
-			//plus_minus.hide();
-			//var img_src = ;
-
-			if (this.img_src) {
-				rest_of_top_line.add(new jsgui.img(my({
-					'dom': {
-						'attributes': {
-							'src': this.img_src
-						}
-					}
-				})));
-			}
-			//var img = make(new jsgui.img({}));
-			//img.dom.attributes.src = img_src;
-			// Also add the text to the top line.
-			//var span = make(new jsgui.span({}));
-			//var text = this.text;
-			//console.log('this.text', this.text);
-			//span.add(text);
-			top_line.add(new jsgui.span(my({
-				text: this.text,
-				'class': 'text'
 			})));
+		}
+		//var img = make(new jsgui.img({}));
+		//img.dom.attributes.src = img_src;
+		// Also add the text to the top line.
+		//var span = make(new jsgui.span({}));
+		//var text = this.text;
+		//console.log('this.text', this.text);
+		//span.add(text);
+		// inner_box
+		main_box.add(new jsgui.span(my({
+			text: this.text,
+			'class': 'text'
+		})));
 
-			var clearall = add(new Control(my({
-				'class': 'clearall'
+		/*
+		var clearall = add(new Control(my({
+			'class': 'clearall'
+		})));
+		*/
+		// expandable by default.
+		//  Some won't be.
+
+		let expander;
+		//console.log('this.expandable', this.expandable);
+		if (this.expandable) {
+			expander = add(new Vertical_Expander(my({
+				//state: this.state
 			})));
-			// expandable by default.
-			//  Some won't be.
-
-			let expander;
-			//console.log('this.expandable', this.expandable);
-			if (this.expandable) {
-				expander = add(new Vertical_Expander(my({
-					//state: this.state
-				})));
-				//var inner_control = make(new Control({ 'class': 'inner' }));
-				expander.add(inner_control = new Control(my({
-					'class': 'inner'
-				})));
-				var inner_control_content = inner_control.content;
-				inner_control_content.on('change', e_change => {
-					//console.log('Tree_Node inner_control_content change', e_change);
-					//throw 'stop';
-					var l = inner_control_content.length();
-					//console.log('l', l);
-					if (l > 0) {
-						// so could / should be hidden bydefault anyway.
-						plus_minus.show();
-					}
-					//throw 'stop';
-				});
-				this.toggle_button = plus_minus;
-				//console.log('pre set inner_control');
-				this.inner_control = inner_control;
-				//console.log('post set inner_control');
-				this.expander = expander;
-
-				if (spec.nodes) {
-					for (let node of spec.nodes) {
-						node.context = this.context;
-						node.depth = this.depth + 1;
-						let tn = new Tree_Node(node);
-						this.inner_control.add(tn);
-					}
-					expander.state = this.state = 'open';
-				} else {
-					expander.state = this.state = 'closed';
-					//plus_minus.hide();
-					//expander.close();
+			//var inner_control = make(new Control({ 'class': 'inner' }));
+			expander.add(inner_control = new Control(my({
+				'class': 'inner'
+			})));
+			var inner_control_content = inner_control.content;
+			inner_control_content.on('change', e_change => {
+				//console.log('Tree_Node inner_control_content change', e_change);
+				//throw 'stop';
+				var l = inner_control_content.length();
+				//console.log('l', l);
+				if (l > 0) {
+					// so could / should be hidden bydefault anyway.
+					plus_minus.show();
 				}
-			} else {
-				//console.log('should hide plus_minus');
-				plus_minus.hide();
-			}
-
-			var ctrl_fields = this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
-				'toggle_button': plus_minus
+				//throw 'stop';
 			});
-			if (expander) {
-				ctrl_fields.inner_control = inner_control;
-				ctrl_fields.expander = expander;
+			this.toggle_button = plus_minus;
+			//console.log('pre set inner_control');
+			this.inner_control = inner_control;
+			//console.log('post set inner_control');
+			this.expander = expander;
+
+			if (spec.nodes) {
+				for (let node of spec.nodes) {
+					node.context = this.context;
+					node.depth = this.depth + 1;
+					let tn = new Tree_Node(node);
+					this.inner_control.add(tn);
+				}
+				expander.state = this.state = 'open';
+			} else {
+				expander.state = this.state = 'closed';
+				//plus_minus.hide();
+				//expander.close();
 			}
+		} else {
+			//console.log('should hide plus_minus');
+			plus_minus.hide();
+		}
 
-			this.add_class('tree-node');
+		var ctrl_fields = this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
+			'toggle_button': plus_minus
+		});
+		if (expander) {
+			ctrl_fields.inner_control = inner_control;
+			ctrl_fields.expander = expander;
+		}
 
-			// only active on the server.
-			//  on the client, we don't need those extra references?
-			this.active();
+		this.add_class('tree-node');
+
+		// only active on the server.
+		//  on the client, we don't need those extra references?
+		this.active();
 	}
 
 	// adding a node - need to set up its depth?
@@ -237,7 +253,7 @@ class Tree_Node extends Control {
 	// __is_active
 
 
-	'activate' (el) {
+	'activate'(el) {
 		if (!this.__active) {
 			super.activate(el);
 
@@ -290,13 +306,13 @@ class Tree_Node extends Control {
 				}
 				//expander.on('change', e_change => {
 				//	if (e_change.name === 'state') {
-						//console.log('*state* e_change', e_change);
+				//console.log('*state* e_change', e_change);
 				//	}
 				//});
 			}
 		}
 
-		
+
 
 	}
 }

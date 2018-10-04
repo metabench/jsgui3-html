@@ -492,6 +492,7 @@ div.single-line.selected {
     background-color: #DCEBFA;
     box-sizing: border-box;
     border: 1px solid #ABCDEF;
+    border-radius: 4px;
 
 }
 
@@ -539,8 +540,13 @@ div.single-line.selected {
     */
 }
 
+.tree-node .main-box {
+    height: 24px;
+    margin-left: 24px;
+}
+
 .tree-node .file .top-line span {
-    width: 300px;
+    /* width: 300px; */
 }
 
 .tree-node .file .top-line .toggle-button span {
@@ -984,10 +990,16 @@ div.grid .row .cell span {
     line-height: 28px;
 }
 
-
 .tabbed-panel .tab.selected {
     float: left;
     margin-left: 6px;
     margin-right: 6px;
     background-color: #EEEEEE;
 }
+
+.selection-box {
+    background-color: #ABCDEF;
+    position: absolute;
+    opacity: 0.4;
+}
+

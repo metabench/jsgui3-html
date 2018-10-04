@@ -14,6 +14,8 @@ const {
 	def
 } = jsgui;
 //var is_ctrl = jsgui.is_ctrl;
+const v_subtract = jsgui.util.v_subtract;
+
 
 /*
 var get_a_sig = jsgui.get_a_sig,
@@ -192,7 +194,7 @@ class Control extends Control_Core {
 		//super(spec);
 
 		// just give a selection scope number in the jsgui fields when the control has a selection_scope.
-		
+
 
 		/*
 
@@ -446,21 +448,15 @@ class Control extends Control_Core {
 
 	'one_mousedown_elsewhere'(callback) {
 		var body = this.context.body();
-
-		//var that = this;
-
 		var fn_mousedown = (e_mousedown) => {
 			// Maybe see if it's internal or external to the control
-
 			// Would be good to have that in the event.
 
 			var el = this.dom.el;
 			var e_el = e_mousedown.srcElement || e_mousedown.target;
 			//console.log('one mousedown', e_mousedown);
 			//console.log('e_el', e_el);
-
 			// Want to see if the element clicked on is a descendant of this's el.
-
 			// is_contained_by
 			var iao = this.is_ancestor_of(e_el);
 			//console.log('iao', iao);
@@ -476,25 +472,65 @@ class Control extends Control_Core {
 	}
 	// one_click_anywhere
 
-
 	'one_mousedown_anywhere'(callback) {
 		//var ctrl_html_root = this.context.ctrl_document;
 		//console.log('this.context', this.context);
 		var body = this.context.body();
-
 		//var that = this;
 		body.one('mousedown', (e_mousedown) => {
-			// Maybe see if it's internal or external to the control
-
-			// Would be good to have that in the event.
-
 			var el = this.dom.el;
-
 			var e_el = e_mousedown.srcElement || e_mousedown.target;
 			var iao = this.is_ancestor_of(e_el);
 			e_mousedown.within_this = iao;
 			callback(e_mousedown);
 		});
+	}
+
+	'drag_events'(hmd, hmm, hmu) {
+
+		//let md, mm, mu;
+		let body = this.context.body();
+		let md_pos, mm_pos, mu_pos, mm_offset, mu_offset;
+
+		let mm = emm => {
+			// movement offset
+
+			emm.pos = mm_pos = [emm.pageX, emm.pageY];
+			emm.offset = mm_offset = v_subtract(mm_pos, md_pos);
+			//console.log('mm_offset', mm_offset);
+			hmm(emm);
+		}
+		let mu = emu => {
+			emu.pos = mu_pos = [emu.pageX, emu.pageY];
+			emu.offset = mu_offset = v_subtract(mu_pos, md_pos);
+			body.off('mousemove', mm);
+			body.off('mouseup', mu);
+			hmu(emu);
+		}
+		this.on('mousedown', emd => {
+			// page offset
+
+			emd.offset = md_pos = [emd.offsetX, emd.offsetY];
+
+
+
+			emd.pos = md_pos = [emd.pageX, emd.pageY];
+
+			if (hmd(emd) === false) {
+
+			} else {
+				body.on('mousemove', mm);
+				body.on('mouseup', mu);
+			};
+		});
+
+		// mouse up anywhere
+		// mouse move anywhere with the button not pressed.
+
+
+
+
+		//return [md, mm, mu];
 	}
 
 	// Activation of dynamically added content
@@ -517,7 +553,6 @@ class Control extends Control_Core {
 					//  If we have activated the whole page, then they will exist.
 					//  However, we may just want to do activate on some controls.
 					//throw 'stop';
-
 					var ctrl = map_controls[jsgui_id];
 					//console.log('jsgui_id', jsgui_id);
 					//console.log('!!ctrl', !!ctrl);
@@ -701,6 +736,7 @@ class Control extends Control_Core {
 				//el.setAttribute('style', dval.value());
 				dval = dval.value();
 			}
+			//console.log('property_name, dval', property_name, dval);
 
 			if (el && el.nodeType === 1) {
 				el.setAttribute(property_name, dval);
@@ -719,49 +755,22 @@ class Control extends Control_Core {
 	}
 
 	'activate_content_listen'() {
-		//console.log('activate_content_listen, this', this);
-		//console.log('activate_content_listen, this.dom.el', this.dom.el);
-		//var content = this.content;
-		//console.log('1) content.length()', content.length());
-		//var that = this;
 		var context = this.context;
 		var map_controls = context.map_controls;
-		//console.log('map_controls', map_controls);
-		// content.on clear?
-		//  because they all will be changes.
 		let el = this.dom.el;
-		//let that = this;
-		// these events seem to get rid of the el reference.
-		// change, type = 'remove'?
-
 		this.content.on('change', (e_change) => {
 			let itemDomEl;
 			var type = e_change.name;
-			// remove content change...
-			//  could also swap it with other content.
-			//  could be removed & inserted together.
 			if (type === 'insert') {
-
-				//console.log('INSERT');
-
-				//console.log('e_change', e_change);
 				var item = e_change.value;
-				//console.log('item', item);
 				var retrieved_item_dom_el = item.dom.el;
 				var t_ret = tof(retrieved_item_dom_el);
-				//console.log('t_ret', t_ret);
-				//throw 'stop';
-				//console.log('retrieved_item_dom_el', retrieved_item_dom_el);
 				if (t_ret === 'string') {
 					itemDomEl = retrieved_item_dom_el;
 				} else {
 					if (retrieved_item_dom_el) {
 						itemDomEl = retrieved_item_dom_el;
 					}
-					//if (itemDomEl) console.log('1) itemDomEl', itemDomEl);
-					// need to render the item ID in there too.
-					//var id = item._id();
-
 					if (!itemDomEl) {
 						//console.log('item._id()', item._id());
 						if (context.map_els[item._id()]) {
@@ -804,7 +813,7 @@ class Control extends Control_Core {
 					itemDomEl = document.createTextNode(itemDomEl);
 				}
 				if (!itemDomEl) {
-					console.log('*** !itemDomEl this._id()', this._id());
+					//console.log('*** !itemDomEl this._id()', this._id());
 					/*
 					//
 					var grandparent = that.parent().parent();
@@ -823,15 +832,11 @@ class Control extends Control_Core {
 					//e_change.item.activate_this_and_subcontrols();
 					//e_change.item.activate();
 				}
-
 			}
 			if (type === 'clear') {
-
-				//console.log('el ' + el);
 				if (el) {
 					el.innerHTML = '';
 				}
-				//if (el) el.innerHTML = '';
 			}
 			if (type === 'remove') {
 				if (e_change.value.dom.el) {
@@ -947,7 +952,6 @@ class Control extends Control_Core {
 			if (el.getAttribute) {
 				var str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
 				if (str_ctrl_fields) {
-					//console.log('str_ctrl_fields ' + str_ctrl_fields);
 					ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
 				}
 				var ctrl_fields_keys = Object.keys(ctrl_fields);
@@ -958,14 +962,7 @@ class Control extends Control_Core {
 				for (c = 0; c < l_ctrl_fields_keys; c++) {
 					key = ctrl_fields_keys[c];
 					value = ctrl_fields[key];
-
 					var referred_to_control = context.map_controls[value];
-
-					//console.log('referred_to_control', referred_to_control);
-
-					//that.set(key, referred_to_control);
-					// The underscore thing may work better as it could be a proxy object.
-
 					this[key] = referred_to_control;
 					//console.log('referred_to_control', referred_to_control);
 
@@ -1017,7 +1014,6 @@ class Control extends Control_Core {
 			console.trace();
 			console.log('missing el');
 		}
-		//this.rec_desc_activate();
 	}
 
 	'activate_dom_attributes'() {
@@ -1026,7 +1022,6 @@ class Control extends Control_Core {
 		// may not have el....?
 		//var that = this;
 		var dom_attributes = this.dom.attributes;
-		// 
 		var item, name, value;
 		if (el) {
 			if (el.attributes) {
@@ -1046,6 +1041,16 @@ class Control extends Control_Core {
 				}
 			}
 		}
+
+		/*
+		dom_attributes.style.on('change', e_style_change => {
+			console.log('e_style_change', e_style_change);
+		})
+		*/
+
+		//dom_attributes.on('change', d_change => {
+		//	console.log('*& d_change', d_change);
+		//});
 	}
 
 	'attach_dom_events'() {
@@ -1070,9 +1075,7 @@ class Control extends Control_Core {
 			// callback on all of the child controls, and then iterate those.
 			//console.log('recursive_iterate');
 			var content = ctrl.content;
-			//console.log('content', content);
 			var t_content = tof(content);
-			//console.log('t_content', t_content);
 			if (t_content == 'collection') {
 				if (content.length() > 0) {
 					content.each((item, i) => {
@@ -1100,7 +1103,6 @@ class Control extends Control_Core {
 	'ancestor'(search) {
 		// could maybe work when not activated too...
 		// need to get the ancestor control matching the search (in type).
-
 		let parent = this.parent;
 		if (parent) {
 			if (parent === search) {

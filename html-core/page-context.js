@@ -8,9 +8,7 @@ var Control = jsgui.Control,
 var fp = jsgui.fp;
 var group = jsgui.group;
 var get_a_sig = jsgui.get_a_sig;
-
 var get_window_size = jsgui.get_window_size;
-
 const Selection_Scope = require('./selection-scope');
 // this is the enhanced HTML module.
 
@@ -71,15 +69,14 @@ class Page_Context extends jsgui.Evented_Class {
         // create the selection scope, with an assigned id
         var res = new Selection_Scope({
             'context': this,
-            'id': this.selection_scope_id_counter++
+            'id': this.selection_scope_id_counter++,
+            'ctrl': ctrl
         })
         this.selection_scopes[res.id] = res;
-        
         if (ctrl) {
             //console.log('core new_selection_scope ctrl._id()', ctrl._id());
             ctrl.selection_scope = res;
             if (!document) {
-                // 
                 ctrl._fields.selection_scope = res.id;
             }
         }
@@ -100,16 +97,10 @@ class Page_Context extends jsgui.Evented_Class {
     */
 
     'make' (source) {
-
-        // make is similar to parse and mount.
-        //  
-
         let t_source = tof(source);
         if (t_source === 'string') {
             let parsed = jsgui.parse_and_mount(source, this);
         }
-
-
         /*
         if (abstract_object._abstract) {
             //var res = new
@@ -163,9 +154,7 @@ class Page_Context extends jsgui.Evented_Class {
         //console.log('register_control control.__id', control.__id);
         //console.log('register_control control.__type_name', control.__type_name);
         //console.trace();
-
         var id = control._id();
-
         // Seems a control (not basic control) did not get its ID.
         //console.log('registering control id', id);
         this.map_controls[id] = control;
@@ -285,11 +274,9 @@ class Page_Context extends jsgui.Evented_Class {
         var clientY = e_begin.clientY;
         ctrl_abs.set('dom.attributes.style', 'position: absolute; left: ' + clientX + 'px; top:' + clientY + 'px; height: 200px; width: 320px; background-color: #EEEEEE');
         var html = ctrl_abs.all_html_render();
-
         var el_ctr = document.createElement('div');
         el_ctr.innerHTML = html;
         var el_abs = el_ctr.childNodes[0];
-
         document.body.appendChild(el_abs);
         //ctrl_abs.set('el', el_abs);
         // within the context, we can make new controls and put them in the document.
@@ -301,7 +288,6 @@ class Page_Context extends jsgui.Evented_Class {
         console.log('page context move_drag_selection_scope');
         var clientX = e_move.clientX;
         var clientY = e_move.clientY;
-
         // definitely would be useful to have the abstraction that covers individual style properties.
         var style = 'position: absolute; left: ' + clientX + 'px; top:' + clientY + 'px; height: 200px; width: 320px; background-color: #EEEEEE'
         //console.log('style ' + style);

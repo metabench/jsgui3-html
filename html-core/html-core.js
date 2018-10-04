@@ -7,11 +7,17 @@ var str_arr_mapify = jsgui.str_arr_mapify;
 var get_a_sig = jsgui.get_a_sig;
 var each = jsgui.each;
 var Control = jsgui.Control = require('./control-enh');
+
+const Evented_Class = jsgui.Evented_Class;
 //jsgui.util = require('../lang/util');
 //var Control = jsgui.Control = require('./control-enh');
 var tof = jsgui.tof;
 var map_Controls = jsgui.map_Controls = {};
 const def = jsgui.is_defined;
+
+const {
+    prop
+} = require('obext');
 
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui[tagName] = class extends Control {
@@ -143,16 +149,16 @@ var activate = function (context) {
             //console.log('2) el.tagName ' + el.tagName);
             var nt = el.nodeType;
             //console.log('nt ' + nt);
-    
+
             // So for the 'HTML' tag name...
             //  We should make a control for the HTML document - or it should get activated.
-    
-    
-    
+
+
+
             if (nt == 1) {
                 var jsgui_id = el.getAttribute('data-jsgui-id');
                 // Give the HTML document an ID?
-    
+
                 //console.log('jsgui_id ' + jsgui_id);
                 if (jsgui_id) {
                     var ib = id_before__(jsgui_id);
@@ -165,7 +171,7 @@ var activate = function (context) {
                         if (num > max_typed_ids[ib]) max_typed_ids[ib] = num;
                     }
                     //console.log('max_typed_ids', max_typed_ids);
-    
+
                     map_jsgui_els[jsgui_id] = el;
                     var jsgui_type = el.getAttribute('data-jsgui-type');
                     //console.log('jsgui_type ' + jsgui_type);
@@ -362,7 +368,7 @@ var activate = function (context) {
             }
         }
     });
-    
+
 
 };
 
@@ -430,7 +436,7 @@ jsgui.span = class span extends Control {
     }
     set text(value) {
         this._text = value;
-        
+
         this.raise('change', {
             'name': 'text',
             'value': value
@@ -464,36 +470,36 @@ jsgui.span = class span extends Control {
             dtn = this.dom.el.childNodes[0];
 
             if (!dtn) {
-                dtn = document.createTextNode('');   
+                dtn = document.createTextNode('');
                 this.dom.el.appendChild(dtn);
             }
-    
+
             // Add to array without raising event.
-    
-            
+
+
             let tn = this.tn = this.textNode = this.text_node = new textNode({
                 context: this.context,
                 node: dtn
             });
             this.content._arr.push(tn);
             //this.add(tn);
-            
+
             this.on('change', e => {
                 if (e.name === 'text') {
-    
+
                     dtn.nodeValue = e.value;
-                    
+
                 }
             });
         } else {
 
-            
+
 
             console.log('span expected dom.el');
         }
         //let 
 
-        
+
 
 
 
@@ -553,7 +559,7 @@ class textNode extends Control {
 
         spec.nodeType = 3;
         spec = spec || {};
-        
+
 
         //ctrl_init_call(this, spec);
 
@@ -592,7 +598,7 @@ class textNode extends Control {
             'value': value
         });
     }
-    'all_html_render' () {
+    'all_html_render'() {
         // need to escape the HTML it outputs.
         var res;
 
@@ -628,7 +634,7 @@ class HTML_Document extends jsgui.Control {
         super(spec);
     }
 
-    'render_dtd' () {
+    'render_dtd'() {
         return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n';
     }
 
@@ -687,7 +693,7 @@ class Blank_HTML_Document extends HTML_Document {
         //console.log('');
         //console.log('end init Blank_HTML_Document this._ ' + stringify(this._));
     }
-    'body' () {
+    'body'() {
         //console.log('body sig', sig);
         var a = arguments;
         a.l = arguments.length;
@@ -719,7 +725,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
 
     }
 
-    'include_js' (url) {
+    'include_js'(url) {
         var head = this.get('head');
         // create jsgui.script
         var script = new jsgui.script({
@@ -745,7 +751,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
         head.content.add(script);
     }
 
-    'include_css' (url) {
+    'include_css'(url) {
         var head = this.get('head');
         // create jsgui.script
         // <link rel="stylesheet" type="text/css" href="theme.css">
@@ -769,7 +775,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
     }
 
 
-    'include_jsgui_client' (js_file_require_data_main) {
+    'include_jsgui_client'(js_file_require_data_main) {
         // Could add the default client file.
         // Or a specific client file with a control that also has client-side code.
         //  The client-side code won't get processed on the server.
@@ -812,7 +818,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
         //throw 'stop';
     }
 
-    'include_jsgui_resource_client' (path) {
+    'include_jsgui_resource_client'(path) {
         // Could add the default client file.
         // Or a specific client file with a control that also has client-side code.
         //  The client-side code won't get processed on the server.
@@ -822,7 +828,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
         this.include_jsgui_client(js_file_require_data_main);
 
     }
-    'include_client_css' () {
+    'include_client_css'() {
         var head = this.get('head');
         var link = new jsgui.link({
             //<script type="text/JavaScript" src="abc.js"></script>
@@ -847,6 +853,237 @@ class Client_HTML_Document extends Blank_HTML_Document {
     // also need to include jsgui client css
 }
 
+
+
+// Find 2d intersections
+//  Useful for selection boxes
+
+// Simple algorithm, for the moment. Won't use sectors.
+//  Could be event driven, with events for when controls are found to be intersecting, or found not to be intersection.
+//  .change event
+
+
+
+
+class Intersection_Finder extends Evented_Class {
+    constructor(spec) {
+
+        // For all of the controls here.
+        super(spec);
+
+        // Needs to track the positions of the controls
+        //  Or keep checking them frequently.
+
+        let coords_ctrls;
+
+        let update_ctrl_coords = () => {
+            coords_ctrls = [];
+            //console.log('spec.controls.length', spec.controls.length);
+            each(spec.controls || spec.ctrls, ctrl => {
+                //let [pos,, size] = ctrl.bcr();
+                //console.log('bcr', ctrl.bcr());
+
+                coords_ctrls.push([ctrl.bcr(), ctrl]);
+            });
+        }
+
+        //console.log('coords_ctrls', coords_ctrls);
+
+
+        let map_selected = new Map();
+
+
+
+        let find_intersections = (coords) => {
+            update_ctrl_coords();
+            //console.log('coords[0]', coords[0]);
+            //console.log('box coords', coords);
+
+            let intersecting = [], newly_intersecting = [], previously_intersecting = [];;
+            let [btl, bbr] = coords;
+
+            //console.log('[btl, bbr]', [btl, bbr]);
+            
+
+            each(coords_ctrls, cc => {
+                //console.log('cc', cc);
+
+                let [ccoords, ctrl] = cc;
+
+                let [cpos, cbr, csize] = ccoords;
+
+                // does it intersect the coords?
+
+                //console.log('cc[0][0][0]', cc[0][0][0]);
+                //console.log('cc[0][1][0]', cc[0][1][0]);
+                //console.log('cc[0][2][0]', cc[0][2][0]);
+                //console.log('cc', cc);
+
+
+                //let x_intersect = ccoords[0][0] <= coords[0] && coords[0] <= ccoords[1][0];
+                //let y_intersect = ccoords[0][1] <= coords[1] && coords[1] <= ccoords[1][1];
+
+                /*
+
+                let x_intersect = cpos[0] <= btl[0] && btl[0] <= cbr[0] ||
+                    cpos[0] <= bbr[0] && bbr[0] <= cbr[0];
+
+
+                //console.log('ccoords', ccoords);
+                console.log('cpos', cpos);
+                //console.log('cpos[1]', cpos[1]);
+                //console.log('cbr[1]', cbr[1]);
+                let y_intersect = cpos[1] <= btl[1] && btl[1] <= cbr[1] ||
+                    cpos[1] <= bbr[1] && bbr[1] <= cbr[1];
+
+                */
+                //console.log('cpos', cpos);
+                //console.log('ctrl._id()', ctrl._id());
+                //console.log('cbr', cbr);
+
+                //console.log('btl[0] <= cpos[0] <= bbr[0]', btl[0], cpos[0], bbr[0]);
+
+                //console.log('btl[1] <= cpos[1] <= bbr[1]', btl[1], cpos[1], bbr[1]);
+
+                //console.log('btl', btl);
+                //console.log('bbr', bbr);
+                //console.log('cpos[0]', cpos[0]);
+                //console.log('cbr[0]', cbr[0]);
+
+                /*
+
+                let x_intersect = btl[0] <= cpos[0] && cpos[0] <= bbr[0] || btl[0] <= cbr[0] && cbr[0] <= bbr[0];
+
+
+                let y_intersect = btl[1] <= cpos[1] && cpos[1] <= bbr[1] || btl[1] <= cbr[1] && cbr[1] <= bbr[1];
+
+
+
+                //let x_intersect = btl[0] >= cpos[0] && cpos[0] <= bbr[0] || btl[0] >= cbr[0] && cbr[0] <= bbr[0];
+                //let y_intersect = btl[1] >= cpos[1] && cpos[1] <= bbr[1] || btl[1] >= cbr[1] && cbr[1] <= bbr[1];
+
+                //let x_intersect = cpos[0] <= btl[0] && btl[0] <= cbr[0] ||
+                //    cpos[0] <= bbr[0] && bbr[0] <= cbr[0];
+
+
+                //console.log('ccoords', ccoords);
+                //console.log('cpos', cpos);
+                //console.log('cpos[1]', cpos[1]);
+                //console.log('cbr[1]', cbr[1]);
+                //let y_intersect = cpos[1] <= btl[1] && btl[1] <= cbr[1] ||
+                //    cpos[1] <= bbr[1] && bbr[1] <= cbr[1];
+
+
+                //console.log('x_intersect', x_intersect);
+                //console.log('y_intersect', y_intersect);
+
+                let intersect = x_intersect && y_intersect;
+
+                */
+
+                let intersect = (cpos[0] <= bbr[0] &&
+                    btl[0] <= cbr[0] &&
+                    cpos[1] <= bbr[1] &&
+                    btl[1] <= cbr[1])
+
+                //let y_intersect = ccoords[0][1] <= coords[1] && coords[1] <= ccoords[1][1];
+
+                //console.log('intersect', intersect);
+                //console.log('y_intersect', y_intersect);
+
+                if (intersect) {
+                    // newly intersecting
+                    //console.log('map_selected.get(ctrl)', map_selected.get(ctrl));
+                    if (map_selected.get(ctrl) !== true) {
+                        newly_intersecting.push(ctrl);
+                        map_selected.set(ctrl, true);
+                    }
+                    
+                    intersecting.push(ctrl);
+                    //map_selected.set(ctrl, true);
+                } else {
+                    if (map_selected.get(ctrl) === true) {
+                        previously_intersecting.push(ctrl);
+                        map_selected.set(ctrl, false);
+                    }
+                }
+
+            });
+            return [intersecting, newly_intersecting, previously_intersecting];
+        }
+
+
+        // want a rectify function too.
+        //  2 functions there, with the previous not being onchange, but prechange.
+
+        prop(this, 'coords', (transform_coords) => {
+
+            // some reversals....
+            //console.log('transform_coords', transform_coords);
+
+            if (transform_coords[0][1] > transform_coords[1][1]) {
+                //console.log('yswap');
+                let [a, b] = transform_coords;
+                //transform_coords[0] = b; transform_coords[1] = a;
+                transform_coords = [b, a];
+
+            }
+
+            if (transform_coords[0][0] > transform_coords[1][0]) {
+                //console.log('xswap');
+                let a = transform_coords[1][0];
+                transform_coords[1][0] = transform_coords[0][0];
+                transform_coords[0][0] = a;
+            }
+
+            //console.log('transform_coords', transform_coords);
+
+            return transform_coords;
+
+
+        }, (change_coords) => {
+            //console.log('change_coords', change_coords);
+            //let [i, new_i, un_i] = find_intersections(change_coords[0]);
+
+            // if the intersections have changed...
+
+            let intersections = find_intersections(change_coords[0]);
+            //console.log('intersections', intersections);
+
+            if (intersections[1].length > 0 || intersections[2].length > 0) {
+                this.raise('change', {
+                    'name': 'intersections',
+                    'value': intersections
+                });
+            }
+            
+
+            /*
+            console.log('i.length', i.length);
+
+            // and to say they are unselected too...
+            //  
+
+            each(i, i => {
+                if (map_selected.get(i) === true) {
+
+                } else {
+                    map_selected.set(i, true);
+
+
+
+                }
+            });
+            */
+        });
+        // intersection box
+
+        this.find_intersections = find_intersections;
+
+    }
+}
+
+
 jsgui.textNode = textNode;
 jsgui.Text_Node = textNode;
 jsgui.HTML_Document = HTML_Document;
@@ -854,6 +1091,7 @@ jsgui.Blank_HTML_Document = Blank_HTML_Document;
 jsgui.Client_HTML_Document = Client_HTML_Document;
 jsgui.Page_Context = require('./page-context');
 jsgui.Selection_Scope = require('./selection-scope');
+jsgui.Intersection_Finder = Intersection_Finder;
 
 // And load in all or a bunch of the controls.
 // Can we require all of the controls at once, and then merge them?

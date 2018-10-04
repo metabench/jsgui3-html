@@ -60,7 +60,7 @@ class Vertical_Expander extends Control {
 	}
 	
 	'activate'() {
-		console.log('Vertical Expander activate');
+		//console.log('Vertical Expander activate');
         super.activate();
 
 		// I think that animation should be handled by Contol, just getting called here.
@@ -103,7 +103,7 @@ class Vertical_Expander extends Control {
 
 				var fnTransitionEnd = function(e_end) {
 					//console.log('e_end', e_end);
-					console.log('fnTransitionEnd');
+					//console.log('fnTransitionEnd');
 					//el.style.overflow = 'visible';
 					el.removeEventListener('transitionend', fnTransitionEnd)
 				}
