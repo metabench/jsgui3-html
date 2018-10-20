@@ -263,7 +263,6 @@ class Control extends Control_Core {
 		}
 	}
 
-
 	get size() {
 		if (this._size) {
 			return this._size;
@@ -278,12 +277,13 @@ class Control extends Control_Core {
 		}
 	}
 
+	/*
 	set size(value) {
 
 		//this.super(value);
 
 		//Control_Core.prototype.
-		/*
+		/ *
 		this._size = value;
 		
 		this.style({
@@ -292,11 +292,12 @@ class Control extends Control_Core {
 		});
 		// need to raise a resize event, or that the style has been changed
 		//  or dom attributes changed
-		*/
+		* /
 		super.size = value;
 
 
 	}
+	*/
 
 	'add_text'(value) {
 		var tn = new Text_Node({
@@ -488,9 +489,18 @@ class Control extends Control_Core {
 
 	'drag_events'(hmd, hmm, hmu) {
 
+		// screen x rather than page x
+
+
+
+
 		//let md, mm, mu;
 		let body = this.context.body();
 		let md_pos, mm_pos, mu_pos, mm_offset, mu_offset;
+
+		// may need to deal with scrolling differently somewhere.
+
+		// bcr could become something that gets the absolute positions within documents, not the screen positions.
 
 		let mm = emm => {
 			// movement offset
@@ -511,9 +521,6 @@ class Control extends Control_Core {
 			// page offset
 
 			emd.offset = md_pos = [emd.offsetX, emd.offsetY];
-
-
-
 			emd.pos = md_pos = [emd.pageX, emd.pageY];
 
 			if (hmd(emd) === false) {

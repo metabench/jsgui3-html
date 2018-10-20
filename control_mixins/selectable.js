@@ -5,7 +5,6 @@ const {
 
 let selectable = (ctrl) => {
     let old_selectable = ctrl.selectable;
-
     let click_handler = (e) => {
         //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
@@ -32,8 +31,6 @@ let selectable = (ctrl) => {
             let n = e_change.name,
                 value = e_change.value;
             // old selectable value too?
-
-
             // notify the selection scope?
             let ss = ctrl.find_selection_scope();
             if (n === 'selected') {
@@ -49,9 +46,7 @@ let selectable = (ctrl) => {
 
             if (n === 'selectable') {
                 if (value === true) {
-
                     ctrl.deselect = ctrl.deselect || (() => {
-                        
                         if (ss) ss.deselect(ctrl);
                     });
                     ctrl.action_select_only = ctrl.action_select_only || (() => {
@@ -68,7 +63,6 @@ let selectable = (ctrl) => {
                         ss.select_toggle(ctrl);
                     });
                     // ctrl.deselect();
-
                     if (typeof document === 'undefined') {
                         //ctrl._fields = ctrl._fields || {};
                         //ctrl._fields['selectable'] = true;
@@ -123,11 +117,7 @@ let selectable = (ctrl) => {
         if (old_selectable !== undefined) {
             ctrl.selectable = old_selectable;
         }
-
-
         /*
-
-
         Object.defineProperty(ctrl, 'selectable', {
             get() {
                 return _selectable;

@@ -4,9 +4,9 @@
   "license": "MIT",
   "dependencies": {
     "deep-equal": "^1.0.1",
-    "fnl": "^0.0.3",
+    "fnl": "^0.0.7",
     "htmlparser": "^1.7.7",
-    "obext": "^0.0.3",
+    "obext": "^0.0.4",
     "url-parse": "^1.4.3"
   },
   "engines": {
@@ -18,5 +18,5 @@
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
-  "version": "0.0.13"
+  "version": "0.0.14"
 }

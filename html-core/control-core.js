@@ -462,8 +462,6 @@ class Control_Core extends Data_Object {
 		// TextNodes don't have attributes
 		let d = this.dom = new Control_DOM();
 
-		
-
 		// oext props
 
 		// a prop with a set type.
@@ -2038,7 +2036,6 @@ class Control_Core extends Data_Object {
 		// the control applies to the ultimate selector.
 
 		// need to then go back through the control's parents to find the matching controls.
-
 		// loop through the selectors
 		//  moving to the parent as many times as necessary for each.
 
@@ -2082,6 +2079,7 @@ class Control_Core extends Data_Object {
 		return res;
 	}
 
+	/*
 	get my_selectable() {
 		// iterate parents
 		//  applying a test to see which is selectable.
@@ -2096,6 +2094,7 @@ class Control_Core extends Data_Object {
 	deselect() {
 
 	}
+	*/
 
 	// 01/03/2016
 	//  Better for color to be handled by the input and output processing systems and fields.

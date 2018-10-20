@@ -13,7 +13,6 @@ const stringify = jsgui.stringify,
 const Control = jsgui.Control;
 const v_subtract = jsgui.util.v_subtract;
 //let ofs = e => [e.offsetX, e.offsetY];
-
 /*
 const coords_to_lt_wh = (coords_pair) => {
     //if ()
@@ -29,7 +28,6 @@ const coords_to_lt_wh = (coords_pair) => {
     return [[l,t],[w,h]];
 }
 */
-
 const coords_to_lt_wh = coords_pair => {
     //if ()
     let l, t, r, b, w, h, min = Math.min,
@@ -48,7 +46,6 @@ const coords_to_lt_wh = coords_pair => {
         [w, h]
     ];
 }
-
 
 // a selectable class / control?
 let selection_box_host = (ctrl) => {
@@ -123,7 +120,7 @@ let selection_box_host = (ctrl) => {
         ctrl.drag_events(md => {
             // md within uncovered control
             // a way to cancel the event too...
-            //console.log('md', md);
+            console.log('md', md);
             let main_boxes = ctrl.$('.main-box');
             //console.log('main_boxes', main_boxes);
             //console.log('main_boxes.length', main_boxes.length);
@@ -144,11 +141,23 @@ let selection_box_host = (ctrl) => {
                 // offset of ctrl...
                 // ctrl pos
                 //console.log('ctrl.pos', ctrl.pos);
+
+                // need the scroll position...
+
+                //console.log('ctrl.el.scrollTop', ctrl.dom.el.scrollTop);
+                //console.log('ctrl.el.parentNode.scrollTop', ctrl.dom.el.parentNode.scrollTop);
+                //console.log('window.scrollY', window.scrollY);
+
                 //console.log('ctrl.bcr()', ctrl.bcr());
                 let ctrl_pos = ctrl.bcr()[0];
+
+                // bcr plus window scroll
+
                 // mf pos within control
                 //console.log('ctrl_pos', ctrl_pos);
                 md_offset_within_ctrl = v_subtract(md.pos, ctrl_pos);
+                md_offset_within_ctrl[1] -= window.scrollY;
+                md_pos[1] -= window.scrollY;
                 var el = ctrl.dom.el;
                 var elpos2 = [el.offsetLeft, el.offsetTop];
 
@@ -193,18 +202,34 @@ let selection_box_host = (ctrl) => {
         }, mm => {
             if (selection_box) {
                 mm_pos = mm.pos;
+                mm_pos[1] -= window.scrollY;
                 let ctrl_pos = ctrl.bcr()[0];
+
+                // subtract the scroll position
+
+                // console.log('window.scrollY', window.scrollY);
+                //console.log('ctrl_pos', ctrl_pos);
+                //ctrl_pos[1] += window.scrollY;
+
+                //console.log('2) window.scrollY', window.scrollY);
+
+
                 mm_offset_within_ctrl = v_subtract(mm.pos, ctrl_pos);
+
+                //console.log('mm_offset_within_ctrl', mm_offset_within_ctrl);
+                //mm_offset_within_ctrl[1] -= window.scrollY;
                 //;
                 //let intersecting = isf.find_intersections(selection_box.coords = [md_offset_within_ctrl, mm_offset_within_ctrl]);
                 //console.log('intersecting', intersecting);
+
+                // could set a scroll offset...
+
                 selection_box.coords = [md_offset_within_ctrl, mm_offset_within_ctrl];
                 isf.coords = [md_pos, mm_pos];
             }
         }, mu => {
             //console.log('mu', mu);
             selection_box.remove();
-
             isf = null;
             //console.log('ofs(mu)', ofs(mu));
         });
