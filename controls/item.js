@@ -1,6 +1,12 @@
 var jsgui = require('../html-core/html-core');
 
-const {stringify, each, tof, Control, Data_Value} = jsgui;
+const {
+    stringify,
+    each,
+    tof,
+    Control,
+    Data_Value
+} = jsgui;
 
 /*
 var stringify = jsgui.stringify,
@@ -197,83 +203,89 @@ class Item extends Control {
         }
     }
 
-    'compose_item' () {
-        var value = this.value
-        var ctrl_primary = new Control({
-            'context': this.context
-        });
-        this.add(ctrl_primary);
+    'compose_item'() {
+        var value = this.value;
 
-        var set_value = (value) => {
-            var t_value = tof(value);
-            if (t_value === 'collection') {
-                //console.log('collection value', value);
-                set_value(value._arr[0]);
-                //console.log('tof(value._arr[1])', tof(value._arr[1]));
-                /*
-                if (tof(value._arr[1]) === 'function') {
-                    //console.log('adding on click');
-                    // The problem is, we don't have an element right now.
-                    //  Need to assign this click event to the DOM once it gets an element.
-                    //  It has not been rendered yet, so once it gets rendered and put in the DOM, it still needs to have its DOM events attached.
-                    that.on('click', value._arr[1]);
-                }
-                */
-            } else if (t_value === 'data_value') {
-                ctrl_primary.add(value.value());
-            } else if (t_value === 'string' || t_value === 'number') {
-                // A textNode could do.
-                // Add a span with that text.
-                let span = new jsgui.span({
-                    context: this.context,
-                    text: value
-                });
-                ctrl_primary.add(span);
-            } else if (typeof value.keys === 'function') {
-                var value_keys = value.keys();
-                //console.log('value_keys', value_keys);
-                var map_keys = mapify(value_keys);
-                //console.log('map_keys', map_keys);
-                var has_id = map_keys['id'];
-                var has_name = map_keys['name'];
-                var has_key = map_keys['key'];
-                var id, name, key;
-                if (has_id && has_key && !has_name) {
-                    id = value.id;
-                    key = value.key;
-                    //console.log('id', id);
-                    //console.log('key', key);
-                    var ctrl_id = new Control({
-                        'context': this.context
+        if (value !== undefined) {
+            var ctrl_primary = new Control({
+                'context': this.context
+            });
+            this.add(ctrl_primary);
+
+            var set_value = (value) => {
+                var t_value = tof(value);
+                if (t_value === 'collection') {
+                    //console.log('collection value', value);
+                    set_value(value._arr[0]);
+                    //console.log('tof(value._arr[1])', tof(value._arr[1]));
+                    /*
+                    if (tof(value._arr[1]) === 'function') {
+                        //console.log('adding on click');
+                        // The problem is, we don't have an element right now.
+                        //  Need to assign this click event to the DOM once it gets an element.
+                        //  It has not been rendered yet, so once it gets rendered and put in the DOM, it still needs to have its DOM events attached.
+                        that.on('click', value._arr[1]);
+                    }
+                    */
+                } else if (t_value === 'data_value') {
+                    ctrl_primary.add(value.value());
+                } else if (t_value === 'string' || t_value === 'number') {
+                    // A textNode could do.
+                    // Add a span with that text.
+                    let span = new jsgui.span({
+                        context: this.context,
+                        text: value
                     });
-                    //ctrl_id.set('dom.attributes.class', 'id');
-                    ctrl_id.add_class('id');
-                    var ctrl_key = new Control({
-                        'context': this.context
-                    });
-                    //ctrl_key.set('dom.attributes.class', 'key');
-                    ctrl_id.add_class('key');
-                    // Will possibly have more code to do with rendering Data_Values as HTML, as Control content.
-                    ctrl_id.add(id.value);
-                    ctrl_key.add(key.value);
-                    ctrl_primary.add(ctrl_id);
-                    ctrl_primary.add(ctrl_key);
+                    ctrl_primary.add(span);
+                } else if (typeof value.keys === 'function') {
+                    var value_keys = value.keys();
+                    //console.log('value_keys', value_keys);
+                    var map_keys = mapify(value_keys);
+                    //console.log('map_keys', map_keys);
+                    var has_id = map_keys['id'];
+                    var has_name = map_keys['name'];
+                    var has_key = map_keys['key'];
+                    var id, name, key;
+                    if (has_id && has_key && !has_name) {
+                        id = value.id;
+                        key = value.key;
+                        //console.log('id', id);
+                        //console.log('key', key);
+                        var ctrl_id = new Control({
+                            'context': this.context
+                        });
+                        //ctrl_id.set('dom.attributes.class', 'id');
+                        ctrl_id.add_class('id');
+                        var ctrl_key = new Control({
+                            'context': this.context
+                        });
+                        //ctrl_key.set('dom.attributes.class', 'key');
+                        ctrl_id.add_class('key');
+                        // Will possibly have more code to do with rendering Data_Values as HTML, as Control content.
+                        ctrl_id.add(id.value);
+                        ctrl_key.add(key.value);
+                        ctrl_primary.add(ctrl_id);
+                        ctrl_primary.add(ctrl_key);
+                    }
                 }
             }
+            set_value(value);
+
         }
-        set_value(value);
+
+
 
         //var ctrl_secondary = new Control({
         //    'context': this.context
         //})
-        
+
         this.add(this.inner = new Control({
             'context': this.context,
             'class': 'inner hidden'
         }));
     }
 
-    'iterate_sub_items' (cb_item, depth) {
+    'iterate_sub_items'(cb_item, depth) {
         // this.inner.contents
         depth = depth || 0;
         var path;
@@ -289,7 +301,7 @@ class Item extends Control {
 
     }
 
-    'activate' () {
+    'activate'() {
         if (!this.__active) {
             super.activate();
 
@@ -360,11 +372,11 @@ class Item extends Control {
         }
     }
 
-    'open' () {
+    'open'() {
         //this.state.set('open');
         this.state = 'open';
     }
-    'close' () {
+    'close'() {
         //this.state.set('closed');
         this.state = 'closed';
     }

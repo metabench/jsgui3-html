@@ -520,7 +520,7 @@ class Grid extends Control {
 
         //var num_columns = this.grid_size[0];
         //var num_rows = this.grid_size[1];
-        console.log('this.grid_size', this.grid_size);
+        //console.log('this.grid_size', this.grid_size);
 
         let [num_columns, num_rows] = this.grid_size;
         //console.log('this.size', this.size);

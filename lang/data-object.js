@@ -529,11 +529,12 @@ class Data_Object extends Evented_Class {
                 //console.log(stack);
 
                 // no such function... but there should be something declared in many situations.
-                console.trace();
-                throw 'stop, currently unsupported.';
-                this.__id = new_data_object_id();
+                //console.trace();
+                //throw 'stop, currently unsupported.';
+                //this.__id = new_data_object_id();
 
-                console.log('!!! no context __id ' + this.__id);
+                //console.log('!!! no context __id ' + this.__id);
+                return undefined;
             }
         }
         return this.__id;

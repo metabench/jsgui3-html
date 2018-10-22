@@ -1,3 +1,6 @@
+// Maybe just change to Field control
+// Then Field_Group control would avoid confusion with an HTML form.
+
 var jsgui = require('../html-core/html-core');
 var Text_Input = require('./text-input');
 var Text_Item = require('./text-item');

@@ -45,7 +45,7 @@ class Tree extends Control {
         //if (spec.title) this.title = spec.title;
 
         field(this, 'title');
-        this.title = spec.title || '';
+        this.title = spec.title;
 
         //add(Title_Bar({
         //    'text': 'tree'
@@ -72,10 +72,15 @@ class Tree extends Control {
         }) 
     }
     compose_tree(spec) {
-        this.add(this.title_bar = new Title_Bar({
-            context: this.context,
-            text: this.title
-        }));
+
+        //console.log('this.title', this.title);
+        if (this.title !== undefined) {
+            this.add(this.title_bar = new Title_Bar({
+                context: this.context,
+                text: this.title
+            }));
+        }
+
         this.add(this.main = new Panel({
             context: this.context
         }));
@@ -91,9 +96,12 @@ class Tree extends Control {
         }
 
         this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
-            'title_bar': this.title_bar,
+            //'title_bar': this.title_bar,
             'main': this.main
         });
+        if (this.title_bar) {
+            this._ctrl_fields.title_bar = title_bar;
+        }
 
         //this.dom.attributes['data-jsgui-ctrl-fields'] = stringify(ctrl_fields).replace(/"/g, "'");
     }

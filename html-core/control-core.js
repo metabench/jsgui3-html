@@ -975,7 +975,10 @@ class Control_Core extends Data_Object {
 				} else {
 					item = dom_attrs[key];
 					//console.log('item', item);
-					arr.push(' ', key, '="', item.toString(), '"');
+					if (item && item.toString) {
+						arr.push(' ', key, '="', item.toString(), '"');
+					}
+					
 				}
 			}
 			//dom_attrs.each(function (i, v) {
@@ -1288,6 +1291,12 @@ class Control_Core extends Data_Object {
 			if (new_content) {
 				//console.log('!!new_content', !!new_content);
 				if (tnc === 'string') {
+					//console.log('new content is string');
+
+					new_content = new jsgui.textNode({
+						'text': new_content,
+						'context': this.context
+					});
 
 				} else {
 					if (!new_content.context) {
@@ -1297,6 +1306,8 @@ class Control_Core extends Data_Object {
 							new_content.context = this.context;
 						}
 					}
+
+
 				}
 				var inner_control = this.inner_control;
 				if (inner_control) {
@@ -1551,7 +1562,17 @@ class Control_Core extends Data_Object {
 			tCtrl = tof(ctrl);
 			//console.log('tCtrl', tCtrl);
 			if (tCtrl === 'control') {
-				ctrl.active();
+
+				// if it's a text node then no
+
+				if (ctrl instanceof jsgui.textNode || ctrl instanceof jsgui.code) {
+
+				} else {
+					//console.log('ctrl', ctrl);
+					ctrl.active();
+				}
+
+				
 			}
 		});
 	}

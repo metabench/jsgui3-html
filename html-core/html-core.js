@@ -403,6 +403,8 @@ var escape_html = function (str) {
     return str;
 };
 
+
+
 jsgui.span = class span extends Control {
     constructor(spec) {
         spec.__type_name = 'span';
@@ -539,7 +541,7 @@ jsgui.span = class span extends Control {
 
 jsgui.activate = activate;
 //core_extension('html head title body div span h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col');
-core_extension('html head title body div h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col svg defs marker polygon line');
+core_extension('html head title body div h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col svg defs marker polygon line section code samp');
 core_extension_no_closing_tag('link input');
 
 
