@@ -32,7 +32,6 @@ var fields = [
 ];
 
 class Tree_Node extends Control {
-
 	constructor(spec) {
 		// Wont fields have been set?
 		spec = spec || {};
@@ -40,20 +39,16 @@ class Tree_Node extends Control {
 		spec.__type_name = spec.__type_name || 'tree_node';
 		//spec.expandable = spec.expandable || true;
 		if (!def(spec.expandable)) spec.expandable = true;
-
 		super(spec);
 		mx_selectable(this);
 
 		field(this, 'depth');
 		field(this, 'state', 'open');
 		this.expandable = spec.expandable;
-
 		if (def(spec.depth)) this.depth = spec.depth;
-
 		if (spec) {
 			var spec_state = spec.state,
 				state;
-
 			//this.depth = spec.depth || 0;
 			//console.log('spec_state', spec_state);
 			if (spec_state === 'open' || spec_state === 'closed') {
@@ -88,13 +83,46 @@ class Tree_Node extends Control {
 			//console.log('5) spec2', spec2);
 			//console.log('typeof spec2', typeof spec2);
 			//console.log('**** spec.img_src', spec.img_src);
-
 			this.compose_tree_node(spec);
 			// Tree node name, or text.
 			//  Could give it a name
 		}
 		//this.selectable = true;
 		//}
+
+		// need to listen to content change...
+		//  how many tree nodes are in the content.
+
+		// inner_control content change
+
+		if (this.inner_control) {
+			this.inner_control.content.on('change', e_change => {
+				//console.log('tree inner_control content change', e_change);
+
+				let coll = e_change.target;
+				// then does the collection contain at least one Tree_Node?
+
+				// can we do has by type?
+				//  has an instance of a function constructor.
+				let has_tree_node = false;
+				each(coll, (v, i, stop) => {
+					if (v instanceof Tree_Node) {
+						has_tree_node = true;
+						stop();
+					}
+				});
+
+				if (has_tree_node) {
+					this.toggle_button.show();
+				} else {
+					this.toggle_button.hide();
+				}
+
+			})
+		}
+
+
+
 	}
 
 	'compose_tree_node'(spec) {
@@ -136,7 +164,19 @@ class Tree_Node extends Control {
 		if (this.state === 'closed') {
 			spec3.state = '+';
 		}
+
+		// only if there are other nodes within this node?
+
 		top_line.add(plus_minus = new Plus_Minus_Toggle_Button(my(spec3)));
+		this.toggle_button = plus_minus;
+		plus_minus.hide();
+
+		// Whenever the collection of nodes changes, if there are 0 nodes, then hide this plus minus button.
+
+
+
+
+
 
 		var main_box = top_line.add(new Control(my({
 			'class': 'main-box'
@@ -185,19 +225,22 @@ class Tree_Node extends Control {
 			expander.add(inner_control = new Control(my({
 				'class': 'inner'
 			})));
+
+			/*
 			var inner_control_content = inner_control.content;
 			inner_control_content.on('change', e_change => {
 				//console.log('Tree_Node inner_control_content change', e_change);
 				//throw 'stop';
 				var l = inner_control_content.length();
-				//console.log('l', l);
+				console.log('inner_control_content', l);
 				if (l > 0) {
 					// so could / should be hidden bydefault anyway.
 					plus_minus.show();
 				}
 				//throw 'stop';
 			});
-			this.toggle_button = plus_minus;
+			*/
+			
 			//console.log('pre set inner_control');
 			this.inner_control = inner_control;
 			//console.log('post set inner_control');
@@ -228,9 +271,7 @@ class Tree_Node extends Control {
 			ctrl_fields.inner_control = inner_control;
 			ctrl_fields.expander = expander;
 		}
-
 		this.add_class('tree-node');
-
 		// only active on the server.
 		//  on the client, we don't need those extra references?
 		this.active();

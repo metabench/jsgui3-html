@@ -73,7 +73,7 @@ class Vertical_Expander extends Control {
 		var el = this.dom.el;
 
 		if (el) {
-			el.style.transition = 'height 0.5s linear';
+			el.style.transition = 'height 0.125s linear';
 			var ui_close = () => {
 				var h = el.childNodes[0].offsetHeight;
 				//console.log('h', h);

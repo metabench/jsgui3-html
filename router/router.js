@@ -331,10 +331,23 @@ class Router {
                     handler(req, res);
                 } else {
                     if (t_handler === 'undefined') {
-                        console.log('1) no defined route result', splitPath);
+
+                        // Got this when some were trying to hack me.
+
+                        //  Any .php is a hack attempt.
+
+                        let their_ip = req.connection.remoteAddress;
+
+                        let last_part = splitPath[splitPath.length - 1];
+                        //console.log('last_part', last_part);
+                        
+                        if (last_part.indexOf('.php') > -1) {
+                            // looks like a hack attempt
+                        }
+
+                        console.log('1) no defined route result ', their_ip.padEnd(16, ' '), splitPath);
 
                         // Some kind of 404 handler makes sense.
-
                         return false;
                     } else {
                         // handler may be undefined.
