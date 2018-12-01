@@ -695,8 +695,12 @@ class Control extends Control_Core {
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
 
 	'activate'(el) {
+
+		//if (document) {
+
+		//}
 		// Should really activate with a dom element.
-		if (!this.__active) {
+		if (document && !this.__active) {
 			this.__active = true;
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id()];

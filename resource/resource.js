@@ -182,8 +182,6 @@ class Resource extends Data_Object {
 
         // self setter?
 
-
-
         if (al === 3) {
             if (this.setters[name]) {
                 this.setters[name](value, callback);
@@ -260,8 +258,6 @@ class Resource extends Data_Object {
             }
             if (callback) {
                 var arr_params = a.slice(0, a.l - 1);
-
-
                 var res = super.apply(this, a);
                 return res;
                 //console.log('res ' + stringify(res));
@@ -275,7 +271,6 @@ class Resource extends Data_Object {
             //return super(a);
         }
     }
-
 }
 
 /*

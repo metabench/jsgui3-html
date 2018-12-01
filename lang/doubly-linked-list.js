@@ -1,5 +1,3 @@
-
-
 class Node {
 	constructor(spec) {
 		// previous and next held as an array.

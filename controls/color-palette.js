@@ -724,9 +724,7 @@ class Color_Palette extends Control {
 
                 this.grid.size = new_grid_size;
             }
-        })
-
-
+        });
 
     }
 

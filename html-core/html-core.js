@@ -865,8 +865,6 @@ class Client_HTML_Document extends Blank_HTML_Document {
 //  .change event
 
 
-
-
 class Intersection_Finder extends Evented_Class {
     constructor(spec) {
 
@@ -884,7 +882,6 @@ class Intersection_Finder extends Evented_Class {
             each(spec.controls || spec.ctrls, ctrl => {
                 //let [pos,, size] = ctrl.bcr();
                 //console.log('bcr', ctrl.bcr());
-
                 coords_ctrls.push([ctrl.bcr(), ctrl]);
             });
         }
@@ -893,8 +890,6 @@ class Intersection_Finder extends Evented_Class {
 
 
         let map_selected = new Map();
-
-
 
         let find_intersections = (coords) => {
             update_ctrl_coords();
@@ -911,7 +906,6 @@ class Intersection_Finder extends Evented_Class {
                 //console.log('cc', cc);
 
                 let [ccoords, ctrl] = cc;
-
                 let [cpos, cbr, csize] = ccoords;
 
                 // does it intersect the coords?
@@ -920,7 +914,6 @@ class Intersection_Finder extends Evented_Class {
                 //console.log('cc[0][1][0]', cc[0][1][0]);
                 //console.log('cc[0][2][0]', cc[0][2][0]);
                 //console.log('cc', cc);
-
 
                 //let x_intersect = ccoords[0][0] <= coords[0] && coords[0] <= ccoords[1][0];
                 //let y_intersect = ccoords[0][1] <= coords[1] && coords[1] <= ccoords[1][1];
@@ -944,7 +937,6 @@ class Intersection_Finder extends Evented_Class {
                 //console.log('cbr', cbr);
 
                 //console.log('btl[0] <= cpos[0] <= bbr[0]', btl[0], cpos[0], bbr[0]);
-
                 //console.log('btl[1] <= cpos[1] <= bbr[1]', btl[1], cpos[1], bbr[1]);
 
                 //console.log('btl', btl);
@@ -955,11 +947,7 @@ class Intersection_Finder extends Evented_Class {
                 /*
 
                 let x_intersect = btl[0] <= cpos[0] && cpos[0] <= bbr[0] || btl[0] <= cbr[0] && cbr[0] <= bbr[0];
-
-
                 let y_intersect = btl[1] <= cpos[1] && cpos[1] <= bbr[1] || btl[1] <= cbr[1] && cbr[1] <= bbr[1];
-
-
 
                 //let x_intersect = btl[0] >= cpos[0] && cpos[0] <= bbr[0] || btl[0] >= cbr[0] && cbr[0] <= bbr[0];
                 //let y_intersect = btl[1] >= cpos[1] && cpos[1] <= bbr[1] || btl[1] >= cbr[1] && cbr[1] <= bbr[1];
@@ -980,7 +968,6 @@ class Intersection_Finder extends Evented_Class {
                 //console.log('y_intersect', y_intersect);
 
                 let intersect = x_intersect && y_intersect;
-
                 */
 
                 let intersect = (cpos[0] <= bbr[0] &&
@@ -1000,7 +987,6 @@ class Intersection_Finder extends Evented_Class {
                         newly_intersecting.push(ctrl);
                         map_selected.set(ctrl, true);
                     }
-                    
                     intersecting.push(ctrl);
                     //map_selected.set(ctrl, true);
                 } else {
@@ -1009,7 +995,6 @@ class Intersection_Finder extends Evented_Class {
                         map_selected.set(ctrl, false);
                     }
                 }
-
             });
             return [intersecting, newly_intersecting, previously_intersecting];
         }
@@ -1019,16 +1004,13 @@ class Intersection_Finder extends Evented_Class {
         //  2 functions there, with the previous not being onchange, but prechange.
 
         prop(this, 'coords', (transform_coords) => {
-
             // some reversals....
             //console.log('transform_coords', transform_coords);
-
             if (transform_coords[0][1] > transform_coords[1][1]) {
                 //console.log('yswap');
                 let [a, b] = transform_coords;
                 //transform_coords[0] = b; transform_coords[1] = a;
                 transform_coords = [b, a];
-
             }
 
             if (transform_coords[0][0] > transform_coords[1][0]) {
@@ -1037,42 +1019,28 @@ class Intersection_Finder extends Evented_Class {
                 transform_coords[1][0] = transform_coords[0][0];
                 transform_coords[0][0] = a;
             }
-
             //console.log('transform_coords', transform_coords);
-
             return transform_coords;
-
-
         }, (change_coords) => {
             //console.log('change_coords', change_coords);
             //let [i, new_i, un_i] = find_intersections(change_coords[0]);
-
             // if the intersections have changed...
-
             let intersections = find_intersections(change_coords[0]);
             //console.log('intersections', intersections);
-
             if (intersections[1].length > 0 || intersections[2].length > 0) {
                 this.raise('change', {
                     'name': 'intersections',
                     'value': intersections
                 });
             }
-            
-
             /*
             console.log('i.length', i.length);
-
             // and to say they are unselected too...
             //  
-
             each(i, i => {
                 if (map_selected.get(i) === true) {
-
                 } else {
                     map_selected.set(i, true);
-
-
 
                 }
             });

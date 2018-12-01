@@ -7,7 +7,7 @@
     "fnl": "^0.0.7",
     "htmlparser": "^1.7.7",
     "obext": "^0.0.4",
-    "url-parse": "^1.4.3"
+    "url-parse": "^1.4.4"
   },
   "engines": {
     "node": ">=10.0.0"
@@ -18,5 +18,5 @@
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
-  "version": "0.0.16"
+  "version": "0.0.17"
 }

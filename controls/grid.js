@@ -8,7 +8,13 @@ var jsgui = require('../html-core/html-core');
 // A general purpose grid...
 //  Have something with a similar API to Vectorious?
 //var Data_Grid = jsgui.Data_Grid;
-const {stringify, each, tof, def, Control} = jsgui;
+const {
+    stringify,
+    each,
+    tof,
+    def,
+    Control
+} = jsgui;
 
 /*
 var stringify = jsgui.stringify,
@@ -93,7 +99,7 @@ let obj_field = (obj, spec, name, default_value, fn_validate) => {
                         'old': old,
                         'value': value
                     });
-                    
+
                 } else {
                     throw val;
                 }
@@ -147,7 +153,7 @@ class Grid_Cell extends Control {
         //  Don't add it in the Month_View Control
 
         this.add(this.span = new jsgui.span(o));
-        
+
     }
 }
 
@@ -248,7 +254,7 @@ class Grid extends Control {
                                 'old': old,
                                 'value': value
                             });
-                            
+
                         } else {
                             throw val;
                         }
@@ -269,7 +275,7 @@ class Grid extends Control {
                 }
             });
             if (def(spec[name])) {
-                
+
                 (this._fields = this._fields || {})[name] = _prop_value = spec[name];
             } else {
                 _prop_value = default_value;
@@ -339,7 +345,8 @@ class Grid extends Control {
         field('row_headers', false);
         prop('data', false);
 
-        this.map_cells = [];
+        this.map_cells = {};
+        this.arr_cells = {};
 
         // size prop
         //  however, controls in general could do with an upgrade here.
@@ -438,16 +445,26 @@ class Grid extends Control {
         // on resize, resize all of the cells.
         // on activate, will need to reconnect all of the cells.
 
-        this.on('resize', (e_resize) => {
+        this.on('change', (e_change) => {
             //console.log('resize Grid', e_resize);
+
+            let {name, value} = e_change;
+            if (name === 'grid_size') {
+                //this.refresh_size();
+
+
+                this.clear();
+                this.full_compose_as_divs();
+            }
+
 
             // then need to recalculate the cell sizes.
             //console.log('this.composition_mode', this.composition_mode);
-            this.refresh_size();
+            
         });
     }
 
-    'refresh_size' () {
+    'refresh_size'() {
         if (this.composition_mode === 'divs') {
 
             // resize or refresh_grid_size
@@ -455,10 +472,10 @@ class Grid extends Control {
 
             //var num_columns = this.grid_size[0];
             //var num_rows = this.grid_size[1];
+            console.log('refresh_size this.grid_size', this.grid_size);
+            let [num_columns, num_rows] = this.grid_size;
 
-            let [num_columns, num_rows] = this.grid_size[0];
-
-            console.log('this.grid_size', this.grid_size);
+            
 
             var cell_border_thickness = 1;
             var _2_cell_border_thickness = cell_border_thickness * 2;
@@ -484,11 +501,11 @@ class Grid extends Control {
         }
     }
 
-    'each_row' (cb_row) {
+    'each_row'(cb_row) {
         each(this._arr_rows, cb_row);
     }
 
-    'each_cell' (cb_cell) {
+    'each_cell'(cb_cell) {
         // want to return the cell position as an index
         each(this._arr_rows, (row, i_row) => {
 
@@ -500,14 +517,14 @@ class Grid extends Control {
             //each(row, cb_cell);
         });
     }
-    'get_cell' (x, y) {
+    'get_cell'(x, y) {
 
 
 
         //return this._arr_rows[y]
     }
 
-    'full_compose_as_divs' () {
+    'full_compose_as_divs'() {
         // Compose row and column headers here, if they are in use.
         // row header width
         // column header height
@@ -521,181 +538,193 @@ class Grid extends Control {
         //var num_columns = this.grid_size[0];
         //var num_rows = this.grid_size[1];
         //console.log('this.grid_size', this.grid_size);
+        let map_cells = this.map_cells, arr_cells = this.arr_cells;
+        if (this.grid_size) {
+            let [num_columns, num_rows] = this.grid_size;
+            //console.log('this.size', this.size);
+            //throw 'stop';
+            // Nope, easier to use box-sizing internal or whatever css.
 
-        let [num_columns, num_rows] = this.grid_size;
-        //console.log('this.size', this.size);
-        //throw 'stop';
-        // Nope, easier to use box-sizing internal or whatever css.
+            var cell_border_thickness = 0;
+            var _2_cell_border_thickness = cell_border_thickness * 2;
 
-        var cell_border_thickness = 0;
-        var _2_cell_border_thickness = cell_border_thickness * 2;
-
-        //console.log('this.cell_size', this.cell_size);
-        // need to know the row / column header sizes and if we are using them.
+            //console.log('this.cell_size', this.cell_size);
+            // need to know the row / column header sizes and if we are using them.
 
 
-        //console.log('this.size', this.size);
-        //console.log('num_rows', num_rows);
-        //console.log('num_columns', num_columns);
+            //console.log('this.size', this.size);
+            //console.log('num_rows', num_rows);
+            //console.log('num_columns', num_columns);
 
-        var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
-        //console.log('cell_size', cell_size);
-        let row_width, row_height;
-        //console.log('this.cell_size', this.cell_size);
-        //let row_header_width = this.cell_size[0];
-        let row_header_width;
-        //console.log('this.row_headers', this.row_headers);
-        if (this.cell_size) {
-            //header_row.style('width', this.cell_size[0] * num_columns);
-            //header_row.style('height', this.cell_size[1]);
-            if (this.row_headers) {
-                row_header_width = this.row_headers.width || row_header_width;
-                row_width = this.cell_size[0] * num_columns + row_header_width;
+            var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+            console.log('cell_size', cell_size);
+            let row_width, row_height;
+            //console.log('this.cell_size', this.cell_size);
+            //let row_header_width = this.cell_size[0];
+            let row_header_width;
+            //console.log('this.row_headers', this.row_headers);
+            if (this.cell_size) {
+                //header_row.style('width', this.cell_size[0] * num_columns);
+                //header_row.style('height', this.cell_size[1]);
+                if (this.row_headers) {
+                    row_header_width = this.row_headers.width || row_header_width;
+                    row_width = this.cell_size[0] * num_columns + row_header_width;
+                } else {
+                    row_width = this.cell_size[0] * num_columns;
+                }
+                row_height = this.cell_size[1];
+
             } else {
-                row_width = this.cell_size[0] * num_columns;
+                //header_row.style('height', Math.floor(this.size[1] / num_rows));
+                row_height = Math.floor(this.size[1] / num_rows);
             }
-            row_height = this.cell_size[1];
 
-        } else {
-            //header_row.style('height', Math.floor(this.size[1] / num_rows));
-            row_height = Math.floor(this.size[1] / num_rows);
-        }
+            const data = this.data;
 
-        const data = this.data;
-
-        console.log('row_header_width', row_header_width);
+            console.log('row_header_width', row_header_width);
 
 
-        var x, y;
+            var x, y;
 
-        // compose the header row if we have one.
-        if (this.column_headers) {
-            let header_row = new Control({
-                context: this.context //,
-                //'class': 'row'
-            });
-            header_row.add_class('header');
-            header_row.add_class('row');
-
-            if (row_height) {
-                header_row.style('height', row_height);
-            }
-            if (row_width) {
-                header_row.style('width', row_width);
-            }
-            this.add(header_row);
-
-            if (this.row_headers) {
-                var cell = new Control({
-                    context: this.context,
-                    __type_name: 'grid_cell', //,
-                    //'class': 'cell'
+            // compose the header row if we have one.
+            if (this.column_headers) {
+                let header_row = new Control({
+                    context: this.context //,
+                    //'class': 'row'
                 });
-                cell.add_class('grid-header');
-                cell.add_class('cell');
-                if (row_header_width) {
-                    cell.size = [row_header_width, cell_size[1]];
-                } else {
+                header_row.add_class('header');
+                header_row.add_class('row');
+
+                if (row_height) {
+                    header_row.style('height', row_height);
+                }
+                if (row_width) {
+                    header_row.style('width', row_width);
+                }
+                this.add(header_row);
+
+                if (this.row_headers) {
+                    var cell = new Control({
+                        context: this.context,
+                        __type_name: 'grid_cell', //,
+                        //'class': 'cell'
+                    });
+                    cell.add_class('grid-header');
+                    cell.add_class('cell');
+                    if (row_header_width) {
+                        cell.size = [row_header_width, cell_size[1]];
+                    } else {
+                        cell.size = cell_size;
+                    }
+                    header_row.add(cell);
+                }
+
+                for (x = 0; x < num_columns; x++) {
+                    var cell = new Control({
+                        context: this.context,
+                        __type_name: 'grid_cell', //,
+                        //'class': 'cell'
+                    });
+                    cell.add_class('column-header');
+                    cell.add_class('cell');
                     cell.size = cell_size;
+                    //mx_selectable(cell);
+                    header_row.add(cell);
+                    
                 }
-                header_row.add(cell);
             }
 
-            for (x = 0; x < num_columns; x++) {
-                var cell = new Control({
-                    context: this.context,
-                    __type_name: 'grid_cell', //,
-                    //'class': 'cell'
+            for (y = 0; y < num_rows; y++) {
+                var row_container = new Control({
+                    context: this.context //,
+                    //'class': 'row'
                 });
-                cell.add_class('column-header');
-                cell.add_class('cell');
-                cell.size = cell_size;
-                //mx_selectable(cell);
-                header_row.add(cell);
+                //row_container.style.height = cell_size[1];
+                //if (this.cell_size) {
+                //    row_container.style('width', this.cell_size[0] * num_columns);
+                //    row_container.style('height', this.cell_size[1]);
 
-            }
+                //} else {
+                //    row_container.style('height', Math.floor(this.size[1] / num_rows));
+                // }
 
-        }
+                if (row_height) {
+                    row_container.style('height', row_height);
+                }
+                if (row_width) {
+                    row_container.style('width', row_width);
+                }
 
-        for (y = 0; y < num_rows; y++) {
-            var row_container = new Control({
-                context: this.context //,
-                //'class': 'row'
-            });
-            //row_container.style.height = cell_size[1];
-            //if (this.cell_size) {
-            //    row_container.style('width', this.cell_size[0] * num_columns);
-            //    row_container.style('height', this.cell_size[1]);
-
-            //} else {
-            //    row_container.style('height', Math.floor(this.size[1] / num_rows));
-            // }
-
-            if (row_height) {
-                row_container.style('height', row_height);
-            }
-            if (row_width) {
-                row_container.style('width', row_width);
-            }
-
-            row_container.add_class('row');
-            this._arr_rows.push(row_container);
-            this.add(row_container);
+                row_container.add_class('row');
+                this._arr_rows.push(row_container);
+                this.add(row_container);
+                row_container.activate();
 
 
-            // if we have a row header...
+                // if we have a row header...
 
-            if (this.row_headers) {
-                var cell = new Control({
-                    context: this.context,
-                    __type_name: 'grid_cell', //,
-                    //'class': 'cell'
-                });
-                cell.add_class('row-header');
-                cell.add_class('cell');
-                //cell.x = 
+                if (this.row_headers) {
+                    var cell = new Control({
+                        context: this.context,
+                        __type_name: 'grid_cell', //,
+                        //'class': 'cell'
+                    });
+                    cell.add_class('row-header');
+                    cell.add_class('cell');
+                    //cell.x = 
 
-                if (row_header_width) {
-                    cell.size = [row_header_width, cell_size[1]];
-                } else {
+                    if (row_header_width) {
+                        cell.size = [row_header_width, cell_size[1]];
+                    } else {
+                        cell.size = cell_size;
+                    }
+                    row_container.add(cell);
+                    cell.activate();
+                }
+                console.log('num_columns', num_columns);
+
+                for (x = 0; x < num_columns; x++) {
+
+                    let o = {
+                        context: this.context,
+                        x: x,
+                        y: y
+                        //,
+                        //__type_name: 'grid_cell', //,
+                        //'class': 'cell'
+                    }
+
+                    if (data) {
+                        //console.log('data', data);
+                        //console.log('[x, y]', [x, y]);
+                        o.data = data[y][x];
+                    }
+
+                    // Grid_Cell
+                    var cell = new Grid_Cell(o);
+                    cell.add_class('cell');
+
+                    console.log('cell', cell);
+
+                    // and put the data in the cell.
+
+                    // A grid cell class may work best.
+
                     cell.size = cell_size;
+                    mx_selectable(cell);
+                    row_container.add(cell);
+                    arr_cells[x] = arr_cells[x] || [];
+                    arr_cells[x][y] = cell;
+                    map_cells['[' + x + ',' + y + ']'] = cell;
+                    cell.activate();
                 }
-                row_container.add(cell);
-            }
-
-            for (x = 0; x < num_columns; x++) {
-
-                let o = {
-                    context: this.context,
-                    x: x,
-                    y: y
-                    //,
-                    //__type_name: 'grid_cell', //,
-                    //'class': 'cell'
-                }
-
-                if (data) {
-                    //console.log('data', data);
-                    //console.log('[x, y]', [x, y]);
-                    o.data = data[y][x];
-                }
-
-                // Grid_Cell
-                var cell = new Grid_Cell(o);
-                cell.add_class('cell');
-
-                // and put the data in the cell.
-
-                // A grid cell class may work best.
-
-                cell.size = cell_size;
-                mx_selectable(cell);
-                row_container.add(cell);
             }
         }
+
+
     }
 
-    'full_compose_as_table' () {
+    'full_compose_as_table'() {
 
         //this.set('dom.tagName', 'table');
         this.dom.tagName = table;
@@ -785,7 +814,7 @@ class Grid extends Control {
         //  meaning that when something is set with a Data_Grid, it does not wrap it in a Data_Value.
 
     }
-    'activate' () {
+    'activate'() {
         // May need to register Flexiboard in some way on the client.
 
         if (!this.__active) {
