@@ -15,7 +15,6 @@ var Control = jsgui.Control;
 var fields = [
     ['value', String],
     ['type', String]
-
 ];
 
 class Text_Input extends Control {
@@ -27,10 +26,19 @@ class Text_Input extends Control {
         //this._super(spec, fields);
         super(spec, fields);
 
+        if (spec.placeholder) this.placeholder = spec.placeholder;
+
         // listen for a change in the value of the text field, in the DOM.
         //  and when that changes, the value changes.
 
         //this.set('dom.tagName', 'input');
+
+        if (!spec.el) {
+            this.compose_text_input();
+        }
+        // This should render as an input field.
+    }
+    compose_text_input() {
         this.dom.tagName = 'input';
 
         //console.log('dom.tagName ' + this.get('dom.tagName'));
@@ -44,8 +52,7 @@ class Text_Input extends Control {
         this.dom.attributes.type = 'input';
         this.dom.attributes.value = this.value;
 
-        // This should render as an input field.
-
+        if (this.placeholder) this.dom.attributes.placeholder = this.placeholder;
     }
 }
 module.exports = Text_Input;

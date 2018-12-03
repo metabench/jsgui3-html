@@ -586,12 +586,12 @@ class Control extends Control_Core {
 					if (!this.disabled) {
 						each(listener, l => {
 							l(e);
-						})
+						});
 					}
 				}, false);
 			} else {
 				el.addEventListener(event_name, (e) => {
-					console.log('this.disabled', this.disabled);
+					//console.log('this.disabled', this.disabled);
 					if (!this.disabled) listener(e);
 				}, false);
 			}
@@ -695,7 +695,6 @@ class Control extends Control_Core {
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
 
 	'activate'(el) {
-
 		//if (document) {
 
 		//}
@@ -754,7 +753,6 @@ class Control extends Control_Core {
 			}
 		});
 	}
-
 	'activate_this_and_subcontrols'() {
 		let context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
@@ -764,7 +762,6 @@ class Control extends Control_Core {
 			}
 		});
 	}
-
 	'activate_content_listen'() {
 		var context = this.context;
 		var map_controls = context.map_controls;

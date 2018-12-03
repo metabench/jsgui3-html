@@ -234,14 +234,10 @@ class Audio_Player extends Control {
 			// Change the paths of the albums?
 
 			var c_albums = jsgui.clone(albums);
-
 			c_albums[0].path = '/audio/albums/01/';
-
 			this.set('dom.attributes.data-jsgui-fields', stringify({
 				'albums': c_albums
 			}).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
-
-
 		}
 
 	}

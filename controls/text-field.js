@@ -4,9 +4,10 @@
 var jsgui = require('../html-core/html-core');
 var Text_Input = require('./text-input');
 var Text_Item = require('./text-item');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+	each = jsgui.each,
+	tof = jsgui.tof;
 var Control = jsgui.Control;
-
 
 // fields could have default values too.
 
@@ -29,6 +30,18 @@ class Text_Field extends Control {
 		this.__type_name = 'text_field';
 		this.add_class('field');
 
+		if (spec.type) this.type = spec.type;
+		if (spec.placeholder) this.placeholder = spec.placeholder;
+
+		if (!spec.el) {
+			this.compose_text_field();
+		}
+
+		//this.add_event_listener('change', function(e) {
+		//console.log('Text_Field change event e ' + stringify(e));
+		//});
+	}
+	compose_text_field() {
 		var left = new jsgui.div({
 			'context': this.context
 		});
@@ -52,32 +65,34 @@ class Text_Field extends Control {
 		if (this.show_text) {
 			var label = new jsgui.label({
 				'context': this.context
-	
 			});
 			//var text = this.get('text');
 			//console.log('this.text ' + this.text);
 			//console.log('tof text ' + tof(text));
 			label.add(this.text);
 			left.add(label);
-
 		}
 
-		
-
 		if (this.editable) {
-			var textInput = new Text_Input({
+
+			
+
+			let o_spec = {
 				'context': this.context,
 				'value': this.value
-			});
+			}
+
+			if (this.placeholder) o_spec.placeholder = this.placeholder;
+
+			var textInput = new Text_Input(o_spec);
 			var tiid = textInput._id();
 			textInput.dom.attributes.id = tiid;
 			textInput.dom.attributes.name = this.name;
-	
 			label.dom.attributes.for = tiid;
-	
+
 			// and the type... it could be a password.
 			//  that's a DOM attribute.
-			textInput.dom.attributes.type = spec.type;
+			textInput.dom.attributes.type = this.type;
 			right.add(textInput);
 		} else {
 			// Text_Item.
@@ -87,13 +102,6 @@ class Text_Field extends Control {
 			});
 			right.add(text_item);
 		}
-
-		
-		
-		
-		//this.add_event_listener('change', function(e) {
-			//console.log('Text_Field change event e ' + stringify(e));
-		//});
 	}
 }
 module.exports = Text_Field;
