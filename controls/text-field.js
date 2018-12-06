@@ -73,9 +73,9 @@ class Text_Field extends Control {
 			left.add(label);
 		}
 
-		if (this.editable) {
+		const _ctrl_fields = this._ctrl_fields = this._ctrl_fields || {};
 
-			
+		if (this.editable) {
 
 			let o_spec = {
 				'context': this.context,
@@ -94,6 +94,9 @@ class Text_Field extends Control {
 			//  that's a DOM attribute.
 			textInput.dom.attributes.type = this.type;
 			right.add(textInput);
+
+			_ctrl_fields.textInput = textInput;
+			_ctrl_fields.text_input = textInput;
 		} else {
 			// Text_Item.
 			var text_item = new Text_Item({
@@ -102,6 +105,15 @@ class Text_Field extends Control {
 			});
 			right.add(text_item);
 		}
+		// textInput
 	}
+
+	/*
+	get value() {
+		return this.text_input.value;
+		//const text_input = this.text_input;
+
+	}
+	*/
 }
 module.exports = Text_Field;

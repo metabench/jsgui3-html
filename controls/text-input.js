@@ -53,7 +53,16 @@ class Text_Input extends Control {
         this.dom.attributes.value = this.value;
 
         if (this.placeholder) this.dom.attributes.placeholder = this.placeholder;
+
+        //this._ctrl_fields = this._ctrl_fields || {};
+        //this._ctrl_fields.
     }
+
+    /*
+    get value() {
+
+    }
+    */
 }
 module.exports = Text_Input;
 
