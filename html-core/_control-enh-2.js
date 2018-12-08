@@ -62,8 +62,6 @@ class Control_Enh_2 extends Control_Enh {
 
 	}
 
-
-
 	// absolute_ghost_clone
 	'absolute_ghost_clone' () {
 
@@ -89,8 +87,6 @@ class Control_Enh_2 extends Control_Enh {
 		var map_controls = context.map_controls;
 
 		// Want the body control as well.
-
-
 
 		if (!map_controls[new_id]) {
 			// create it.
@@ -167,7 +163,6 @@ class Control_Enh_2 extends Control_Enh {
 				my_bcr[2][1] = my_bcr[2][1] - 2 * my_border_thickness;
 			}
 			new_ctrl.bcr(my_bcr);
-
 			//console.log('new_ctrl', new_ctrl);
 			body.add(new_ctrl);
 
@@ -541,12 +536,12 @@ class Control_Enh_2 extends Control_Enh {
 
 	}
 
-	'draggable' () {
+	'dragable' () {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
 		var that = this;
-		//console.log('draggable sig', sig);
+		//console.log('dragable sig', sig);
 		//console.trace();
 		var options = {},
 			mode, drag_start_distance = 4;
@@ -661,7 +656,7 @@ class Control_Enh_2 extends Control_Enh {
 		var ctrl_el = ctrl.dom.el;
 		// could go in enhanced....
 		//this.drag(function(e_mousedown) {
-		this.draggable(function (e_mousedown) {
+		this.dragable(function (e_mousedown) {
 			//console.log('e_mousedown', e_mousedown);
 			// This will need to be revised - making adjustment for when dragging from an anchored position.
 			//  Should maintain some info about the drag so it knows if it starts/ends anchored anywhere.
@@ -739,7 +734,7 @@ class Control_Enh_2 extends Control_Enh {
 	// maybe remove this.
 	//  
 	'resize_handle_to' (ctrl, handle_position) {
-		// The control needs to be draggable normally?
+		// The control needs to be dragable normally?
 		//  And then from the positions of where it is adjust the size of what it's a resize handle to?
 		//console.log('resize_handle_to');
 		if (handle_position == 'right-bottom') {

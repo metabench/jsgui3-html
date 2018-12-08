@@ -4,6 +4,12 @@ const {
 } = require('obext');
 
 let selectable = (ctrl, ctrl_handle) => {
+
+    let selection_action = 'mousedown';
+
+
+    // select on mousedown?
+
     ctrl_handle = ctrl_handle || ctrl;
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
@@ -16,8 +22,8 @@ let selectable = (ctrl, ctrl_handle) => {
             if ((ctrl_key || meta_key)) {
                     ctrl.action_select_toggle();
             } else {
-                console.log('pre select only');
-                console.log('ctrl.action_select_only', ctrl.action_select_only);
+                //console.log('pre select only');
+                //console.log('ctrl.action_select_only', ctrl.action_select_only);
                 ctrl.action_select_only();
             }
         }
@@ -26,13 +32,14 @@ let selectable = (ctrl, ctrl_handle) => {
     ctrl.on('change', e_change => {
         let {name, value} = e_change;
         if (name === 'selected') {
-            console.log('selected value', value);
+            //console.log('selected value', value);
             if (value) {
                 ctrl.add_class('selected');
             } else {
                 ctrl.remove_class('selected');
             }
         }
+        return true;
     })
 
     if (!old_selectable) {
@@ -66,7 +73,7 @@ let selectable = (ctrl, ctrl_handle) => {
                     ctrl.action_select_only = ctrl.action_select_only || (() => {
                         //console.log('action_select_only');
                         let ss = ctrl.find_selection_scope();
-                        console.log('ss', ss);
+                        //console.log('ss', ss);
                         if (ss) ss.select_only(ctrl);
 
                         //this.find_selection_scope().select_only(this);
@@ -88,8 +95,10 @@ let selectable = (ctrl, ctrl_handle) => {
                         //console.log('ctrl.has_selection_click_handler', ctrl.has_selection_click_handler);
                         if (!ctrl_handle.has_selection_click_handler) {
                             ctrl_handle.has_selection_click_handler = true;
+
+
                             setTimeout(() => {
-                                ctrl_handle.on('click', click_handler);
+                                ctrl_handle.on(selection_action, click_handler);
                                 // bit of a hack to fix a bug.
                             }, 10);
                         }
@@ -104,7 +113,7 @@ let selectable = (ctrl, ctrl_handle) => {
                     } else {
                         //this.click(click_handler);
                         //console.log('make unselectable');
-                        ctrl_handle.off('click', click_handler);
+                        ctrl_handle.off(selection_action, click_handler);
                         ctrl_handle.has_selection_click_handler = false;
                     }
                 }

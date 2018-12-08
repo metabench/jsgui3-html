@@ -45,14 +45,14 @@ class Scrollbar extends Control {
             var scroll_area = new Control({
                 'context': context
             });
-            var draggable_scroller = new Control({
+            var dragable_scroller = new Control({
                 'context': context
             });
             var btn_positive = new Button({
                 'context': context
             });
             this.add(btn_negitive);
-            scroll_area.add(draggable_scroller);
+            scroll_area.add(dragable_scroller);
             this.add(scroll_area);
             this.add(btn_positive);
         }
