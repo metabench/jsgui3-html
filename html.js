@@ -56,7 +56,6 @@ if (typeof document === 'undefined') {
     // Want the css ASTs as well.
 
     // Want to be able to get the CSS properties in order to have default sizes in some situations.
-    
 
     jsgui.css = {
         'basic': basic_css
@@ -67,6 +66,7 @@ if (typeof document === 'undefined') {
 
 //var Controls = require('./controls/controls');
 Object.assign(jsgui, require('./controls/controls'));
+jsgui.mixins = jsgui.mx = require('./control_mixins/mx');
 
 //jsgui.Toggle_Button =
 

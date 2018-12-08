@@ -899,6 +899,11 @@ class Control_Core extends Data_Object {
 					key = keys[c];
 					if (key !== '_bound_events') {
 						//console.log('this._ctrl_fields[key]', this._ctrl_fields[key]);
+
+						//console.log('this._id()', this._id());
+						//console.log('key', key);
+
+
 						obj_ctrl_fields[key] = this._ctrl_fields[key]._id();
 					}
 				}
@@ -1052,6 +1057,7 @@ class Control_Core extends Data_Object {
 	'register_this_and_subcontrols'() {
 		let context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
+			//console.log('iterate ctrl', ctrl);
 			context.register_control(ctrl);
 		});
 	}

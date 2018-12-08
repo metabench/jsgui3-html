@@ -168,11 +168,13 @@ class Resource extends Data_Object {
         */
     }
 
+    'authenticate'(token) {
+        //console.log('basic resource authenticate');
+        return true;
+    }
+
     // Resources could also operate in connected mode.
     //  How the connection gets handled will be outside of the scope of the resource itself.
-
-
-
 
 
     // the last item in the signature is the callback
@@ -205,15 +207,8 @@ class Resource extends Data_Object {
         if (tof(last_param) == 'function') {
             callback = last_param;
             var arr_params = a.slice(0, a.l - 1);
-
             // checks the setters
-
-
-
-
             //var res = this._super.apply(this, arr_params);
-
-
             callback(null, res);
 
         } else {

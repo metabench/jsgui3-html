@@ -3,7 +3,8 @@ const {
     field
 } = require('obext');
 
-let selectable = (ctrl) => {
+let selectable = (ctrl, ctrl_handle) => {
+    ctrl_handle = ctrl_handle || ctrl;
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
         //console.log('selectable click e', e);
@@ -16,10 +17,23 @@ let selectable = (ctrl) => {
                     ctrl.action_select_toggle();
             } else {
                 console.log('pre select only');
+                console.log('ctrl.action_select_only', ctrl.action_select_only);
                 ctrl.action_select_only();
             }
         }
     }
+
+    ctrl.on('change', e_change => {
+        let {name, value} = e_change;
+        if (name === 'selected') {
+            console.log('selected value', value);
+            if (value) {
+                ctrl.add_class('selected');
+            } else {
+                ctrl.remove_class('selected');
+            }
+        }
+    })
 
     if (!old_selectable) {
         field(ctrl, 'selected');
@@ -36,10 +50,10 @@ let selectable = (ctrl) => {
             if (n === 'selected') {
                 //console.log('1) ss', ss);
                 if (value === true) {
-                    ctrl.add_class('selected');
+                    //ctrl.add_class('selected');
                     ss.map_selected_controls[id] = ctrl;
                 } else {
-                    ctrl.remove_class('selected');
+                    //ctrl.remove_class('selected');
                     ss.map_selected_controls[id] = null;
                 }
             }
@@ -52,7 +66,7 @@ let selectable = (ctrl) => {
                     ctrl.action_select_only = ctrl.action_select_only || (() => {
                         //console.log('action_select_only');
                         let ss = ctrl.find_selection_scope();
-                        //console.log('ss', ss);
+                        console.log('ss', ss);
                         if (ss) ss.select_only(ctrl);
 
                         //this.find_selection_scope().select_only(this);
@@ -72,10 +86,10 @@ let selectable = (ctrl) => {
                     } else {
                         //this.click(click_handler);
                         //console.log('ctrl.has_selection_click_handler', ctrl.has_selection_click_handler);
-                        if (!ctrl.has_selection_click_handler) {
-                            ctrl.has_selection_click_handler = true;
+                        if (!ctrl_handle.has_selection_click_handler) {
+                            ctrl_handle.has_selection_click_handler = true;
                             setTimeout(() => {
-                                ctrl.on('click', click_handler);
+                                ctrl_handle.on('click', click_handler);
                                 // bit of a hack to fix a bug.
                             }, 10);
                         }
@@ -90,8 +104,8 @@ let selectable = (ctrl) => {
                     } else {
                         //this.click(click_handler);
                         //console.log('make unselectable');
-                        ctrl.off('click', click_handler);
-                        ctrl.has_selection_click_handler = false;
+                        ctrl_handle.off('click', click_handler);
+                        ctrl_handle.has_selection_click_handler = false;
                     }
                 }
             }

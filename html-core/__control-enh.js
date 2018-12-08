@@ -1,4 +1,5 @@
-/**
+let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id() || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')];
+				/**
  * Created by James on 16/09/2016.
  */
 
@@ -702,9 +703,8 @@ class Control extends Control_Core {
 		if (document && !this.__active) {
 			this.__active = true;
 			if (!this.dom.el) {
-
-
-				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id()] || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')[0];
+				//let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id() || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')];
+				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id() || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')];
 				//console.log('found_el', found_el);
 				if (found_el) {
 					this.dom.el = found_el;
@@ -789,31 +789,37 @@ class Control extends Control_Core {
 					}
 					//console.log('2) itemDomEl', itemDomEl);
 					if (!itemDomEl) {
-						var item_tag_name = 'div';
-						var dv_tag_name = item.dom.tagName;
-						// no, it's dom.tag_name
-						if (dv_tag_name) {
-							item_tag_name = dv_tag_name;
-						}
-						var temp_el;
-						//console.log('item_tag_name', item_tag_name);
-						if (item_tag_name == 'circle' || item_tag_name == 'line' || item_tag_name == 'polyline') {
-							// Can make SVG inside an element, with the right namespace.
 
-							// TODO Maybe we can have a global temporary SVG container.
-							var temp_svg_container = e_change.item.context.document.createElement('div');
-							temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + e_change.item.all_html_render() + '</svg>';
-							itemDomEl = temp_svg_container.childNodes[0].childNodes[0];
-							//
-							//itemDomEl = e_change.item.context.document.createElementNS("http://www.w3.org/2000/svg", item_tag_name);
-							//console.log('itemDomEl', itemDomEl);
-							//throw 'stop';
-						} else {
-							temp_el = e_change.item.context.document.createElement('div');
-							temp_el.innerHTML = e_change.item.all_html_render();
-							itemDomEl = temp_el.childNodes[0];
+						let create_new_el = () => {
+							var item_tag_name = 'div';
+							var dv_tag_name = item.dom.tagName;
+							// no, it's dom.tag_name
+							if (dv_tag_name) {
+								item_tag_name = dv_tag_name;
+							}
+							var temp_el;
+							//console.log('item_tag_name', item_tag_name);
+							if (item_tag_name == 'circle' || item_tag_name == 'line' || item_tag_name == 'polyline') {
+								// Can make SVG inside an element, with the right namespace.
+
+								// TODO Maybe we can have a global temporary SVG container.
+								var temp_svg_container = e_change.item.context.document.createElement('div');
+								temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + e_change.item.all_html_render() + '</svg>';
+								itemDomEl = temp_svg_container.childNodes[0].childNodes[0];
+								//
+								//itemDomEl = e_change.item.context.document.createElementNS("http://www.w3.org/2000/svg", item_tag_name);
+								//console.log('itemDomEl', itemDomEl);
+								//throw 'stop';
+							} else {
+								temp_el = e_change.item.context.document.createElement('div');
+								temp_el.innerHTML = e_change.item.all_html_render();
+								itemDomEl = temp_el.childNodes[0];
+							}
 						}
-						item.dom.el = itemDomEl;
+
+
+
+						item.dom.el = itemDomEl = create_new_el();;
 						// map controls by el.
 						context.map_els[item._id()] = itemDomEl;
 					};
@@ -834,12 +840,12 @@ class Control extends Control_Core {
 					that.dom.el = el;
 					*/
 				}
-				//console.log('!!itemDomEl', !!itemDomEl);
+				console.log('!!itemDomEl', !!itemDomEl);
 				if (itemDomEl) {
 					e_change.item.active();
 					el.appendChild(itemDomEl);
 					e_change.item.register_this_and_subcontrols();
-					//e_change.item.activate_this_and_subcontrols();
+					e_change.item.activate_this_and_subcontrols();
 					//e_change.item.activate();
 				}
 			}

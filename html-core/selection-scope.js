@@ -23,7 +23,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		var count_deselected = 0;
 
 		var selected;
-		//console.log('select_only this.map_selected_controls', this.map_selected_controls);
+		console.log('select_only this.map_selected_controls', this.map_selected_controls);
 		each(this.map_selected_controls, (v, i) => {
 			// Don't want to select the selection scope itself.
 			if (v && v !== ctrl && v !== this.control) {
@@ -46,6 +46,8 @@ class Selection_Scope extends jsgui.Data_Object {
 		}
 		// and then tell the control that it's selected.
 		// could possibly set a CSS flag.
+
+		console.log('currently_selected', currently_selected);
 
 		if (!currently_selected) {
 			ctrl.selected = true;
