@@ -116,97 +116,205 @@ var a = arguments;
 */
 
 const {
-    prop,
-    field
+	prop,
+	field
 } = require('obext');
 
-let dragable = (ctrl, ctrl_handle) => {
+let dragable = (ctrl, opts = {}) => {
+	//let selection_action = 'mousedown';
+	// select on mousedown?
 
-    //let selection_action = 'mousedown';
-    // select on mousedown?
+	// bounds, handle
+	let {
+		bounds,
+		handle
+	} = opts;
+	// bounds could be a control.
 
-    ctrl_handle = ctrl_handle || ctrl;
-    let old_dragable = ctrl.dragable;
+	// if the bounding control is the parent, it doesn't require copying to the body.
 
-    /*
-    let click_handler = (e) => {
-        //console.log('selectable click e', e);
-        //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
-        //console.log('ctrl.selectable', ctrl.selectable);
-        if (ctrl.dragable && !ctrl.selection_scope) {
-            var ctrl_key = e.ctrlKey;
-            var meta_key = e.metaKey;
-            if ((ctrl_key || meta_key)) {
-                    ctrl.action_select_toggle();
-            } else {
-                //console.log('pre select only');
-                //console.log('ctrl.action_select_only', ctrl.action_select_only);
-                ctrl.action_select_only();
-            }
-        }
-    }
-    */
+	let bounds_is_parent = bounds === ctrl.parent;
+	//console.log('ctrl.parent', ctrl.parent);
+	//console.log('bounds_is_parent', bounds_is_parent);
+	handle = handle || ctrl;
+	let old_dragable = ctrl.dragable;
 
-    const h_md = (e_md) => {
-        console.log('dragable e_md', e_md);
-    }
+	// Also drag within bounds?
+	//  Within bounds of parent?
 
-    ctrl.on('change', e_change => {
-        let {
-            name,
-            value
-        } = e_change;
-        /*
-        if (name === 'selected') {
-            //console.log('selected value', value);
-            if (value) {
-                ctrl.add_class('selected');
-            } else {
-                ctrl.remove_class('selected');
-            }
-        }
-        */
-        //return true;
-    })
+	let drag_mode = 'body';
+	if (bounds_is_parent) drag_mode = 'within-parent';
 
-    if (!old_dragable) {
-        //field(ctrl, 'selected');
-        field(ctrl, 'dragable');
-        //field(ctrl, 'select_unique');
-        //let id = ctrl._id();
-        ctrl.on('change', e_change => {
-            //console.log('e_change', e_change);
-            let n = e_change.name,
-                value = e_change.value;
 
-            if (n === 'dragable') {
-                if (value === true) {
+	// Changing position within another control - not putting it into the document root.
+	// 
 
-                    // ctrl.deselect();
-                    if (typeof document === 'undefined') {} else {
-                        if (!ctrl_handle.has_drag_md_handler) {
-                            ctrl_handle.has_drag_md_handler = true;
-                            ctrl_handle.on('mousedown', h_md);
+	/*
+	let click_handler = (e) => {
+	    //console.log('selectable click e', e);
+	    //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
+	    //console.log('ctrl.selectable', ctrl.selectable);
+	    if (ctrl.dragable && !ctrl.selection_scope) {
+	        var ctrl_key = e.ctrlKey;
+	        var meta_key = e.metaKey;
+	        if ((ctrl_key || meta_key)) {
+	                ctrl.action_select_toggle();
+	        } else {
+	            //console.log('pre select only');
+	            //console.log('ctrl.action_select_only', ctrl.action_select_only);
+	            ctrl.action_select_only();
+	        }
+	    }
+	}
+	*/
 
-                            //setTimeout(() => {
+	// calculate a drag mode.
+	//  'within-parent'
+	//  'body'
 
-                            // bit of a hack to fix a bug.
-                            //}, 10);
-                        }
-                    }
-                } else {
-                    if (typeof document === 'undefined') {} else {
-                        ctrl_handle.off('mousedown', h_md);
-                        ctrl_handle.has_drag_md_handler = false;
-                    }
-                }
-            }
-        })
-    }
 
-    if (old_dragable !== undefined) {
-        ctrl.dragable = old_dragable;
-    }
+	let pos_md, pos_mm, pos_mu;
+	let ctrl_body = ctrl.context.body();
+	let dragging = false;
+	let drag_offset_distance = 6;
+	let movement_offset;
+	let item_start_pos;
+
+	let bounds_size;
+
+	const begin_drag = (pos) => {
+		//console.log('begin_drag', pos);
+
+		if (drag_mode === 'within-parent') {
+			dragging = true;
+			// move the item
+			// need to calculate move offsets.
+			//  measure the item's initial position.
+			//console.log('parent.size', parent.size);
+			item_start_pos = ctrl.pos;
+			//item_start_pos = ctrl.bcr()[0];
+			//console.log('item_start_pos', item_start_pos);
+			//console.log('movement_offset', movement_offset);
+			//console.log('ctrl.position', ctrl.position);
+			//console.log('1) ctrl.pos', ctrl.pos);
+			//console.log('ctrl', ctrl);
+			let new_pos = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
+			ctrl.pos = new_pos;
+			//console.log('2) ctrl.pos', ctrl.pos);
+			//let new_item_pos = 
+		} else {
+			throw 'NYI';
+		}
+	}
+	const move_drag = (pos) => {
+		bounds_size = ctrl.parent.bcr()[2];
+		let ctrl_size = ctrl.bcr()[2];
+
+		//console.log('bounds_size', bounds_size);
+		//console.log('ctrl_size', ctrl_size);
+		let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1] + movement_offset[1]];
+
+		if (new_pos[0] < 0) new_pos[0] = 0;
+		if (new_pos[1] < 0) new_pos[1] = 0;
+
+
+		if (new_pos[0] > bounds_size[0] - ctrl_size[0]) new_pos[0] = bounds_size[0] - ctrl_size[0];
+		if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
+
+		ctrl.pos = new_pos;
+	}
+
+	const body_mm = e_mm => {
+		let pos_mm = [e_mm.pageX, e_mm.pageY];
+		movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
+		if (!dragging) {
+			//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
+			let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
+			let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
+			//console.log('abs_offset_dist', abs_offset_dist);
+			if (abs_offset_dist >= drag_offset_distance) {
+				begin_drag(pos_mm);
+			}
+		} else {
+			move_drag(pos_mm);
+		}
+	}
+
+	const end_drag = e_mu => {
+		dragging = false;
+		ctrl_body.off('mousemove', body_mm);
+		ctrl_body.off('mouseup', body_mu);
+		ctrl.raise('drag-complete', {
+			movement_offset: movement_offset
+		});
+	}
+
+	const body_mu = e_mu => {
+		// release
+		//console.log('body_mu', body_mu);
+		end_drag(e_mu);
+	}
+
+	const h_md = (e_md) => {
+		//console.log('dragable e_md', e_md);
+		pos_md = [e_md.pageX, e_md.pageY];
+		ctrl_body.on('mousemove', body_mm);
+		ctrl_body.on('mouseup', body_mu);
+
+	}
+
+	ctrl.on('change', e_change => {
+		let {
+			name,
+			value
+		} = e_change;
+		/*
+		if (name === 'selected') {
+		    //console.log('selected value', value);
+		    if (value) {
+		        ctrl.add_class('selected');
+		    } else {
+		        ctrl.remove_class('selected');
+		    }
+		}
+		*/
+		//return true;
+	})
+
+	if (!old_dragable) {
+		//field(ctrl, 'selected');
+		field(ctrl, 'dragable');
+		//field(ctrl, 'select_unique');
+		//let id = ctrl._id();
+		ctrl.on('change', e_change => {
+			//console.log('e_change', e_change);
+			let n = e_change.name,
+				value = e_change.value;
+			if (n === 'dragable') {
+				if (value === true) {
+					// ctrl.deselect();
+					if (typeof document === 'undefined') {} else {
+						if (!handle.has_drag_md_handler) {
+							handle.has_drag_md_handler = true;
+							handle.on('mousedown', h_md);
+							//setTimeout(() => {
+							// bit of a hack to fix a bug.
+							//}, 10);
+						}
+					}
+				} else {
+					if (typeof document === 'undefined') {} else {
+						handle.off('mousedown', h_md);
+						handle.has_drag_md_handler = false;
+					}
+				}
+			}
+		})
+	}
+
+	if (old_dragable !== undefined) {
+		ctrl.dragable = old_dragable;
+	}
 
 }
 

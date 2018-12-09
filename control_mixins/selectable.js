@@ -74,7 +74,10 @@ let selectable = (ctrl, ctrl_handle) => {
                         //console.log('action_select_only');
                         let ss = ctrl.find_selection_scope();
                         //console.log('ss', ss);
-                        if (ss) ss.select_only(ctrl);
+                        if (ss) {
+                            ss.select_only(ctrl);
+                            ctrl.raise('select');
+                        }
 
                         //this.find_selection_scope().select_only(this);
                     });
@@ -100,7 +103,7 @@ let selectable = (ctrl, ctrl_handle) => {
                             setTimeout(() => {
                                 ctrl_handle.on(selection_action, click_handler);
                                 // bit of a hack to fix a bug.
-                            }, 10);
+                            }, 0);
                         }
                     }
                 } else {

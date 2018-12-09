@@ -546,6 +546,17 @@ class Control_Core extends Data_Object {
 			//var width = value[0];
 			//var height = value[1];
 			//console.log('value', value);
+			if (value.length === 2) {
+				//console.log('old', old);
+				if (old.length === 3) {
+					value = [value[0], value[1], old[2]];
+					this.pos = value;
+				}
+			}
+			if (value.length === 3) {
+				
+			}
+
 			let [left, top] = value;
 			//console.log('left', left);
 			//console.log('top', top);
