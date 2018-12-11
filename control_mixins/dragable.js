@@ -131,9 +131,16 @@ let dragable = (ctrl, opts = {}) => {
 	} = opts;
 	// bounds could be a control.
 
+	// boundary control
+	let bounds_pos;
 	// if the bounding control is the parent, it doesn't require copying to the body.
 
 	let bounds_is_parent = bounds === ctrl.parent;
+
+	if (bounds) {
+		bounds_pos = bounds.pos || [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
+	}
+
 	//console.log('ctrl.parent', ctrl.parent);
 	//console.log('bounds_is_parent', bounds_is_parent);
 	handle = handle || ctrl;
@@ -142,13 +149,13 @@ let dragable = (ctrl, opts = {}) => {
 	// Also drag within bounds?
 	//  Within bounds of parent?
 
-	let drag_mode = 'body';
+	let drag_mode = opts.mode || 'body';
 	if (bounds_is_parent) drag_mode = 'within-parent';
 
+	console.log('dragable drag_mode', drag_mode);
 
 	// Changing position within another control - not putting it into the document root.
 	// 
-
 	/*
 	let click_handler = (e) => {
 	    //console.log('selectable click e', e);
@@ -173,14 +180,19 @@ let dragable = (ctrl, opts = {}) => {
 	//  'body'
 
 
-	let pos_md, pos_mm, pos_mu;
+	let pos_md, pos_mm, pos_mu, pos_md_within_ctrl;
+
+	// pos_md_within_ctrl
+
 	let ctrl_body = ctrl.context.body();
 	let dragging = false;
-	let drag_offset_distance = 6;
+	let drag_offset_distance = opts.start_distance || 6;
 	let movement_offset;
 	let item_start_pos;
 
 	let bounds_size;
+	let bounds_offset;
+	let half_item_width, item_width;
 
 	const begin_drag = (pos) => {
 		//console.log('begin_drag', pos);
@@ -192,6 +204,7 @@ let dragable = (ctrl, opts = {}) => {
 			//  measure the item's initial position.
 			//console.log('parent.size', parent.size);
 			item_start_pos = ctrl.pos;
+
 			//item_start_pos = ctrl.bcr()[0];
 			//console.log('item_start_pos', item_start_pos);
 			//console.log('movement_offset', movement_offset);
@@ -203,34 +216,95 @@ let dragable = (ctrl, opts = {}) => {
 			//console.log('2) ctrl.pos', ctrl.pos);
 			//let new_item_pos = 
 		} else {
-			throw 'NYI';
+			if (drag_mode === 'x') {
+				dragging = true;
+				item_start_pos = ctrl.pos || [ctrl.dom.el.offsetLeft, ctrl.dom.el.offsetTop];
+				console.log('item_start_pos', item_start_pos);
+
+				half_item_width = Math.round(ctrl.dom.el.offsetWidth / 2);
+				item_width = (ctrl.dom.el.offsetWidth);
+				bounds_offset = [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
+
+				console.log('item_start_pos', item_start_pos);
+				console.log('movement_offset', movement_offset);
+
+				console.log('bounds_pos', bounds_pos);
+
+				//let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_offset[0] - pos_md_within_ctrl[0] - item_width, item_start_pos[1]];
+				let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_pos[0] - half_item_width, item_start_pos[1]];
+				console.log('item_start_pos[1]', item_start_pos[1]);
+
+				ctrl.pos = new_pos;
+			} else {
+				console.log('drag_mode', drag_mode);
+				throw 'NYI';
+			}
+
+			
 		}
 	}
 	const move_drag = (pos) => {
-		bounds_size = ctrl.parent.bcr()[2];
-		let ctrl_size = ctrl.bcr()[2];
+		//let ctrl_size = ctrl.bcr()[2];
+		let ctrl_size = [ctrl.dom.el.offsetWidth, ctrl.dom.el.offsetHeight];
 
 		//console.log('bounds_size', bounds_size);
 		//console.log('ctrl_size', ctrl_size);
-		let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1] + movement_offset[1]];
 
-		if (new_pos[0] < 0) new_pos[0] = 0;
-		if (new_pos[1] < 0) new_pos[1] = 0;
+		//console.log('move_drag drag_mode', drag_mode);
 
+		if (drag_mode === 'within-parent') {
+			bounds_size = bounds.bcr()[2];
+			let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1] + movement_offset[1]];
 
-		if (new_pos[0] > bounds_size[0] - ctrl_size[0]) new_pos[0] = bounds_size[0] - ctrl_size[0];
-		if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
+			if (new_pos[0] < 0) new_pos[0] = 0;
+			if (new_pos[1] < 0) new_pos[1] = 0;
 
-		ctrl.pos = new_pos;
+			if (new_pos[0] > bounds_size[0] - ctrl_size[0]) new_pos[0] = bounds_size[0] - ctrl_size[0];
+			if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
+
+			ctrl.pos = new_pos;
+		}
+		if (drag_mode === 'x') {
+			//bounds_size = bounds.bcr()[2];
+			bounds_size = [bounds.dom.el.offsetWidth, bounds.dom.el.offsetHeight];
+			//console.log('bounds.dom.el', bounds.dom.el);
+			//console.log('bounds_size', bounds_size);
+			//console.log('bounds_pos', bounds_pos);
+			// half_item_width
+			//console.log('movement_offset', movement_offset);
+
+			//let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_pos[0] - pos_md_within_ctrl[0] - half_item_width, item_start_pos[1]];
+			//console.log('item_start_pos', item_start_pos);
+			let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_pos[0] - half_item_width, item_start_pos[1]];
+			//console.log('* new_pos', new_pos);
+
+			if (new_pos[0] < bounds_pos[0] - half_item_width) new_pos[0] = bounds_pos[0] - half_item_width;
+			//if (new_pos[1] < 0) new_pos[1] = 0;
+
+			// bounds left
+
+			if (new_pos[0] > bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width) new_pos[0] = bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width;
+			//if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
+			//console.log('** new_pos', new_pos);
+
+			ctrl.pos = new_pos;
+		}
+
+		// and need body drag mode too / back.
+
+		
 	}
 
 	const body_mm = e_mm => {
 		let pos_mm = [e_mm.pageX, e_mm.pageY];
+
 		movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
 		if (!dragging) {
 			//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
 			let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
 			let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
+
+
 			//console.log('abs_offset_dist', abs_offset_dist);
 			if (abs_offset_dist >= drag_offset_distance) {
 				begin_drag(pos_mm);
@@ -256,8 +330,18 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const h_md = (e_md) => {
-		//console.log('dragable e_md', e_md);
-		pos_md = [e_md.pageX, e_md.pageY];
+		console.log('dragable e_md', e_md);
+		// use offset
+
+		pos_md_within_ctrl = [e_md.offsetX, e_md.offsetY];
+
+		if (drag_mode === 'x') {
+			//pos_md = [e_md.layerX, e_md.layerY];
+			pos_md = [e_md.pageX, e_md.pageY];
+		} else {
+			pos_md = [e_md.pageX, e_md.pageY];
+		}
+
 		ctrl_body.on('mousemove', body_mm);
 		ctrl_body.on('mouseup', body_mu);
 

@@ -10,6 +10,10 @@ var v_add = util.v_add;
 
 class Resize_Handle extends Control {
 
+    // Scenario with more FP that assigns a specific control to be a reisze handle
+
+
+
     // Though maybe tell it to be an array and it should be an array rather than a collection?
     //  Or a Data_Value that holds an array?
 
@@ -75,8 +79,6 @@ class Resize_Handle extends Control {
                     //console.log('offset', offset);
 
                     target.mid_resize(offset);
-
-
     
                     // Add the body event listener.
     
@@ -95,9 +97,6 @@ class Resize_Handle extends Control {
                     body.remove_event_listener('mouseup', fn_mouseup);
 
                     target.end_resize(offset);
-
-
-
     
                     // Add the body event listener.
     

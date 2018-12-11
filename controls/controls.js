@@ -26,7 +26,7 @@ var controls = {
     File_Upload: require('./file-upload'),
     Grid: require('./grid'),
     Horizontal_Menu: require('./horizontal-menu'),
-    //Horizontal_Slider: require('./horizontal-slider'),
+    Horizontal_Slider: require('./horizontal-slider'),
     //Data_Item: require('./data-item'),
     Data_Row: require('./data-row'),
     Date_Picker: require('./date-picker'),

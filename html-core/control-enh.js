@@ -28,7 +28,7 @@ var Control_Core = require('./control-core');
 //const def = jsgui.is_defined;
 
 const mx_selectable = require('../control_mixins/selectable');
-const mx_fast_touch_click = require('../control_mixins/fast-touch-click');
+//const mx_fast_touch_click = require('../control_mixins/fast-touch-click');
 
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
@@ -585,14 +585,16 @@ class Control extends Control_Core {
 					e.ctrl = this;
 					if (!this.disabled) {
 						each(listener, l => {
-							l(e);
+							if (l) {
+								l(e);
+							}
 						});
 					}
 				}, false);
 			} else {
 				el.addEventListener(event_name, (e) => {
 					//console.log('this.disabled', this.disabled);
-					if (!this.disabled) listener(e);
+					if (!this.disabled && listener) listener(e);
 				}, false);
 			}
 			//console.log('post el add listener');
@@ -699,7 +701,7 @@ class Control extends Control_Core {
 
 		//}
 		// Should really activate with a dom element.
-		if (document && !this.__active) {
+		if (typeof document !== 'undefined' && !this.__active) {
 			this.__active = true;
 			if (!this.dom.el) {
 
@@ -720,9 +722,13 @@ class Control extends Control_Core {
 				this.activate_content_controls();
 				this.activate_content_listen();
 				this.activate_other_changes_listen();
+
+				/*
+				// This disables mobile UI events eg scroll, set focus. 
 				if ('ontouchstart' in document.documentElement) {
 					mx_fast_touch_click(this);
 				}
+				*/
 				//console.log('this.selectable', this.selectable);
 				if (def(this.selectable)) {
 					//console.log('activating mx_selectable');

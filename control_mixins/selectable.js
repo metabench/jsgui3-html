@@ -4,12 +4,8 @@ const {
 } = require('obext');
 
 let selectable = (ctrl, ctrl_handle) => {
-
     let selection_action = 'mousedown';
-
-
     // select on mousedown?
-
     ctrl_handle = ctrl_handle || ctrl;
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
@@ -38,9 +34,9 @@ let selectable = (ctrl, ctrl_handle) => {
             } else {
                 ctrl.remove_class('selected');
             }
-        }
+        };
         return true;
-    })
+    });
 
     if (!old_selectable) {
         field(ctrl, 'selected');
@@ -64,7 +60,6 @@ let selectable = (ctrl, ctrl_handle) => {
                     ss.map_selected_controls[id] = null;
                 }
             }
-
             if (n === 'selectable') {
                 if (value === true) {
                     ctrl.deselect = ctrl.deselect || (() => {
@@ -78,7 +73,6 @@ let selectable = (ctrl, ctrl_handle) => {
                             ss.select_only(ctrl);
                             ctrl.raise('select');
                         }
-
                         //this.find_selection_scope().select_only(this);
                     });
                     ctrl.action_select_toggle = ctrl.action_select_toggle || (() => {
@@ -98,8 +92,6 @@ let selectable = (ctrl, ctrl_handle) => {
                         //console.log('ctrl.has_selection_click_handler', ctrl.has_selection_click_handler);
                         if (!ctrl_handle.has_selection_click_handler) {
                             ctrl_handle.has_selection_click_handler = true;
-
-
                             setTimeout(() => {
                                 ctrl_handle.on(selection_action, click_handler);
                                 // bit of a hack to fix a bug.
@@ -122,7 +114,7 @@ let selectable = (ctrl, ctrl_handle) => {
                 }
             }
         })
-    }
+    };
 
     if (true) {
         //ctrl.__selectable = true;
@@ -161,9 +153,6 @@ let selectable = (ctrl, ctrl_handle) => {
                 let old = _selectable;
                 _selectable = value;
                 // Handling the change may be best here though.
-
-                
-                
                 ctrl.raise('change', {
                     'name': 'selectable',
                     'old': old,
@@ -174,11 +163,9 @@ let selectable = (ctrl, ctrl_handle) => {
             enumerable: true,
             configurable: true
         });
-
         */
 
         /*
-
         Object.defineProperty(ctrl, 'select_unique', {
             get() {
                 return _select_unique;

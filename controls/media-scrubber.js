@@ -92,7 +92,6 @@ class Media_Scrubber extends Control {
 
             this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
 
-
             // Don't just send control fields, send the ms duration field too.
             //  Will get updated when the track changes.
 

@@ -548,7 +548,7 @@ class Control_Core extends Data_Object {
 			//console.log('value', value);
 			if (value.length === 2) {
 				//console.log('old', old);
-				if (old.length === 3) {
+				if (old && old.length === 3) {
 					value = [value[0], value[1], old[2]];
 					this.pos = value;
 				}

@@ -1,5 +1,7 @@
 var jsgui = require('../html-core/html-core');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+var stringify = jsgui.stringify,
+	each = jsgui.each,
+	tof = jsgui.tof;
 var Control = jsgui.Control;
 
 var v_subtract = jsgui.v_subtract;
@@ -17,7 +19,12 @@ var v_subtract = jsgui.v_subtract;
  ],
  */
 
+const {
+	prop,
+	field
+} = require('obext');
 
+const mx_dragable = require('../control_mixins/dragable');
 
 class Horizontal_Slider extends Control {
 	// fields... text, value, type?
@@ -44,62 +51,82 @@ class Horizontal_Slider extends Control {
 	constructor(spec, add, make) {
 		super(spec);
 		this.__type_name = 'horizontal_slider';
-
 		// Want a 'ghost' drag mode.
 
-		if (!spec.abstract && !spec.el) {
+		if (!spec.el) {
 
-			var div_relative = add(Control({ 'class': 'relative' }))
-			this.add_class('horizontal slider');
+			this.compose_horizontal_slider();
 
-			// Then we add the bar over the width.
-			var h_bar = make(Control({ 'class': 'h-bar' }));
-			var v_bar = make(Control({ 'class': 'v-bar' }));
-
-			div_relative.add(h_bar);
-			div_relative.add(v_bar);
-
-			var ctrl_fields = {
-				'div_relative': div_relative._id(),
-				'h_bar': h_bar._id(),
-				'v_bar': v_bar._id()
-			}
-
-			this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
-
+			//this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
 			// Send the min, max and value fields over to the client too.
-
 			// Fields to persist to client.
 
-			var min = this.get('min').value();
-			var max = this.get('max').value();
-
-
+			//var min = this.get('min').value();
+			//var max = this.get('max').value();
 
 			//console.log('min', min);
 			//console.log('max', max);
 
 			// Is value a specific case?
 
-			var value = this.value;
+			//var value = this.value;
 
+			/*
 			var obj_fields = {
 				//'ms_duration': ms_duration
 				'min': min,
 				'max': max,
 				'value': value
 			};
-			var drag_mode = this.get('drag_mode');
-			if (drag_mode) {
-				obj_fields.drag_mode = drag_mode.value();
-			}
+			*/
+
+			// Make the slider itself dragable.
+
+			//var drag_mode = this.get('drag_mode');
+			//if (drag_mode) {
+			//	obj_fields.drag_mode = drag_mode.value();
+			//}
 			//console.log('tof(min)', tof(min));
 			//throw 'stop';
-			this.set('dom.attributes.data-jsgui-fields', stringify(obj_fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
-			this.active();
+
+			//this.set('dom.attributes.data-jsgui-fields', stringify(obj_fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
+			//this.active();
+		}
+	}
+	'compose_horizontal_slider'() {
+		let h_bar, v_bar;
+		const context = this.context;
+
+		let div_relative = this.add(new Control({
+			'class': 'relative',
+			'context': context
+		}));
+		this.add_class('horizontal slider');
+
+		// Then we add the bar over the width.
+		(h_bar = new Control({
+			'class': 'h-bar',
+			'context': context
+		}));
+		(v_bar = new Control({
+			'class': 'v-bar',
+			'context': context
+		}));
+
+		div_relative.add(h_bar);
+		div_relative.add(v_bar);
+
+		field(this, 'min', 0);
+		field(this, 'max', 100);
+
+		let ctrl_fields = {
+			'div_relative': div_relative,
+			'h_bar': h_bar,
+			'v_bar': v_bar
 		}
 
-
+		this._ctrl_fields = this._ctrl_fields || {};
+		Object.assign(this._ctrl_fields, ctrl_fields);
 	}
 	'activate'() {
 		super.activate();
@@ -117,30 +144,44 @@ class Horizontal_Slider extends Control {
 		var h_bar = this.h_bar;
 		var v_bar = this.v_bar;
 
-		var ghost_v_bar;
+		mx_dragable(v_bar, {
+			mode: 'x',
+			bounds: h_bar,
+			start_distance: 1
+		});
+		v_bar.dragable = true;
 
-
+		//var ghost_v_bar;
 
 		//console.log('h_bar', h_bar);
 		//console.log('v_bar', v_bar);
 
-		var size = this.size();
-		//console.log('size', size);
+		var size = this.bcr()[2];
+		console.log('Horizontal Slider size', size);
 
-		var size_v_bar = this.v_bar.size();
+		var size_v_bar = this.v_bar.bcr()[2];
+
+
 		var w_v_bar = size_v_bar[0];
 		var h_w_v_bar = w_v_bar / 2;
+
+
+		var h_bar_width = this.v_bar.bcr()[2][0];
+
+		/*
 
 		var h_padding = 5;
 
 		var h_bar_width = size[0] - h_padding * 2;
 
+
 		this.h_bar.style({
 			'width': h_bar_width + 'px'
 		});
 
-		var ctrl_html_root = this.context.ctrl_document;
+		*/
 
+		var ctrl_html_root = this.context.ctrl_document;
 
 		// have lower level drag working on the h_bar?
 		//  want some kind of flexible drag, but that could be done while cutting out code.
@@ -163,6 +204,9 @@ class Horizontal_Slider extends Control {
 
 		var v_bar_center_pos;
 		var v_bar_center_pos_when_pressed;
+
+		/*
+
 
 		var ensure_ctrl_ghost_v_bar = function () {
 			if (!ctrl_ghost_v_bar) {
@@ -214,8 +258,6 @@ class Horizontal_Slider extends Control {
 				ctrl_ghost_v_bar.style('left', (up_offset_from_bcr_h_bar_x) + 'px');
 
 			} else {
-
-
 				v_bar.style('left', up_offset_from_bcr_h_bar_x + 'px');
 			}
 
@@ -297,22 +339,25 @@ class Horizontal_Slider extends Control {
 			pos_down = [e_mousedown.pageX, e_mousedown.pageY];
 
 		});
+
+		*/
 		// So the event does not get raised when setting a field?
 
 		//this.get('value').on('change', function(name, value) {
 		//	console.log('h slider value change ', name, value);
 		//});
 
+		/*
 
-		this.on('change', function (e_change) {
+		this.on('change', (e_change) => {
 
-			var name = e_change.name, value = e_change.value;
+			var name = e_change.name,
+				value = e_change.value;
 			//console.log('h slider change', e_change);
 
 			if (name == 'value') {
-				var min = that.min;
-
-				var max = that.max;
+				var min = this.min;
+				var max = this.max;
 
 				prop = value / max;
 
@@ -321,6 +366,7 @@ class Horizontal_Slider extends Control {
 				v_bar.style('left', v_bar_center_pos + 'px');
 			}
 		});
+		*/
 		// need to
 	}
 }
