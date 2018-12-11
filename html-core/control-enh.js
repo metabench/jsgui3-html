@@ -584,6 +584,7 @@ class Control extends Control_Core {
 					//console.log('this', this);
 					e.ctrl = this;
 					if (!this.disabled) {
+						//console.log('listener.length', listener.length)
 						each(listener, l => {
 							if (l) {
 								l(e);

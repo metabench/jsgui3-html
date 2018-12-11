@@ -124,18 +124,33 @@ let dragable = (ctrl, opts = {}) => {
 	//let selection_action = 'mousedown';
 	// select on mousedown?
 
+	console.log('dragable');
+
+
 	// bounds, handle
 	let {
 		bounds,
-		handle
+		handle,
+		mode
 	} = opts;
 	// bounds could be a control.
 
+	//control
+
 	// boundary control
 	let bounds_pos;
+	let bounds_is_parent = bounds === ctrl.parent;
 	// if the bounding control is the parent, it doesn't require copying to the body.
 
-	let bounds_is_parent = bounds === ctrl.parent;
+	
+
+	if (bounds === 'parent') {
+		bounds = ctrl.parent;
+		bounds_is_parent = true;
+	} 
+
+	console.log('bounds', bounds);
+	
 
 	if (bounds) {
 		bounds_pos = bounds.pos || [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
@@ -150,7 +165,10 @@ let dragable = (ctrl, opts = {}) => {
 	//  Within bounds of parent?
 
 	let drag_mode = opts.mode || 'body';
-	if (bounds_is_parent) drag_mode = 'within-parent';
+	if (bounds_is_parent) {
+		drag_mode = 'within-parent';
+		//bounds = 
+	}
 
 	console.log('dragable drag_mode', drag_mode);
 
@@ -227,11 +245,10 @@ let dragable = (ctrl, opts = {}) => {
 
 				console.log('item_start_pos', item_start_pos);
 				console.log('movement_offset', movement_offset);
-
 				console.log('bounds_pos', bounds_pos);
 
 				//let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_offset[0] - pos_md_within_ctrl[0] - item_width, item_start_pos[1]];
-				let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_pos[0] - half_item_width, item_start_pos[1]];
+				let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1]];
 				console.log('item_start_pos[1]', item_start_pos[1]);
 
 				ctrl.pos = new_pos;
@@ -239,8 +256,6 @@ let dragable = (ctrl, opts = {}) => {
 				console.log('drag_mode', drag_mode);
 				throw 'NYI';
 			}
-
-			
 		}
 	}
 	const move_drag = (pos) => {
@@ -253,6 +268,8 @@ let dragable = (ctrl, opts = {}) => {
 		//console.log('move_drag drag_mode', drag_mode);
 
 		if (drag_mode === 'within-parent') {
+			//console.log('bounds', bounds);
+			bounds = bounds || ctrl.parent;
 			bounds_size = bounds.bcr()[2];
 			let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1] + movement_offset[1]];
 
@@ -275,7 +292,7 @@ let dragable = (ctrl, opts = {}) => {
 
 			//let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_pos[0] - pos_md_within_ctrl[0] - half_item_width, item_start_pos[1]];
 			//console.log('item_start_pos', item_start_pos);
-			let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_pos[0] - half_item_width, item_start_pos[1]];
+			let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1]];
 			//console.log('* new_pos', new_pos);
 
 			if (new_pos[0] < bounds_pos[0] - half_item_width) new_pos[0] = bounds_pos[0] - half_item_width;
@@ -316,8 +333,15 @@ let dragable = (ctrl, opts = {}) => {
 
 	const end_drag = e_mu => {
 		dragging = false;
+		//console.log('end_drag', end_drag);
+		//console.trace();
 		ctrl_body.off('mousemove', body_mm);
 		ctrl_body.off('mouseup', body_mu);
+
+		//console.log('pre raise drag complete');
+
+		console.log('movement_offset', movement_offset);
+
 		ctrl.raise('drag-complete', {
 			movement_offset: movement_offset
 		});
@@ -325,12 +349,13 @@ let dragable = (ctrl, opts = {}) => {
 
 	const body_mu = e_mu => {
 		// release
-		//console.log('body_mu', body_mu);
+		//console.log('body_mu', e_mu);
+		//console.trace();
 		end_drag(e_mu);
 	}
 
 	const h_md = (e_md) => {
-		console.log('dragable e_md', e_md);
+		//console.log('dragable e_md', e_md);
 		// use offset
 
 		pos_md_within_ctrl = [e_md.offsetX, e_md.offsetY];
@@ -378,6 +403,11 @@ let dragable = (ctrl, opts = {}) => {
 				if (value === true) {
 					// ctrl.deselect();
 					if (typeof document === 'undefined') {} else {
+
+						// on activation of control.
+
+
+
 						if (!handle.has_drag_md_handler) {
 							handle.has_drag_md_handler = true;
 							handle.on('mousedown', h_md);
