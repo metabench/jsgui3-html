@@ -72,7 +72,6 @@ var controls = {
     Vertical_Expander: require('./vertical-expander'),
     Window: require('./window'),
 
-
     mx: require('../control_mixins/mx')
 }
 

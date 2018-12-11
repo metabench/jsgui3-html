@@ -17,7 +17,6 @@ let selected_deletable = (ctrl) => {
     let press_handler = (event) => {
         const keyName = event.key;
         //console.log('event', event);
-
         // 46
 
         if (keyName === 'Delete') {

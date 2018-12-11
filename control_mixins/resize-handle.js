@@ -19,7 +19,6 @@ let selectable = (ctrl, target) => {
         //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
         //console.log('ctrl.selectable', ctrl.selectable);
-        
     }
 
     ctrl.on('change', e_change => {
@@ -35,7 +34,6 @@ let selectable = (ctrl, target) => {
             //console.log('e_change', e_change);
             let n = e_change.name,
                 value = e_change.value;
-            
         })
     };
 

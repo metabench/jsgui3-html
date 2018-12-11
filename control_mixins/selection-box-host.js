@@ -114,9 +114,7 @@ let selection_box_host = (ctrl) => {
             });
             return selection_box;
         }
-
         //throw 'stop';
-
         ctrl.drag_events(md => {
             // md within uncovered control
             // a way to cancel the event too...
@@ -143,16 +141,13 @@ let selection_box_host = (ctrl) => {
                 //console.log('ctrl.pos', ctrl.pos);
 
                 // need the scroll position...
-
                 //console.log('ctrl.el.scrollTop', ctrl.dom.el.scrollTop);
                 //console.log('ctrl.el.parentNode.scrollTop', ctrl.dom.el.parentNode.scrollTop);
                 //console.log('window.scrollY', window.scrollY);
-
                 //console.log('ctrl.bcr()', ctrl.bcr());
                 let ctrl_pos = ctrl.bcr()[0];
 
                 // bcr plus window scroll
-
                 // mf pos within control
                 //console.log('ctrl_pos', ctrl_pos);
                 md_offset_within_ctrl = v_subtract(md.pos, ctrl_pos);
@@ -204,16 +199,11 @@ let selection_box_host = (ctrl) => {
                 mm_pos = mm.pos;
                 mm_pos[1] -= window.scrollY;
                 let ctrl_pos = ctrl.bcr()[0];
-
                 // subtract the scroll position
-
                 // console.log('window.scrollY', window.scrollY);
                 //console.log('ctrl_pos', ctrl_pos);
                 //ctrl_pos[1] += window.scrollY;
-
                 //console.log('2) window.scrollY', window.scrollY);
-
-
                 mm_offset_within_ctrl = v_subtract(mm.pos, ctrl_pos);
 
                 //console.log('mm_offset_within_ctrl', mm_offset_within_ctrl);
@@ -221,9 +211,7 @@ let selection_box_host = (ctrl) => {
                 //;
                 //let intersecting = isf.find_intersections(selection_box.coords = [md_offset_within_ctrl, mm_offset_within_ctrl]);
                 //console.log('intersecting', intersecting);
-
                 // could set a scroll offset...
-
                 selection_box.coords = [md_offset_within_ctrl, mm_offset_within_ctrl];
                 isf.coords = [md_pos, mm_pos];
             }
