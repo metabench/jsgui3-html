@@ -149,7 +149,7 @@ let dragable = (ctrl, opts = {}) => {
 		bounds_is_parent = true;
 	} 
 
-	console.log('bounds', bounds);
+	//console.log('bounds', bounds);
 	
 
 	if (bounds) {
@@ -170,7 +170,7 @@ let dragable = (ctrl, opts = {}) => {
 		//bounds = 
 	}
 
-	console.log('dragable drag_mode', drag_mode);
+	//console.log('dragable drag_mode', drag_mode);
 
 	// Changing position within another control - not putting it into the document root.
 	// 
@@ -237,19 +237,19 @@ let dragable = (ctrl, opts = {}) => {
 			if (drag_mode === 'x') {
 				dragging = true;
 				item_start_pos = ctrl.pos || [ctrl.dom.el.offsetLeft, ctrl.dom.el.offsetTop];
-				console.log('item_start_pos', item_start_pos);
+				//console.log('item_start_pos', item_start_pos);
 
 				half_item_width = Math.round(ctrl.dom.el.offsetWidth / 2);
 				item_width = (ctrl.dom.el.offsetWidth);
 				bounds_offset = [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
 
-				console.log('item_start_pos', item_start_pos);
-				console.log('movement_offset', movement_offset);
-				console.log('bounds_pos', bounds_pos);
+				//console.log('item_start_pos', item_start_pos);
+				//console.log('movement_offset', movement_offset);
+				//console.log('bounds_pos', bounds_pos);
 
 				//let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_offset[0] - pos_md_within_ctrl[0] - item_width, item_start_pos[1]];
 				let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1]];
-				console.log('item_start_pos[1]', item_start_pos[1]);
+				//console.log('item_start_pos[1]', item_start_pos[1]);
 
 				ctrl.pos = new_pos;
 			} else {
@@ -340,7 +340,7 @@ let dragable = (ctrl, opts = {}) => {
 
 		//console.log('pre raise drag complete');
 
-		console.log('movement_offset', movement_offset);
+		//console.log('movement_offset', movement_offset);
 
 		ctrl.raise('drag-complete', {
 			movement_offset: movement_offset
