@@ -69,6 +69,19 @@ let selection_box_host = (ctrl) => {
     field(ctrl, 'selection_box_host');
     ctrl.selection_box_host = true;
     // ctrl drag events
+
+    // .wrap_activate
+    //  finds the old activate function.
+
+    // wraps it with a new one.
+
+
+
+    // Or better to respond to activate.
+
+
+
+
     // wrap the activation function?
     let old_activate = ctrl.activate;
     ctrl.activate = function (spec) {

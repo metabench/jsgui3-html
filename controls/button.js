@@ -1,6 +1,6 @@
 var jsgui = require('../html-core/html-core');
 var Control = jsgui.Control;
-const fast_touch_click = require('../control_mixins/fast-touch-click');
+//const fast_touch_click = require('../control_mixins/fast-touch-click');
 
 class Button extends Control {
     constructor(spec, add, make) {

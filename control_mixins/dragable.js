@@ -142,15 +142,15 @@ let dragable = (ctrl, opts = {}) => {
 	let bounds_is_parent = bounds === ctrl.parent;
 	// if the bounding control is the parent, it doesn't require copying to the body.
 
-	
+
 
 	if (bounds === 'parent') {
 		bounds = ctrl.parent;
 		bounds_is_parent = true;
-	} 
+	}
 
 	//console.log('bounds', bounds);
-	
+
 
 	if (bounds) {
 		bounds_pos = bounds.pos || [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
@@ -309,11 +309,11 @@ let dragable = (ctrl, opts = {}) => {
 
 		// and need body drag mode too / back.
 
-		
+
 	}
 
 	const body_mm = e_mm => {
-		let pos_mm = [e_mm.pageX, e_mm.pageY];
+		let pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 
 		movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
 		if (!dragging) {
@@ -329,6 +329,9 @@ let dragable = (ctrl, opts = {}) => {
 		} else {
 			move_drag(pos_mm);
 		}
+
+		// Looks like they are passive now by default.
+		//e_mm.preventDefault();
 	}
 
 	const end_drag = e_mu => {
@@ -337,6 +340,8 @@ let dragable = (ctrl, opts = {}) => {
 		//console.trace();
 		ctrl_body.off('mousemove', body_mm);
 		ctrl_body.off('mouseup', body_mu);
+		ctrl_body.off('touchmove', body_mm);
+		ctrl_body.off('touchend', body_mu);
 
 		//console.log('pre raise drag complete');
 
@@ -355,21 +360,32 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const h_md = (e_md) => {
-		//console.log('dragable e_md', e_md);
+		console.log('dragable e_md', e_md);
 		// use offset
+		// [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 
-		pos_md_within_ctrl = [e_md.offsetX, e_md.offsetY];
-
-		if (drag_mode === 'x') {
-			//pos_md = [e_md.layerX, e_md.layerY];
-			pos_md = [e_md.pageX, e_md.pageY];
+		if (e_md.pageX) {
+			pos_md_within_ctrl = [e_md.offsetX, e_md.offsetX];
 		} else {
-			pos_md = [e_md.pageX, e_md.pageY];
+			pos_md_within_ctrl = [0, 0];
 		}
+
+		//pos_md_within_ctrl = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+
+		//if (drag_mode === 'x') {
+		//pos_md = [e_md.layerX, e_md.layerY];
+		pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
+		//} else {
+		//pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
+		//}
 
 		ctrl_body.on('mousemove', body_mm);
 		ctrl_body.on('mouseup', body_mu);
 
+		ctrl_body.on('touchmove', body_mm);
+		ctrl_body.on('touchend', body_mu);
+
+		e_md.preventDefault();
 	}
 
 	ctrl.on('change', e_change => {
@@ -406,19 +422,44 @@ let dragable = (ctrl, opts = {}) => {
 
 						// on activation of control.
 
-
+						let apply_start_handlers = () => {
+							handle.has_drag_md_handler = true;
+							handle.on('touchstart', h_md);
+							handle.on('mousedown', h_md);
+						}
 
 						if (!handle.has_drag_md_handler) {
-							handle.has_drag_md_handler = true;
-							handle.on('mousedown', h_md);
+
+							if (ctrl.__active) {
+								apply_start_handlers();
+							} else {
+								ctrl.one('activate', () => {
+									//set_svg(spec.svg);
+									apply_start_handlers();
+									
+								})
+							}
+
+
 							//setTimeout(() => {
 							// bit of a hack to fix a bug.
 							//}, 10);
 						}
+
+						
+
+						
+
+
+
+
+
 					}
 				} else {
 					if (typeof document === 'undefined') {} else {
+						handle.off('touchstart', h_md);
 						handle.off('mousedown', h_md);
+
 						handle.has_drag_md_handler = false;
 					}
 				}

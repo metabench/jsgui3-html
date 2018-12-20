@@ -16,6 +16,7 @@ const {
 //var is_ctrl = jsgui.is_ctrl;
 const v_subtract = jsgui.util.v_subtract;
 
+const {prom_or_cb} = require('fnl');
 
 /*
 var get_a_sig = jsgui.get_a_sig,
@@ -74,8 +75,8 @@ var dom_desc = (el, callback) => {
 	}
 }
 
-var mapDomEventNames = {
-	'change': true,
+const mapDomEventNames = {
+	//'change': true,
 
 	'click': true,
 	'mousedown': true,
@@ -464,7 +465,7 @@ class Control extends Control_Core {
 			e_mousedown.within_this = iao;
 			if (!iao) {
 				// raise the callback, disconnect the event.
-				console.log('pre body off');
+				//console.log('pre body off');
 				body.off('mousedown', fn_mousedown);
 				callback(e_mousedown);
 			}
@@ -571,6 +572,7 @@ class Control extends Control_Core {
 
 	'add_dom_event_listener'(event_name, fn_handler) {
 		//console.log('add_dom_event_listener', event_name, this.__id);
+		//console.trace();
 		var listener = this._bound_events[event_name];
 		//var that = this;
 		var el = this.dom.el;
@@ -697,6 +699,20 @@ class Control extends Control_Core {
 	//
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
 
+	'once_active'(cb) {
+		return prom_or_cb((solve, jettison) => {
+			console.log('once_active this.__active', this.__active);
+			if (this.__active) {
+				solve();
+			} else {
+				this.one('activate', () => {
+					console.log('been activated');
+					solve();
+				});
+			}
+		}, cb);
+	}
+
 	'activate'(el) {
 		//if (document) {
 
@@ -715,7 +731,7 @@ class Control extends Control_Core {
 			}
 			//var el = this.dom.el;
 			if (!this.dom.el) {
-				//console.log('no el, this', this);
+				console.log('no el, this', this);
 				//console.trace();
 				//throw 'expected el'
 			} else {
@@ -735,6 +751,8 @@ class Control extends Control_Core {
 					//console.log('activating mx_selectable');
 					//mx_selectable(this);
 				}
+				console.log('pre raise activate');
+				this.raise('activate');
 			}
 		}
 	}

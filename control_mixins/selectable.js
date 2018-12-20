@@ -4,7 +4,11 @@ const {
 } = require('obext');
 
 let selectable = (ctrl, ctrl_handle) => {
-    let selection_action = 'mousedown';
+    let selection_action = ['mousedown', 'touchstart'];
+
+    // touchstart as well.
+
+
     // select on mousedown?
     ctrl_handle = ctrl_handle || ctrl;
     let old_selectable = ctrl.selectable;
@@ -16,7 +20,7 @@ let selectable = (ctrl, ctrl_handle) => {
             var ctrl_key = e.ctrlKey;
             var meta_key = e.metaKey;
             if ((ctrl_key || meta_key)) {
-                    ctrl.action_select_toggle();
+                ctrl.action_select_toggle();
             } else {
                 //console.log('pre select only');
                 //console.log('ctrl.action_select_only', ctrl.action_select_only);
@@ -26,7 +30,10 @@ let selectable = (ctrl, ctrl_handle) => {
     }
 
     ctrl.on('change', e_change => {
-        let {name, value} = e_change;
+        let {
+            name,
+            value
+        } = e_change;
         if (name === 'selected') {
             //console.log('selected value', value);
             if (value) {
@@ -43,6 +50,11 @@ let selectable = (ctrl, ctrl_handle) => {
         field(ctrl, 'selectable');
         field(ctrl, 'select_unique');
         let id = ctrl._id();
+
+
+        // only once the control is active...
+
+        //ctrl.once_active(() => {
         ctrl.on('change', e_change => {
             //console.log('e_change', e_change);
             let n = e_change.name,
@@ -88,15 +100,30 @@ let selectable = (ctrl, ctrl_handle) => {
                         // send this over to the client as a property.
                         //  a field to send to the client.
                     } else {
+
+                        ctrl.once_active(() => {
+                            if (!ctrl_handle.has_selection_click_handler) {
+                                ctrl_handle.has_selection_click_handler = true;
+                                setTimeout(() => {
+
+                                    if (Array.isArray(selection_action)) {
+                                        selection_action.forEach(i => {
+                                            ctrl_handle.on(i, click_handler);
+                                        })
+                                    } else {
+                                        ctrl_handle.on(selection_action, click_handler);
+                                    }
+
+                                    
+                                    // bit of a hack to fix a bug.
+                                }, 0);
+                            }
+                        });
+
+
                         //this.click(click_handler);
                         //console.log('ctrl.has_selection_click_handler', ctrl.has_selection_click_handler);
-                        if (!ctrl_handle.has_selection_click_handler) {
-                            ctrl_handle.has_selection_click_handler = true;
-                            setTimeout(() => {
-                                ctrl_handle.on(selection_action, click_handler);
-                                // bit of a hack to fix a bug.
-                            }, 0);
-                        }
+
                     }
                 } else {
                     if (typeof document === 'undefined') {
@@ -114,6 +141,9 @@ let selectable = (ctrl, ctrl_handle) => {
                 }
             }
         })
+        //});
+
+
     };
 
     if (true) {

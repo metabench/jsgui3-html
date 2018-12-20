@@ -25,24 +25,37 @@ let selected_deletable = (ctrl) => {
             // 
         }
     }
-    
-    ctrl.on('change', e_change => {
-        let {
-            name,
-            value
-        } = e_change;
-        if (name === 'selected') {
-            console.log('selected_deletable selected value', value);
-            if (value) {
-                //ctrl.add_class('selected');
-                document.addEventListener('keydown', press_handler, false);
-            } else {
-                //ctrl.remove_class('selected');
-                document.removeEventListener('keydown', press_handler, false);
-            }
-        };
-        return true;
+
+
+    // once it's active.
+
+    //ctrl.once_active...
+
+
+    ctrl.once_active(() => {
+        ctrl.on('change', e_change => {
+            let {
+                name,
+                value
+            } = e_change;
+            if (name === 'selected') {
+
+                // once it's activated.
+
+                console.log('selected_deletable selected value', value);
+                if (value) {
+                    //ctrl.add_class('selected');
+                    document.addEventListener('keydown', press_handler, false);
+                } else {
+                    //ctrl.remove_class('selected');
+                    document.removeEventListener('keydown', press_handler, false);
+                }
+            };
+            return true;
+        });
     });
+
+
 
     if (true) {
         // but it won't be defined.

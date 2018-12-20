@@ -31,7 +31,7 @@ let selected_resizable = (ctrl, ctrl_handle) => {
             //alert(`Key pressed ${keyName}`);
         }
     }
-    
+
     ctrl.on('change', e_change => {
         let {
             name,
@@ -39,13 +39,19 @@ let selected_resizable = (ctrl, ctrl_handle) => {
         } = e_change;
         if (name === 'selected') {
             //console.log('selected value', value);
-            if (value) {
-                //ctrl.add_class('selected');
-                document.addEventListener('keypress', press_handler, false);
-            } else {
-                //ctrl.remove_class('selected');
-                document.removeEventListener('keypress', press_handler, false);
-            }
+
+
+            ctrl.once_active(() => {
+                if (value) {
+                    //ctrl.add_class('selected');
+                    document.addEventListener('keypress', press_handler, false);
+                } else {
+                    //ctrl.remove_class('selected');
+                    document.removeEventListener('keypress', press_handler, false);
+                }
+            });
+
+
         };
         return true;
     });

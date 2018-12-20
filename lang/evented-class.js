@@ -77,7 +77,7 @@ class Evented_Class {
                     for (c = 0, l = bei.length; c < l; c++) {
                         //res.push(bei[c].call(target));
 
-                        res.push(bei[c]());
+                        if (typeof bei[c] === 'function') res.push(bei[c]());
 
                     }
                     return res;

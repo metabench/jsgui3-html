@@ -22,7 +22,7 @@ let selectable = (ctrl, target) => {
     }
 
     ctrl.on('change', e_change => {
-        
+
     });
 
     if (!old_resizable) {
@@ -30,11 +30,16 @@ let selectable = (ctrl, target) => {
         //field(ctrl, 'selectable');
         //field(ctrl, 'select_unique');
         let id = ctrl._id();
-        ctrl.on('change', e_change => {
-            //console.log('e_change', e_change);
-            let n = e_change.name,
-                value = e_change.value;
+
+        ctrl.once_active(() => {
+            ctrl.on('change', e_change => {
+                //console.log('e_change', e_change);
+                let n = e_change.name,
+                    value = e_change.value;
+            })
         })
+
+
     };
 
 }
