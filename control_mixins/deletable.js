@@ -14,7 +14,7 @@ let deletable = (ctrl) => {
 
     
 
-    console.log('ctrl.delete', ctrl.delete);
+    //console.log('ctrl.delete', ctrl.delete);
 
     ctrl.delete = () => {
 

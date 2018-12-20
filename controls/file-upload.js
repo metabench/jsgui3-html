@@ -68,8 +68,6 @@ class File_Upload extends Control {
         //  time remaining, speed.
 
         //var action;
-
-
         /*
         if (spec.action) {
             this.action = spec.action;
@@ -85,14 +83,11 @@ class File_Upload extends Control {
         //var action = this.get('action') || '/upload/';
         //if (action.value) action = action.value();
 
-
-
         //frm.set('dom.attributes.action', action);
         var da = this.dom.attrs;
         da.action = this.action;
         da.method = 'POST';
         da.enctype = 'multipart/form-data';
-
 
         //frm.set('dom.attributes.action', '/login');
         //frm.set('dom.attributes.method', 'POST');
@@ -115,7 +110,6 @@ class File_Upload extends Control {
                 'context': this.context
 
             })
-
             var bda = btn.dom.attrs;
             bda.type = 'submit';
             bda.value = 'submit';

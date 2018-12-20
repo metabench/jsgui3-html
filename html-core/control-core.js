@@ -514,6 +514,7 @@ class Control_Core extends Data_Object {
 			//this._size = value;
 			//var width = value[0];
 			//var height = value[1];
+			//console.log('value', value);
 			let [width, height] = value;
 			//console.log('width', width);
 			//console.log('height', height);

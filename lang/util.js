@@ -600,6 +600,8 @@ var util = {
 	'v_divide' : v_divide,
 	'vector_magnitude' : vector_magnitude,
 	'distance_between_points' : distance_between_points,
+
+	
 	'execute_on_each_simple' : execute_on_each_simple,
 	'mapify' : mapify,
 	'filter_map_by_regex' : filter_map_by_regex,

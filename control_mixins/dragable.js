@@ -124,7 +124,7 @@ let dragable = (ctrl, opts = {}) => {
 	//let selection_action = 'mousedown';
 	// select on mousedown?
 
-	console.log('dragable');
+	//console.log('dragable');
 
 
 	// bounds, handle

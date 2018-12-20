@@ -71,6 +71,10 @@ class Selection_Scope extends jsgui.Data_Object {
 					//count_deselected++;
 				}
 			}
+			this.raise('change', {
+				name: 'selected',
+				value: undefined
+			});
 		});
 		this.map_selected_controls = {};
 	}
