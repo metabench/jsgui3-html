@@ -146,7 +146,7 @@ class Horizontal_Slider extends Control {
 			//  Detect if the touch is near the item we want to drag.
 			// Perhaps touch tolerance could be done by using a larger touch overlay, or touch handle.
 
-			var that = this;
+			//var that = this;
 
 			//var div_relative = this.get('div_relative');
 			var h_bar = this.h_bar;
@@ -432,7 +432,7 @@ class Horizontal_Slider extends Control {
 	}
 
 	set bar_value(value) {
-		console.log('set bar_value', value);
+		//console.log('set bar_value', value);
 		const {
 			h_bar,
 			v_bar
@@ -441,7 +441,7 @@ class Horizontal_Slider extends Control {
 		var max = this.max;
 
 		let prop = (value - min) / (max - min);
-		console.log('prop', prop);
+		//console.log('prop', prop);
 
 		var size_h_bar = h_bar.size || [h_bar.dom.el.offsetWidth, h_bar.dom.el.offsetHeight];
 		let v_bar_center_pos = Math.round((size_h_bar[0] * prop)) + h_bar.dom.el.offsetLeft;

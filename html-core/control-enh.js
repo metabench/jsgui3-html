@@ -1134,7 +1134,7 @@ class Control extends Control_Core {
 		let e = {
 			cancelDefault: false
 		}
-		console.log('pre raise show')
+		//console.log('pre raise show')
 		this.raise('show', e);
 		if (!e.cancelDefault) {
 			this.remove_class('hidden');

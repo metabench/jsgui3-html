@@ -374,13 +374,13 @@ let dragable = (ctrl, opts = {}) => {
 
 	const body_mu = e_mu => {
 		// release
-		console.log('body_mu', e_mu);
-		console.trace();
+		//console.log('body_mu', e_mu);
+		//console.trace();
 		end_drag(e_mu);
 	}
 
 	const h_md = (e_md) => {
-		console.log('dragable e_md', e_md);
+		//console.log('dragable e_md', e_md);
 		// use offset
 		// [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 
@@ -434,7 +434,7 @@ let dragable = (ctrl, opts = {}) => {
 		//return true;
 	})
 
-	console.log('old_dragable', old_dragable);
+	//console.log('old_dragable', old_dragable);
 
 	if (!old_dragable) {
 		//field(ctrl, 'selected');
@@ -448,7 +448,7 @@ let dragable = (ctrl, opts = {}) => {
 			if (n === 'dragable') {
 				if (value === true) {
 					// ctrl.deselect();
-					console.trace();
+					//console.trace();
 
 					if (typeof document === 'undefined') {} else {
 						// on activation of control.
@@ -471,7 +471,7 @@ let dragable = (ctrl, opts = {}) => {
 						//console.log('handle.has_drag_md_handler', handle.has_drag_md_handler);
 
 						ctrl.once_active(() => {
-							console.log('dragable once_active');
+							//console.log('dragable once_active');
 							apply_start_handlers();
 						});
 						

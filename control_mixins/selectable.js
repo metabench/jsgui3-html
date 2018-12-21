@@ -3,7 +3,81 @@ const {
     field
 } = require('obext');
 
-let selectable = (ctrl, ctrl_handle) => {
+let selectable = (ctrl, ctrl_handle, opts) => {
+
+
+    // A few variables concerning how selection works.
+
+    // ui action -> selection action
+
+    // select 1
+    //  deselect with further select action
+
+    // select multi
+
+
+    // select_toggle
+    // select_multi
+
+    // two different variables would cover it.
+
+
+    // but still single selection.
+    let select_toggle = false;
+
+    // select only...
+    let select_multi = false;
+    // will allow meta key toggle
+
+    // maybe defining a bunch of params and actions?
+    //  then having a 'mode' preset.
+
+    // press action
+    //  select_only
+    //  
+
+    // and then options for selecting multiple with the meta / ctrl key
+
+
+
+    // Or it could be a selection scope mode.
+
+    //let multi_select = 
+
+    if (!opts) {
+
+        if (ctrl_handle) {
+            if (!ctrl_handle.activate) {
+                opts = ctrl_handle;
+                ctrl_handle = undefined;
+            }
+        }
+
+        
+    }
+
+    if (opts) {
+        if (opts.handle) {
+            ctrl_handle = opts.handle;
+        }
+        if (opts.select_toggle || opts.toggle) {
+            select_toggle = true;
+        }
+        if (opts.select_multi || opts.multi) {
+            select_multi = true;
+        }
+        if (opts.single) {
+            select_multi = false;
+        }
+    }
+
+
+    // Should have options,
+    //  with the handle being one of the options.
+    //   Though could interpret the params to keep the API.
+    //   Can check if it is a control.
+
+
     let selection_action = ['mousedown', 'touchstart'];
 
     // touchstart as well.
@@ -13,18 +87,41 @@ let selectable = (ctrl, ctrl_handle) => {
     ctrl_handle = ctrl_handle || ctrl;
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
-        console.log('selectable click e', e);
+
+        // or not a click
+
+        //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
         //console.log('ctrl.selectable', ctrl.selectable);
         if (ctrl.selectable && !ctrl.selection_scope) {
             var ctrl_key = e.ctrlKey;
             var meta_key = e.metaKey;
-            if ((ctrl_key || meta_key)) {
-                ctrl.action_select_toggle();
+
+            if (select_multi) {
+                if ((ctrl_key || meta_key)) {
+                    ctrl.action_select_toggle();
+                } else {
+                    //console.log('pre select only');
+                    //console.log('ctrl.action_select_only', ctrl.action_select_only);
+                    ctrl.action_select_only();
+                }
             } else {
-                //console.log('pre select only');
-                //console.log('ctrl.action_select_only', ctrl.action_select_only);
-                ctrl.action_select_only();
+
+
+                if (select_toggle) {
+
+                    
+
+                    if (ctrl.selected) {
+                        ctrl.deselect();
+                    } else {
+                        ctrl.action_select_only();
+                    }
+                } else {
+                    ctrl.action_select_only();
+                }
+
+                
             }
         }
     }
@@ -48,7 +145,7 @@ let selectable = (ctrl, ctrl_handle) => {
     if (!old_selectable) {
         field(ctrl, 'selected');
         field(ctrl, 'selectable');
-        field(ctrl, 'select_unique');
+        //field(ctrl, 'select_unique');
         let id = ctrl._id();
 
 
@@ -104,14 +201,14 @@ let selectable = (ctrl, ctrl_handle) => {
                         // Problem with multiple once_active callbacks?
 
                         ctrl.once_active(() => {
-                            console.log('selectable once active');
+                            //console.log('selectable once active');
 
                             if (!ctrl_handle.has_selection_click_handler) {
                                 ctrl_handle.has_selection_click_handler = true;
                                 //setTimeout(() => {
 
                                     if (Array.isArray(selection_action)) {
-                                        console.log('selection_action', selection_action);
+                                        //console.log('selection_action', selection_action);
 
 
                                         selection_action.forEach(i => {
