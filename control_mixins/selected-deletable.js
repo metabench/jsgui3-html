@@ -32,17 +32,19 @@ let selected_deletable = (ctrl) => {
     //ctrl.once_active...
 
 
-    ctrl.once_active(() => {
-        ctrl.on('change', e_change => {
-            let {
-                name,
-                value
-            } = e_change;
-            if (name === 'selected') {
 
-                // once it's activated.
+    ctrl.on('change', e_change => {
+        let {
+            name,
+            value
+        } = e_change;
+        if (name === 'selected') {
 
-                console.log('selected_deletable selected value', value);
+            // once it's activated.
+
+            //console.log('selected_deletable selected value', value);
+
+            ctrl.once_active(() => {
                 if (value) {
                     //ctrl.add_class('selected');
                     document.addEventListener('keydown', press_handler, false);
@@ -50,10 +52,13 @@ let selected_deletable = (ctrl) => {
                     //ctrl.remove_class('selected');
                     document.removeEventListener('keydown', press_handler, false);
                 }
-            };
-            return true;
-        });
+            });
+
+        };
+        return true;
+
     });
+    //});
 
 
 

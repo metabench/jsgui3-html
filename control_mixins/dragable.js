@@ -313,22 +313,31 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const body_mm = e_mm => {
-		let pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 
-		movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
-		if (!dragging) {
-			//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
-			let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
-			let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
+		let touch_count = 1;
+
+		if (e_mm.touches) touch_count = e_mm.touches.length;
+
+		if (touch_count === 1) {
+			let pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+
+			movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
+			if (!dragging) {
+				//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
+				let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
+				let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
 
 
-			//console.log('abs_offset_dist', abs_offset_dist);
-			if (abs_offset_dist >= drag_offset_distance) {
-				begin_drag(pos_mm);
+				//console.log('abs_offset_dist', abs_offset_dist);
+				if (abs_offset_dist >= drag_offset_distance) {
+					begin_drag(pos_mm);
+				}
+			} else {
+				move_drag(pos_mm);
 			}
-		} else {
-			move_drag(pos_mm);
 		}
+
+
 
 		// Looks like they are passive now by default.
 		//e_mm.preventDefault();
@@ -374,6 +383,10 @@ let dragable = (ctrl, opts = {}) => {
 
 		//if (drag_mode === 'x') {
 		//pos_md = [e_md.layerX, e_md.layerY];
+
+		// Cancel move if there are multiple touches?
+		//  Want to recognise pinch / 2 finger rotate events.
+
 		pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
 		//} else {
 		//pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
@@ -418,17 +431,26 @@ let dragable = (ctrl, opts = {}) => {
 			if (n === 'dragable') {
 				if (value === true) {
 					// ctrl.deselect();
+
+
+
 					if (typeof document === 'undefined') {} else {
 
 						// on activation of control.
 
 						let apply_start_handlers = () => {
+							//console.log('apply_start_handlers');
 							handle.has_drag_md_handler = true;
 							handle.on('touchstart', h_md);
 							handle.on('mousedown', h_md);
 						}
 
+						//console.log('handle.has_drag_md_handler', handle.has_drag_md_handler);
+
 						if (!handle.has_drag_md_handler) {
+							ctrl.once_active(apply_start_handlers);
+
+							/*
 
 							if (ctrl.__active) {
 								apply_start_handlers();
@@ -436,9 +458,10 @@ let dragable = (ctrl, opts = {}) => {
 								ctrl.one('activate', () => {
 									//set_svg(spec.svg);
 									apply_start_handlers();
-									
+
 								})
 							}
+							*/
 
 
 							//setTimeout(() => {
@@ -446,9 +469,9 @@ let dragable = (ctrl, opts = {}) => {
 							//}, 10);
 						}
 
-						
 
-						
+
+
 
 
 
