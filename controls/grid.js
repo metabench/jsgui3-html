@@ -472,7 +472,7 @@ class Grid extends Control {
 
             //var num_columns = this.grid_size[0];
             //var num_rows = this.grid_size[1];
-            console.log('refresh_size this.grid_size', this.grid_size);
+            //console.log('refresh_size this.grid_size', this.grid_size);
             let [num_columns, num_rows] = this.grid_size;
 
             
@@ -557,7 +557,7 @@ class Grid extends Control {
             //console.log('num_columns', num_columns);
 
             var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
-            console.log('cell_size', cell_size);
+            //console.log('cell_size', cell_size);
             let row_width, row_height;
             //console.log('this.cell_size', this.cell_size);
             //let row_header_width = this.cell_size[0];
@@ -581,8 +581,7 @@ class Grid extends Control {
 
             const data = this.data;
 
-            console.log('row_header_width', row_header_width);
-
+            //console.log('row_header_width', row_header_width);
 
             var x, y;
 
@@ -681,7 +680,7 @@ class Grid extends Control {
                     row_container.add(cell);
                     cell.activate();
                 }
-                console.log('num_columns', num_columns);
+                //console.log('num_columns', num_columns);
 
                 for (x = 0; x < num_columns; x++) {
 
@@ -704,7 +703,7 @@ class Grid extends Control {
                     var cell = new Grid_Cell(o);
                     cell.add_class('cell');
 
-                    console.log('cell', cell);
+                    //console.log('cell', cell);
 
                     // and put the data in the cell.
 

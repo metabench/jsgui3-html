@@ -16,6 +16,14 @@
 const parse_mount = (html, context) => {
     // parser in other thread?
 
+    // .$('<a dom>');
+    //  begins with <
+
+    // Needs access to a load of different controls
+    //  They could be expressed in different cases.
+
+    
+
     //var htmlparser = require("htmlparser2");
 
     /*

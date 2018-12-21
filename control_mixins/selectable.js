@@ -13,7 +13,7 @@ let selectable = (ctrl, ctrl_handle) => {
     ctrl_handle = ctrl_handle || ctrl;
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
-        //console.log('selectable click e', e);
+        console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
         //console.log('ctrl.selectable', ctrl.selectable);
         if (ctrl.selectable && !ctrl.selection_scope) {
@@ -101,12 +101,19 @@ let selectable = (ctrl, ctrl_handle) => {
                         //  a field to send to the client.
                     } else {
 
+                        // Problem with multiple once_active callbacks?
+
                         ctrl.once_active(() => {
+                            console.log('selectable once active');
+
                             if (!ctrl_handle.has_selection_click_handler) {
                                 ctrl_handle.has_selection_click_handler = true;
-                                setTimeout(() => {
+                                //setTimeout(() => {
 
                                     if (Array.isArray(selection_action)) {
+                                        console.log('selection_action', selection_action);
+
+
                                         selection_action.forEach(i => {
                                             ctrl_handle.on(i, click_handler);
                                         })
@@ -116,7 +123,7 @@ let selectable = (ctrl, ctrl_handle) => {
 
                                     
                                     // bit of a hack to fix a bug.
-                                }, 0);
+                                //}, 0);
                             }
                         });
 

@@ -700,17 +700,39 @@ class Control extends Control_Core {
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
 
 	'once_active'(cb) {
-		return prom_or_cb((solve, jettison) => {
-			console.log('once_active this.__active', this.__active);
-			if (this.__active) {
-				solve();
-			} else {
-				this.one('activate', () => {
-					console.log('been activated');
+
+		// maintain a list of once active callbacks...
+
+
+
+		if (typeof document !== 'undefined') {
+			return prom_or_cb((solve, jettison) => {
+				//console.log('once_active this.__active', this.__active);
+				if (this.__active) {
 					solve();
-				});
-			}
-		}, cb);
+				} else {
+
+					// Same function here... won't work with .one
+
+					// Or the list gets changed while its being processed.
+
+					let fn_activate = () => {
+						//console.log('been activated');
+
+						solve();
+
+						setTimeout(() => {
+							this.off('activate', fn_activate);
+						}, 0)
+					}
+					//fn_activate.key = Math.random();
+
+					// 'one' deactivates the key
+					this.on('activate', fn_activate);
+				}
+			}, cb);
+		}
+		
 	}
 
 	'activate'(el) {
@@ -751,7 +773,7 @@ class Control extends Control_Core {
 					//console.log('activating mx_selectable');
 					//mx_selectable(this);
 				}
-				console.log('pre raise activate');
+				//console.log('pre raise activate');
 				this.raise('activate');
 			}
 		}
@@ -1098,11 +1120,25 @@ class Control extends Control_Core {
 
 	'hide'() {
 		//console.log('hide');
-		this.add_class('hidden');
+		//this.add_class('hidden');
+		let e = {
+			cancelDefault: false
+		}
+		this.raise('hide', e)
+		if (!e.cancelDefault) {
+			this.add_class('hidden');
+		}
 	}
 	'show'() {
 		//console.log('show');
-		this.remove_class('hidden');
+		let e = {
+			cancelDefault: false
+		}
+		console.log('pre raise show')
+		this.raise('show', e);
+		if (!e.cancelDefault) {
+			this.remove_class('hidden');
+		}
 	}
 
 	'descendants'(search) {

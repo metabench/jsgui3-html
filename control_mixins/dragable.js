@@ -313,9 +313,7 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const body_mm = e_mm => {
-
 		let touch_count = 1;
-
 		if (e_mm.touches) touch_count = e_mm.touches.length;
 
 		if (touch_count === 1) {
@@ -327,6 +325,7 @@ let dragable = (ctrl, opts = {}) => {
 				let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
 				let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
 
+				//console.log('drag_offset_distance', drag_offset_distance);
 
 				//console.log('abs_offset_dist', abs_offset_dist);
 				if (abs_offset_dist >= drag_offset_distance) {
@@ -344,27 +343,39 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const end_drag = e_mu => {
-		dragging = false;
-		//console.log('end_drag', end_drag);
-		//console.trace();
+
 		ctrl_body.off('mousemove', body_mm);
 		ctrl_body.off('mouseup', body_mu);
 		ctrl_body.off('touchmove', body_mm);
 		ctrl_body.off('touchend', body_mu);
 
-		//console.log('pre raise drag complete');
+		if (dragging) {
+			dragging = false;
+			//console.log('end_drag', end_drag);
+			//console.trace();
 
-		//console.log('movement_offset', movement_offset);
+			// Also end drag attempt...
+			//  Want it switched off on mouseup.
 
-		ctrl.raise('drag-complete', {
-			movement_offset: movement_offset
-		});
+
+
+
+			//console.log('pre raise drag complete');
+
+			//console.log('movement_offset', movement_offset);
+
+			ctrl.raise('drag-complete', {
+				movement_offset: movement_offset
+			});
+		}
+
+
 	}
 
 	const body_mu = e_mu => {
 		// release
-		//console.log('body_mu', e_mu);
-		//console.trace();
+		console.log('body_mu', e_mu);
+		console.trace();
 		end_drag(e_mu);
 	}
 
@@ -378,6 +389,8 @@ let dragable = (ctrl, opts = {}) => {
 		} else {
 			pos_md_within_ctrl = [0, 0];
 		}
+
+		dragging = false;
 
 		//pos_md_within_ctrl = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 
@@ -398,7 +411,9 @@ let dragable = (ctrl, opts = {}) => {
 		ctrl_body.on('touchmove', body_mm);
 		ctrl_body.on('touchend', body_mu);
 
-		e_md.preventDefault();
+
+		// Does this break selectable / other mixins?
+		//e_md.preventDefault();
 	}
 
 	ctrl.on('change', e_change => {
@@ -419,6 +434,8 @@ let dragable = (ctrl, opts = {}) => {
 		//return true;
 	})
 
+	console.log('old_dragable', old_dragable);
+
 	if (!old_dragable) {
 		//field(ctrl, 'selected');
 		field(ctrl, 'dragable');
@@ -431,43 +448,33 @@ let dragable = (ctrl, opts = {}) => {
 			if (n === 'dragable') {
 				if (value === true) {
 					// ctrl.deselect();
-
-
+					console.trace();
 
 					if (typeof document === 'undefined') {} else {
-
 						// on activation of control.
 
 						let apply_start_handlers = () => {
-							//console.log('apply_start_handlers');
-							handle.has_drag_md_handler = true;
-							handle.on('touchstart', h_md);
-							handle.on('mousedown', h_md);
+							//console.log('apply_start_handlers handle', handle);
+							//console.trace();
+
+							if (!handle.has_drag_md_handler) {
+							
+
+								handle.has_drag_md_handler = true;
+								handle.on('touchstart', h_md);
+								handle.on('mousedown', h_md);
+							}
+
+							
 						}
 
 						//console.log('handle.has_drag_md_handler', handle.has_drag_md_handler);
 
-						if (!handle.has_drag_md_handler) {
-							ctrl.once_active(apply_start_handlers);
-
-							/*
-
-							if (ctrl.__active) {
-								apply_start_handlers();
-							} else {
-								ctrl.one('activate', () => {
-									//set_svg(spec.svg);
-									apply_start_handlers();
-
-								})
-							}
-							*/
-
-
-							//setTimeout(() => {
-							// bit of a hack to fix a bug.
-							//}, 10);
-						}
+						ctrl.once_active(() => {
+							console.log('dragable once_active');
+							apply_start_handlers();
+						});
+						
 
 
 
@@ -482,7 +489,6 @@ let dragable = (ctrl, opts = {}) => {
 					if (typeof document === 'undefined') {} else {
 						handle.off('touchstart', h_md);
 						handle.off('mousedown', h_md);
-
 						handle.has_drag_md_handler = false;
 					}
 				}
