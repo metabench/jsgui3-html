@@ -30,6 +30,8 @@ const mx_selectable = require('../control_mixins/selectable');
 
 // This will need to be versatile as well as operating simply with little configuration.
 
+// Could do with use of obext / oext
+
 // presentation
 //  column_headers
 //  row_headers
@@ -168,6 +170,8 @@ class Grid extends Control {
         spec.size = spec.size || [320, 200];
 
 
+
+
         // grid should have a default size?
         //  would be nice to read this from css.
 
@@ -274,6 +278,8 @@ class Grid extends Control {
                     }
                 }
             });
+
+
             if (def(spec[name])) {
 
                 (this._fields = this._fields || {})[name] = _prop_value = spec[name];
@@ -284,6 +290,12 @@ class Grid extends Control {
 
         spec.__type_name = spec.__type_name || 'grid';
         super(spec);
+
+
+        if (spec.cell_selection) {
+            this.cell_selection = spec.cell_selection;
+        }
+
         //this.__type_name = 'grid';
         this.add_class('grid');
         var spec_data = spec.data;
@@ -704,13 +716,23 @@ class Grid extends Control {
                     cell.add_class('cell');
 
                     //console.log('cell', cell);
-
                     // and put the data in the cell.
-
                     // A grid cell class may work best.
 
                     cell.size = cell_size;
-                    mx_selectable(cell);
+
+                    // but with what selection options.
+
+                    if (this.cell_selection) {
+                        mx_selectable(cell, this.cell_selection);
+                    } else {
+                        mx_selectable(cell);
+                    }
+
+                    
+
+
+
                     row_container.add(cell);
                     arr_cells[x] = arr_cells[x] || [];
                     arr_cells[x][y] = cell;

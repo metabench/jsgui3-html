@@ -867,8 +867,14 @@ div.grid .row .cell.selected {
     border-right: 1px solid #AAAAAA;
     border-bottom: 1px solid #999999;
     */
+
+    /*
     border: 2px solid #2046df;
     border-radius: 4px;
+    */
+
+    outline: 2px solid #0000FF;
+    outline-offset: -2px;
 }
 
 div.grid .row .cell.selected span {

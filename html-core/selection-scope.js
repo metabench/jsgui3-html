@@ -69,19 +69,26 @@ class Selection_Scope extends jsgui.Data_Object {
 				if (v.selected) {
 					v.selected = false;
 					//count_deselected++;
+					v.raise('deselected');
 				}
 			}
-			this.raise('change', {
-				name: 'selected',
-				value: undefined
-			});
+		});
+		this.raise('change', {
+			name: 'selected',
+			value: undefined
 		});
 		this.map_selected_controls = {};
 	}
 	'deselect'(ctrl) {
 		if (ctrl.selected === true) {
 			ctrl.selected = false;
+			ctrl.raise('deselected');
 		}
+		this.raise('change', {
+			name: 'selected',
+			map_selected_controls: this.map_selected_controls
+		})
+
 	}
 	// deselect controls internal to a control.
 
@@ -92,17 +99,21 @@ class Selection_Scope extends jsgui.Data_Object {
 		//var cs = ctrl.get('selection_scope');
 		var cs = ctrl.selection_scope;
 		var msc = this.map_selected_controls;
-		var that = this;
+		//var that = this;
 		ctrl.content.each(v => {
 			//var tv = tof(v);
 			if (v instanceof Control) {
 				v.selected = false;
 				var id = v._id();
 				if (msc[id]) msc[id] = false;
-				that.deselect_ctrl_content(v);
+				this.deselect_ctrl_content(v);
+				v.raise('deselected');
 			}
 		});
-		this.raise('change');
+		this.raise('change', {
+			name: 'selected',
+			map_selected_controls: this.map_selected_controls
+		});
 		//throw 'stop';
 	}
 	'select_toggle'(ctrl) {

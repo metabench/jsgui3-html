@@ -52,8 +52,6 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                 ctrl_handle = undefined;
             }
         }
-
-        
     }
 
     if (opts) {
@@ -70,16 +68,11 @@ let selectable = (ctrl, ctrl_handle, opts) => {
             select_multi = false;
         }
     }
-
-
     // Should have options,
     //  with the handle being one of the options.
     //   Though could interpret the params to keep the API.
     //   Can check if it is a control.
-
-
     let selection_action = ['mousedown', 'touchstart'];
-
     // touchstart as well.
 
 
@@ -87,9 +80,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     ctrl_handle = ctrl_handle || ctrl;
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
-
         // or not a click
-
         //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
         //console.log('ctrl.selectable', ctrl.selectable);
@@ -101,17 +92,19 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                 if ((ctrl_key || meta_key)) {
                     ctrl.action_select_toggle();
                 } else {
+
+                    if (select_toggle) {
+                        ctrl.action_select_toggle();
+                    } else {
+                        ctrl.action_select_only();
+                    }
+
                     //console.log('pre select only');
                     //console.log('ctrl.action_select_only', ctrl.action_select_only);
-                    ctrl.action_select_only();
+                    
                 }
             } else {
-
-
                 if (select_toggle) {
-
-                    
-
                     if (ctrl.selected) {
                         ctrl.deselect();
                     } else {
@@ -120,8 +113,6 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                 } else {
                     ctrl.action_select_only();
                 }
-
-                
             }
         }
     }
@@ -173,7 +164,12 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                 if (value === true) {
                     ctrl.deselect = ctrl.deselect || (() => {
                         if (ss) ss.deselect(ctrl);
+                        ctrl.raise('deselect');
                     });
+
+
+                    // need to listen for the control desele-
+
                     ctrl.action_select_only = ctrl.action_select_only || (() => {
                         //console.log('action_select_only');
                         let ss = ctrl.find_selection_scope();
