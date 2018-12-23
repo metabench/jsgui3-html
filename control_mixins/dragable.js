@@ -343,7 +343,6 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const end_drag = e_mu => {
-
 		ctrl_body.off('mousemove', body_mm);
 		ctrl_body.off('mouseup', body_mu);
 		ctrl_body.off('touchmove', body_mm);
@@ -459,6 +458,8 @@ let dragable = (ctrl, opts = {}) => {
 
 							if (!handle.has_drag_md_handler) {
 							
+
+								
 
 								handle.has_drag_md_handler = true;
 								handle.on('touchstart', h_md);

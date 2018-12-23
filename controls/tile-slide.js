@@ -1,6 +1,8 @@
 // This is a Control Transformer
 //  A function
 
+// Could work well as a mixin too.
+
 var jsgui = require('../html-core/html-core');
 var stringify = jsgui.stringify,
     each = jsgui.each,

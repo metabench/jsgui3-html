@@ -32,6 +32,14 @@ const mx_selectable = require('../control_mixins/selectable');
 
 // Could do with use of obext / oext
 
+// Including a sliding tile inside the grid would help too.
+
+const {
+    prop,
+    field
+} = require('obext');
+
+
 // presentation
 //  column_headers
 //  row_headers
@@ -167,7 +175,18 @@ class Grid extends Control {
     constructor(spec, add, make) {
         spec = spec || {};
 
-        spec.size = spec.size || [320, 200];
+        // Be able to use CSS to define grid cell sizes.
+        //  Ability to scroll within the grid.
+
+
+
+        //spec.size = spec.size || [320, 200];
+
+
+        // No need to rely on the size or cell size here.
+        //  Want to be able to use CSS values here.
+
+
 
 
 
@@ -192,101 +211,7 @@ class Grid extends Control {
 
         // More work on control fields would help too.
 
-        let prop = (name, default_value, fn_validate) => {
-            let _prop_value;
-            Object.defineProperty(this, name, {
-                get() {
-                    return _prop_value;
-                },
-                set(value) {
-                    // value must be an array of length 2.
-                    if (fn_validate) {
-                        let val = fn_validate(value);
-                        if (val === true) {
-                            let old = _prop_value
-                            _prop_value = value;
-                            this.raise('change', {
-                                'name': name,
-                                'old': old,
-                                'value': value
-                            });
-                        } else {
-                            throw val;
-                        }
-                    } else {
-                        let old = _prop_value
-                        _prop_value = value;
-                        this.raise('change', {
-                            'name': name,
-                            'old': old,
-                            'value': value
-                        });
-                    }
-                }
-            });
-            if (def(spec[name])) {
-                _prop_value = spec[name];
-            } else {
-                _prop_value = default_value;
-            }
-        }
-
-        // and a field function.
-        //  like a prop, but sets the ._fields
-
-        let field = (name, default_value, fn_validate) => {
-            //prop(name, default_value, fn_validate);
-            let _prop_value;
-            Object.defineProperty(this, name, {
-                get() {
-                    return _prop_value;
-                },
-                set(value) {
-                    // value must be an array of length 2.
-                    if (fn_validate) {
-                        let val = fn_validate(value);
-                        if (val === true) {
-                            let old = _prop_value
-                            _prop_value = value;
-                            if (!this.el) {
-                                (this._fields = this._fields || {})[name] = value;
-                                //this._fields = this._fields || {};
-                                //this._fields[name] = value;
-                            }
-                            this.raise('change', {
-                                'name': name,
-                                'old': old,
-                                'value': value
-                            });
-
-                        } else {
-                            throw val;
-                        }
-                    } else {
-                        let old = _prop_value
-                        _prop_value = value;
-                        if (!this.el) {
-                            (this._fields = this._fields || {})[name] = value;
-                            //this._fields = this._fields || {};
-                            //this._fields[name] = value;
-                        }
-                        this.raise('change', {
-                            'name': name,
-                            'old': old,
-                            'value': value
-                        });
-                    }
-                }
-            });
-
-
-            if (def(spec[name])) {
-
-                (this._fields = this._fields || {})[name] = _prop_value = spec[name];
-            } else {
-                _prop_value = default_value;
-            }
-        }
+        
 
         spec.__type_name = spec.__type_name || 'grid';
         super(spec);
@@ -325,25 +250,12 @@ class Grid extends Control {
 
         if (spec.grid_size) _grid_size = spec.grid_size;
 
-        let _cell_size;
-        Object.defineProperty(this, 'cell_size', {
-            get() {
-                return _cell_size;
-            },
-            set(value) {
-                let old = _cell_size
-                _cell_size = value;
-                this.raise('change', {
-                    'name': 'cell_size',
-                    'old': old,
-                    'value': value
-                });
-            }
-        });
+        
+        field(this, 'cell_size');
 
         //console.log('spec.cell_size', spec.cell_size);
 
-        if (spec.cell_size) _cell_size = spec.cell_size;
+        if (spec.cell_size) this.cell_size = spec.cell_size;
 
 
         // row headers property
@@ -353,9 +265,9 @@ class Grid extends Control {
         //  could be objects
 
 
-        field('column_headers', false);
-        field('row_headers', false);
-        prop('data', false);
+        field(this, 'column_headers', false);
+        field(this, 'row_headers', false);
+        prop(this, 'data', false);
 
         this.map_cells = {};
         this.arr_cells = {};
@@ -460,7 +372,10 @@ class Grid extends Control {
         this.on('change', (e_change) => {
             //console.log('resize Grid', e_resize);
 
-            let {name, value} = e_change;
+            let {
+                name,
+                value
+            } = e_change;
             if (name === 'grid_size') {
                 //this.refresh_size();
 
@@ -472,11 +387,13 @@ class Grid extends Control {
 
             // then need to recalculate the cell sizes.
             //console.log('this.composition_mode', this.composition_mode);
-            
+
         });
     }
 
     'refresh_size'() {
+
+        // Don't necessarily refresh the cell size.
         if (this.composition_mode === 'divs') {
 
             // resize or refresh_grid_size
@@ -486,8 +403,6 @@ class Grid extends Control {
             //var num_rows = this.grid_size[1];
             //console.log('refresh_size this.grid_size', this.grid_size);
             let [num_columns, num_rows] = this.grid_size;
-
-            
 
             var cell_border_thickness = 1;
             var _2_cell_border_thickness = cell_border_thickness * 2;
@@ -536,6 +451,35 @@ class Grid extends Control {
         //return this._arr_rows[y]
     }
 
+    // Cells only rendering mode
+    //  They will float
+    //  More layout will be done with CSS.
+
+    'add_cell'(content) {
+        var cell = new Grid_Cell({
+            context: this.context
+        });
+        if (this.cell_selection) {
+            mx_selectable(cell, this.cell_selection);
+        } else {
+            mx_selectable(cell);
+        }
+        if (content) {
+            cell.add(content);
+        }
+        cell.active();
+        
+        this.add(cell);
+        
+        //cell.activate();
+        
+        return cell;
+    }
+
+
+
+
+
     'full_compose_as_divs'() {
         // Compose row and column headers here, if they are in use.
         // row header width
@@ -550,9 +494,18 @@ class Grid extends Control {
         //var num_columns = this.grid_size[0];
         //var num_rows = this.grid_size[1];
         //console.log('this.grid_size', this.grid_size);
-        let map_cells = this.map_cells, arr_cells = this.arr_cells;
+        let map_cells = this.map_cells,
+            arr_cells = this.arr_cells;
+
         if (this.grid_size) {
+
+            // set the number of rows or columns...
+
+
+
             let [num_columns, num_rows] = this.grid_size;
+
+
             //console.log('this.size', this.size);
             //throw 'stop';
             // Nope, easier to use box-sizing internal or whatever css.
@@ -641,7 +594,6 @@ class Grid extends Control {
                     cell.size = cell_size;
                     //mx_selectable(cell);
                     header_row.add(cell);
-                    
                 }
             }
 
@@ -713,7 +665,7 @@ class Grid extends Control {
 
                     // Grid_Cell
                     var cell = new Grid_Cell(o);
-                    cell.add_class('cell');
+                    //cell.add_class('cell');
 
                     //console.log('cell', cell);
                     // and put the data in the cell.
@@ -728,10 +680,6 @@ class Grid extends Control {
                     } else {
                         mx_selectable(cell);
                     }
-
-                    
-
-
 
                     row_container.add(cell);
                     arr_cells[x] = arr_cells[x] || [];
@@ -854,7 +802,7 @@ class Grid extends Control {
                 });
 
             }
-            load_rows();
+            //load_rows();
 
             //this.each_cell
 
