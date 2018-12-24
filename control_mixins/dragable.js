@@ -257,6 +257,8 @@ let dragable = (ctrl, opts = {}) => {
 				throw 'NYI';
 			}
 		}
+
+		ctrl.raise('dragstart');
 	}
 	const move_drag = (pos) => {
 		//let ctrl_size = ctrl.bcr()[2];
@@ -306,19 +308,14 @@ let dragable = (ctrl, opts = {}) => {
 
 			ctrl.pos = new_pos;
 		}
-
 		// and need body drag mode too / back.
-
-
 	}
 
 	const body_mm = e_mm => {
 		let touch_count = 1;
 		if (e_mm.touches) touch_count = e_mm.touches.length;
-
 		if (touch_count === 1) {
 			let pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-
 			movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
 			if (!dragging) {
 				//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
@@ -335,9 +332,6 @@ let dragable = (ctrl, opts = {}) => {
 				move_drag(pos_mm);
 			}
 		}
-
-
-
 		// Looks like they are passive now by default.
 		//e_mm.preventDefault();
 	}
@@ -352,23 +346,14 @@ let dragable = (ctrl, opts = {}) => {
 			dragging = false;
 			//console.log('end_drag', end_drag);
 			//console.trace();
-
 			// Also end drag attempt...
 			//  Want it switched off on mouseup.
-
-
-
-
 			//console.log('pre raise drag complete');
-
 			//console.log('movement_offset', movement_offset);
-
-			ctrl.raise('drag-complete', {
+			ctrl.raise('dragend', {
 				movement_offset: movement_offset
 			});
 		}
-
-
 	}
 
 	const body_mu = e_mu => {
@@ -382,13 +367,11 @@ let dragable = (ctrl, opts = {}) => {
 		//console.log('dragable e_md', e_md);
 		// use offset
 		// [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-
 		if (e_md.pageX) {
 			pos_md_within_ctrl = [e_md.offsetX, e_md.offsetX];
 		} else {
 			pos_md_within_ctrl = [0, 0];
 		}
-
 		dragging = false;
 
 		//pos_md_within_ctrl = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
@@ -455,12 +438,7 @@ let dragable = (ctrl, opts = {}) => {
 						let apply_start_handlers = () => {
 							//console.log('apply_start_handlers handle', handle);
 							//console.trace();
-
 							if (!handle.has_drag_md_handler) {
-							
-
-								
-
 								handle.has_drag_md_handler = true;
 								handle.on('touchstart', h_md);
 								handle.on('mousedown', h_md);
@@ -475,15 +453,6 @@ let dragable = (ctrl, opts = {}) => {
 							//console.log('dragable once_active');
 							apply_start_handlers();
 						});
-						
-
-
-
-
-
-
-
-
 
 					}
 				} else {

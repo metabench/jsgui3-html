@@ -115,6 +115,8 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                 }
             }
         }
+        e.stopPropagation(); 
+        e.preventDefault(); 
     }
 
     ctrl.on('change', e_change => {
@@ -166,8 +168,6 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                         if (ss) ss.deselect(ctrl);
                         ctrl.raise('deselect');
                     });
-
-
                     // need to listen for the control desele-
 
                     ctrl.action_select_only = ctrl.action_select_only || (() => {
@@ -205,16 +205,12 @@ let selectable = (ctrl, ctrl_handle, opts) => {
 
                                     if (Array.isArray(selection_action)) {
                                         //console.log('selection_action', selection_action);
-
-
                                         selection_action.forEach(i => {
                                             ctrl_handle.on(i, click_handler);
                                         })
                                     } else {
                                         ctrl_handle.on(selection_action, click_handler);
                                     }
-
-                                    
                                     // bit of a hack to fix a bug.
                                 //}, 0);
                             }
