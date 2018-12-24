@@ -160,7 +160,7 @@ class Horizontal_Slider extends Control {
 			v_bar.dragable = true;
 
 			// drag complete event...
-			v_bar.on('drag-complete', e_complete => {
+			v_bar.on('dragend', e_complete => {
 				//console.log('v_bar e_complete', e_complete);
 				//console.trace();
 
