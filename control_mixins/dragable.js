@@ -267,12 +267,16 @@ let dragable = (ctrl, opts = {}) => {
 		//console.log('bounds_size', bounds_size);
 		//console.log('ctrl_size', ctrl_size);
 
-		//console.log('move_drag drag_mode', drag_mode);
+		//console.log('move_drag pos', pos);
+		//console.log('movement_offset', movement_offset);
+		//console.log('item_start_pos', item_start_pos);
 
 		if (drag_mode === 'within-parent') {
 			//console.log('bounds', bounds);
 			bounds = bounds || ctrl.parent;
 			bounds_size = bounds.bcr()[2];
+
+			//console.log('bounds_size', bounds_size);
 			let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1] + movement_offset[1]];
 
 			if (new_pos[0] < 0) new_pos[0] = 0;
@@ -281,6 +285,7 @@ let dragable = (ctrl, opts = {}) => {
 			if (new_pos[0] > bounds_size[0] - ctrl_size[0]) new_pos[0] = bounds_size[0] - ctrl_size[0];
 			if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
 
+			//console.log('new_pos', new_pos);
 			ctrl.pos = new_pos;
 		}
 		if (drag_mode === 'x') {
@@ -290,7 +295,7 @@ let dragable = (ctrl, opts = {}) => {
 			//console.log('bounds_size', bounds_size);
 			//console.log('bounds_pos', bounds_pos);
 			// half_item_width
-			//console.log('movement_offset', movement_offset);
+			
 
 			//let new_pos = [item_start_pos[0] + movement_offset[0] + bounds_pos[0] - pos_md_within_ctrl[0] - half_item_width, item_start_pos[1]];
 			//console.log('item_start_pos', item_start_pos);
@@ -305,7 +310,7 @@ let dragable = (ctrl, opts = {}) => {
 			if (new_pos[0] > bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width) new_pos[0] = bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width;
 			//if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
 			//console.log('** new_pos', new_pos);
-
+			//console.log('new_pos', new_pos);
 			ctrl.pos = new_pos;
 		}
 		// and need body drag mode too / back.
@@ -395,7 +400,7 @@ let dragable = (ctrl, opts = {}) => {
 
 
 		// Does this break selectable / other mixins?
-		//e_md.preventDefault();
+		e_md.preventDefault();
 	}
 
 	ctrl.on('change', e_change => {

@@ -753,7 +753,7 @@ class Control extends Control_Core {
 			}
 			//var el = this.dom.el;
 			if (!this.dom.el) {
-				console.log('no el, this', this);
+				//console.log('no el, this', this);
 				//console.trace();
 				//throw 'expected el'
 			} else {
