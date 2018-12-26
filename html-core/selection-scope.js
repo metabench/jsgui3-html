@@ -55,6 +55,7 @@ class Selection_Scope extends jsgui.Data_Object {
 				name: 'selected',
 				value: ctrl
 			});
+			ctrl.raise('select');
 			
 		}
 		if (count_deselected > 0 & !currently_selected) {

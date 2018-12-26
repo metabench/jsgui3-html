@@ -176,7 +176,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                         //console.log('ss', ss);
                         if (ss) {
                             ss.select_only(ctrl);
-                            ctrl.raise('select');
+                            //ctrl.raise('select');
                         }
                         //this.find_selection_scope().select_only(this);
                     });
@@ -242,98 +242,10 @@ let selectable = (ctrl, ctrl_handle, opts) => {
 
     };
 
-    if (true) {
-        //ctrl.__selectable = true;
-        //let _selectable = false;
-        //let _select_unique = false;
-        // select_unique
-
-        //console.log('ctrl.selectable', ctrl.selectable);
-        //console.trace();
-
-        try {
-
-        } catch (err) {
-
-        }
-
-        // but it won't be defined.
-        if (old_selectable !== undefined) {
-            ctrl.selectable = old_selectable;
-        }
-        /*
-        Object.defineProperty(ctrl, 'selectable', {
-            get() {
-                return _selectable;
-            },
-            set(value) {
-
-                //console.log('set selectable', value);
-
-                // However, should be stored as RGB or better a Color object.
-                //  Just [r, g, b] for the moment.
-                //  Color object with a Typed Array could be nice.
-                //  pixel.color = ...
-                //   could be OK for low level programming.
-
-                let old = _selectable;
-                _selectable = value;
-                // Handling the change may be best here though.
-                ctrl.raise('change', {
-                    'name': 'selectable',
-                    'old': old,
-                    //'new': _disabled,
-                    'value': _selectable
-                });
-            },
-            enumerable: true,
-            configurable: true
-        });
-        */
-
-        /*
-        Object.defineProperty(ctrl, 'select_unique', {
-            get() {
-                return _select_unique;
-            },
-            set(value) {
-
-                //console.log('set selectable', value);
-
-                // However, should be stored as RGB or better a Color object.
-                //  Just [r, g, b] for the moment.
-                //  Color object with a Typed Array could be nice.
-                //  pixel.color = ...
-                //   could be OK for low level programming.
-
-                let old = _select_unique;
-                _select_unique = value;
-
-                // Handling the change may be best here though.
-                if (typeof document === 'undefined') {
-                    ctrl._fields = ctrl._fields || {};
-                    ctrl._fields['select_unique'] = value;
-                    //ctrl.is_selectable = true;
-
-                    // send this over to the client as a property.
-                    //  a field to send to the client.
-
-                }
-
-
-                this.raise('change', {
-                    'name': 'select_unique',
-                    'old': old,
-                    //'new': _disabled,
-                    'value': _selectable
-                });
-
-            },
-            enumerable: true,
-            configurable: false
-        });
-        */
+    if (old_selectable !== undefined) {
+        ctrl.selectable = old_selectable;
     }
+
 
 }
 
