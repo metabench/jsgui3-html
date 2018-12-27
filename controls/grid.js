@@ -434,6 +434,13 @@ class Grid extends Control {
 
     'each_cell'(cb_cell) {
         // want to return the cell position as an index
+
+        // Activate has not put together the rows...
+
+        console.log('this._arr_rows', this._arr_rows);
+        console.trace();
+
+
         each(this._arr_rows, (row, i_row) => {
 
 
@@ -469,6 +476,9 @@ class Grid extends Control {
         }
         cell.active();
         
+
+        // doesnt add it to a row.
+
         this.add(cell);
         
         //cell.activate();
@@ -791,9 +801,11 @@ class Grid extends Control {
             //console.log('activate Grid');
             //var _arr_rows;
 
+
+
             var load_rows = () => {
-                //console.log('load_rows');
-                //console.log('this.content.length()', this.content.length());
+                console.log('load_rows');
+                console.log('this.content.length', this.content.length);
                 // the rows are the content?
 
                 var _arr_rows = this._arr_rows = [];
@@ -802,7 +814,7 @@ class Grid extends Control {
                 });
 
             }
-            //load_rows();
+            load_rows();
 
             //this.each_cell
 

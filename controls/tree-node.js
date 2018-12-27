@@ -335,21 +335,10 @@ class Tree_Node extends Control {
 							this.raise('contract');
 							this.raise('close');
 						}
-						//console.log('tree-node toggle e_toggle', e_toggle);
-						// need to expand or contract the
-						// need to expand or contract the inner control.
-						//  Mixins could be good for this type of functionality.
-						//  Something that enhances a Control without making a new Class.
-						//expander.toggle();
 					})
 
 					//console.log('toggle_button.__active', toggle_button.__active);
 				}
-				//expander.on('change', e_change => {
-				//	if (e_change.name === 'state') {
-				//console.log('*state* e_change', e_change);
-				//	}
-				//});
 			}
 		}
 

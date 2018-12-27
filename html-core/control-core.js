@@ -425,19 +425,7 @@ class Control_Core extends Data_Object {
 	constructor(spec, fields) {
 		// but process / normalize the spec here?
 		spec = spec || {};
-
-		//console.log('Control_Core spec.__type_name', spec.__type_name);
-
 		spec.__type_name = spec.__type_name || 'control';
-		//super(spec, fields.concat(my_fields));
-		//spec.nodeType = spec.nodeType || 1;
-		//console.log('pre super init');
-		//console.log('fields', fields);
-		//throw 'stop';
-		//console.log('Control_Core spec', spec);
-		//console.log('Control_Core spec keys', Object.keys(spec));
-		//console.log('spec.id', spec.id);
-		//console.trace();
 		super(spec, fields);
 		if (spec.id) {
 			this.__id = spec.id;
@@ -449,12 +437,6 @@ class Control_Core extends Data_Object {
 		//console.log('done Control_Core super');
 		//do_init_call(this, spec);
 		this.mapListeners = {};
-
-		// Some of the Control initialization makes sense to do before the Data_Object initialization.
-		//  Data_Object will run the fields as function calls to set the values.
-		// When setting the color upon init, it's not setting the color in the css.
-		//  However, size is working OK.
-		//this.__type_name = 'control';
 		this.__type = 'control';
 
 		//console.log('post super init');
@@ -462,34 +444,7 @@ class Control_Core extends Data_Object {
 		// TextNodes don't have attributes
 		let d = this.dom = new Control_DOM();
 
-		// oext props
-
-		// a prop with a set type.
-		//  type checking in the prop.
-
-		//this._background = 
-
-		//prop(this, 'background', new Control_Background());
-		/*
-		Object.defineProperty(this, '_background', {
-			value: new Control_Background(),
-			enumerable: false,
-			writable: true,
-			configurable: false
-		});
-
-		this._background.on('change', evt => {
-			if (evt.name === 'color') {
-				// Except may be better after all to use a Color class that can output to HTML better.
-				d.attributes.style['background-color'] = evt.value;
-			}
-		});
-		*/
-		// onchange function given here?
 		prop(this, 'background', new Control_Background(), (e_change) => {
-			// .name, .value
-			//console.log('e_change', e_change);
-
 			let [value] = e_change;
 			value.on('change', evt => {
 				if (evt.name === 'color') {
@@ -501,52 +456,17 @@ class Control_Core extends Data_Object {
 		});
 		prop(this, 'disabled', false);
 		prop(this, 'size', spec.size, (e_change) => {
-			// .name, .value
-
-			// or a change tuplet kvp.
 			let [value, old] = e_change;
-			//var width = value[0].join('');
-			//var height = value[1].join('');
-			// Maybe keep its own style object, not css rules?
-			// As well as CSS rule-based object.
-			// size fits into own rules and description. Could bypass css inefficiencies.
-			//console.log('set size');
-			//this._size = value;
-			//var width = value[0];
-			//var height = value[1];
-			//console.log('value', value);
 			let [width, height] = value;
-			//console.log('width', width);
-			//console.log('height', height);
-
 			const s = this.dom.attrs.style;
 			s.width = width;
 			s.height = height;
-
-			//this.style({
-			//	'width': width,
-			//	'height': height
-			//});
-			// raise change size.
-			//console.log('pre raise resize');
 			this.raise('resize', {
 				'value': value
 			});
 		});
 		prop(this, 'pos', spec.pos, (e_change) => {
-			// .name, .value
-			// or a change tuplet kvp.
 			let [value, old] = e_change;
-			//var width = value[0].join('');
-			//var height = value[1].join('');
-			// Maybe keep its own style object, not css rules?
-			// As well as CSS rule-based object.
-			// size fits into own rules and description. Could bypass css inefficiencies.
-			//console.log('set size');
-			//this._size = value;
-			//var width = value[0];
-			//var height = value[1];
-			//console.log('value', value);
 			if (value.length === 2) {
 				//console.log('old', old);
 				if (old && old.length === 3) {
@@ -559,8 +479,6 @@ class Control_Core extends Data_Object {
 			}
 
 			let [left, top] = value;
-			//console.log('left', left);
-			//console.log('top', top);
 			this.style({
 				'left': left,
 				'top': top
@@ -571,44 +489,6 @@ class Control_Core extends Data_Object {
 				'value': value
 			});
 		});
-		/*
-		let _disabled = false;
-
-		Object.defineProperty(this, 'disabled', {
-			// Using shorthand method names (ES2015 feature).
-			// This is equivalent to:
-			// get: function() { return bValue; },
-			// set: function(newValue) { bValue = newValue; },
-
-			// Need to disable events.
-
-			get() {
-				return _disabled;
-			},
-			set(value) {
-
-				// check that it's either true or false?
-
-
-				// However, should be stored as RGB or better a Color object.
-				//  Just [r, g, b] for the moment.
-				//  Color object with a Typed Array could be nice.
-				//  pixel.color = ...
-				//   could be OK for low level programming.
-
-				let old = _disabled;
-				_disabled = value;
-				this.raise('change', {
-					'name': 'disabled',
-					'old': old,
-					//'new': _disabled,
-					'value': _disabled
-				});
-			},
-			enumerable: true,
-			configurable: false
-		});
-		*/
 
 		this.on('change', e => {
 
@@ -727,49 +607,6 @@ class Control_Core extends Data_Object {
 
 	}
 
-	/*
-	get background() {
-		return this._background;
-	}
-	set background(value) {
-		return this._background.set(value);
-	}
-	*/
-
-	/*
-
-	get size() {
-		return this._size;
-	}
-	set size(value) {
-		// format the value...
-		/ *
-		var width = value[0].join('');
-		var height = value[1].join('');
-		* /
-		// Maybe keep its own style object, not css rules?
-		// As well as CSS rule-based object.
-		// size fits into own rules and description. Could bypass css inefficiencies.
-		//console.log('set size');
-		this._size = value;
-		//var width = value[0];
-		//var height = value[1];
-
-		let [width, height] = value;
-		//console.log('width', width);
-		//console.log('height', height);
-
-		this.style({
-			'width': width,
-			'height': height
-		});
-		// raise change size.
-		//console.log('pre raise resize');
-		this.raise('resize', {
-			'value': value
-		});
-	}
-	*/
 
 	get internal_relative_div() {
 		return this._internal_relative_div || false;
@@ -805,7 +642,6 @@ class Control_Core extends Data_Object {
 		var output_processor = jsgui.output_processors['color'];
 		var processed = input_processor(value);
 		//console.log('processed', processed);
-
 
 		this.set('color', processed, false); // false not to raise change event from it?
 
@@ -1411,101 +1247,10 @@ class Control_Core extends Data_Object {
 		};
 		if (sig == '[s,s]' || sig == '[s,n]') {
 			[style_name, style_value] = a;
-			
-			//var styleValue = a[1];
-
-			// Seems like we need to do style modifications on a string.
-
-			// May have to do input transformations for some values.
-
-
-
-			// Needs a model of the styles that are currently active.
-
-			//console.log('styleName', styleName);
-			//console.log('styleValue', styleValue);
-
-			// better to have a style object and then construct that on render. change dom attributes object.
-
-
-			//if (d.el) d.el.style[styleName] = styleValue;
-			//console.log("removed from core: if (d.el) d.el.style[styleName] = styleValue;");
-			//console.trace();
-
-			//  should have listener in other part that responds to the dom attributes change.
-
-			// needs to deal with the dom attribute's style name(s).
-
-			// Should be there already.
-			//  Could just be an object.
-			//  An OO style class could be useful
-
-
-
-			
-
-			// rebuild the css style???
-			//  May just be in the dom attributes as well.
-
-			//var das = this._.dom_attributes._.style;
-			//console.log('das', das);
-
-			//var da = this._.dom._.attributes;
-			//console.log('da', da);
-
-			// Modify dom by default if there is a DOM.
-			//var modifyDom = a[2];
 
 		};
 		if (style_name && typeof style_value !== 'undefined') {
-			//var styleName = a[0];
-			//var styleValue = a[1];
-			// dom.attributes.style - as a normal data_object?
-			//  Or a particular type of attribute that is dealt with differently?
-			// Need to set the inline css dict
-			// will update the dom attributes string from the style?
-			//  will set an item in the inline_css_dict
-
-
-			/*
-
-			this._icss[style_name] = style_value;
-
-			// then rebuild the dom attributes style from that one.
-			// produce the inline css from that dict...
-			//console.log('styleName', styleName);
-
-			var str_css = '';
-			//var first = true;
-			each(this._icss, (item_style_value, item_style_name) => {
-				//if (!first) {
-				//    str_css = str_css + '';
-				//}
-				str_css = str_css + item_style_name + ':' + item_style_value + ';';
-			})
-
-			*/
-
-
-			//console.log('str_css', str_css);
-			//console.log('style dom modification removed');
-			//if (modify_dom) {
-			//this.set('dom.attributes.style', str_css);
-			//}
-
-			//console.log('da.style', da.style);
-
 			if (da.style) {
-				//console.log('styleName', styleName);
-				//console.log('styleValue', styleValue);
-
-				//console.log('this.dom.attrs.style', this.dom.attrs.style);
-				//console.log('tof(this.dom.attrs.style)', tof(this.dom.attrs.style));
-
-				// Change should be raised by style proxy?
-				//console.log('style_name', style_name);
-				//console.log('style_value', style_value);
-
 				da.style[style_name] = style_value;
 				da.raise('change', {
 					'property': 'style',
@@ -1519,23 +1264,13 @@ class Control_Core extends Data_Object {
 		//var that = this;
 
 		if (sig == '[o]') {
-			// could recompute the whole style string in a more optimized way.
-			//  there could also be a style map, that would help in storing and checking particular styles.
 			each(a[0], (v, i) => {
 				//console.log('v', v);
 				//console.log('i', i);
 				//that.style(i, v, false);
 				this.style(i, v);
 			});
-			/*
-			var style = this.dom.attributes.style;
-			//var el = this.value('dom.el');
-            var el = this.dom.el;
-
-			if (el) {
-				el.style.cssText = style;
-			}
-            */
+			
 		}
 	}
 	'active'() {
@@ -1561,12 +1296,6 @@ class Control_Core extends Data_Object {
 		}
 
 		if (el) {
-			//console.log('el', el);
-			//console.log('el.nodeType', el.nodeType);
-			//console.log('el', el);
-			//console.log('el.nodeType', el.nodeType);
-			// Should be updated by listener.
-
 			if (el.nodeType === 1) { // element
 				//console.log('Removed dome update.');
 				//el.setAttribute('data-jsgui-id', id);
@@ -1580,17 +1309,13 @@ class Control_Core extends Data_Object {
 			tCtrl = tof(ctrl);
 			//console.log('tCtrl', tCtrl);
 			if (tCtrl === 'control') {
-
 				// if it's a text node then no
-
 				if (ctrl instanceof jsgui.textNode || ctrl instanceof jsgui.code) {
 
 				} else {
 					//console.log('ctrl', ctrl);
 					ctrl.active();
 				}
-
-				
 			}
 		});
 	}
@@ -1600,21 +1325,19 @@ class Control_Core extends Data_Object {
 		var res = this.selection_scope;
 		//console.log('find_selection_scope', this._id());
 		if (res) return res;
-		// look at the ancestor...
-
-		//var parent = this.get('parent');
-		//console.log('parent ' + tof(parent));
-
-		//console.log('this.parent', this.parent);
-
 		if (this.parent && this.parent.find_selection_scope) return this.parent.find_selection_scope();
-
 	}
 	'click'(handler) {
 		// Adding the click event listener... does that add it to the DOM?
 
 		this.on('click', handler);
 	}
+
+	// Hover could be a simple mixin
+	//  Could raise events.
+
+	// DOM can do that now.
+
 	'hover'(fn_in, fn_out) {
 		this.on('mouseover', e => {
 			//console.log('hover mouseover');
@@ -1624,6 +1347,16 @@ class Control_Core extends Data_Object {
 		this.on('mouseout', e => {
 			//console.log('hover mouseout');
 			fn_out();
+		})
+	}
+	'hover_class'(class_name) {
+		//var that = this;
+		this.hover(e_in => {
+			this.add_class(class_name);
+			//ctrl_key_close_quote.add_class(hover_class);
+		}, e_out => {
+			this.remove_class(class_name);
+			//ctrl_key_close_quote.remove_class(hover_class);
 		})
 	}
 	'add_class'(class_name) {
@@ -1854,16 +1587,7 @@ class Control_Core extends Data_Object {
 		}
 	}
 
-	'hover_class'(class_name) {
-		//var that = this;
-		this.hover(e_in => {
-			this.add_class(class_name);
-			//ctrl_key_close_quote.add_class(hover_class);
-		}, e_out => {
-			this.remove_class(class_name);
-			//ctrl_key_close_quote.remove_class(hover_class);
-		})
-	}
+	
 	'matches_selector'(selector) {
 
 	}
@@ -1982,14 +1706,6 @@ class Control_Core extends Data_Object {
 		});
 		var da = this.dom.attributes;
 		var cl = da.class;
-
-		// Class may just be got as a string.
-		//  The setter could parse / interpret it.
-
-
-		//console.log('cl ' + stringify(cl));
-		//console.log('cl ' + tof(cl));
-
 		var map_class_exclude = {
 			//'bg-light-yellow': true,
 			'selected': true
@@ -2118,68 +1834,12 @@ class Control_Core extends Data_Object {
 		return res;
 	}
 
-	/*
-	get my_selectable() {
-		// iterate parents
-		//  applying a test to see which is selectable.
-
-
-
-	}
-
-	select() {
-
-	}
-	deselect() {
-
-	}
-	*/
-
 	// 01/03/2016
 	//  Better for color to be handled by the input and output processing systems and fields.
 	//  Not using a function within the Control definition space.
 	//  .size works like this already. Should be similar.
 	///  ??? or not???
 
-	// May be better as a property with getter & setter.
-	//
-
-	// Could have a color getter or setter, or use a proxy.
-	//  Should not have functional properties like this.
-	//   Getters and setters would do the job better.
-
-
-	/*
-
-	get offset() {
-		var el = this.dom.el;
-		var res = [el.offsetLeft, el.offsetTop];
-		return res;
-	}
-	set offset(value) {
-		this.style({
-			'left': a[0] + 'px',
-			'top': a[1] + 'px'
-		});
-	}
-	*/
-
-	/*
-	'offset'() {
-		var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-		if (sig == '[]') {
-			var el = this.dom.el;
-			var res = [el.offsetLeft, el.offsetTop];
-			return res;
-		}
-		if (sig == '[a]') {
-			this.style({
-				'left': a[0] + 'px',
-				'top': a[1] + 'px'
-			})
-		}
-	}
-	*/
 
 	'clear'() {
 		// clear all the contents.

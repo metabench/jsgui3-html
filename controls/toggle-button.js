@@ -140,21 +140,6 @@ class Toggle_Button extends Control {
         }
         if (spec.states) {
             this.states = spec.states;
-            //if (spec_state == 'expanded' || spec_state == 'contracted') {
-            //states = this.states = spec_states;
-            // Should probably get the collection.
-            //console.log('states', states);
-            //console.log('tof states', tof(states));
-            //console.log('tof states', tof(this._.states));
-            //throw 'stop';
-            //states = this.set('states', spec_states);
-            //state = this.set('state', spec_state);
-            //if (!active_fields) active_fields = {};
-            //active_fields.states = states;
-            //ctrl_fields['state'] = state;
-            //} else {
-            //	throw 'spec.state expects "expanded" or "contracted".';
-            //}
         } else {
             //state = this.set('state', 'expanded');
         }
@@ -194,75 +179,14 @@ class Toggle_Button extends Control {
         //that.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
         // Need to transfer the state and states properties/fields to the clients.
     }
-    // a getter and setter for the state would work
-
-    // Could use the dynamic object extensions or whatever it is for this.
-    //  Listener that responds to state changes with DOM changes.
-
-    /*
     
-    get state() {
-        return this._state;
-    }
-
-    set state(value) {
-        var span_state = this.span_state;
-        this._state = value;
-        //var that = this;
-        //console.log('span_state', span_state);
-        if (span_state) {
-            span_state.clear();
-            var tn_new_value = new jsgui.textNode({
-                'context': this.context,
-                'text': value
-            });
-            //console.log('');
-            //console.log('2) span_state.__id', span_state.__id);
-
-            // Activated the span state with the wrong ID?
-            //  Or it needs to generate another id?
-            span_state.add(tn_new_value);
-        }
-    }
-    */
 
     'activate'() {
         //console.log('toggle button activate this.__active', this.__active);
         //console.log('this', this);
         if (!this.__active) {
             super.activate();
-            // Need references?
-            //var that = this;
-            //console.log('this.states', this.states);
-            //console.log('this.state', this.state);
-
-            /*
-            // Only want jsgui wrappers in some places.
-            // When getting a jsgui Data_Object or Control, we don't want it wrapped within its own Data_Object.
-            var span_state = this.span_state;
-            // read the active fields.
-            //  This is likely to be done in Control in the future.? Or now?
-            // need to listen for the state changing.
-            //  update the UI.
-            // Automatically make strings get set as Data_Objects?
-            var state = that.state;
-    
-            // State is just a normal object.
-    
-            that.on('change', function(e_change) {
-              //console.log('e_change', e_change);
-              if (e_change.name === 'state') {
-                //e_change.value;
-                  //console.log('e_change.value', e_change.value);
-                  //console.log('tof e_change.value', tof(e_change.value));
-                  //console.log('');
-                  //console.log('1) span_state.__id', span_state.__id);
-              }
-            });
-            */
-            // .on
-
-            //console.log('pre setup click');
+            
 
             this.on('click', e_click => {
                 //console.log('toggle button clicked');
@@ -272,12 +196,6 @@ class Toggle_Button extends Control {
                 //console.log('state', state);
                 // And need to look at the states.
                 var states = this.states;
-                // Need to send the state field from the server to the client.
-                //console.log('state', state);
-                
-                //State being stored as a Data_Object,
-                // States being stored as an Array?
-                // still, need to shift between them
                 var i_current_state;
                 if (tof(states) === 'array') {
                     //console.log('states', states);

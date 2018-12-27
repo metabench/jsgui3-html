@@ -56,6 +56,23 @@ body {
     clear: left;
 }
 
+.cover {
+    width: 100%;
+    height: 100%;
+}
+
+.cover .background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
+.cover .foreground {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+}
+
 .field {
     /* clear: both; */
 }

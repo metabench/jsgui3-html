@@ -101,26 +101,6 @@ class Page_Context extends jsgui.Evented_Class {
         if (t_source === 'string') {
             let parsed = jsgui.parse_and_mount(source, this);
         }
-        /*
-        if (abstract_object._abstract) {
-            //var res = new
-            // we need the constructor function.
-            var constructor = abstract_object.constructor;
-            //console.log('constructor ' + constructor);
-            //throw 'stop';
-            var aos = abstract_object._spec;
-
-            // could use 'delete?'
-            aos.abstract = null;
-            aos.context = this;
-            //console.log('abstract_object._spec ' + stringify(abstract_object._spec));
-            // Not sure it is creating the right constructor.
-            var res = new constructor(abstract_object._spec);
-            return res;
-        } else {
-            throw 'Object must be abstract, having ._abstract == true'
-        }
-        */
     }
     'update_Controls' () {
         //console.log('update_Controls sig ' + sig);

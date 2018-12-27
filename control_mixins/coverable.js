@@ -29,8 +29,25 @@ let coverable = (ctrl, opts) => {
         ctrl_cover = new Control({
             context: ctrl.context,
             class: 'cover'
-        })
-        ctrl_cover.add(content);
+        });
+
+        // then the cover has a background
+
+        let ctrl_cover_bg = new Control({
+            context: ctrl.context,
+            class: 'background'
+        });
+
+        let ctrl_cover_fg = new Control({
+            context: ctrl.context,
+            class: 'foreground'
+        });
+        
+        content.remove();
+        
+        ctrl_cover.add(ctrl_cover_bg);
+        ctrl_cover.add(ctrl_cover_fg);
+        ctrl_cover_fg.add(content);
         ctrl.add(ctrl_cover);
 
         // and return an uncover function.

@@ -499,10 +499,6 @@ jsgui.span = class span extends Control {
         }
         //let 
 
-
-
-
-
         // May need to work with the text node element?
 
     }
@@ -532,6 +528,56 @@ jsgui.span = class span extends Control {
         return res;
     }
     */
+}
+
+class String_Control extends Control {
+    constructor(spec) {
+        spec.__type_name = 'string_control';
+        super(spec);
+        this.dom.tagName = undefined;
+        spec = spec || {};
+
+        console.log('\nspec.text', spec.text);
+
+        if (typeof spec.text !== 'undefined') {
+            this._text = spec.text;
+        } else {
+            this._text = '';
+        }
+        if (!spec.el) {
+            //this.compose_span();
+        }
+
+        //this.typeName = pr.typeName;
+        //this.tagName = 'p';
+    }
+    //compose_span() {
+        
+    //}
+    get text() {
+        return this._text;
+    }
+    set text(value) {
+        this._text = value;
+
+        this.raise('change', {
+            'name': 'text',
+            'value': value
+        });
+
+        // Should not really need to respond to such events anyway.
+        //  principles of react etc.
+    }
+
+    all_html_render() {
+        //console.log('all_html_render', this._text);
+        return this._text;
+    }
+
+    activate() {
+        // get the text node reference?
+
+    }
 }
 
 jsgui.activate = activate;
@@ -1042,13 +1088,11 @@ class Intersection_Finder extends Evented_Class {
             */
         });
         // intersection box
-
         this.find_intersections = find_intersections;
-
     }
 }
 
-
+jsgui.String_Control = String_Control;
 jsgui.textNode = textNode;
 jsgui.Text_Node = textNode;
 jsgui.HTML_Document = HTML_Document;
