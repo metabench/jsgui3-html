@@ -479,7 +479,7 @@ class Grid extends Control {
 
         // doesnt add it to a row.
 
-        this.add(cell);
+        this.main.add(cell);
         
         //cell.activate();
         
@@ -491,6 +491,15 @@ class Grid extends Control {
 
 
     'full_compose_as_divs'() {
+
+
+        let main = this.main = new Control({
+            context: this.context,
+            class: 'main'
+        });
+
+        this.add(main);
+
         // Compose row and column headers here, if they are in use.
         // row header width
         // column header height
@@ -575,7 +584,7 @@ class Grid extends Control {
                 if (row_width) {
                     header_row.style('width', row_width);
                 }
-                this.add(header_row);
+                main.add(header_row);
 
                 if (this.row_headers) {
                     var cell = new Control({
@@ -700,7 +709,8 @@ class Grid extends Control {
             }
         }
 
-
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.main = main;
     }
 
     'full_compose_as_table'() {
@@ -804,12 +814,16 @@ class Grid extends Control {
 
 
             var load_rows = () => {
-                console.log('load_rows');
-                console.log('this.content.length', this.content.length);
+                //console.log('load_rows');
+                //console.log('this.content.length', this.content.length);
                 // the rows are the content?
 
+                //console.log('this.main.content', this.main.content);
+                //console.log('this.main.content._arr.length', this.main.content._arr.length);
+
                 var _arr_rows = this._arr_rows = [];
-                this.content.each((v) => {
+                this.main.content._arr.forEach((v) => {
+                    //console.log('v', v);
                     _arr_rows.push(v);
                 });
 

@@ -537,7 +537,7 @@ class String_Control extends Control {
         this.dom.tagName = undefined;
         spec = spec || {};
 
-        console.log('\nspec.text', spec.text);
+        //console.log('\nspec.text', spec.text);
 
         if (typeof spec.text !== 'undefined') {
             this._text = spec.text;
