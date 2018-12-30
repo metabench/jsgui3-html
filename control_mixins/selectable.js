@@ -40,10 +40,11 @@ let selectable = (ctrl, ctrl_handle, opts) => {
 
 
 
+
     // Or it could be a selection scope mode.
 
     //let multi_select = 
-
+    let selection_action = ['mousedown', 'touchstart'];
     if (!opts) {
 
         if (ctrl_handle) {
@@ -67,12 +68,22 @@ let selectable = (ctrl, ctrl_handle, opts) => {
         if (opts.single) {
             select_multi = false;
         }
+        if (opts.selection_action) {
+            selection_action = opts.selection_action;
+        }
+
+        // disable default select?
+        //  or respond to a different event / set of events.
+
+
+
+
     }
     // Should have options,
     //  with the handle being one of the options.
     //   Though could interpret the params to keep the API.
     //   Can check if it is a control.
-    let selection_action = ['mousedown', 'touchstart'];
+    
     // touchstart as well.
 
 

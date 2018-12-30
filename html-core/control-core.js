@@ -467,6 +467,9 @@ class Control_Core extends Data_Object {
 		});
 		prop(this, 'pos', spec.pos, (e_change) => {
 			let [value, old] = e_change;
+
+			
+
 			if (value.length === 2) {
 				//console.log('old', old);
 				if (old && old.length === 3) {
@@ -474,15 +477,18 @@ class Control_Core extends Data_Object {
 					this.pos = value;
 				}
 			}
-			if (value.length === 3) {
-				
-			}
+			
 
 			let [left, top] = value;
-			this.style({
+			let o_style = {
 				'left': left,
 				'top': top
-			});
+			}
+
+			//if (value.length === 3) {
+			//	o_style['z-index'] = value[2];
+			//}
+			this.style(o_style);
 			// raise change size.
 			//console.log('pre raise resize');
 			this.raise('move', {
@@ -1493,7 +1499,6 @@ class Control_Core extends Data_Object {
 			if (tCls == 'data_value') {
 				throw 'removed';
 			}
-
 		}
 	}
 

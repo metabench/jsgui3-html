@@ -53,7 +53,6 @@ class Horizontal_Slider extends Control {
 		super(spec);
 
 		// Want a 'ghost' drag mode.
-
 		//console.log('spec.min', spec.min);
 		//console.log('spec.max', spec.max);
 		//console.trace();
@@ -63,9 +62,7 @@ class Horizontal_Slider extends Control {
 		field(this, 'max', spec.max || 100);
 
 		if (!spec.el) {
-
 			this.compose_horizontal_slider();
-
 		}
 	}
 	'compose_horizontal_slider'() {
@@ -155,10 +152,6 @@ class Horizontal_Slider extends Control {
 				let range_diff = this.max - this.min;
 				//console.log('range_diff', range_diff);
 				let v = (prop * range_diff) + this.min;
-
-
-
-
 				//console.log('v', v);
 				this._.value = v;
 
@@ -283,8 +276,14 @@ class Horizontal_Slider extends Control {
 
 		//v_bar.style('left', v_bar_left_pos + 'px');
 
+		// no, work out where the top should go.
+
 		let v_bar_top = v_bar.dom.el.offsetTop;
-		v_bar.pos = [v_bar_left_pos, v_bar_top];
+
+
+		v_bar.dom.attributes.style.left = v_bar_left_pos;
+
+		//v_bar.pos = [v_bar_left_pos, v_bar_top];
 
 		this._.value = value;
 	}

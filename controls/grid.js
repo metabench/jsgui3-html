@@ -437,8 +437,8 @@ class Grid extends Control {
 
         // Activate has not put together the rows...
 
-        console.log('this._arr_rows', this._arr_rows);
-        console.trace();
+        //console.log('this._arr_rows', this._arr_rows);
+        //console.trace();
 
 
         each(this._arr_rows, (row, i_row) => {

@@ -197,7 +197,6 @@ let dragable = (ctrl, opts = {}) => {
 	//  'within-parent'
 	//  'body'
 
-
 	let pos_md, pos_mm, pos_mu, pos_md_within_ctrl;
 
 	// pos_md_within_ctrl
@@ -205,6 +204,7 @@ let dragable = (ctrl, opts = {}) => {
 	let ctrl_body = ctrl.context.body();
 	let dragging = false;
 	let drag_offset_distance = opts.start_distance || 6;
+
 	let movement_offset;
 	let item_start_pos;
 
