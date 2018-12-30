@@ -20,7 +20,8 @@ let dragable = (ctrl, opts = {}) => {
 		bounds,
 		handle,
 		mode,
-		start_action
+		start_action,
+		condition
 	} = opts;
 	// bounds could be a control.
 
@@ -272,35 +273,40 @@ let dragable = (ctrl, opts = {}) => {
 		//console.log('dragable e_md', e_md);
 		// use offset
 		// [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-		if (e_md.pageX) {
-			pos_md_within_ctrl = [e_md.offsetX, e_md.offsetX];
-		} else {
-			pos_md_within_ctrl = [0, 0];
+
+		if (!condition || condition()) {
+			if (e_md.pageX) {
+				pos_md_within_ctrl = [e_md.offsetX, e_md.offsetX];
+			} else {
+				pos_md_within_ctrl = [0, 0];
+			}
+			dragging = false;
+
+			//pos_md_within_ctrl = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+
+			//if (drag_mode === 'x') {
+			//pos_md = [e_md.layerX, e_md.layerY];
+
+			// Cancel move if there are multiple touches?
+			//  Want to recognise pinch / 2 finger rotate events.
+
+			pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
+			//} else {
+			//pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
+			//}
+
+			ctrl_body.on('mousemove', body_mm);
+			ctrl_body.on('mouseup', body_mu);
+
+			ctrl_body.on('touchmove', body_mm);
+			ctrl_body.on('touchend', body_mu);
+
+
+			// Does this break selectable / other mixins?
+			e_md.preventDefault();
 		}
-		dragging = false;
-
-		//pos_md_within_ctrl = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-
-		//if (drag_mode === 'x') {
-		//pos_md = [e_md.layerX, e_md.layerY];
-
-		// Cancel move if there are multiple touches?
-		//  Want to recognise pinch / 2 finger rotate events.
-
-		pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
-		//} else {
-		//pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
-		//}
-
-		ctrl_body.on('mousemove', body_mm);
-		ctrl_body.on('mouseup', body_mu);
-
-		ctrl_body.on('touchmove', body_mm);
-		ctrl_body.on('touchend', body_mu);
 
 
-		// Does this break selectable / other mixins?
-		e_md.preventDefault();
 	}
 
 	ctrl.on('change', e_change => {
@@ -368,7 +374,7 @@ let dragable = (ctrl, opts = {}) => {
 								handle.off(sa, h_md);
 							});
 						})(start_action);
-						
+
 						/*
 						handle.off('touchstart', h_md);
 						handle.off('mousedown', h_md);

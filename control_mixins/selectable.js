@@ -29,6 +29,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     let select_multi = false;
     // will allow meta key toggle
 
+    let condition;
     // maybe defining a bunch of params and actions?
     //  then having a 'mode' preset.
 
@@ -71,6 +72,9 @@ let selectable = (ctrl, ctrl_handle, opts) => {
         if (opts.selection_action) {
             selection_action = opts.selection_action;
         }
+        if (opts.condition) {
+            condition = opts.condition;
+        }
 
         // disable default select?
         //  or respond to a different event / set of events.
@@ -83,7 +87,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     //  with the handle being one of the options.
     //   Though could interpret the params to keep the API.
     //   Can check if it is a control.
-    
+
     // touchstart as well.
 
 
@@ -95,39 +99,48 @@ let selectable = (ctrl, ctrl_handle, opts) => {
         //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
         //console.log('ctrl.selectable', ctrl.selectable);
+
+
+
         if (ctrl.selectable && !ctrl.selection_scope) {
-            var ctrl_key = e.ctrlKey;
-            var meta_key = e.metaKey;
 
-            if (select_multi) {
-                if ((ctrl_key || meta_key)) {
-                    ctrl.action_select_toggle();
-                } else {
+            if (!condition || condition()) {
+                var ctrl_key = e.ctrlKey;
+                var meta_key = e.metaKey;
 
-                    if (select_toggle) {
+                if (select_multi) {
+                    if ((ctrl_key || meta_key)) {
                         ctrl.action_select_toggle();
                     } else {
-                        ctrl.action_select_only();
-                    }
 
-                    //console.log('pre select only');
-                    //console.log('ctrl.action_select_only', ctrl.action_select_only);
-                    
-                }
-            } else {
-                if (select_toggle) {
-                    if (ctrl.selected) {
-                        ctrl.deselect();
+                        if (select_toggle) {
+                            ctrl.action_select_toggle();
+                        } else {
+                            ctrl.action_select_only();
+                        }
+
+                        //console.log('pre select only');
+                        //console.log('ctrl.action_select_only', ctrl.action_select_only);
+
+                    }
+                } else {
+                    if (select_toggle) {
+                        if (ctrl.selected) {
+                            ctrl.deselect();
+                        } else {
+                            ctrl.action_select_only();
+                        }
                     } else {
                         ctrl.action_select_only();
                     }
-                } else {
-                    ctrl.action_select_only();
                 }
+                e.stopPropagation();
+                e.preventDefault();
             }
+
+
         }
-        e.stopPropagation(); 
-        e.preventDefault(); 
+
     }
 
     ctrl.on('change', e_change => {
@@ -214,15 +227,15 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                                 ctrl_handle.has_selection_click_handler = true;
                                 //setTimeout(() => {
 
-                                    if (Array.isArray(selection_action)) {
-                                        //console.log('selection_action', selection_action);
-                                        selection_action.forEach(i => {
-                                            ctrl_handle.on(i, click_handler);
-                                        })
-                                    } else {
-                                        ctrl_handle.on(selection_action, click_handler);
-                                    }
-                                    // bit of a hack to fix a bug.
+                                if (Array.isArray(selection_action)) {
+                                    //console.log('selection_action', selection_action);
+                                    selection_action.forEach(i => {
+                                        ctrl_handle.on(i, click_handler);
+                                    })
+                                } else {
+                                    ctrl_handle.on(selection_action, click_handler);
+                                }
+                                // bit of a hack to fix a bug.
                                 //}, 0);
                             }
                         });
