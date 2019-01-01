@@ -85,6 +85,8 @@ const {
 //  In terms of layout and GUI
 //  In terms of data source
 
+
+/*
 let obj_field = (obj, spec, name, default_value, fn_validate) => {
     //prop(name, default_value, fn_validate);
     let _prop_value;
@@ -135,6 +137,7 @@ let obj_field = (obj, spec, name, default_value, fn_validate) => {
         _prop_value = default_value;
     }
 }
+*/
 
 class Grid_Cell extends Control {
     constructor(spec) {
@@ -142,11 +145,19 @@ class Grid_Cell extends Control {
         super(spec);
         this.add_class('cell');
 
-        obj_field(this, spec, 'x');
-        obj_field(this, spec, 'y');
-        obj_field(this, spec, 'data');
+        field(this, 'x', spec.x);
+        field(this, 'y', spec.y);
+        field(this, 'data', spec.data);
 
-        this.compose_grid_cell();
+        console.log('new grid cell');
+
+        mx_selectable(this);
+
+        if (!spec.el) {
+            this.compose_grid_cell();
+        }
+
+        
 
     }
     compose_grid_cell() {
@@ -165,6 +176,11 @@ class Grid_Cell extends Control {
         this.add(this.span = new jsgui.span(o));
 
     }
+
+
+    // activate grid cell?
+
+
 }
 
 // Row_Headers
@@ -178,17 +194,10 @@ class Grid extends Control {
         // Be able to use CSS to define grid cell sizes.
         //  Ability to scroll within the grid.
 
-
-
         //spec.size = spec.size || [320, 200];
-
 
         // No need to rely on the size or cell size here.
         //  Want to be able to use CSS values here.
-
-
-
-
 
 
         // grid should have a default size?
@@ -211,7 +220,7 @@ class Grid extends Control {
 
         // More work on control fields would help too.
 
-        
+
 
         spec.__type_name = spec.__type_name || 'grid';
         super(spec);
@@ -250,7 +259,7 @@ class Grid extends Control {
 
         if (spec.grid_size) _grid_size = spec.grid_size;
 
-        
+
         field(this, 'cell_size');
 
         //console.log('spec.cell_size', spec.cell_size);
@@ -310,7 +319,7 @@ class Grid extends Control {
         }
 
 
-        if (!spec.abstract && !spec.el) {
+        if (!spec.el) {
             var data;
 
             /*
@@ -343,14 +352,6 @@ class Grid extends Control {
 
             //this.full_compose_as_table();
             this.full_compose_as_divs();
-
-            /*
-            this.dom.attributes['data-jsgui-fields'] = stringify({
-                'composition_mode': composition_mode
-            }).replace(/"/g, "'");
-            */
-
-            // column_data / columns property.
 
             this._fields = this._fields || {};
             Object.assign(this._fields, {
@@ -434,16 +435,12 @@ class Grid extends Control {
 
     'each_cell'(cb_cell) {
         // want to return the cell position as an index
-
         // Activate has not put together the rows...
 
         //console.log('this._arr_rows', this._arr_rows);
         //console.trace();
 
-
         each(this._arr_rows, (row, i_row) => {
-
-
             row.content.each((cell, i_cell) => {
                 cb_cell(cell, [i_cell, i_row]);
             });
@@ -452,8 +449,6 @@ class Grid extends Control {
         });
     }
     'get_cell'(x, y) {
-
-
 
         //return this._arr_rows[y]
     }
@@ -466,38 +461,37 @@ class Grid extends Control {
         var cell = new Grid_Cell({
             context: this.context
         });
+        //console.log('this.cell_selection', this.cell_selection);
         if (this.cell_selection) {
-            mx_selectable(cell, this.cell_selection);
+            
+
+            //if (this.cell_selection) {
+            cell.selectable = true;
+            //}
         } else {
-            mx_selectable(cell);
+            //mx_selectable(cell);
         }
         if (content) {
             cell.add(content);
         }
         cell.active();
-        
-
         // doesnt add it to a row.
 
         this.main.add(cell);
-        
+
+        // jsgui.doc property
+        //  would be a useful undefined or document reference.
+
         //cell.activate();
-        
+
         return cell;
     }
 
-
-
-
-
     'full_compose_as_divs'() {
-
-
         let main = this.main = new Control({
             context: this.context,
             class: 'main'
         });
-
         this.add(main);
 
         // Compose row and column headers here, if they are in use.
@@ -515,16 +509,9 @@ class Grid extends Control {
         //console.log('this.grid_size', this.grid_size);
         let map_cells = this.map_cells,
             arr_cells = this.arr_cells;
-
         if (this.grid_size) {
-
             // set the number of rows or columns...
-
-
-
             let [num_columns, num_rows] = this.grid_size;
-
-
             //console.log('this.size', this.size);
             //throw 'stop';
             // Nope, easier to use box-sizing internal or whatever css.
@@ -534,12 +521,9 @@ class Grid extends Control {
 
             //console.log('this.cell_size', this.cell_size);
             // need to know the row / column header sizes and if we are using them.
-
-
             //console.log('this.size', this.size);
             //console.log('num_rows', num_rows);
             //console.log('num_columns', num_columns);
-
             var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
             //console.log('cell_size', cell_size);
             let row_width, row_height;
@@ -562,11 +546,8 @@ class Grid extends Control {
                 //header_row.style('height', Math.floor(this.size[1] / num_rows));
                 row_height = Math.floor(this.size[1] / num_rows);
             }
-
             const data = this.data;
-
             //console.log('row_header_width', row_header_width);
-
             var x, y;
 
             // compose the header row if we have one.
@@ -641,8 +622,6 @@ class Grid extends Control {
                 this._arr_rows.push(row_container);
                 this.add(row_container);
                 row_container.activate();
-
-
                 // if we have a row header...
 
                 if (this.row_headers) {
@@ -666,7 +645,6 @@ class Grid extends Control {
                 //console.log('num_columns', num_columns);
 
                 for (x = 0; x < num_columns; x++) {
-
                     let o = {
                         context: this.context,
                         x: x,
@@ -694,11 +672,13 @@ class Grid extends Control {
 
                     // but with what selection options.
 
+                    /*
                     if (this.cell_selection) {
                         mx_selectable(cell, this.cell_selection);
                     } else {
                         mx_selectable(cell);
                     }
+                    */
 
                     row_container.add(cell);
                     arr_cells[x] = arr_cells[x] || [];
@@ -714,16 +694,9 @@ class Grid extends Control {
     }
 
     'full_compose_as_table'() {
-
         //this.set('dom.tagName', 'table');
         this.dom.tagName = table;
-
-
         var data = this.data;
-
-        //console.log('data', data);
-        //console.log('t data', tof(data));
-
         var range = data.range;
         var value;
 
@@ -737,8 +710,6 @@ class Grid extends Control {
             // Retrieval of all values from all cells within the range.
 
             // console.log('range', range);
-
-
             var x, y, max_x = range[0],
                 max_y = range[1];
             var ctrl_cell, ctrl_row;
@@ -810,8 +781,7 @@ class Grid extends Control {
             super.activate();
             //console.log('activate Grid');
             //var _arr_rows;
-
-
+            this.selection_scope = this.context.new_selection_scope(this);
 
             var load_rows = () => {
                 //console.log('load_rows');
@@ -829,11 +799,6 @@ class Grid extends Control {
 
             }
             load_rows();
-
-            //this.each_cell
-
-            // load the cells
-
             var load_cells = () => {
                 each(this._arr_rows, (row) => {
                     each(row.content._arr, (cell) => {
@@ -843,10 +808,10 @@ class Grid extends Control {
                 });
             };
             //load_cells();
-
         }
-
     }
 }
+
+Grid.Cell = Grid.Grid_Cell = Grid_Cell;
 
 module.exports = Grid;

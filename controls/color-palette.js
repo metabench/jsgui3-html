@@ -736,15 +736,13 @@ class Color_Palette extends Control {
         // Be able to switch on and off those options.
         //  An internal relative div in the kind of internal implementation property which could be done as a rendering property.
 
-        var size = this.size;
+        var size = this.size || [200, 200];
         //console.log('size', size);
 
         var padding = 6;
 
         // Make it so that resizing the grid resizes the internal controls.
         //  A resize event listener.
-
-
 
         //throw 'stop';
 
@@ -753,7 +751,8 @@ class Color_Palette extends Control {
         this.grid = new Grid({
             'context': this.context,
             'grid_size': [12, 12],
-            'size': [size[0] - padding * 2, size[1] - padding * 2]
+            'size': [size[0] - padding * 2, size[1] - padding * 2],
+            'cell_selection': 'single'
         });
         /*
         this.grid.style({
@@ -771,6 +770,7 @@ class Color_Palette extends Control {
                 //console.log('cell', cell);
                 cell.color = hex;
             }
+            cell.selectable = true;
         });
 
 

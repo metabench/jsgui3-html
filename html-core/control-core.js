@@ -735,7 +735,8 @@ class Control_Core extends Data_Object {
 							//if (this._ctrl_fields && !this._ctrl_fields[key]) this._ctrl_fields[key] = this._[key];
 							(this._ctrl_fields = this._ctrl_fields || {})[key] = this._[key];
 						} else {
-							(this._fields = this._fields || {})[key] = this._[key];
+							this._fields = this._fields || {};
+							this._fields[key] = this._[key];
 							//(this._fields && !this._fields[key]) this._fields[key] = this._[key];
 						}
 					}

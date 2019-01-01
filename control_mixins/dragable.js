@@ -243,8 +243,11 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const end_drag = e_mu => {
+		// depending on if it is touch or mouse
+
 		ctrl_body.off('mousemove', body_mm);
 		ctrl_body.off('mouseup', body_mu);
+
 		ctrl_body.off('touchmove', body_mm);
 		ctrl_body.off('touchend', body_mu);
 
@@ -294,19 +297,15 @@ let dragable = (ctrl, opts = {}) => {
 			//} else {
 			//pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
 			//}
-
 			ctrl_body.on('mousemove', body_mm);
 			ctrl_body.on('mouseup', body_mu);
-
 			ctrl_body.on('touchmove', body_mm);
 			ctrl_body.on('touchend', body_mu);
-
-
 			// Does this break selectable / other mixins?
-			e_md.preventDefault();
+			//e_md.preventDefault();
 		}
-
-
+		//e_md.stopPropagation();
+		//e_md.preventDefault();
 	}
 
 	ctrl.on('change', e_change => {
@@ -365,7 +364,6 @@ let dragable = (ctrl, opts = {}) => {
 							//console.log('dragable once_active');
 							apply_start_handlers(start_action);
 						});
-
 					}
 				} else {
 					if (typeof document === 'undefined') {} else {

@@ -18,7 +18,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		// set the items by their id to point to the control.
 		//  the control will know its index within its parent, can look up more info there.
 	}
-	'select_only'(ctrl) {
+	'select_only'(ctrl, silent = false) {
 		var currently_selected;
 		var count_deselected = 0;
 
@@ -51,18 +51,21 @@ class Selection_Scope extends jsgui.Data_Object {
 
 		if (!currently_selected) {
 			ctrl.selected = true;
-			this.raise('change', {
-				name: 'selected',
-				value: ctrl
-			});
-			ctrl.raise('select');
-			
+			if (!silent) {
+				this.raise('change', {
+					name: 'selected',
+					value: ctrl
+				});
+				ctrl.raise('select');
+			}
 		}
 		if (count_deselected > 0 & !currently_selected) {
 			//this.raise('change');
 		}
+
+		
 	}
-	'deselect_all'() {
+	'deselect_all'(silent = false) {
 		//console.log('this.map_selected_controls', this.map_selected_controls);
 		each(this.map_selected_controls, (v, i) => {
 			// Don't want to select the selection scope itself.
@@ -74,29 +77,33 @@ class Selection_Scope extends jsgui.Data_Object {
 				}
 			}
 		});
-		this.raise('change', {
-			name: 'selected',
-			value: undefined
-		});
+		if (!silent) {
+			this.raise('change', {
+				name: 'selected',
+				value: undefined
+			});
+		}
+		
 		this.map_selected_controls = {};
 	}
-	'deselect'(ctrl) {
+	'deselect'(ctrl, silent = false) {
 		if (ctrl.selected === true) {
 			ctrl.selected = false;
 			ctrl.raise('deselected');
 		}
-		this.raise('change', {
-			name: 'selected',
-			map_selected_controls: this.map_selected_controls
-		})
-
+		if (!silent) {
+			this.raise('change', {
+				name: 'selected',
+				map_selected_controls: this.map_selected_controls
+			})
+		}
 	}
 	// deselect controls internal to a control.
 
 	// When selecting a control, we want to make it so that controls inside it, in the same selection context are not selected.
 	//  The Selection Scope does a fair bit of the management of the selections.
 
-	'deselect_ctrl_content'(ctrl) {
+	'deselect_ctrl_content'(ctrl, silent = false) {
 		//var cs = ctrl.get('selection_scope');
 		var cs = ctrl.selection_scope;
 		var msc = this.map_selected_controls;
@@ -108,16 +115,19 @@ class Selection_Scope extends jsgui.Data_Object {
 				var id = v._id();
 				if (msc[id]) msc[id] = false;
 				this.deselect_ctrl_content(v);
-				v.raise('deselected');
+				if (!silent) v.raise('deselected');
 			}
 		});
-		this.raise('change', {
-			name: 'selected',
-			map_selected_controls: this.map_selected_controls
-		});
+		if (!silent) {
+			this.raise('change', {
+				name: 'selected',
+				map_selected_controls: this.map_selected_controls
+			});
+		}
+		
 		//throw 'stop';
 	}
-	'select_toggle'(ctrl) {
+	'select_toggle'(ctrl, silent = false) {
 		var sel = ctrl.selected;
 		//console.log('tof(sel) ' + tof(sel));
 		var msc = this.map_selected_controls;
@@ -129,7 +139,7 @@ class Selection_Scope extends jsgui.Data_Object {
 			} else {
 				ctrl.selected = true;
 				// Check for a selected ancestor control in the scope.
-				this.deselect_ctrl_content(ctrl);
+				this.deselect_ctrl_content(ctrl, silent);
 				msc[id] = ctrl;
 			}
 		} else {
@@ -147,7 +157,7 @@ class Selection_Scope extends jsgui.Data_Object {
 						console.log('2) not selecting because a selected ancestor in the selection scope has been found.');
 					} else {
 						ctrl.selected = true;
-						this.deselect_ctrl_content(ctrl);
+						this.deselect_ctrl_content(ctrl, silent);
 						msc[id] = ctrl;
 					}
 				}
@@ -161,14 +171,17 @@ class Selection_Scope extends jsgui.Data_Object {
 					if (sel_anc) {
 						console.log('2) not selecting because a selected ancestor in the selection scope has been found.');
 					} else {
-						this.deselect_ctrl_content(ctrl);
+						this.deselect_ctrl_content(ctrl, silent);
 						ctrl.selected = true;
 						msc[id] = ctrl;
 					}
 				}
 			}
 		}
-		this.raise('change');
+		if (!silent) {
+			this.raise('change');
+		}
+		
 	}
 }
 
