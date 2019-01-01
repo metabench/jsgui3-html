@@ -172,12 +172,6 @@ class Control extends Control_Core {
 						this[i] = v;
 					}
 				});
-
-				// object assign won't carry out set?
-
-				//Object.assign(this, props_to_apply);
-
-				//console.log('2) this.selectable', this.selectable);
 			}
 
 			if (def(this.selection_scope)) {
@@ -191,41 +185,6 @@ class Control extends Control_Core {
 			if (id) this.__id = id;
 
 		}
-
-		//super(spec);
-
-		// just give a selection scope number in the jsgui fields when the control has a selection_scope.
-
-
-		/*
-
-		if (typeof spec.selection_scope !== 'undefined') {
-			//console.log('spec.selection_scope', spec.selection_scope);
-			//var selection_scope = this.context.get_selection_scope_by_id(spec.selection_scope);
-			//  Do we need to set the control of the selection scope?
-
-			//console.log('selection_scope', selection_scope);
-			this.selection_scope = selection_scope;
-			// then if we have the selection scope, we should set it up for the control.
-			var scrollbars = this.scrollbars;
-			//console.log('scrollbars', scrollbars);
-
-
-			var active_scroll = false;
-
-			if (scrollbars === 'both' || scrollbars === 'horizontal' || scrollbars === 'vertical') {
-				active_scroll = true;
-				// Put a Scroll_View in place in this control.
-				var scroll_view = new Scroll_View({
-					'context': this.context
-				})
-				this.add(scroll_view);
-			}
-		}
-		*/
-		//if (spec.is_selectable) {
-		//	this.selectable();
-		//}
 	}
 
 	'bcr'() {
@@ -277,28 +236,6 @@ class Control extends Control_Core {
 
 		}
 	}
-
-	/*
-	set size(value) {
-
-		//this.super(value);
-
-		//Control_Core.prototype.
-		/ *
-		this._size = value;
-		
-		this.style({
-			width: value[0],
-			height: value[1]
-		});
-		// need to raise a resize event, or that the style has been changed
-		//  or dom attributes changed
-		* /
-		super.size = value;
-
-
-	}
-	*/
 
 	'add_text'(value) {
 		var tn = new Text_Node({
@@ -391,52 +328,9 @@ class Control extends Control_Core {
 			return thickness;
 		}
 	}
-
-	'cover'() {
-		// Makes a cover to this control.
-		//  Relatively positioned div as first child (if it is not there already)
-		//  Absolutely positioned within that relative div.
-
-		// insert a new relative div?
-		//  relative for layout?
-
-	}
 	'ghost'() {
 
 	}
-
-	/*
-	// can have different monomorphic versions.
-
-	'set' (name, value) {
-		// Used for setting controls, on the server, that get persisted to the client.
-
-		// when the value is a control, we also want to set the ._jsgui_ctrl_fields
-
-
-
-		if (typeof value !== 'undefined') {
-			//var t_val = tof(value);
-			//console.log('t_val', t_val);
-
-			if (is_ctrl(value)) {
-				var cf = this._ctrl_fields = this._ctrl_fields || {};
-
-				cf[name] = value;
-			}
-
-			Control_Core.prototype.set.call(this, name, value);
-
-			//super(name, value);
-
-			//return this._super(name, value);
-		} else {
-			//return this._super(name);
-			Control_Core.prototype.set.call(this, name);
-			//super(name);
-		}
-	}
-	*/
 
 	// one mousedown elsewhere.
 
@@ -534,8 +428,6 @@ class Control extends Control_Core {
 
 		// mouse up anywhere
 		// mouse move anywhere with the button not pressed.
-
-
 
 
 		//return [md, mm, mu];
@@ -702,25 +594,15 @@ class Control extends Control_Core {
 	'once_active'(cb) {
 
 		// maintain a list of once active callbacks...
-
-
-
 		if (typeof document !== 'undefined') {
 			return prom_or_cb((solve, jettison) => {
 				//console.log('once_active this.__active', this.__active);
 				if (this.__active) {
 					solve();
 				} else {
-
-					// Same function here... won't work with .one
-
-					// Or the list gets changed while its being processed.
-
 					let fn_activate = () => {
 						//console.log('been activated');
-
 						solve();
-
 						setTimeout(() => {
 							this.off('activate', fn_activate);
 						}, 0)
@@ -732,7 +614,6 @@ class Control extends Control_Core {
 				}
 			}, cb);
 		}
-		
 	}
 
 	'activate'(el) {
@@ -743,8 +624,6 @@ class Control extends Control_Core {
 		if (typeof document !== 'undefined' && !this.__active) {
 			this.__active = true;
 			if (!this.dom.el) {
-
-
 				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id()] || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')[0];
 				//console.log('found_el', found_el);
 				if (found_el) {

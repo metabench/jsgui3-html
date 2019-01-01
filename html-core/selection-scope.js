@@ -29,6 +29,7 @@ class Selection_Scope extends jsgui.Data_Object {
 			if (v && v !== ctrl && v !== this.control) {
 				if (v.selected) {
 					v.selected = false;
+					//v.remove_class('selected');
 					count_deselected++;
 				}
 				//console.log('should have deselcted ' + v._id())
@@ -36,6 +37,7 @@ class Selection_Scope extends jsgui.Data_Object {
 			//console.log('v !== this.control', v !== this.control);
 			if (v === ctrl && v !== this.control) {
 				currently_selected = v.selected;
+				//v.add_class('selected');
 			}
 		});
 		this.map_selected_controls = {};
@@ -62,8 +64,6 @@ class Selection_Scope extends jsgui.Data_Object {
 		if (count_deselected > 0 & !currently_selected) {
 			//this.raise('change');
 		}
-
-		
 	}
 	'deselect_all'(silent = false) {
 		//console.log('this.map_selected_controls', this.map_selected_controls);
@@ -73,7 +73,7 @@ class Selection_Scope extends jsgui.Data_Object {
 				if (v.selected) {
 					v.selected = false;
 					//count_deselected++;
-					v.raise('deselected');
+					v.raise('deselect');
 				}
 			}
 		});

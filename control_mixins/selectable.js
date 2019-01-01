@@ -68,12 +68,13 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
         // or not a click
-        //console.log('selectable click e', e);
+        console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
-        //console.log('ctrl.selectable', ctrl.selectable);
+        console.log('ctrl.selectable', ctrl.selectable);
 
-        if (ctrl.selectable && !ctrl.selection_scope) {
+        if (ctrl.selectable && !ctrl.selection_scope && !ctrl.disabled) {
             if (!condition || condition()) {
+                console.log('passed condition check');
                 var ctrl_key = e.ctrlKey;
                 var meta_key = e.metaKey;
                 if (select_multi) {
@@ -99,13 +100,14 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                         ctrl.action_select_only();
                     }
                 }
-
                 //e.stopPropagation();
-                e.preventDefault();
+                //e.preventDefault();
 
+            } else {
+                console.log('failed condition check');
             }
         }
-        //e.stopPropagation();
+        e.stopPropagation();
         //e.preventDefault();
     }
     ctrl.on('change', e_change => {

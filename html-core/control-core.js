@@ -2,7 +2,6 @@
  * Created by James on 16/09/2016.
  */
 
-
 var jsgui = require('../lang/lang');
 var get_a_sig = jsgui.get_a_sig;
 //var remove_sig_from_arr_shell = jsgui.remove_sig_from_arr_shell;
@@ -35,28 +34,6 @@ const {
 //  Will use input and output formatters.
 
 var px_handler = (target, property, value, receiver) => {
-	// just the number part, any units
-
-	//console.log('value', value);
-	//console.log('tof(value)', tof(value));
-
-
-	/*
-	var t_val = tof(value);
-
-	if (t_val === 'number') {
-		target[property] = value + 'px';
-	} else if (t_val === 'string') {
-		var match = value.match(/(\d*\.?\d*)(.*)/);
-		//console.log('px_handler match', match);
-		if (match.length === 2) {
-			target[property] = value + 'px';
-		} else {
-			target[property] = value;
-		}
-	}
-	return target[property];
-	*/
 	let res;
 	var t_val = tof(value);
 
@@ -72,7 +49,6 @@ var px_handler = (target, property, value, receiver) => {
 		}
 	}
 	return res;
-
 }
 
 var style_input_handlers = {
@@ -1774,20 +1750,13 @@ class Control_Core extends Data_Object {
 
 		let parse_selector = selector => {
 			let words = selector.split(' ');
-			
 			// then the word gets turned unto a selection part.
 			//  an oo selector with a test.
-
 			let res = words.map(x => parse_word(x));
-
 			// then with the stack of different selectors
 			// need to be able to apply these selectors in sequence successfully.
-
 			return res;
-
-			
 		}
-
 		let parsed = parse_selector(selector);
 		//console.log('parsed', parsed);
 
@@ -1810,8 +1779,6 @@ class Control_Core extends Data_Object {
 		} else {
 			throw 'NYI';
 		}
-
-
 		// Does this match the selector?
 		let res = false;
 		let tn = this.__type_name;
