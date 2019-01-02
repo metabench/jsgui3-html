@@ -149,15 +149,15 @@ class Grid_Cell extends Control {
         field(this, 'y', spec.y);
         field(this, 'data', spec.data);
 
-        console.log('new grid cell');
+        //console.log('new grid cell');
 
-        mx_selectable(this);
+        
+        
+
 
         if (!spec.el) {
             this.compose_grid_cell();
         }
-
-        
 
     }
     compose_grid_cell() {
@@ -176,11 +176,26 @@ class Grid_Cell extends Control {
         this.add(this.span = new jsgui.span(o));
 
     }
+    activate() {
+        if (!this.__active) {
 
+            super.activate();
 
+            //console.log('');
+            //console.log('activate Grid_Cell');
+            //console.log('this.selectable', this.selectable);
+
+            //console.log('pre make grid cell selectable');
+            mx_selectable(this);
+            //this.selectable = true;
+
+            //console.log('');
+
+            //console.log('this.selectable', this.selectable);
+            //console.trace();
+        }
+    }
     // activate grid cell?
-
-
 }
 
 // Row_Headers
@@ -437,7 +452,7 @@ class Grid extends Control {
         // want to return the cell position as an index
         // Activate has not put together the rows...
 
-        //console.log('this._arr_rows', this._arr_rows);
+        //console.log('this._arr_rows.length', this._arr_rows.length);
         //console.trace();
 
         each(this._arr_rows, (row, i_row) => {
@@ -463,10 +478,10 @@ class Grid extends Control {
         });
         //console.log('this.cell_selection', this.cell_selection);
         if (this.cell_selection) {
-            
+
 
             //if (this.cell_selection) {
-            cell.selectable = true;
+            //cell.selectable = true;
             //}
         } else {
             //mx_selectable(cell);
@@ -620,8 +635,8 @@ class Grid extends Control {
 
                 row_container.add_class('row');
                 this._arr_rows.push(row_container);
-                this.add(row_container);
-                row_container.activate();
+                main.add(row_container);
+                //row_container.activate();
                 // if we have a row header...
 
                 if (this.row_headers) {
@@ -640,7 +655,7 @@ class Grid extends Control {
                         cell.size = cell_size;
                     }
                     row_container.add(cell);
-                    cell.activate();
+                    //cell.activate();
                 }
                 //console.log('num_columns', num_columns);
 
@@ -684,7 +699,7 @@ class Grid extends Control {
                     arr_cells[x] = arr_cells[x] || [];
                     arr_cells[x][y] = cell;
                     map_cells['[' + x + ',' + y + ']'] = cell;
-                    cell.activate();
+                    //cell.activate();
                 }
             }
         }
@@ -780,6 +795,7 @@ class Grid extends Control {
         if (!this.__active) {
             super.activate();
             //console.log('activate Grid');
+
             //var _arr_rows;
             this.selection_scope = this.context.new_selection_scope(this);
 
@@ -789,7 +805,7 @@ class Grid extends Control {
                 // the rows are the content?
 
                 //console.log('this.main.content', this.main.content);
-                //console.log('this.main.content._arr.length', this.main.content._arr.length);
+                //console.log('load_rows this.main.content._arr.length', this.main.content._arr.length);
 
                 var _arr_rows = this._arr_rows = [];
                 this.main.content._arr.forEach((v) => {
@@ -802,7 +818,7 @@ class Grid extends Control {
             var load_cells = () => {
                 each(this._arr_rows, (row) => {
                     each(row.content._arr, (cell) => {
-                        mx_selectable(cell);
+                        
                         //cell.selectable = cell.selectable;
                     });
                 });

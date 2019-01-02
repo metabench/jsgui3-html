@@ -728,6 +728,53 @@ class Color_Palette extends Control {
 
     }
 
+    activate() {
+        if (!this.activate.__active) {
+            super.activate();
+
+            // listen for selection change events.
+
+            this.grid.selection_scope.on('change', e => {
+                //console.log('color palette ss change', e);
+                //console.trace();
+
+                const {name, value} = e;
+                if (name === 'selected') {
+                    const selected_ctrl = value;
+                    let color = selected_ctrl._color;
+
+                    this.raise('choose-color', {
+                        value: color
+                    });
+                }
+            });
+
+            // go through the cells, getting their color values from the DOM
+            console.log('pre grid each cell');
+            this.grid.each_cell(cell => {
+
+                //console.log('cell', cell);
+                //console.log('cell.dom.el', cell.dom.el);
+                //console.log('cell.dom.el.style.background-color', cell.dom.el.style['background-color']);
+                //console.log('cell.dom.attributes.style.background-color', cell.dom.attributes.style['background-color']);
+
+                //console.log('cell.color', cell.color);
+
+
+                // set color, but silently...
+
+                // .set(..., silent);
+
+                cell._color = cell.dom.el.style['background-color'];
+                cell.selectable = true;
+
+
+                //cell.color = cell.dom.el.style['background-color'];
+
+            })
+        }
+    }
+
     compose_color_palette() {
         // An internal relative frame could help.
         //  Help superimposing anything relative to that DIV, any popup, but not require the DIV itself to have relative positioning.
@@ -770,7 +817,7 @@ class Color_Palette extends Control {
                 //console.log('cell', cell);
                 cell.color = hex;
             }
-            cell.selectable = true;
+            //cell.selectable = true;
         });
 
 

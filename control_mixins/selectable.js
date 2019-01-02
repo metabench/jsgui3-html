@@ -68,9 +68,9 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
         // or not a click
-        console.log('selectable click e', e);
+        //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
-        console.log('ctrl.selectable', ctrl.selectable);
+        //console.log('ctrl.selectable', ctrl.selectable);
 
         if (ctrl.selectable && !ctrl.selection_scope && !ctrl.disabled) {
             if (!condition || condition()) {
@@ -106,9 +106,9 @@ let selectable = (ctrl, ctrl_handle, opts) => {
             } else {
                 console.log('failed condition check');
             }
+            //e.stopPropagation();
+            //e.preventDefault();
         }
-        e.stopPropagation();
-        //e.preventDefault();
     }
     ctrl.on('change', e_change => {
         let {
@@ -149,7 +149,9 @@ let selectable = (ctrl, ctrl_handle, opts) => {
             }
             if (n === 'selectable') {
                 if (value === true) {
-                    apply_active_selectable(ctrl);
+                    //ctrl.once_active(() => {
+                        apply_active_selectable(ctrl);
+                    //})
                 } else {
                     if (typeof document === 'undefined') {
                         //ctrl._fields = ctrl._fields || {};
@@ -169,7 +171,6 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                         } else {
                             ctrl_handle.off(selection_action, click_handler);
                         }
-
                         //ctrl_handle.off(selection_action, click_handler);
                         ctrl_handle.has_selection_click_handler = false;
                     }
@@ -212,6 +213,8 @@ let selectable = (ctrl, ctrl_handle, opts) => {
             //  a field to send to the client.
         } else {
             // Problem with multiple once_active callbacks?
+            //console.log('pre once active');
+            //console.log('ctrl.__active', ctrl.__active);
             ctrl.once_active(() => {
                 //console.log('selectable once active');
 
@@ -231,30 +234,22 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                     //}, 0);
                 }
             });
-
-
             //this.click(click_handler);
             //console.log('ctrl.has_selection_click_handler', ctrl.has_selection_click_handler);
-
         }
-
     }
 
     if (!old_selectable) {
         field(ctrl, 'selected');
         field(ctrl, 'selectable');
         //field(ctrl, 'select_unique');
-
         //});
         apply_all(ctrl);
     };
 
     ctrl.on('activate', e => {
         //console.log('selectable ctrl activate', ctrl.selectable);
-
-
         if (ctrl.selectable) apply_all(ctrl);
-
     })
 
     if (old_selectable !== undefined) {
