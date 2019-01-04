@@ -116,6 +116,8 @@ let dragable = (ctrl, opts = {}) => {
 			// need to calculate move offsets.
 			//  measure the item's initial position.
 			//console.log('parent.size', parent.size);
+
+
 			item_start_pos = ctrl.pos;
 
 			//item_start_pos = ctrl.bcr()[0];
@@ -276,7 +278,6 @@ let dragable = (ctrl, opts = {}) => {
 		//console.log('dragable e_md', e_md);
 		// use offset
 		// [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-
 		if (!condition || condition()) {
 			if (e_md.pageX) {
 				pos_md_within_ctrl = [e_md.offsetX, e_md.offsetX];
@@ -350,11 +351,9 @@ let dragable = (ctrl, opts = {}) => {
 							//console.trace();
 							if (!handle.has_drag_md_handler) {
 								handle.has_drag_md_handler = true;
-
 								each(start_action, sa => {
 									handle.on(sa, h_md);
 								});
-
 								//handle.on('touchstart', h_md);
 								//handle.on('mousedown', h_md);
 							}
@@ -372,7 +371,6 @@ let dragable = (ctrl, opts = {}) => {
 								handle.off(sa, h_md);
 							});
 						})(start_action);
-
 						/*
 						handle.off('touchstart', h_md);
 						handle.off('mousedown', h_md);

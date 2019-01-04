@@ -273,17 +273,29 @@ class Horizontal_Slider extends Control {
 		let v_bar_left_pos = v_bar_center_pos - Math.round(v_bar.dom.el.offsetWidth / 2);
 
 		// then the left pos
-
 		//v_bar.style('left', v_bar_left_pos + 'px');
 
 		// no, work out where the top should go.
 
 		let v_bar_top = v_bar.dom.el.offsetTop;
 
+		//console.log('v_bar.pos', v_bar.pos);
+		if (v_bar.pos) {
+			
 
-		v_bar.dom.attributes.style.left = v_bar_left_pos;
+			//console.log('v_bar.pos', v_bar.pos);
+			//console.log('v_bar.pos[1]', v_bar.pos[1]);
+			v_bar.pos = [v_bar_left_pos, v_bar.pos[1]];
+		} else {
+			v_bar.dom.attributes.style.left = v_bar_left_pos;
+		}
 
-		//v_bar.pos = [v_bar_left_pos, v_bar_top];
+		//
+
+		
+
+		//console.log('set bar_value', value);
+		//console.trace();
 
 		this._.value = value;
 	}
