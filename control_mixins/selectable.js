@@ -100,8 +100,8 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                         ctrl.action_select_only();
                     }
                 }
-                //e.stopPropagation();
-                //e.preventDefault();
+                e.stopPropagation();
+                e.preventDefault();
 
             } else {
                 console.log('failed condition check');
