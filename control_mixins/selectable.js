@@ -18,6 +18,8 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     let select_multi = false;
     // will allow meta key toggle
     let condition;
+
+    let preventDefault = true;
     // maybe defining a bunch of params and actions?
     //  then having a 'mode' preset.
     // press action
@@ -55,6 +57,10 @@ let selectable = (ctrl, ctrl_handle, opts) => {
         if (opts.condition) {
             condition = opts.condition;
         }
+        if (opts.preventDefault === false) {
+            preventDefault = false;
+        }
+
         // disable default select?
         //  or respond to a different event / set of events.
     }
@@ -100,8 +106,14 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                         ctrl.action_select_only();
                     }
                 }
-                e.stopPropagation();
-                e.preventDefault();
+
+                if (preventDefault) {
+                    e.preventDefault();
+                }
+                //e.stopPropagation();
+                //e.preventDefault();
+
+
 
             } else {
                 console.log('failed condition check');
