@@ -145,6 +145,7 @@ class Selection_Scope extends jsgui.Data_Object {
 		} else {
 			var tsel = tof(sel);
 			//console.log('tsel ' + (tsel))
+			/*
 			if (tsel == 'data_value') {
 				var val = sel.get();
 				//console.log('val ' + val);
@@ -162,8 +163,10 @@ class Selection_Scope extends jsgui.Data_Object {
 					}
 				}
 			}
+			*/
 			if (tsel == 'boolean') {
 				if (sel) {
+					//ctrl.remove_class('selected');
 					ctrl.selected = false;
 					msc[id] = false;
 				} else {

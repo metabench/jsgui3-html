@@ -454,49 +454,59 @@ jsgui.span = class span extends Control {
 
     activate() {
         // get the text node reference?
-        let dtn;
 
-        if (!this.dom.el) {
-            // Try to find the dom element amongst registered control elements.
-            //console.log('this.context', this.context);
-            //console.log('this.context.map_els', this.context.map_els);
+        if (!this.__active) {
+            super.activate();
 
-            let el = this.context.map_els[this._id()];
-            //console.log('el', el);
-            if (el) {
-                this.dom.el = el;
-            }
-        }
+            let dtn;
 
-        if (this.dom.el) {
-            dtn = this.dom.el.childNodes[0];
+            //console.log('activate span');
 
-            if (!dtn) {
-                dtn = document.createTextNode('');
-                this.dom.el.appendChild(dtn);
-            }
+            if (!this.dom.el) {
+                // Try to find the dom element amongst registered control elements.
+                //console.log('this.context', this.context);
+                //console.log('this.context.map_els', this.context.map_els);
 
-            // Add to array without raising event.
-
-
-            let tn = this.tn = this.textNode = this.text_node = new textNode({
-                context: this.context,
-                node: dtn
-            });
-            this.content._arr.push(tn);
-            //this.add(tn);
-
-            this.on('change', e => {
-                if (e.name === 'text') {
-
-                    dtn.nodeValue = e.value;
-
+                let el = this.context.map_els[this._id()];
+                //console.log('el', el);
+                if (el) {
+                    this.dom.el = el;
                 }
-            });
-        } else {
+            }
 
-            //console.log('span expected dom.el');
+            //console.log('!!this.dom.el', !!this.dom.el);
+
+            if (this.dom.el) {
+                dtn = this.dom.el.childNodes[0];
+
+                if (!dtn) {
+                    dtn = document.createTextNode('');
+                    this.dom.el.appendChild(dtn);
+                }
+
+                // Add to array without raising event.
+
+                let tn = this.tn = this.textNode = this.text_node = new textNode({
+                    context: this.context,
+                    node: dtn
+                });
+                this.content._arr.push(tn);
+                //this.add(tn);
+
+                this.on('change', e => {
+                    console.log('span text change', e);
+                    if (e.name === 'text') {
+                        dtn.nodeValue = e.value;
+                    }
+                });
+            } else {
+
+                //console.log('span expected dom.el');
+            }
         }
+
+
+
         //let 
 
         // May need to work with the text node element?
@@ -552,7 +562,7 @@ class String_Control extends Control {
         //this.tagName = 'p';
     }
     //compose_span() {
-        
+
     //}
     get text() {
         return this._text;
@@ -937,11 +947,13 @@ class Intersection_Finder extends Evented_Class {
             //console.log('coords[0]', coords[0]);
             //console.log('box coords', coords);
 
-            let intersecting = [], newly_intersecting = [], previously_intersecting = [];;
+            let intersecting = [],
+                newly_intersecting = [],
+                previously_intersecting = [];;
             let [btl, bbr] = coords;
 
             //console.log('[btl, bbr]', [btl, bbr]);
-            
+
 
             each(coords_ctrls, cc => {
                 //console.log('cc', cc);
