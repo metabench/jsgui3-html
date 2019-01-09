@@ -80,7 +80,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
 
         if (ctrl.selectable && !ctrl.selection_scope && !ctrl.disabled) {
             if (!condition || condition()) {
-                console.log('passed condition check');
+                //console.log('passed condition check');
                 var ctrl_key = e.ctrlKey;
                 var meta_key = e.metaKey;
                 if (select_multi) {
@@ -106,15 +106,11 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                         ctrl.action_select_only();
                     }
                 }
-
                 if (preventDefault) {
                     e.preventDefault();
                 }
                 //e.stopPropagation();
                 //e.preventDefault();
-
-
-
             } else {
                 console.log('failed condition check');
             }
