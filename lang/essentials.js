@@ -1853,6 +1853,8 @@ var deep_arr_iterate = (arr, path = [], callback) => {
 	})
 }
 
+const hypot = (a, b) => Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+
 
 var jsgui = {
 	'each': each,
@@ -1902,7 +1904,8 @@ var jsgui = {
 	'get_arr_tree_value': get_arr_tree_value,
 	'deep_arr_iterate': deep_arr_iterate,
 
-	'pr_obs_all_complete': pr_obs_all_complete
+	'pr_obs_all_complete': pr_obs_all_complete,
+	'hypot': hypot
 };
 
 

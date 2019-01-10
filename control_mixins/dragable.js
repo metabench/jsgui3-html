@@ -222,23 +222,33 @@ let dragable = (ctrl, opts = {}) => {
 	const body_mm = e_mm => {
 		let touch_count = 1;
 		if (e_mm.touches) touch_count = e_mm.touches.length;
+
+
+		// could store a variable that tracks the last event.
+
+
 		if (touch_count === 1) {
-			let pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-			movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
-			if (!dragging) {
-				//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
-				let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
-				let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
 
-				//console.log('drag_offset_distance', drag_offset_distance);
+			if (e_mm.pageX || e_mm.touches) {
+				let pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+				movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
+				if (!dragging) {
+					//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
+					let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
+					let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
 
-				//console.log('abs_offset_dist', abs_offset_dist);
-				if (abs_offset_dist >= drag_offset_distance) {
-					begin_drag(pos_mm);
+					//console.log('drag_offset_distance', drag_offset_distance);
+
+					//console.log('abs_offset_dist', abs_offset_dist);
+					if (abs_offset_dist >= drag_offset_distance) {
+						begin_drag(pos_mm);
+					}
+				} else {
+					move_drag(pos_mm);
 				}
-			} else {
-				move_drag(pos_mm);
 			}
+
+
 		}
 		// Looks like they are passive now by default.
 		//e_mm.preventDefault();
