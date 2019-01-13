@@ -1,10 +1,7 @@
 /**
  * Created by James on 16/09/2016.
  */
-
 // Functions to load a few of the most common functions as local variables
-
-
 var jsgui = require('../lang/lang');
 
 const {
@@ -78,6 +75,7 @@ var dom_desc = (el, callback) => {
 const mapDomEventNames = {
 	//'change': true,
 
+	'change': true,
 	'click': true,
 	'mousedown': true,
 	'mouseup': true,
@@ -90,15 +88,12 @@ const mapDomEventNames = {
 	'keyup': true,
 	'keypress': true,
 	'contextmenu': true,
-
 	'touchstart': true,
 	'touchmove': true,
 	'touchend': true,
 	'touchcancel': true,
 	'touchforcechange': true,
-
 	'transitionend': true,
-
 	'abort': true,
 	'canplay': true,
 	'canplaythrough': true,
@@ -116,12 +111,12 @@ const mapDomEventNames = {
 	'ratechange': true,
 	'seeked': true,
 	'seeking': true,
+	'submit': true,
 	'stalled': true,
 	'suspend': true,
 	'timeupdate': true,
 	'volumechange': true,
 	'waiting': true
-
 };
 
 class Control extends Control_Core {
@@ -183,7 +178,6 @@ class Control extends Control_Core {
 
 			var id = spec.el.getAttribute('data-jsgui-id');
 			if (id) this.__id = id;
-
 		}
 	}
 
@@ -383,12 +377,7 @@ class Control extends Control_Core {
 	}
 
 	'drag_events'(hmd, hmm, hmu) {
-
 		// screen x rather than page x
-
-
-
-
 		//let md, mm, mu;
 		let body = this.context.body();
 		let md_pos, mm_pos, mu_pos, mm_offset, mu_offset;
@@ -470,6 +459,9 @@ class Control extends Control_Core {
 		var el = this.dom.el;
 		if (el) {
 			var t_listener = tof(listener);
+
+			// What if the listeners are the same?
+
 			if (t_listener === 'array') {
 				//console.log('listener.length', listener.length);
 				//console.trace();
@@ -533,7 +525,6 @@ class Control extends Control_Core {
 			}
 		}
 		Control_Core.prototype.remove_event_listener.apply(this, arguments);
-
 	}
 
 	'add_event_listener'() {
@@ -608,7 +599,6 @@ class Control extends Control_Core {
 						}, 0)
 					}
 					//fn_activate.key = Math.random();
-
 					// 'one' deactivates the key
 					this.on('activate', fn_activate);
 				}
@@ -640,7 +630,6 @@ class Control extends Control_Core {
 				this.activate_content_controls();
 				this.activate_content_listen();
 				this.activate_other_changes_listen();
-
 				/*
 				// This disables mobile UI events eg scroll, set focus. 
 				if ('ontouchstart' in document.documentElement) {
@@ -675,7 +664,6 @@ class Control extends Control_Core {
 				dval = dval.value();
 			}
 			//console.log('property_name, dval', property_name, dval);
-
 			if (el && el.nodeType === 1) {
 				el.setAttribute(property_name, dval);
 			}

@@ -30,7 +30,6 @@ class Text_Input extends Control {
 
         // listen for a change in the value of the text field, in the DOM.
         //  and when that changes, the value changes.
-
         //this.set('dom.tagName', 'input');
 
         if (!spec.el) {
