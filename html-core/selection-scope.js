@@ -48,7 +48,6 @@ class Selection_Scope extends jsgui.Data_Object {
 		}
 		// and then tell the control that it's selected.
 		// could possibly set a CSS flag.
-
 		//console.log('currently_selected', currently_selected);
 
 		if (!currently_selected) {

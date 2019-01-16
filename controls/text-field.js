@@ -96,7 +96,7 @@ class Text_Field extends Control {
 			right.add(textInput);
 
 			_ctrl_fields.textInput = textInput;
-			_ctrl_fields.text_input = textInput;
+			this.text_input = _ctrl_fields.text_input = textInput;
 		} else {
 			// Text_Item.
 			var text_item = new Text_Item({

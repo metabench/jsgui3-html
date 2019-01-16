@@ -332,7 +332,6 @@ class Evented_Class {
 
     }
     'one' (event_name, fn_handler) {
-
         var inner_handler = (e) => {
             //var result = fn_handler.call(this, e);
             fn_handler.call(this, e);
@@ -341,6 +340,16 @@ class Evented_Class {
         };
 
         this.on(event_name, inner_handler);
+    }
+    'changes' (obj_change_handlers) {
+        this.on('change', e => {
+            const {name, value} = e;
+            const ch = obj_change_handlers[name];
+            // pass the original event? no.
+            if (ch) {
+                ch(value);
+            }
+        })
     }
 };
 

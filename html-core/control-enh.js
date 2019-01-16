@@ -184,6 +184,16 @@ class Control extends Control_Core {
 			if (id) this.__id = id;
 		}
 	}
+	'ctrls'(obj_ctrls) {
+		this._ctrl_fields = this._ctrl_fields || {};
+		let cf = this._ctrl_fields;
+		each(obj_ctrls, (ctrl, name) => {
+			//console.log('name', name);
+			cf[name] = this[name] = ctrl;
+			this.add(ctrl);
+		});
+		return this;
+	}
 
 	'bcr'() {
 		//console.log('sig', sig);
@@ -473,8 +483,6 @@ class Control extends Control_Core {
 				}
 			}
 		}
-
-
 		/*
 
 		//console.trace();
@@ -483,8 +491,6 @@ class Control extends Control_Core {
 		var el = this.dom.el;
 		if (el) {
 			var t_listener = tof(listener);
-
-
 
 			// What if the listeners are the same?
 
