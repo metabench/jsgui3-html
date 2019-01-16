@@ -62,12 +62,8 @@ class Evented_Class {
             res = [];
             if (bgh) {
                 for (c = 0, l = bgh.length; c < l; c++) {
-
-
                     //res.push(bgh[c].call(target, event_name));
-
                     res.push(bgh[c](event_name));
-
                 }
             }
 
@@ -76,9 +72,7 @@ class Evented_Class {
                 if (tof(bei) == 'array') {
                     for (c = 0, l = bei.length; c < l; c++) {
                         //res.push(bei[c].call(target));
-
                         if (typeof bei[c] === 'function') res.push(bei[c]());
-
                     }
                     return res;
                 }
@@ -138,8 +132,6 @@ class Evented_Class {
         }
 
 
-
-
         if (sig == '[s,o]') {
             let be = this._bound_events;
             let bgh = this._bound_general_handler;
@@ -159,7 +151,8 @@ class Evented_Class {
                 let bei = be[event_name];
                 if (tof(bei) === 'array') {
                     for (c = 0, l = bei.length; c < l; c++) {
-                        res.push(bei[c](a[1]));
+                        //console.log('bei[c]', bei[c]);
+                        if (typeof bei[c] === 'function') res.push(bei[c](a[1]));
                     }
                 }
             }
@@ -228,12 +221,6 @@ class Evented_Class {
         // Why is the bound events array getting so big?
 
         if (sig == '[f]') {
-            //var stack = new Error().stack;
-            //console.log(stack);
-            //throw 'stop';
-
-
-
             this._bound_general_handler = this._bound_general_handler || [];
             if (Array.isArray(this._bound_general_handler)) {
                 //if (tof(this._bound_general_handler) == 'array') {
@@ -242,7 +229,6 @@ class Evented_Class {
         }
         // Why does a change event listener get bound to the wrong control, or bound multiple times?
         //  Changes getting pushed up through the tree?
-
 
         if (sig == '[s,f]') {
             // bound to a particular event name
@@ -272,7 +258,6 @@ class Evented_Class {
                 bei.push(fn_listener);
             };
         }
-
     }
 
     // A way of proxying functions below?

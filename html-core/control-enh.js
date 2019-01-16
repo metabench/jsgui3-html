@@ -13,7 +13,9 @@ const {
 //var is_ctrl = jsgui.is_ctrl;
 const v_subtract = jsgui.util.v_subtract;
 
-const {prom_or_cb} = require('fnl');
+const {
+	prom_or_cb
+} = require('fnl');
 
 /*
 var get_a_sig = jsgui.get_a_sig,
@@ -147,6 +149,8 @@ class Control extends Control_Core {
 		}
 		//mx_selectable(this);
 
+		this.map_raises_dom_events = {};
+
 		if (spec.el) {
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
 
@@ -227,7 +231,6 @@ class Control extends Control_Core {
 				var bcr = this.dom.el.getBoundingClientRect();
 				return [bcr.width, bcr.height];
 			}
-
 		}
 	}
 
@@ -305,10 +308,8 @@ class Control extends Control_Core {
 
 			var c_border = this.computed_style('border');
 			//console.log('c_border', c_border);
-
 			//var s_c_border = c_border.split(' ');
 			//console.log('s_c_border', s_c_border);
-
 			// Can't really split it by space.
 			//  some of the terms in the bracket include a space.
 			//  could first do a regex to change ', ' to ','
@@ -453,6 +454,29 @@ class Control extends Control_Core {
 
 	'add_dom_event_listener'(event_name, fn_handler) {
 		//console.log('add_dom_event_listener', event_name, this.__id);
+		// Not sure we even need the listener here.
+		if (this.map_raises_dom_events) {
+			if (this.map_raises_dom_events[event_name] === true) {
+
+			} else {
+				this.map_raises_dom_events[event_name] = true;
+				var el = this.dom.el;
+				if (el) {
+					el.addEventListener(event_name, (e) => {
+						//console.log('this.disabled', this.disabled);
+						//console.log('this', this);
+						e.ctrl = this;
+						if (!this.disabled) {
+							this.raise(event_name, e);
+						}
+					}, false);
+				}
+			}
+		}
+
+
+		/*
+
 		//console.trace();
 		var listener = this._bound_events[event_name];
 		//var that = this;
@@ -460,10 +484,13 @@ class Control extends Control_Core {
 		if (el) {
 			var t_listener = tof(listener);
 
+
+
 			// What if the listeners are the same?
 
 			if (t_listener === 'array') {
 				//console.log('listener.length', listener.length);
+				//console.log('event_name', event_name);
 				//console.trace();
 				el.addEventListener(event_name, (e) => {
 					//console.log('this.disabled', this.disabled);
@@ -471,39 +498,62 @@ class Control extends Control_Core {
 					e.ctrl = this;
 					if (!this.disabled) {
 						//console.log('listener.length', listener.length)
+
+						// Better not to add separate listeners.
+
+						/ *
 						each(listener, l => {
 							if (l) {
 								l(e);
 							}
 						});
+						* /
+
+						// add the last listener in the array?
+
+						//this.raise(event_name, e);
 					}
 				}, false);
 			} else {
 				el.addEventListener(event_name, (e) => {
 					//console.log('this.disabled', this.disabled);
-					if (!this.disabled && listener) listener(e);
+					//if (!this.disabled && listener) listener(e);
+
+					this.raise(event_name, e);
 				}, false);
 			}
 			//console.log('post el add listener');
 		}
+		*/
 	}
 
 	'remove_dom_event_listener'(event_name, fn_handler) {
 		var listener = this._bound_events[event_name];
 		var el = this.dom.el;
+
 		if (el) {
 			var t_listener = tof(listener);
 			if (t_listener === 'array') {
 				//console.log('listener.length', listener.length);
+
+				let c_removed = 0;
 				each(listener, (listener) => {
-					el.removeEventListener(event_name, listener, false);
+					// only if its that specific handler?
+					if (listener === fn_handler) {
+						el.removeEventListener(event_name, listener, false);
+						c_removed++;
+					}
 				});
+				if (c_removed === listener.length) {
+					this.map_raises_dom_events[event_name] = false;
+				}
 			} else {
-				el.removeEventListener(event_name, listener, false);
+				if (listener === fn_handler) {
+					el.removeEventListener(event_name, listener, false);
+				}
 			}
 		}
 	}
-
 	// Need to remove event listener from the DOM as well.
 
 	'remove_event_listener'() {
@@ -583,7 +633,6 @@ class Control extends Control_Core {
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
 
 	'once_active'(cb) {
-
 		// maintain a list of once active callbacks...
 		if (typeof document !== 'undefined') {
 			return prom_or_cb((solve, jettison) => {
