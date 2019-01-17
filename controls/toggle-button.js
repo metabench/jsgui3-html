@@ -63,86 +63,10 @@ class Toggle_Button extends Control {
         //  can initialise the fields at each level in the code here, rather than all at once.
         //this.__type_name = 'toggle_button';
         this.add_class('toggle-button');
-        // Always active?
-        //this.active();
-        // Has the states.
-        //  Is set with a state
-        //  Has different content per state.
-        //   Maybe have different controls that get toggled, give easy access to those controls.
-        //  An array or collection of controls. Toggles between them.
-        // A map of the states and their content controls.
-        // And the Plus_Minus_Toggle_Button will extend this.
-        //  The tree control will use that.
-        //  Will listen to changes from the button.
-        //let spec_state = spec.state, state, spec_states = spec.states, states;
-        // need to persist some fields to the client, but not as
-        //var ctrl_fields = {};
-        // Activate would set those values on the client-side.
-        // active_fields.
-        //  Potential to make all of a control's fields active.
-        //  Would be better to include a new JSON dock or chunk of JSON in the script.
-        //  It could download that data separately, so that it gets the first rendered view quicker.
-
-        // Title on top, main content, sidebar on right
-        //  Perhaps multi layout mode(s) could have footer as well.
-        //  Possibly replace title with header.
-        //   see http://alistapart.com/d/negativemargins/ex4.htm
-
-        // May need to put the various containers within wrapper divs, to get more divs that are needed for flexibility in CSS
-        //  I think flexible layout also means flexible HTML construction.
-        //   Want it to render specific wrapper combinations on the server or in the construction phase.
-        //   Multi-layout-mode may need to hold quite a variety of layouts, and render them differently.
-        //    a variety of CSS classes will mean that the layout that gets rendered in HTML appears correct when rendered in the browser.
-
-        //var that = this;
-        var active_fields;
         //console.log('spec.state', spec.state);
 
-        field(this, 'states');
-        field(this, 'state');
-
-        //console.log('spec', spec);
-
-        if (spec.state) {
-            //console.log('spec_state', spec_state);
-            //if (spec_state == 'expanded' || spec_state == 'contracted') {
-            //state = this.set('state', spec_state);
-            //state = this.state = spec.state;
-            //console.log('\nstate', state);
-            //console.log()
-            // So it's a Data_Value when it's a string...
-            // But when it's an array it's an array?
-            //throw 'stop';
-
-            //if (!active_fields) active_fields = {};
-            //active_fields.state = state;
-
-            // Have a control for its text.
-            //var ctrl_text = new jsgui.textNode({'context': that.context, 'text': e_change.value});
-
-            //that.add(ctrl_text);
-            //that.set('ctrl_text', ctrl_text);
-            // May be better to put this into more general purpose composition.
-
-            // add and persist?
-            //  add as field?
-            //  client add?
-            //  add control field?
-            //  reference persistance
-            this.state = spec.state;
-            //that.add(state + '');
-            //ctrl_fields['state'] = state;
-            //} else {
-            //	throw 'spec.state expects "expanded" or "contracted".';
-            //}
-        } else {
-            //state = this.set('state', 'expanded');
-        }
-        if (spec.states) {
-            this.states = spec.states;
-        } else {
-            //state = this.set('state', 'expanded');
-        }
+        field(this, 'states', spec.states || '');
+        field(this, 'state', spec.state || '');
 
         if (!spec.abstract && !spec.el) {
             //console.log('1) this.state', this.state);

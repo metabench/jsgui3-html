@@ -44,7 +44,7 @@ class Evented_Class {
         });
     }
 
-    'raise_event' () {
+    'raise_event'() {
 
         let a = Array.prototype.slice.call(arguments),
             sig = get_item_sig(a, 1);
@@ -204,7 +204,10 @@ class Evented_Class {
         return res;
     }
 
-    'add_event_listener' () {
+    'add_event_listener'() {
+
+
+
         var a = Array.prototype.slice.call(arguments),
             sig = get_item_sig(a, 1);
         a.l = a.length;
@@ -215,12 +218,15 @@ class Evented_Class {
 
         // Why is this getting called so many times, for the same object?
 
+        if (sig === '[o]') {
+            each(a[0], (h, name) => this.add_event_listener(name, h));
+        }
 
 
         //console.log('');
         // Why is the bound events array getting so big?
 
-        if (sig == '[f]') {
+        if (sig === '[f]') {
             this._bound_general_handler = this._bound_general_handler || [];
             if (Array.isArray(this._bound_general_handler)) {
                 //if (tof(this._bound_general_handler) == 'array') {
@@ -230,7 +236,7 @@ class Evented_Class {
         // Why does a change event listener get bound to the wrong control, or bound multiple times?
         //  Changes getting pushed up through the tree?
 
-        if (sig == '[s,f]') {
+        if (sig === '[s,f]') {
             // bound to a particular event name
 
             // want the general triggering functions to be done too.
@@ -274,11 +280,54 @@ class Evented_Class {
     }
     */
 
-    'remove_event_listener' (event_name, fn_listener) {
+    'remove_event_listener'(event_name, fn_listener) {
 
 
         // TODO
         // And remove something that's bound to the general handler...?
+
+        const a = arguments;
+        if (a.length === 1) {
+            if (typeof a[0] === 'object' && !isArray(a[0])) {
+                each(a[0], (v, i) => {
+                    this.remove_event_listener(i, v);
+                });
+            }
+        } else {
+            if (this._bound_events) {
+                //console.log('event_name', event_name);
+                var bei = this._bound_events[event_name] || [];
+
+                //var tbei = tof(bei);
+                //console.log('tbei', tbei);
+
+                //console.log('Array.isArray(bei)', Array.isArray(bei));
+
+                if (Array.isArray(bei)) {
+                    // bei.push(fn_listener);
+
+                    var c = 0,
+                        l = bei.length,
+                        found = false;
+
+                    //console.log('l', l);
+
+                    while (!found && c < l) {
+                        //console.log('bei[c]', bei[c]);
+                        if (bei[c] === fn_listener) {
+                            found = true;
+                        } else {
+                            c++;
+                        }
+                    }
+                    //console.log('found', found);
+                    //console.log('c', c);
+                    if (found) {
+                        bei.splice(c, 1);
+                    }
+                };
+            }
+        }
 
 
 
@@ -287,51 +336,21 @@ class Evented_Class {
 
         //console.log('remove_event_listener');
         //console.log('this._bound_events', this._bound_events);
-        if (this._bound_events) {
-            //console.log('event_name', event_name);
-            var bei = this._bound_events[event_name] || [];
 
-            //var tbei = tof(bei);
-            //console.log('tbei', tbei);
-
-            //console.log('Array.isArray(bei)', Array.isArray(bei));
-
-            if (Array.isArray(bei)) {
-                // bei.push(fn_listener);
-
-                var c = 0,
-                    l = bei.length,
-                    found = false;
-
-                //console.log('l', l);
-
-                while (!found && c < l) {
-                    //console.log('bei[c]', bei[c]);
-                    if (bei[c] === fn_listener) {
-                        found = true;
-                    } else {
-                        c++;
-                    }
-                }
-                //console.log('found', found);
-                //console.log('c', c);
-                if (found) {
-                    bei.splice(c, 1);
-                }
-            };
-        }
 
 
     }
 
-    'off' () {
+    /*
+    'off'() {
         // However, need to make use of some document events.
         //  With some controls, we need to pass through
 
         return this.remove_event_listener.apply(this, arguments);
 
     }
-    'one' (event_name, fn_handler) {
+    */
+    'one'(event_name, fn_handler) {
         var inner_handler = (e) => {
             //var result = fn_handler.call(this, e);
             fn_handler.call(this, e);
@@ -341,9 +360,12 @@ class Evented_Class {
 
         this.on(event_name, inner_handler);
     }
-    'changes' (obj_change_handlers) {
+    'changes'(obj_change_handlers) {
         this.on('change', e => {
-            const {name, value} = e;
+            const {
+                name,
+                value
+            } = e;
             const ch = obj_change_handlers[name];
             // pass the original event? no.
             if (ch) {
@@ -358,6 +380,7 @@ p.raise = p.raise_event;
 p.trigger = p.raise_event;
 p.subscribe = p.add_event_listener;
 p.on = p.add_event_listener;
+p.off = p.remove_event_listener;
 
 
 module.exports = Evented_Class;

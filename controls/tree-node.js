@@ -117,12 +117,8 @@ class Tree_Node extends Control {
 				} else {
 					this.toggle_button.hide();
 				}
-
 			})
 		}
-
-
-
 	}
 
 	'compose_tree_node'(spec) {

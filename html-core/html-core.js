@@ -587,40 +587,11 @@ jsgui.span = class span extends Control {
                 //console.log('span expected dom.el');
             }
         }
-
-
-
         //let 
 
         // May need to work with the text node element?
 
     }
-
-
-    /*
-    'all_html_render' () {
-        // need to escape the HTML it outputs.
-        var res;
-
-        //var text = this._.text || '';
-        //var text = this.get('text');
-        // These get and set operations should not rely on the page_context.
-
-        //console.log('text ' + text);
-
-        //var nx = this.get('no_escape');
-
-        //console.log('nx ' + nx);
-
-        if (this.nx) {
-            res = this.text || '';
-        } else {
-            res = escape_html(this.text || '') || '';
-        }
-
-        return res;
-    }
-    */
 }
 
 class String_Control extends Control {
@@ -712,10 +683,6 @@ class textNode extends Control {
 
         //this._ = {};
 
-
-
-
-
         if (typeof spec.text !== 'undefined') {
             this._text = spec.text;
         }
@@ -735,26 +702,8 @@ class textNode extends Control {
         });
     }
     'all_html_render'() {
-        // need to escape the HTML it outputs.
-        var res;
+        return this.nx ? this._text || '' : escape_html(this._text || '') || '';
 
-        //var text = this._.text || '';
-        //var text = this.get('text');
-        // These get and set operations should not rely on the page_context.
-
-        //console.log('text ' + text);
-
-        //var nx = this.get('no_escape');
-
-        //console.log('nx ' + nx);
-
-        if (this.nx) {
-            res = this._text || '';
-        } else {
-            res = escape_html(this._text || '') || '';
-        }
-
-        return res;
     }
 
     // getter and setter for the text itself?

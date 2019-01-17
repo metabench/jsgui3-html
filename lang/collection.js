@@ -1142,82 +1142,6 @@ class Collection extends Data_Object {
     //  Could have a getter.
     //   Data Object fields will do the job probably.
 
-
-    /*
-
-    'fields'() {
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-        var that = this;
-        // this will refer to the fields of the data_object_constraint.
-
-        if (sig == '[o]') {
-            // use a field definition constraint
-            //  (a different way of doing the constraint, using json-like object, not using a Data_Object constructor.
-
-            each(a[0], function(i, v) {
-                that.set_field(i, v);
-            });
-
-            // set the constraints
-
-            that.constraint(a[0]);
-
-        } else {
-            if (!this._data_object_constraint) {
-                this._data_object_constraint = Constraint.from_obj(new Data_Object());
-            }
-            var doc = this._data_object_constraint;
-
-            if (a.l == 0) {
-                return doc.data_object.fc.get();
-            }
-            // if given an array, set the fields.
-
-            //console.log('a.l ' + a.l);
-
-            if (a.l == 1 && tof(a[0] == 'array')) {
-                //console.log('array 1');
-                return doc.data_object.fc.set(a[0]);
-            }
-        }
-    }
-    */
-
-    // Getting quite in depth with generality and polymorphism here.
-    //
-    //  Perhaps there should be a _fields object.
-    //  So far we have used constraints - there will be field constraints when fields are specified.
-    //   Maybe it makes sense... a 'field' may correspond with indexes as well.
-
-    // May be the fields from the prototype, as well as fields that have been added.
-
-    /*
-
-    'set_field'() {
-        var that = this;
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-        var doc = that._data_object_constraint = that._data_object_constraint || Constraint.from_obj(new Data_Object());
-
-        if(a.l == 2 && tof(a[0]) == 'string') {
-            doc.data_object.fc = doc.data_object.fc || new Data_Object_Field_Collection();
-            // May need to set up indexing on the fields as well.
-            return doc.data_object.fc.set(a[0], a[1]);
-        }
-    }
-
-    'remove_field'() {
-        var doc = this._data_object_constraint;
-
-        if (doc) {
-            if (sig == '[s]') {
-                return doc.data_object.fc.out(a[0]);
-            }
-        }
-
-
-    }
-
-    */
     // A constraint may reference an index.
     // It may need to create the index if it does not already exist.
 
@@ -1383,47 +1307,6 @@ class Collection extends Data_Object {
     // Likely to be best to do a lot in the abstract so changes can be viewed before being made.
 
     // Unique constraint will again be done functionally, somehow.
-
-    /*
-
-    'get_unique_constraint'(fields) {
-        if (tof(fields) == 'string') fields = [fields];
-        each(this._unique_constraints, function(i, unique_constraint) {
-            var uc_fields = unique_constraint.fields;
-            //console.log('uc_fields ' + stringify(uc_fields));
-
-            if (are_equal(uc_fields, fields)) return unique_constraint;
-        });
-    }
-
-    'unique'() {
-        var that = this;
-        var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
-        //console.log('a[0] ' + stringify(a[0]));
-
-        if (sig == '[s]') {
-            return this.unique([a[0]]);
-        }
-        if (tof(a[0]) == 'array') {
-            if (is_arr_of_arrs(a[0])) {
-                //console.log('is_arr_of_arrs');
-            }
-            if (is_arr_of_strs(a[0])) {
-                var existing_uc = this.get_unique_constraint(a[0]);
-                if (existing_uc) return existing_uc;
-                var new_uc = new Constraint.Unique({
-                    'fields': a[0]
-                });
-                this._unique_constraints = this._unique_constraints || [];
-                this._unique_constraints.push(new_uc);
-                var idx = this.index(a[0]);
-                //console.log('');
-                //console.log('idx ' + stringify(idx));
-            }
-        }
-    }
-
-    */
 
     // indexes
     //  will get all the indexes... may set a particular index? Or replace the indexes?
@@ -1806,25 +1689,7 @@ class Collection extends Data_Object {
         }
 
         if (tv == 'string' || tv == 'number') {
-            //console.log('tv ' + tv);
-            // still need to check if it matched the collection constraint(s).
-            //console.log('3) pre test_object_against_constraints');
-            /*
-
-            var constraints_test_res = this.test_object_against_constraints(value);
-            //console.log('constraints_test_res ' + constraints_test_res);
-            if (constraints_test_res) {
-                if (tv == 'string') {
-                    // indexing the value
-                    this.index_system.unsafe_add_object(dv);
-                }
-            } else {
-                //console.trace();
-                throw('wrong data type');
-            }
-
-            */
-
+            // [constraint testing]
             var dv = new Data_Value({
                 'value': value
             });
@@ -1859,22 +1724,6 @@ class Collection extends Data_Object {
 
 
     'load_array' (arr) {
-        //var that = this;
-        //console.log('load_array arr ', (arr));
-        // there could be a data type that this is expecting... a constraint?
-        //  could have a data type constructor.
-        // so, if the item given is not a Data_Object, we can try making the Data_Object, and putting it in place.
-        //var dtc = this._data_type_constraint;
-        //console.log('dtc ' + dtc);
-        // May also need to change ID values on the objects?
-        //  Create clones of the objects with different ID values?
-
-        // Be able to accept items being pushed that will have IDs changed?
-
-        // Should have a data_type_constructor with typed collections.
-
-        // 
-
         for (var c = 0, l = arr.length; c < l; c++) {
             this.push(arr[c]);
         }

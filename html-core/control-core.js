@@ -739,14 +739,6 @@ class Control_Core extends Data_Object {
 					}
 				}
 
-				//each(this._ctrl_fields, function(ctrl_field, name) {
-				//  obj_ctrl_fields[name] = ctrl_field._id();
-				//});
-
-				//this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(obj_ctrl_fields).replace(/"/g, "'"));
-				// lower level set here?
-				//dom_attrs['data-jsgui-ctrl-fields'] = stringify(obj_ctrl_fields).replace(/"/g, "'");
-
 				let scf = stringify(obj_ctrl_fields).replace(/"/g, "'");
 				//console.log('scf', scf);
 
@@ -756,17 +748,6 @@ class Control_Core extends Data_Object {
 			}
 
 			if (this._fields) {
-				// go through the control fields, putting together the data attribute that will be persited to the client.
-				// need to compose the string.
-
-				//var obj_fields = {};
-				//each(this._ctrl_fields, function(ctrl_field, name) {
-				//  obj_ctrl_fields[name] = ctrl_field._id();
-				//});
-
-				//this.set('dom.attributes.data-jsgui-fields', stringify({
-				//    'num_days': num_days
-				//}).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
 
 				let sf = stringify(this._fields).replace(/"/g, "'");
 				//console.log('sf', sf);
@@ -1143,8 +1124,6 @@ class Control_Core extends Data_Object {
 							new_content.context = this.context;
 						}
 					}
-
-
 				}
 				var inner_control = this.inner_control;
 				if (inner_control) {
@@ -1389,35 +1368,6 @@ class Control_Core extends Data_Object {
 				//this.dom.attrs.set('class', str_cls);
 				da['class'] = arr_class.join(' ');
 				*/
-			} else if (tCls == 'data_value') {
-				throw 'removed';
-				/*
-
-				
-				var val = cls.value();
-
-				var arr_classes = val.split(' ');
-				var already_has_class = false,
-					l = arr_classes.length,
-					c = 0;
-				while (c < l & !already_has_class) {
-					if (arr_classes[c] == class_name) {
-						already_has_class = true;
-					}
-					c++;
-				}
-				if (!already_has_class) {
-					arr_classes.push(class_name);
-				}
-				//var str_cls = arr_classes.join(' ');
-				//console.log('str_cls', str_cls);
-				//this.add_class(str_cls);
-				//this.dom.attrs.set('class', str_cls);
-				da['class'] = arr_classes.join(' ');
-				//this.add_class(val);
-				// And the DOM should update itself when one of these 'model' objects gets changed - depending on if its activated or not.
-
-				*/
 			} else if (tCls == 'string') {
 				var arr_classes = cls.split(' ');
 				var already_has_class = false,
@@ -1471,10 +1421,6 @@ class Control_Core extends Data_Object {
 					}
 					c++;
 				}
-			}
-			// and if it's a data value, do similar...
-			if (tCls == 'data_value') {
-				throw 'removed';
 			}
 		}
 	}
@@ -1538,32 +1484,6 @@ class Control_Core extends Data_Object {
 				da['class'] = arr_res.join(' ');
 				//console.log('str_cls ' + str_cls);
 				//throw 'stop';
-			}
-			// and if it's a data value, do similar...
-			if (tCls == 'data_value') {
-				throw 'removed';
-				/*
-				var cls2 = cls.value();
-				var arr_classes = cls2.split(' ');
-				var arr_res = [];
-				var l = arr_classes.length,
-					c = 0;
-				//console.log('arr_classes', arr_classes);
-				while (c < l) {
-					if (arr_classes[c] !== class_name) {
-						//already_has_class = true;
-						arr_res.push(arr_classes[c]);
-					}
-					c++;
-				}
-				//console.log('arr_res', arr_res);
-				//var str_cls = arr_res.join(' ');
-				//console.log('str_cls ', str_cls);
-				//this.add_class(str_cls);
-				//this.dom.attrs.set('class', str_cls);
-				da['class'] = arr_res.join(' ');
-				//console.log('str_cls ' + str_cls);
-				*/
 			}
 
 		}
@@ -1670,7 +1590,7 @@ class Control_Core extends Data_Object {
 		// No, remove it from collection in parent.
 		//  Have DOM respond to that.
 
-		console.log('TO CHANGE: control-core.remove()');
+		console.log('TO CHANGE: control-core.remove(). need to remove from collection and parent too in ctrl world');
 
 		var el = this.dom.el;
 		if (el) {
@@ -1678,6 +1598,9 @@ class Control_Core extends Data_Object {
 				el.parentNode.removeChild(el);
 			}
 		}
+
+		// remove it from the collection too.
+
 	}
 
 	'shallow_copy'() {

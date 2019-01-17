@@ -21,7 +21,6 @@ class Selection_Scope extends jsgui.Data_Object {
 	'select_only'(ctrl, silent = false) {
 		var currently_selected;
 		var count_deselected = 0;
-
 		var selected;
 		//console.log('select_only this.map_selected_controls', this.map_selected_controls);
 		each(this.map_selected_controls, (v, i) => {

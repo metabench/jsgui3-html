@@ -84,24 +84,28 @@ class Multi_Layout_Mode extends Control {
 
         var panel_title = new Panel({
             'context': context,
-            'name': 'title'
+            'name': 'title',
+            'class': 'title'
         })
-        panel_title.add_class('title');
+        //panel_title.add_class('title');
         var panel_navigation = new Panel({
             'context': context,
-            'name': 'navigation'
+            'name': 'navigation',
+            'class': 'navigation'
         })
-        panel_navigation.add_class('navigation');
+        //panel_navigation.add_class('navigation');
         var panel_main = new Panel({
             'context': context,
-            'name': 'main'
+            'name': 'main',
+            'class': 'main'
         })
-        panel_main.add_class('main');
+        //panel_main.add_class('main');
         var panel_misc = new Panel({
             'context': context,
-            'name': 'misc'
+            'name': 'misc',
+            'class': 'misc'
         })
-        panel_misc.add_class('misc');
+        //panel_misc.add_class('misc');
         if (layout_mode == 'fluid-fixed') {
             // make the html like in
             //  http://www.dynamicdrive.com/style/layouts/item/css-liquid-layout-22-fluid-fixed/

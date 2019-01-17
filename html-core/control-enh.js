@@ -590,6 +590,10 @@ class Control extends Control_Core {
 
 		// So, it should also bind the event to the control, so a listener will hear that.
 		// But does this apply itself???
+		if (a.l === 1) {
+			//this._super.apply(this, a);
+			return super.add_event_listener(a[0]);
+		}
 		if (a.l === 2) {
 			//this._super.apply(this, a);
 			super.add_event_listener(a[0], a[1]);
@@ -1113,6 +1117,7 @@ class Control extends Control_Core {
 
 let p = Control.prototype;
 p.on = p.add_event_listener;
+p.off = p.remove_event_listener;
 
 module.exports = Control;
 

@@ -60,6 +60,8 @@ class Panel extends Control {
     }
     //'resizable': function() {
     //},
+
+    /*
     'activate'() {
         // May need to register Flexiboard in some way on the client.
 
@@ -72,5 +74,6 @@ class Panel extends Control {
         }
         
     }
+    */
 }
 module.exports = Panel;
