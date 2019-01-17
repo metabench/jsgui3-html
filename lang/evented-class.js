@@ -380,7 +380,7 @@ p.raise = p.raise_event;
 p.trigger = p.raise_event;
 p.subscribe = p.add_event_listener;
 p.on = p.add_event_listener;
-p.off = p.remove_event_listener;
+//p.off = p.remove_event_listener;
 
 
 module.exports = Evented_Class;

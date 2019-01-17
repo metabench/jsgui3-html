@@ -35,12 +35,10 @@ var group = jsgui.group;
 //var Relative_Frame = Control.
 
 /*
-
  'fields': {
  'layout_mode': String
  },
  */
-
 
 var fields = {
     'layout_mode': String

@@ -319,12 +319,12 @@ class Control_DOM extends Evented_Class {
 			}
 		});
 
-		
+
 		//attrs.on('change', ech => {
 		//	console.log('attrs ** ech', ech);
 		//	this.raise('change', ech);
 		//});
-		
+
 		// Then whenever the DOM attributes change...
 	}
 }
@@ -444,7 +444,7 @@ class Control_Core extends Data_Object {
 		prop(this, 'pos', spec.pos, (e_change) => {
 			let [value, old] = e_change;
 
-			
+
 
 			if (value.length === 2) {
 				//console.log('old', old);
@@ -453,7 +453,7 @@ class Control_Core extends Data_Object {
 					this.pos = value;
 				}
 			}
-			
+
 
 			let [left, top] = value;
 			let o_style = {
@@ -551,6 +551,14 @@ class Control_Core extends Data_Object {
 
 		//var content = this.content = this.contents = new Collection({});
 		var content = this.content = new Collection({});
+
+
+		if (spec.hide) {
+			this.hide();
+		}
+		if (spec.add) {
+			this.add(spec.add);
+		}
 
 		// Want something in the change event that indicates the bubble level.
 		//  It looks like the changes bubble upwards.
@@ -781,21 +789,26 @@ class Control_Core extends Data_Object {
 				//else if (key === 'raise') {} 
 				else if (key === 'style') {
 					item = dom_attrs[key];
-					let is = item.toString();
-					//console.log('item', item);
-					//console.log('item', item.toString());
-					//console.log('item.__empty', item.__empty);
 
-					if (!item.__empty && is.length > 0) {
-						arr.push(' ', key, '="', is, '"');
+					if (typeof item !== 'function') {
+						let is = item.toString();
+						//console.log('item', item);
+						//console.log('item', item.toString());
+						//console.log('item.__empty', item.__empty);
+
+						if (!item.__empty && is.length > 0) {
+							arr.push(' ', key, '="', is, '"');
+						}
 					}
+
+
 				} else {
 					item = dom_attrs[key];
 					//console.log('item', item);
 					if (item && item.toString) {
 						arr.push(' ', key, '="', item.toString(), '"');
 					}
-					
+
 				}
 			}
 			//dom_attrs.each(function (i, v) {
@@ -818,7 +831,7 @@ class Control_Core extends Data_Object {
 		// do we have 'get'?
 		//var dom = this.get('dom');
 		//var tagName = this.get('dom.tagName'),
-		var tagName = this.dom.tagName;
+		const tagName = this.dom.tagName;
 		//console.log('this._.dom', this._.dom._.attributes);
 		//console.log('tagName', tagName);
 		var res;
@@ -840,8 +853,8 @@ class Control_Core extends Data_Object {
 		//var dom = this.get('dom');
 		//var tagName = dom.get('tagName'),
 		var res;
-		var tagName = this.dom.tagName;
-		var noClosingTag = this.dom.noClosingTag;
+		const tagName = this.dom.tagName;
+		const noClosingTag = this.dom.noClosingTag;
 		//console.log(tof(noClosingTag));
 		//throw 'stop';
 		if (tagName === false || noClosingTag) {
@@ -867,7 +880,7 @@ class Control_Core extends Data_Object {
 
 	// register this and subcontrols
 	'register_this_and_subcontrols'() {
-		let context = this.context;
+		const context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
 			//console.log('iterate ctrl', ctrl);
 			context.register_control(ctrl);
@@ -896,9 +909,8 @@ class Control_Core extends Data_Object {
 
 	'iterate_this_and_subcontrols'(ctrl_callback) {
 		ctrl_callback(this);
-		var content = this.content;
-		var that = this,
-			tv;
+		const content = this.content;
+		let tv;
 		content.each(v => {
 			//console.log('v', v);
 			tv = tof(v);
@@ -944,8 +956,8 @@ class Control_Core extends Data_Object {
 			// then if we are waiting on any of them we listen for them to complete.
 			//console.log('arr_waiting_controls.length', arr_waiting_controls.length);
 			if (arr_waiting_controls.length == 0) {
-				var html = this.all_html_render();
-				callback(null, html);
+				//var html = this.all_html_render();
+				callback(null, this.all_html_render());
 			} else {
 				var c = arr_waiting_controls.length;
 				var complete = () => {
@@ -956,14 +968,14 @@ class Control_Core extends Data_Object {
 					//console.log('dom', dom);
 
 					if (dom) {
-						var html = [this.renderBeginTagToHtml(), this.all_html_render_internal_controls(), this.renderEndTagToHtml(), this.renderHtmlAppendment()].join('');
+						//var html = [this.renderBeginTagToHtml(), this.all_html_render_internal_controls(), this.renderEndTagToHtml(), this.renderHtmlAppendment()].join('');
 						//console.log('html', html);
-						callback(null, html);
+						callback(null, [this.renderBeginTagToHtml(), this.all_html_render_internal_controls(), this.renderEndTagToHtml(), this.renderHtmlAppendment()].join(''));
 						//throw ('stop');
 					}
 				}
 				each(arr_waiting_controls, (control, i) => {
-					control.on('ready', (e_ready) => {
+					control.on('ready', e_ready => {
 						//console.log('control ready');
 						c--;
 						//console.log('c');
@@ -1025,8 +1037,7 @@ class Control_Core extends Data_Object {
 
 			if (tn == 'string') {
 				res.push(jsgui.output_processors['string'](n));
-			}
-			if (tn == 'data_value') {
+			} else if (tn == 'data_value') {
 				res.push(n._);
 			} else {
 				if (tn == 'data_object') {
@@ -1096,7 +1107,7 @@ class Control_Core extends Data_Object {
 	}
 
 	'add'(new_content) {
-		var tnc = tof(new_content);
+		const tnc = tof(new_content);
 		let res;
 		//console.log('control add content tnc', tnc);
 		if (tnc == 'array') {
@@ -1171,7 +1182,7 @@ class Control_Core extends Data_Object {
 		// For the moment, this should be a convenient way of updating the dom attributes style.
 
 		const d = this.dom,
-				da = d.attrs;
+			da = d.attrs;
 		//  This could do the document update or not....
 		// No DOM modification here is best.
 		//  Have it listen to style / dom changes on activation.
@@ -1232,13 +1243,14 @@ class Control_Core extends Data_Object {
 				//that.style(i, v, false);
 				this.style(i, v);
 			});
-			
+
 		}
 	}
 	'active'() {
-		var id = this._id();
-		var dom = this.dom,
-			dom_attributes = dom.attributes;
+		const id = this._id();
+		let dom = this.dom,
+			dom_attributes = dom.attributes,
+			el;
 		//console.log('dom_attributes', dom_attributes);
 		//throw 'stop';
 		/*
@@ -1252,7 +1264,7 @@ class Control_Core extends Data_Object {
 		dom_attributes['data-jsgui-id'] = id;
 		dom_attributes['data-jsgui-type'] = this.__type_name;
 		//var el = this._.el || dom._.el;
-		var el;
+		//var el;
 		if (dom.el) {
 			el = dom.el;
 		}
@@ -1264,7 +1276,7 @@ class Control_Core extends Data_Object {
 				//el.setAttribute('data-jsgui-type', this.__type_name);
 			}
 		}
-		var tCtrl;
+		let tCtrl;
 
 		this.content.each(ctrl => {
 			//console.log('active i', i);
@@ -1489,7 +1501,7 @@ class Control_Core extends Data_Object {
 		}
 	}
 
-	
+
 	'matches_selector'(selector) {
 
 	}

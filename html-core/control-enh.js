@@ -744,6 +744,10 @@ class Control extends Control_Core {
 		this.content.on('change', (e_change) => {
 			let itemDomEl;
 			var type = e_change.name;
+
+
+			// .changes
+
 			if (type === 'insert') {
 				var item = e_change.value;
 				var retrieved_item_dom_el = item.dom.el;
@@ -811,7 +815,12 @@ class Control extends Control_Core {
 				if (itemDomEl) {
 					e_change.item.active();
 					el.appendChild(itemDomEl);
-					e_change.item.register_this_and_subcontrols();
+					requestAnimationFrame(() => {
+						e_change.item.register_this_and_subcontrols();
+					});
+
+					
+					
 					//e_change.item.activate_this_and_subcontrols();
 					//e_change.item.activate();
 				}
@@ -824,7 +833,10 @@ class Control extends Control_Core {
 			if (type === 'remove') {
 				if (e_change.value.dom.el) {
 					//el.innerHTML = '';
-					e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
+					requestAnimationFrame(() => {
+						e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
+					});
+					
 				}
 				//if (el) el.innerHTML = '';
 			}

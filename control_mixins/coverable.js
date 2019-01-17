@@ -6,6 +6,9 @@ const {
 var jsgui = require('../html-core/html-core');
 const { Control } = jsgui;
 
+// Want to make modal windows with this.
+
+
 let coverable = (ctrl, opts) => {
     let select_toggle = false;
 
@@ -77,7 +80,6 @@ let coverable = (ctrl, opts) => {
         }
     }
     */
-
 }
 
 module.exports = coverable;
