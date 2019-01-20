@@ -685,23 +685,26 @@ class Control extends Control_Core {
 				//console.trace();
 				//throw 'expected el'
 			} else {
-				this.activate_dom_attributes();
-				this.activate_content_controls();
-				this.activate_content_listen();
-				this.activate_other_changes_listen();
-				/*
-				// This disables mobile UI events eg scroll, set focus. 
-				if ('ontouchstart' in document.documentElement) {
-					mx_fast_touch_click(this);
-				}
-				*/
-				//console.log('this.selectable', this.selectable);
-				if (def(this.selectable)) {
-					//console.log('activating mx_selectable');
-					//mx_selectable(this);
-				}
-				//console.log('pre raise activate');
-				this.raise('activate');
+				//requestAnimationFrame(() => {
+					this.activate_dom_attributes();
+					this.activate_content_controls();
+					this.activate_content_listen();
+					this.activate_other_changes_listen();
+					/*
+					// This disables mobile UI events eg scroll, set focus. 
+					if ('ontouchstart' in document.documentElement) {
+						mx_fast_touch_click(this);
+					}
+					*/
+					//console.log('this.selectable', this.selectable);
+					if (def(this.selectable)) {
+						//console.log('activating mx_selectable');
+						//mx_selectable(this);
+					}
+					//console.log('pre raise activate');
+					this.raise('activate');
+				//})
+
 			}
 		}
 	}
@@ -724,7 +727,10 @@ class Control extends Control_Core {
 			}
 			//console.log('property_name, dval', property_name, dval);
 			if (el && el.nodeType === 1) {
-				el.setAttribute(property_name, dval);
+				//requestAnimationFrame(() => {
+					el.setAttribute(property_name, dval);
+				//})
+				
 			}
 		});
 	}
@@ -779,7 +785,10 @@ class Control extends Control_Core {
 
 							// TODO Maybe we can have a global temporary SVG container.
 							var temp_svg_container = e_change.item.context.document.createElement('div');
+							//var temp_svg_container = e_change.item.context.document.createDocumentFragment('div');
 							temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + e_change.item.all_html_render() + '</svg>';
+
+
 							itemDomEl = temp_svg_container.childNodes[0].childNodes[0];
 							//
 							//itemDomEl = e_change.item.context.document.createElementNS("http://www.w3.org/2000/svg", item_tag_name);
@@ -787,6 +796,7 @@ class Control extends Control_Core {
 							//throw 'stop';
 						} else {
 							temp_el = e_change.item.context.document.createElement('div');
+
 							temp_el.innerHTML = e_change.item.all_html_render();
 							itemDomEl = temp_el.childNodes[0];
 						}
@@ -814,13 +824,15 @@ class Control extends Control_Core {
 				//console.log('!!itemDomEl', !!itemDomEl);
 				if (itemDomEl) {
 					e_change.item.active();
-					el.appendChild(itemDomEl);
-					requestAnimationFrame(() => {
-						e_change.item.register_this_and_subcontrols();
-					});
 
-					
-					
+
+					//requestAnimationFrame(() => {
+						el.appendChild(itemDomEl);
+						e_change.item.register_this_and_subcontrols();
+					//});
+
+
+
 					//e_change.item.activate_this_and_subcontrols();
 					//e_change.item.activate();
 				}
@@ -836,7 +848,7 @@ class Control extends Control_Core {
 					requestAnimationFrame(() => {
 						e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
 					});
-					
+
 				}
 				//if (el) el.innerHTML = '';
 			}
@@ -1056,28 +1068,6 @@ class Control extends Control_Core {
 		});
 	}
 
-	'hide'() {
-		//console.log('hide');
-		//this.add_class('hidden');
-		let e = {
-			cancelDefault: false
-		}
-		this.raise('hide', e)
-		if (!e.cancelDefault) {
-			this.add_class('hidden');
-		}
-	}
-	'show'() {
-		//console.log('show');
-		let e = {
-			cancelDefault: false
-		}
-		//console.log('pre raise show')
-		this.raise('show', e);
-		if (!e.cancelDefault) {
-			this.remove_class('hidden');
-		}
-	}
 
 	'descendants'(search) {
 		var recursive_iterate = (ctrl, item_callback) => {

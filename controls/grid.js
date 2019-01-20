@@ -539,7 +539,14 @@ class Grid extends Control {
             //console.log('this.size', this.size);
             //console.log('num_rows', num_rows);
             //console.log('num_columns', num_columns);
-            var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+
+            let cell_size;
+
+            if (this.size) {
+                cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+            }
+
+            
             //console.log('cell_size', cell_size);
             let row_width, row_height;
             //console.log('this.cell_size', this.cell_size);
@@ -559,7 +566,8 @@ class Grid extends Control {
 
             } else {
                 //header_row.style('height', Math.floor(this.size[1] / num_rows));
-                row_height = Math.floor(this.size[1] / num_rows);
+                if (this.size) row_height = Math.floor(this.size[1] / num_rows);
+                
             }
             const data = this.data;
             //console.log('row_header_width', row_header_width);
@@ -683,7 +691,7 @@ class Grid extends Control {
                     // and put the data in the cell.
                     // A grid cell class may work best.
 
-                    cell.size = cell_size;
+                    if (cell_size) cell.size = cell_size;
 
                     // but with what selection options.
 

@@ -8,6 +8,8 @@ var Control = jsgui.Control;
 
 var v_subtract = jsgui.util.v_subtract;
 
+const {field, prop} = require('obext');
+
 // Could accept only some specific types of data eg numeric.
 //  May well want nicer / custom scrollbars.
 
@@ -696,6 +698,10 @@ class Color_Palette extends Control {
         // Has various items.
         // At the top is a control that either shows the item selected, or search text.
 
+        prop(this, 'palette', spec.palette || pal_crayola);
+        prop(this, 'grid_size', spec.grid_size || [12, 12]);
+
+        // [12, 12]
 
         //  
         //  Could use Items_Container mixin.
@@ -783,7 +789,7 @@ class Color_Palette extends Control {
         // Be able to switch on and off those options.
         //  An internal relative div in the kind of internal implementation property which could be done as a rendering property.
 
-        var size = this.size || [200, 200];
+        //var size = this.size || [200, 200];
         //console.log('size', size);
 
         var padding = 6;
@@ -797,8 +803,8 @@ class Color_Palette extends Control {
 
         this.grid = new Grid({
             'context': this.context,
-            'grid_size': [12, 12],
-            'size': [size[0] - padding * 2, size[1] - padding * 2],
+            'grid_size': this.grid_size,
+            //'size': [size[0] - padding * 2, size[1] - padding * 2],
             'cell_selection': 'single'
         });
         /*
@@ -807,15 +813,24 @@ class Color_Palette extends Control {
         })
         */
         this.add(this.grid);
-
         var c = 0;
+
         this.grid.each_cell((cell) => {
-            var item = pal_crayola[c++];
+            var item = this.palette[c++];
             if (item) {
-                var hex = item.hex;
+
+                if (item.hex) {
+                    cell.color = item.hex;
+                } else {
+                    if (typeof item === 'string') {
+                        cell.color = item;
+                    }
+                }
+
+                //var hex = item.hex;
                 //console.log('hex', hex);
                 //console.log('cell', cell);
-                cell.color = hex;
+                
             }
             //cell.selectable = true;
         });

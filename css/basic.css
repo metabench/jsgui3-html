@@ -18,6 +18,10 @@ body {
     clear: both;
 }
 
+.relative {
+    position: relative;
+}
+
 .hidden {
     /* display: none; */
     display: none !important;
@@ -127,9 +131,6 @@ body {
 	// Should have some sort of styling systems, but needs to work nicely with HTML.
 	//  Some methods that greatly simplify some things.
 
-
-
-
 */
 
 .array-viewer,
@@ -211,8 +212,6 @@ body {
 .number-editor {
     display: inline;
 }
-
-
 
 .selected div {
     /* background-color: #ABCDEF; */

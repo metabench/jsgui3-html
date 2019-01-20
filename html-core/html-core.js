@@ -1136,6 +1136,15 @@ class Intersection_Finder extends Evented_Class {
     }
 }
 
+class Relative extends Control {
+    constructor(spec) {
+        spec.class = 'relative';
+        super(spec);
+    }
+}
+
+jsgui.Relative = Relative;
+
 jsgui.String_Control = String_Control;
 jsgui.textNode = textNode;
 jsgui.Text_Node = textNode;

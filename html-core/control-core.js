@@ -570,6 +570,30 @@ class Control_Core extends Data_Object {
 		//}
 	}
 
+	
+	'hide'() {
+		//console.log('hide');
+		//this.add_class('hidden');
+		let e = {
+			cancelDefault: false
+		}
+		this.raise('hide', e)
+		if (!e.cancelDefault) {
+			this.add_class('hidden');
+		}
+	}
+	'show'() {
+		//console.log('show');
+		let e = {
+			cancelDefault: false
+		}
+		//console.log('pre raise show')
+		this.raise('show', e);
+		if (!e.cancelDefault) {
+			this.remove_class('hidden');
+		}
+	}
+
 	get html() {
 		// The rendered control.
 		return this.all_html_render();

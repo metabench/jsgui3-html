@@ -56,7 +56,6 @@ const popup = (ctrl) => {
         let parent, placeholder;
         setTimeout(() => {
 
-            // Esnure the page context / body has got 
             // make it transparent rather than see-through
             // put a placeholder control in its original location.
             // move the control over to the body.
@@ -65,9 +64,6 @@ const popup = (ctrl) => {
 
             // ensure the page context's popup layer
             // swap it in its current position with a placeholder, move the ctrl to the popup layer.
-
-            
-
 
             // ctrl measure.
             // getBoundingClientRect

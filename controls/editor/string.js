@@ -145,14 +145,14 @@ class String_Editor extends String_Viewer {
                 //  measure the span, size the input, then put the text in.
                 // Don't want the input getting to much text inside it.
 
-                setTimeout(function() {
+                requestAnimationFrame(function() {
                     var scrollWidth = iel.scrollWidth;
                     console.log('scrollWidth', scrollWidth);
 
                     input.style({
                         'width': scrollWidth + 'px'
                     });
-                }, 0);
+                });
 
 
 
