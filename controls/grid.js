@@ -178,9 +178,7 @@ class Grid_Cell extends Control {
     }
     activate() {
         if (!this.__active) {
-
             super.activate();
-
             //console.log('');
             //console.log('activate Grid_Cell');
             //console.log('this.selectable', this.selectable);
@@ -357,7 +355,6 @@ class Grid extends Control {
             // Render all cells as table.
             // Render all cells as divs
 
-
             // Then we may want to do partial rendering
             //  Becomes more complicated when the heights/sizes of items vary.
 
@@ -375,9 +372,7 @@ class Grid extends Control {
 
                 // Cell size options.
                 //  Really column width values.
-
                 // 'all_columns': { width: 200px }
-
             });
 
             //this._fields = ;
@@ -386,7 +381,7 @@ class Grid extends Control {
         // on activate, will need to reconnect all of the cells.
 
         this.on('change', (e_change) => {
-            //console.log('resize Grid', e_resize);
+            console.log('resize Grid', e_change);
 
             let {
                 name,
@@ -707,6 +702,7 @@ class Grid extends Control {
                     arr_cells[x] = arr_cells[x] || [];
                     arr_cells[x][y] = cell;
                     map_cells['[' + x + ',' + y + ']'] = cell;
+
                     //cell.activate();
                 }
             }
@@ -802,13 +798,13 @@ class Grid extends Control {
 
         if (!this.__active) {
             super.activate();
-            //console.log('activate Grid');
+            console.log('activate Grid');
 
             //var _arr_rows;
             this.selection_scope = this.context.new_selection_scope(this);
 
             var load_rows = () => {
-                //console.log('load_rows');
+                console.log('load_rows');
                 //console.log('this.content.length', this.content.length);
                 // the rows are the content?
 
@@ -832,6 +828,10 @@ class Grid extends Control {
                 });
             };
             //load_cells();
+
+            this.each_cell(cell => {
+                cell.activate();
+            })
         }
     }
 }

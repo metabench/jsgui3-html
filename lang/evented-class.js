@@ -282,13 +282,12 @@ class Evented_Class {
 
     'remove_event_listener'(event_name, fn_listener) {
 
-
         // TODO
         // And remove something that's bound to the general handler...?
 
         const a = arguments;
         if (a.length === 1) {
-            if (typeof a[0] === 'object' && !isArray(a[0])) {
+            if (typeof a[0] === 'object' && !is_array(a[0])) {
                 each(a[0], (v, i) => {
                     this.remove_event_listener(i, v);
                 });
@@ -325,7 +324,9 @@ class Evented_Class {
                     if (found) {
                         bei.splice(c, 1);
                     }
-                };
+                } else {
+                    throw 'NYI';
+                }
             }
         }
 
@@ -380,6 +381,7 @@ p.raise = p.raise_event;
 p.trigger = p.raise_event;
 p.subscribe = p.add_event_listener;
 p.on = p.add_event_listener;
+//p.on = p.add_event_listener;
 //p.off = p.remove_event_listener;
 
 

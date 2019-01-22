@@ -710,8 +710,6 @@ class Color_Palette extends Control {
         // Run-time mixins for the moment.
 
 
-
-
         // Maybe contain a single main area and a drop-down box
 
         if (!spec.abstract && !spec.el) {
@@ -731,7 +729,6 @@ class Color_Palette extends Control {
                 this.grid.size = new_grid_size;
             }
         });
-
     }
 
     activate() {
@@ -743,7 +740,6 @@ class Color_Palette extends Control {
             this.grid.selection_scope.on('change', e => {
                 //console.log('color palette ss change', e);
                 //console.trace();
-
                 const {name, value} = e;
                 if (name === 'selected') {
                     const selected_ctrl = value;
@@ -773,12 +769,50 @@ class Color_Palette extends Control {
 
                 cell._color = cell.dom.el.style['background-color'];
                 cell.selectable = true;
-
-
                 //cell.color = cell.dom.el.style['background-color'];
 
             })
         }
+    }
+
+    add_grid_cells() {
+        let c = 0;
+        this.grid.each_cell((cell) => {
+            var item = this.palette[c++];
+            //console.log('item', item);
+            if (item) {
+                if (item.hex) {
+                    cell.color = item.hex;
+                } else {
+                    if (typeof item === 'string') {
+                        cell.color = item;
+                    }
+                }
+                //var hex = item.hex;
+                //console.log('hex', hex);
+                //console.log('cell', cell);
+                
+            }
+            //cell.selectable = true;
+        });
+    }
+
+    refresh() {
+        //this.grid.clear();
+
+        //this.grid.grid_size = 
+
+
+        // A problem clearing dynamically added?
+
+        // clear the cells, reapply the colors
+        this.clear();
+        //this.compose_color_palette();
+        this.compose_color_palette();
+        //this.grid.active();
+        
+
+        //this.add_grid_cells();
     }
 
     compose_color_palette() {
@@ -801,6 +835,8 @@ class Color_Palette extends Control {
 
         // internal_relative_div = true || false
 
+        console.log('this.grid_size', this.grid_size);
+
         this.grid = new Grid({
             'context': this.context,
             'grid_size': this.grid_size,
@@ -813,28 +849,11 @@ class Color_Palette extends Control {
         })
         */
         this.add(this.grid);
-        var c = 0;
-
-        this.grid.each_cell((cell) => {
-            var item = this.palette[c++];
-            if (item) {
-
-                if (item.hex) {
-                    cell.color = item.hex;
-                } else {
-                    if (typeof item === 'string') {
-                        cell.color = item;
-                    }
-                }
-
-                //var hex = item.hex;
-                //console.log('hex', hex);
-                //console.log('cell', cell);
-                
-            }
-            //cell.selectable = true;
-        });
-
+        if (this.__active) {
+            console.log('pre activate grid');
+            this.grid.activate();
+        }
+        this.add_grid_cells();
 
         this.dom.attributes['data-jsgui-ctrl-fields'] = stringify({
             'grid': this.grid._id()

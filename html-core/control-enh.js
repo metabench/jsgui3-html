@@ -465,6 +465,43 @@ class Control extends Control_Core {
 	'add_dom_event_listener'(event_name, fn_handler) {
 		//console.log('add_dom_event_listener', event_name, this.__id);
 		// Not sure we even need the listener here.
+
+		var el = this.dom.el;
+		if (el) {
+
+			// need to keep track of the handler...?
+
+			// here we have the raise_handler
+
+			// a map between the handlers and the function names.
+
+			// Need to be able to detatch by using the handler.
+
+
+
+			el.addEventListener(event_name, fn_handler, false);
+
+			// better to pass the handler itself through.
+
+
+			/*
+
+			el.addEventListener(event_name, (e) => {
+				//console.log('this.disabled', this.disabled);
+				//console.log('this', this);
+				e.ctrl = this;
+				if (!this.disabled) {
+					this.raise(event_name, e);
+				}
+			}, false);
+
+			*/
+
+		}
+
+
+
+		/*
 		if (this.map_raises_dom_events) {
 			if (this.map_raises_dom_events[event_name] === true) {
 
@@ -472,6 +509,17 @@ class Control extends Control_Core {
 				this.map_raises_dom_events[event_name] = true;
 				var el = this.dom.el;
 				if (el) {
+
+					// need to keep track of the handler...?
+
+					// here we have the raise_handler
+					el.addEventListener(event_name, fn_handler, false);
+
+					// better to pass the handler itself through.
+
+
+					/* 
+
 					el.addEventListener(event_name, (e) => {
 						//console.log('this.disabled', this.disabled);
 						//console.log('this', this);
@@ -480,10 +528,11 @@ class Control extends Control_Core {
 							this.raise(event_name, e);
 						}
 					}, false);
+					* /
 				}
 			}
 		}
-		/*
+		*/
 
 		//console.trace();
 		var listener = this._bound_events[event_name];
@@ -507,13 +556,13 @@ class Control extends Control_Core {
 
 						// Better not to add separate listeners.
 
-						/ *
+						/*
 						each(listener, l => {
 							if (l) {
 								l(e);
 							}
 						});
-						* /
+						*/
 
 						// add the last listener in the array?
 
@@ -530,7 +579,7 @@ class Control extends Control_Core {
 			}
 			//console.log('post el add listener');
 		}
-		*/
+		//*/
 	}
 
 	'remove_dom_event_listener'(event_name, fn_handler) {
@@ -579,8 +628,14 @@ class Control extends Control_Core {
 				this.remove_dom_event_listener(event_name, fn_handler);
 				//super.add_event_listener.apply(that, arguments);
 			}
+			Control_Core.prototype.remove_event_listener.apply(this, arguments);
+		} else if (sig === '[o]') {
+			each(a[0], (v, i) => {
+				//console.log('vk_pair', vk_pair);
+				this.remove_event_listener(i, v);
+			});
 		}
-		Control_Core.prototype.remove_event_listener.apply(this, arguments);
+
 	}
 
 	'add_event_listener'() {
@@ -592,7 +647,11 @@ class Control extends Control_Core {
 		// But does this apply itself???
 		if (a.l === 1) {
 			//this._super.apply(this, a);
-			return super.add_event_listener(a[0]);
+			//return super.add_event_listener(a[0]);
+			each(a[0], (v, i) => {
+				//console.log('vk_pair', vk_pair);
+				this.add_event_listener(i, v);
+			});
 		}
 		if (a.l === 2) {
 			//this._super.apply(this, a);
@@ -686,23 +745,23 @@ class Control extends Control_Core {
 				//throw 'expected el'
 			} else {
 				//requestAnimationFrame(() => {
-					this.activate_dom_attributes();
-					this.activate_content_controls();
-					this.activate_content_listen();
-					this.activate_other_changes_listen();
-					/*
-					// This disables mobile UI events eg scroll, set focus. 
-					if ('ontouchstart' in document.documentElement) {
-						mx_fast_touch_click(this);
-					}
-					*/
-					//console.log('this.selectable', this.selectable);
-					if (def(this.selectable)) {
-						//console.log('activating mx_selectable');
-						//mx_selectable(this);
-					}
-					//console.log('pre raise activate');
-					this.raise('activate');
+				this.activate_dom_attributes();
+				this.activate_content_controls();
+				this.activate_content_listen();
+				this.activate_other_changes_listen();
+				/*
+				// This disables mobile UI events eg scroll, set focus. 
+				if ('ontouchstart' in document.documentElement) {
+					mx_fast_touch_click(this);
+				}
+				*/
+				//console.log('this.selectable', this.selectable);
+				if (def(this.selectable)) {
+					//console.log('activating mx_selectable');
+					//mx_selectable(this);
+				}
+				//console.log('pre raise activate');
+				this.raise('activate');
 				//})
 
 			}
@@ -728,9 +787,9 @@ class Control extends Control_Core {
 			//console.log('property_name, dval', property_name, dval);
 			if (el && el.nodeType === 1) {
 				//requestAnimationFrame(() => {
-					el.setAttribute(property_name, dval);
+				el.setAttribute(property_name, dval);
 				//})
-				
+
 			}
 		});
 	}
@@ -827,8 +886,8 @@ class Control extends Control_Core {
 
 
 					//requestAnimationFrame(() => {
-						el.appendChild(itemDomEl);
-						e_change.item.register_this_and_subcontrols();
+					el.appendChild(itemDomEl);
+					e_change.item.register_this_and_subcontrols();
 					//});
 
 

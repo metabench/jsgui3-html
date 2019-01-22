@@ -7,7 +7,8 @@ const mx = {
     selected_deletable: require('./selected-deletable'),
     selected_resizable: require('./selected-resizable'),
     selection_box_host: require('./selection-box-host'),
-    dragable: require('./dragable')
+    dragable: require('./dragable'),
+    press_events: require('./press-events')
 }
 
 module.exports = mx;
