@@ -87,13 +87,27 @@ class Selection_Scope extends jsgui.Data_Object {
 	'deselect'(ctrl, silent = false) {
 		if (ctrl.selected === true) {
 			ctrl.selected = false;
-			ctrl.raise('deselected');
+			
 		}
 		if (!silent) {
+			ctrl.raise('deselected');
 			this.raise('change', {
 				name: 'selected',
 				map_selected_controls: this.map_selected_controls
 			})
+		}
+	}
+	'select'(ctrl, silent = false) {
+		if (!ctrl.selected) {
+			ctrl.selected = true;
+			
+		}
+		if (!silent) {
+			ctrl.raise('selected');
+			this.raise('change', {
+				name: 'selected',
+				map_selected_controls: this.map_selected_controls
+			});
 		}
 	}
 	// deselect controls internal to a control.

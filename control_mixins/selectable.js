@@ -138,6 +138,9 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     const apply_all = ctrl => {
         let id = ctrl._id();
         //ctrl.once_active(() => {
+
+        // 
+
         ctrl.on('change', e_change => {
             //console.log('e_change', e_change);
             let n = e_change.name,
@@ -193,6 +196,11 @@ let selectable = (ctrl, ctrl_handle, opts) => {
             ss = ss || ctrl.find_selection_scope();
             if (ss) ss.deselect(ctrl);
             ctrl.raise('deselect');
+        });
+        ctrl.select = ctrl.select || (() => {
+            ss = ss || ctrl.find_selection_scope();
+            if (ss) ss.select(ctrl);
+            ctrl.raise('select');
         });
         // need to listen for the control desele-
 

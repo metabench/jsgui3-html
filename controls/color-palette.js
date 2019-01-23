@@ -3,12 +3,18 @@
  */
 var jsgui = require('../html-core/html-core');
 var Grid = require('./grid');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
+var stringify = jsgui.stringify,
+    each = jsgui.each,
+    tof = jsgui.tof,
+    is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
 var v_subtract = jsgui.util.v_subtract;
 
-const {field, prop} = require('obext');
+const {
+    field,
+    prop
+} = require('obext');
 
 // Could accept only some specific types of data eg numeric.
 //  May well want nicer / custom scrollbars.
@@ -16,8 +22,7 @@ const {field, prop} = require('obext');
 // It will be a text box but the selection list appears below.
 //  So we will use List with its own scrollbar.
 
-var pal_crayola = [
-    {
+var pal_crayola = [{
         "hex": "#EFDECD",
         "name": "Almond",
         "rgb": "(239, 222, 205)"
@@ -740,14 +745,20 @@ class Color_Palette extends Control {
             this.grid.selection_scope.on('change', e => {
                 //console.log('color palette ss change', e);
                 //console.trace();
-                const {name, value} = e;
+                const {
+                    name,
+                    value
+                } = e;
                 if (name === 'selected') {
                     const selected_ctrl = value;
-                    let color = selected_ctrl._color;
+                    if (selected_ctrl) {
+                        let color = selected_ctrl._color;
 
-                    this.raise('choose-color', {
-                        value: color
-                    });
+                        this.raise('choose-color', {
+                            value: color
+                        });
+                    }
+
                 }
             });
 
@@ -775,6 +786,10 @@ class Color_Palette extends Control {
         }
     }
 
+    each_cell(cb) {
+        return this.grid.each_cell(cb);
+    }
+
     add_grid_cells() {
         let c = 0;
         this.grid.each_cell((cell) => {
@@ -791,7 +806,7 @@ class Color_Palette extends Control {
                 //var hex = item.hex;
                 //console.log('hex', hex);
                 //console.log('cell', cell);
-                
+
             }
             //cell.selectable = true;
         });
@@ -810,7 +825,7 @@ class Color_Palette extends Control {
         //this.compose_color_palette();
         this.compose_color_palette();
         //this.grid.active();
-        
+
 
         //this.add_grid_cells();
     }
