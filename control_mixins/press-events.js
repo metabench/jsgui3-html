@@ -129,6 +129,7 @@ let press_events = (ctrl) => {
             mouseup: mu,
             mousemove: mm
         });
+        e.pos = [e.pageX, e.pageY];
 
         return pe(e);
     }
