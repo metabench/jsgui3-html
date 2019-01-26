@@ -139,7 +139,7 @@ let press_events = (ctrl) => {
             touchmove: tm
         });
 
-        e.pos = pos_move;
+        e.pos = pos_move || pos_start;
         return pe(e);
     }
     const ps = e => {
