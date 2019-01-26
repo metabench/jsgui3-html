@@ -811,7 +811,13 @@ class Client_HTML_Document extends Blank_HTML_Document {
     }
 
     'include_js'(url) {
-        var head = this.get('head');
+
+        /*
+        Add it to the end of the body instead.
+        */
+
+        //var head = this.get('head');
+        const body = this.get('body');
         // create jsgui.script
         var script = new jsgui.script({
             //<script type="text/JavaScript" src="abc.js"></script>
@@ -833,7 +839,7 @@ class Client_HTML_Document extends Blank_HTML_Document {
 
 
 
-        head.content.add(script);
+        body.add(script);
     }
 
     'include_css'(url) {
