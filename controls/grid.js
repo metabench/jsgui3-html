@@ -204,37 +204,6 @@ class Grid extends Control {
     constructor(spec, add, make) {
         spec = spec || {};
 
-        // Be able to use CSS to define grid cell sizes.
-        //  Ability to scroll within the grid.
-
-        //spec.size = spec.size || [320, 200];
-
-        // No need to rely on the size or cell size here.
-        //  Want to be able to use CSS values here.
-
-
-        // grid should have a default size?
-        //  would be nice to read this from css.
-
-        // or to compile css from values in JavaScript.
-        // Need to get grids working in a nice general purpose kind of way.
-
-        // define control property would be a useful function.
-
-        // .prop()
-        //  name, validation test,
-
-        // default...?
-
-        // default.
-
-        // Could make a language object extension module.
-        //  
-
-        // More work on control fields would help too.
-
-
-
         spec.__type_name = spec.__type_name || 'grid';
         super(spec);
 
@@ -380,25 +349,11 @@ class Grid extends Control {
         // on resize, resize all of the cells.
         // on activate, will need to reconnect all of the cells.
 
-        this.on('change', (e_change) => {
-            console.log('resize Grid', e_change);
-
-            let {
-                name,
-                value
-            } = e_change;
-            if (name === 'grid_size') {
-                //this.refresh_size();
-
-
+        this.changes({
+            grid_size: v => {
                 this.clear();
                 this.full_compose_as_divs();
             }
-
-
-            // then need to recalculate the cell sizes.
-            //console.log('this.composition_mode', this.composition_mode);
-
         });
     }
 
@@ -685,9 +640,7 @@ class Grid extends Control {
                     //console.log('cell', cell);
                     // and put the data in the cell.
                     // A grid cell class may work best.
-
                     if (cell_size) cell.size = cell_size;
-
                     // but with what selection options.
 
                     /*
@@ -707,7 +660,6 @@ class Grid extends Control {
                 }
             }
         }
-
         this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.main = main;
     }
@@ -718,14 +670,11 @@ class Grid extends Control {
         var data = this.data;
         var range = data.range;
         var value;
-
         // The Data_Grid could even contain a Data_Value in each cell.
         //  I'm not doing it this way at the moment though.
 
         if (tof(data) === 'data_grid') {
-
             // Need to iterate the data_grid by column and row.
-
             // Retrieval of all values from all cells within the range.
 
             // console.log('range', range);
@@ -747,10 +696,8 @@ class Grid extends Control {
                 tbody_params.size = [size[0][0], size[1][0]];
             }
 
-
             var tbody = new Control(tbody_params);
             this.add(tbody);
-
 
             for (y = 0; y <= max_y; y++) {
                 ctrl_row = new jsgui.tr({
@@ -780,7 +727,6 @@ class Grid extends Control {
                     value = data.get(x, y);
                     //console.log('x, y', x, y);
                     //console.log('value', value);
-
                     ctrl_cell.add_text(value);
                 }
             }
@@ -799,24 +745,19 @@ class Grid extends Control {
         if (!this.__active) {
             super.activate();
             console.log('activate Grid');
-
             //var _arr_rows;
             this.selection_scope = this.context.new_selection_scope(this);
-
             var load_rows = () => {
-                console.log('load_rows');
+                //console.log('load_rows');
                 //console.log('this.content.length', this.content.length);
                 // the rows are the content?
-
                 //console.log('this.main.content', this.main.content);
                 //console.log('load_rows this.main.content._arr.length', this.main.content._arr.length);
-
                 var _arr_rows = this._arr_rows = [];
                 this.main.content._arr.forEach((v) => {
                     //console.log('v', v);
                     _arr_rows.push(v);
                 });
-
             }
             load_rows();
             var load_cells = () => {

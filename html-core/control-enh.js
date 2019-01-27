@@ -185,6 +185,27 @@ class Control extends Control_Core {
 		}
 	}
 	'ctrls'(obj_ctrls) {
+
+		// Another way of doing it.
+
+		// It's not a control, it's a different type of object.
+
+		// .is_control returning true for all controls.
+
+
+		//nu(Constructor, spec)
+
+		// Taking it as a name as well.
+		//  Constructors are registered by name.
+		//   Can add the context and create the spec from the attributes.
+
+
+
+		//  and therefore can add .context itself
+		// other objects - [Control_Constructor, spec]
+
+
+
 		this._ctrl_fields = this._ctrl_fields || {};
 		let cf = this._ctrl_fields;
 		each(obj_ctrls, (ctrl, name) => {
@@ -498,41 +519,6 @@ class Control extends Control_Core {
 			*/
 
 		}
-
-
-
-		/*
-		if (this.map_raises_dom_events) {
-			if (this.map_raises_dom_events[event_name] === true) {
-
-			} else {
-				this.map_raises_dom_events[event_name] = true;
-				var el = this.dom.el;
-				if (el) {
-
-					// need to keep track of the handler...?
-
-					// here we have the raise_handler
-					el.addEventListener(event_name, fn_handler, false);
-
-					// better to pass the handler itself through.
-
-
-					/* 
-
-					el.addEventListener(event_name, (e) => {
-						//console.log('this.disabled', this.disabled);
-						//console.log('this', this);
-						e.ctrl = this;
-						if (!this.disabled) {
-							this.raise(event_name, e);
-						}
-					}, false);
-					* /
-				}
-			}
-		}
-		*/
 
 		//console.trace();
 		var listener = this._bound_events[event_name];
