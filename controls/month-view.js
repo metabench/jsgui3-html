@@ -49,7 +49,7 @@ let bgc_disabled = '#DDDDDD';
 let bgc_enabled = 'inherit';
 
 const mx_date = require(`../control_mixins/date`);
-const mx_selectable = require(`../control_mixins/selectable`);
+//const mx_selectable = require(`../control_mixins/selectable`);
 
 // Want this to keep the same day in the month if possible.
 
@@ -106,7 +106,7 @@ class Month_View extends Grid {
             ///console.log('cell.selectable', cell.selectable);
             //cell.selectable = true;
 
-            mx_selectable(cell);
+            //mx_selectable(cell);
 
             cell.on('change', e_change => {
                 if (e_change.name === 'selected') {
@@ -320,16 +320,14 @@ class Month_View extends Grid {
         let got_day = d.getDay() - 1;
         if (got_day < 0) got_day = 6;
         //console.log('got_day', got_day);
-        console.log('got_day', got_day);
+        //console.log('got_day', got_day);
 
         let day_name = days[got_day];
-
         let d_ctrl;
-
         let day = this.day;
 
         this.each_cell((cell, cell_pos) => {
-            console.log('cell_pos', cell_pos);
+            //console.log('cell_pos', cell_pos);
 
             let [x, y] = cell_pos;
             if (y > 0) {
@@ -385,7 +383,7 @@ class Month_View extends Grid {
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
                             if (ctrl.dom.tagName === 'span') {
                                 d_ctrl = d.getDate();
-                                console.log('d_ctrl', d_ctrl);
+                                //console.log('d_ctrl', d_ctrl);
                                 cell.value = d_ctrl;
                                 ctrl.text = d_ctrl + '';
                                 d.setDate(d.getDate() + 1);
@@ -419,7 +417,6 @@ class Month_View extends Grid {
                 }
             }
         });
-
         //console.log('this.day', this.day);
     }
 

@@ -31,21 +31,20 @@ var is_arr_of_strs = j.is_arr_of_strs;
 var is_arr_of_t = j.is_arr_of_t;
 var clone = jsgui.clone;
 
+// also could be replaced with the version in lang-mini
+//  replacing with lang-mini version does make sense.
+//   maybe moving lang-mini version to other module? but it does fit in well.
+//   returning the whole thing as an evented_class could be very useful for when an app gets made out of a root object.
+
 class Evented_Class {
-
     // Needs to initialize the bound events to start with.
-
     constructor() {
-
-
         //this._bound_events = {};
         Object.defineProperty(this, '_bound_events', {
             value: {}
         });
     }
-
     'raise_event'() {
-
         let a = Array.prototype.slice.call(arguments),
             sig = get_item_sig(a, 1);
         a.l = a.length;

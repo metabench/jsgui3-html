@@ -19,8 +19,31 @@ var mapify = j.mapify;
 var get_item_sig = j.get_item_sig;
 
 
+// ta-utils?
+// ta-matrix
+// ta-tensor
+
+// Maybe expand lang-mini?
+// Could spin out a lang-tools project.
+// or jsgui3-lang, which uses lang-tools
+//  maybe adds some jsgui specific features.
+
+// A Matrix or Tensor data type could be very useful for single images.
+// A Tensor data type could conveniently hold multiple images
+
+// A Manifold Nexus would be able to store a Tensor within different storage devices / network addresses, and process them too.
+
+
+
+
+
+
+
 
 //var B_Plus_Tree = Data_Structures.B_Plus_Tree;
+
+// would prefer a version that applies to typed arrays.
+// uses typed arrays internally
 
 var vectorify = function(n_fn) {
 	// Creates a new polymorphic function around the original one.
@@ -77,6 +100,14 @@ var n_add = function(n1, n2) {
 }, n_divide = function(n1, n2) {
 	return n1 / n2;
 };
+
+// Simple and fast vector and tensor maths would help.
+
+// new Vector(4, 3)
+//  new Uint8Vector(4, 3);
+//  new Uint8Matrix(40, 30);
+//  new Uint8Tensor(40, 30, 3, 60);
+
 
 var v_add = vectorify(n_add), v_subtract = vectorify(n_subtract);
 
@@ -592,7 +623,48 @@ var true_vals = function(map) {
 	return res;
 };
 
+
+const Ui16toUi32 = (ui16) => {
+    let res = new Uint32Array(ui16.length / 2);
+    let dv = new DataView(ui16.buffer);
+    let l = ui16.length;
+    let hl = l / 2;
+    //console.log('l', l);
+    //console.log('hl', hl);
+    let resw = 0;
+    for (let c = 0; c < hl; c++) {
+        //console.log('c', c);
+        res[resw++] = dv.getUint32(c * 4);
+    }
+    //console.log('res', res);
+    return res;
+}
+
+const Ui32toUi16 = (ui32) => {
+    let res = new Uint16Array(ui32.length * 2);
+    let dv = new DataView(ui32.buffer);
+    let l = ui32.length;
+    //let dl = l * 2;
+    //console.log('l', l);
+    //console.log('dl', dl);
+    let resw = 0;
+    for (let c = 0; c < l; c++) {
+        //console.log('c', c);
+        //console.log('dv.getUint16(c)', dv.getUint16(c * 4 + 2));
+        //console.log('dv.getUint16(c)', dv.getUint16(c * 4));
+
+        res[resw++] = dv.getUint16(c * 4 + 2);
+        res[resw++] = dv.getUint16(c * 4);
+        //res[resw++] = dv.getUint16(c * 2 + 1);
+        //res[resw++] = dv.getUint16(c * 2);
+    }
+    console.log('res', res);
+    return res;
+}
+
 var util = {
+	'Ui16toUi32': Ui16toUi32,
+	'Ui32toUi16': Ui32toUi16,
 	'vectorify' : vectorify,
 	'v_add' : v_add,
 	'v_subtract' : v_subtract,

@@ -14,7 +14,6 @@
 //  includes examples
 // controls-business
 
-
  */
 //"use strict";
 var jsgui = require('./html-core/html-core');
@@ -24,9 +23,7 @@ var str_arr_mapify = jsgui.str_arr_mapify;
 var get_a_sig = jsgui.get_a_sig;
 var each = jsgui.each;
 var Control = jsgui.Control;
-
 var map_Controls = jsgui.map_Controls = {};
-
 // And load in all or a bunch of the controls.
 
 // Can we require all of the controls at once, and then merge them?
@@ -37,7 +34,6 @@ jsgui.Resource_Pool = require('./resource/pool');
 
 // sync load of css.
 //  need to be able to serve that CSS to the user.
-
 // if running on the server...
 
 if (typeof document === 'undefined') {
@@ -61,11 +57,14 @@ if (typeof document === 'undefined') {
         'basic': basic_css
     };
 }
-
-
-
 //var Controls = require('./controls/controls');
-Object.assign(jsgui, require('./controls/controls'));
+
+jsgui.controls = jsgui.controls || {};
+Object.assign(jsgui.controls, require('./controls/controls'));
+//jsgui.controls = require('./controls/controls');
+
+// will get rid of this
+Object.assign(jsgui, jsgui.controls);
 jsgui.mixins = jsgui.mx = require('./control_mixins/mx');
 
 //jsgui.Toggle_Button =

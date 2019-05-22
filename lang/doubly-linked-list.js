@@ -18,7 +18,6 @@ class Node {
 		// Adding and removing while maintaining an order?
 		this.value = spec.value;
 
-
 		// parent
 
 	}
@@ -64,7 +63,6 @@ var nodify = function(fn) {
 
 }
 */
-
 
 class Doubly_Linked_List {
 	constructor(spec) {
@@ -176,7 +174,6 @@ class Doubly_Linked_List {
 			var new_node = new Node({ 'value': val });
 			return this.insert_before(new_node, node);
 		}
-
 	}
 
 	'insert_after'(val, node) {

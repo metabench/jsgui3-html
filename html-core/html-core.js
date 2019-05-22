@@ -74,14 +74,10 @@ var recursive_dom_iterate = function (el, callback) {
 
 var recursive_dom_iterate_depth = function (el, callback) {
     //console.log('recursive_dom_iterate');
-
-
     //console.log('tof(el.childNodes) ' + tof(el.childNodes));
-
     //each(el.childNodes, function(i, v) {
     //  console.log('v ' + v);
     //});
-
     //console.log('el.childNodes.length ' + el.childNodes.length);
     var cns = el.childNodes;
     for (var c = 0, l = cns.length; c < l; c++) {
@@ -89,19 +85,14 @@ var recursive_dom_iterate_depth = function (el, callback) {
     }
     callback(el);
 }
-
-
 // Want the document node to be linked with the context when activated (automatically)
-
 // We find the html element control. That is the one that gets set to be the context's ctrl_document.
-
-
-
 
 var activate = function (context) {
     // The context should already have the map of controls.
 
     console.log('jsgui activate');
+    console.trace();
     // Not so sure we can have the client page context here - does it use resources?
 
     //ensure_Context_Menu_loaded(function(_Context_Menu) {
@@ -153,8 +144,6 @@ var activate = function (context) {
             // So for the 'HTML' tag name...
             //  We should make a control for the HTML document - or it should get activated.
 
-
-
             if (nt == 1) {
                 var jsgui_id = el.getAttribute('data-jsgui-id');
                 // Give the HTML document an ID?
@@ -190,8 +179,6 @@ var activate = function (context) {
     //console.log('Object.keys(map_jsgui_els)', Object.keys(map_jsgui_els));
 
     // Whenever they get added, they should be added to the context. This appears missing.
-
-
     // Control construction and registration
 
     //console.log('map_jsgui_types', map_jsgui_types);
@@ -278,43 +265,30 @@ var activate = function (context) {
                     //console.log('\n');
                 } else {
                     console.log('Missing context.map_Controls for type ' + type + ', using generic Control');
-
-
-
                     var ctrl = new Control({
                         'context': context,
                         '__type_name': type,
                         'id': jsgui_id,
                         'el': el
-                    })
+                    });
                     //map_controls[jsgui_id] = ctrl;
 
                     //ctrl.__type_name = type;
                     arr_controls.push(ctrl);
-
-
                     //console.log('2) jsgui_id', jsgui_id);
 
                     map_controls[jsgui_id] = ctrl;
-
                 }
-
-
-
             } else {
                 //console.log('found control in map', jsgui_id);
                 var ctrl = map_controls[jsgui_id];
                 ctrl.dom.el = el;
 
                 // Attach the DOM events.
-
                 // This should only attach the DOM events that are already there.
 
                 if (ctrl.attach_dom_events) ctrl.attach_dom_events();
-
-
             }
-
 
             //console.log('jsgui_id ' + jsgui_id);
             //console.log('ctrl._id() ' + ctrl._id());
@@ -339,13 +313,11 @@ var activate = function (context) {
                 //console.log('!!ctrl', !!ctrl);
                 //ctrl.__activating = true;
 
-
                 //console.log('tof ctrl ' + tof(ctrl));
                 //console.log('ctrl.__type_name', ctrl.__type_name);
                 //console.log('ctrl', ctrl);
                 //console.log('pre ctrl activate', ctrl._id(), jsgui_id);
                 //console.log('ctrl.__type_name', ctrl.__type_name);
-
 
                 // Need to link the controls together in terms of parents (maybe contents?)
 
@@ -413,19 +385,7 @@ var escape_html = function (str) {
 
 //'use strict'
 
-/**
- * Module variables.
- * @private
- */
-
 var matchHtmlRegExp = /["'&<>]/
-
-/**
- * Module exports.
- * @public
- */
-
-module.exports = escapeHtml
 
 /**
  * Escape special characters in the given string of html.
@@ -482,8 +442,10 @@ function escapeHtml(string) {
         html
 }
 
+jsgui.controls = jsgui.controls || {};
 
-jsgui.span = class span extends Control {
+
+jsgui.controls.span = jsgui.span = class span extends Control {
     constructor(spec) {
         spec.__type_name = 'span';
         super(spec);
@@ -521,27 +483,25 @@ jsgui.span = class span extends Control {
             'name': 'text',
             'value': value
         });
-
         // Should not really need to respond to such events anyway.
         //  principles of react etc.
     }
 
     all_html_render_internal_controls() {
-
-
         return escapeHtml(this._text);
     }
+
+
+    // Maybe move to client-side.
+    //  All activation code in the client-side?
 
     activate() {
         // get the text node reference?
 
         if (!this.__active) {
             super.activate();
-
             let dtn;
-
             //console.log('activate span');
-
             if (!this.dom.el) {
                 // Try to find the dom element amongst registered control elements.
                 //console.log('this.context', this.context);
@@ -553,17 +513,14 @@ jsgui.span = class span extends Control {
                     this.dom.el = el;
                 }
             }
-
             //console.log('!!this.dom.el', !!this.dom.el);
 
             if (this.dom.el) {
                 dtn = this.dom.el.childNodes[0];
-
                 if (!dtn) {
                     dtn = document.createTextNode('');
                     this.dom.el.appendChild(dtn);
                 }
-
                 // Add to array without raising event.
 
                 let tn = this.tn = this.textNode = this.text_node = new textNode({
@@ -574,23 +531,18 @@ jsgui.span = class span extends Control {
                 //this.add(tn);
 
                 this.on('change', e => {
-                    console.log('span text change', e);
+                    //console.log('span text change', e);
                     if (e.name === 'text') {
-
-
-
                         dtn.nodeValue = e.value;
                     }
                 });
             } else {
-
                 //console.log('span expected dom.el');
             }
         }
         //let 
 
         // May need to work with the text node element?
-
     }
 }
 
@@ -719,62 +671,48 @@ class HTML_Document extends jsgui.Control {
         super(spec);
     }
 
+    /*
     'render_dtd'() {
         return '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n';
     }
-
-
+    */
 }
-
-
 
 class Blank_HTML_Document extends HTML_Document {
     constructor(spec) {
         //console.log('super', typeof super);
         //console.log('Blank_HTML_Document');
-
         //HTML_Document.prototype.constructor.call(this, spec);
         super(spec);
-
         var context = this.context;
         //console.log('context ' + context);
-
         if (!spec.el) {
             this.dom.tagName = 'html';
             var head = new jsgui.head({
                 'context': context
             });
             this.content.add(head);
-
             var title = new jsgui.title({
                 'context': context
             });
             head.content.add(title);
-
             var body = new jsgui.body({
                 'context': context
             });
             this.content.add(body);
-
             // and have .head, .title, .body?
-
             // useful shortcuts?
             //this.set('head', head);
             //this.set('title', title);
             //this.set('body', body);
-
             this.head = head;
             this.title = title;
             this.body = body;
-
             // Maybe connecting control fields?
             //this.connect_fields(['head', 'body', 'title']);
         }
-
         //console.log('content ' + stringify(this.content));
-
         //throw 'stop';
-
         //console.log('');
         //console.log('end init Blank_HTML_Document this._ ' + stringify(this._));
     }
@@ -785,13 +723,11 @@ class Blank_HTML_Document extends HTML_Document {
         var sig = get_a_sig(a, 1);
         if (sig == '[]') {
             // find the body control.
-
             var content = this.content;
             //console.log('content', content);
             var body = content.get(1);
             //console.log('body', body);
             //throw 'stop';
-
             return body;
         }
     }
@@ -799,23 +735,37 @@ class Blank_HTML_Document extends HTML_Document {
 
 // Want a body function in other nodes, available throughout the document?
 
-
-
 class Client_HTML_Document extends Blank_HTML_Document {
+
+    // Want to get over some jsgui properties
+    //  Such as info on the available server APIs
+    //  This means that resource functions could automatically be wired up on the client, whatever that requires.
+    //  Want it to be very simple to publish and consume data services.
+    //   That would even be data services that controls use to automatically update themselves.
+
+    // May require some kind of data core object.
+    //  The page_context acts like a global right now.
+    //  Want it so that on the client, some data interaction with the server automatically gets set up.
+    //   Will raise client events.
+
+    // Possibly there should be a main / single data events producer on the client.
+    //  Data_Resource will fulfil this role.
+
+    // Including some JS itself on the client would make a lot of sense.
+    //  It will render a JS object.
+    //  Including some JS directly within the client html document would work very well.
+
     constructor(spec) {
         //console.log('Client_HTML_Document');
         super(spec);
         //spec.context.ctrl_document = this;
         this.active();
-
     }
 
     'include_js'(url) {
-
         /*
         Add it to the end of the body instead.
         */
-
         //var head = this.get('head');
         const body = this.get('body');
         // create jsgui.script
@@ -829,16 +779,11 @@ class Client_HTML_Document extends Blank_HTML_Document {
         //var domAttributes = script.get('dom.attributes');
         var domAttributes = dom.attributes;
         //console.log('domAttributes ' + domAttributes);
-
         //domAttributes.set('type', 'text/javascript');
         //domAttributes.set('src', '/js/require.js');
         //domAttributes.set('src', url);
-
         domAttributes.type = 'text/javascript';
         domAttributes.src = url;
-
-
-
         body.add(script);
     }
 
@@ -846,7 +791,6 @@ class Client_HTML_Document extends Blank_HTML_Document {
         var head = this.get('head');
         // create jsgui.script
         // <link rel="stylesheet" type="text/css" href="theme.css">
-
         var link = new jsgui.link({
             //<script type="text/JavaScript" src="abc.js"></script>
             'context': this.context
@@ -865,26 +809,27 @@ class Client_HTML_Document extends Blank_HTML_Document {
         head.content.add(link);
     }
 
-
     'include_jsgui_client'(js_file_require_data_main) {
+
+        // But want this to be last within the body.
+
+        // would be better to add it to the end of the body.
         // Could add the default client file.
         // Or a specific client file with a control that also has client-side code.
         //  The client-side code won't get processed on the server.
         //  There will be a specific place where client side code gets called upon activation.
         // could include a specific parameter for js_file_require_data_main
-
         js_file_require_data_main = js_file_require_data_main || '/js/web/jsgui-html-client';
-
         // Needs to add various script references to the body.
         //  May just be one client.js file
         //  Then will work on having it build quickly
         //  Then will work on making it stay fast to build and be smaller.
-
         // include the script in the body?
         //  is there a way to keep it at the end of the body?
         //  could put it in the head for the moment.
 
         var head = this.head;
+        var body = this.body;
         // create jsgui.script
 
         var script = new jsgui.script({
@@ -899,16 +844,16 @@ class Client_HTML_Document extends Blank_HTML_Document {
         //var domAttributes = script.get('dom.attributes');
         //var domAttributes = dom.get('attributes');
         var domAttributes = script.dom.attributes;
-
         domAttributes.set({
             'type': 'text/javascript',
             'src': '/js/web/require.js',
             'data-main': js_file_require_data_main
         });
-        head.add(script);
+        body.add(script);
         //throw 'stop';
     }
 
+    /*
     'include_jsgui_resource_client'(path) {
         // Could add the default client file.
         // Or a specific client file with a control that also has client-side code.
@@ -918,7 +863,10 @@ class Client_HTML_Document extends Blank_HTML_Document {
         var js_file_require_data_main = path || '/js/web/jsgui-html-resource-client';
         this.include_jsgui_client(js_file_require_data_main);
 
+        // Seems like resources will be made available automatically.
+
     }
+    */
     'include_client_css'() {
         var head = this.get('head');
         var link = new jsgui.link({
@@ -930,7 +878,6 @@ class Client_HTML_Document extends Blank_HTML_Document {
         //console.log('* dom ' + stringify(dom));
         //var domAttributes = script.get('dom.attributes');
         var domAttributes = link.dom.attributes;
-
         // link.dom.attrs
         //domAttributes.set('rel', 'stylesheet');
         //domAttributes.set('type', 'text/css');
@@ -944,8 +891,6 @@ class Client_HTML_Document extends Blank_HTML_Document {
     // also need to include jsgui client css
 }
 
-
-
 // Find 2d intersections
 //  Useful for selection boxes
 
@@ -956,15 +901,11 @@ class Client_HTML_Document extends Blank_HTML_Document {
 
 class Intersection_Finder extends Evented_Class {
     constructor(spec) {
-
         // For all of the controls here.
         super(spec);
-
         // Needs to track the positions of the controls
         //  Or keep checking them frequently.
-
         let coords_ctrls;
-
         let update_ctrl_coords = () => {
             coords_ctrls = [];
             //console.log('spec.controls.length', spec.controls.length);
@@ -976,90 +917,21 @@ class Intersection_Finder extends Evented_Class {
         }
 
         //console.log('coords_ctrls', coords_ctrls);
-
-
         let map_selected = new Map();
-
         let find_intersections = (coords) => {
             update_ctrl_coords();
             //console.log('coords[0]', coords[0]);
             //console.log('box coords', coords);
-
             let intersecting = [],
                 newly_intersecting = [],
                 previously_intersecting = [];;
             let [btl, bbr] = coords;
-
             //console.log('[btl, bbr]', [btl, bbr]);
-
-
             each(coords_ctrls, cc => {
                 //console.log('cc', cc);
 
                 let [ccoords, ctrl] = cc;
                 let [cpos, cbr, csize] = ccoords;
-
-                // does it intersect the coords?
-
-                //console.log('cc[0][0][0]', cc[0][0][0]);
-                //console.log('cc[0][1][0]', cc[0][1][0]);
-                //console.log('cc[0][2][0]', cc[0][2][0]);
-                //console.log('cc', cc);
-
-                //let x_intersect = ccoords[0][0] <= coords[0] && coords[0] <= ccoords[1][0];
-                //let y_intersect = ccoords[0][1] <= coords[1] && coords[1] <= ccoords[1][1];
-
-                /*
-
-                let x_intersect = cpos[0] <= btl[0] && btl[0] <= cbr[0] ||
-                    cpos[0] <= bbr[0] && bbr[0] <= cbr[0];
-
-
-                //console.log('ccoords', ccoords);
-                console.log('cpos', cpos);
-                //console.log('cpos[1]', cpos[1]);
-                //console.log('cbr[1]', cbr[1]);
-                let y_intersect = cpos[1] <= btl[1] && btl[1] <= cbr[1] ||
-                    cpos[1] <= bbr[1] && bbr[1] <= cbr[1];
-
-                */
-                //console.log('cpos', cpos);
-                //console.log('ctrl._id()', ctrl._id());
-                //console.log('cbr', cbr);
-
-                //console.log('btl[0] <= cpos[0] <= bbr[0]', btl[0], cpos[0], bbr[0]);
-                //console.log('btl[1] <= cpos[1] <= bbr[1]', btl[1], cpos[1], bbr[1]);
-
-                //console.log('btl', btl);
-                //console.log('bbr', bbr);
-                //console.log('cpos[0]', cpos[0]);
-                //console.log('cbr[0]', cbr[0]);
-
-                /*
-
-                let x_intersect = btl[0] <= cpos[0] && cpos[0] <= bbr[0] || btl[0] <= cbr[0] && cbr[0] <= bbr[0];
-                let y_intersect = btl[1] <= cpos[1] && cpos[1] <= bbr[1] || btl[1] <= cbr[1] && cbr[1] <= bbr[1];
-
-                //let x_intersect = btl[0] >= cpos[0] && cpos[0] <= bbr[0] || btl[0] >= cbr[0] && cbr[0] <= bbr[0];
-                //let y_intersect = btl[1] >= cpos[1] && cpos[1] <= bbr[1] || btl[1] >= cbr[1] && cbr[1] <= bbr[1];
-
-                //let x_intersect = cpos[0] <= btl[0] && btl[0] <= cbr[0] ||
-                //    cpos[0] <= bbr[0] && bbr[0] <= cbr[0];
-
-
-                //console.log('ccoords', ccoords);
-                //console.log('cpos', cpos);
-                //console.log('cpos[1]', cpos[1]);
-                //console.log('cbr[1]', cbr[1]);
-                //let y_intersect = cpos[1] <= btl[1] && btl[1] <= cbr[1] ||
-                //    cpos[1] <= bbr[1] && bbr[1] <= cbr[1];
-
-
-                //console.log('x_intersect', x_intersect);
-                //console.log('y_intersect', y_intersect);
-
-                let intersect = x_intersect && y_intersect;
-                */
 
                 let intersect = (cpos[0] <= bbr[0] &&
                     btl[0] <= cbr[0] &&
@@ -1089,8 +961,6 @@ class Intersection_Finder extends Evented_Class {
             });
             return [intersecting, newly_intersecting, previously_intersecting];
         }
-
-
         // want a rectify function too.
         //  2 functions there, with the previous not being onchange, but prechange.
 
@@ -1150,7 +1020,6 @@ class Relative extends Control {
 }
 
 jsgui.Relative = Relative;
-
 jsgui.String_Control = String_Control;
 jsgui.textNode = textNode;
 jsgui.Text_Node = textNode;
@@ -1163,12 +1032,7 @@ jsgui.Intersection_Finder = Intersection_Finder;
 
 // And load in all or a bunch of the controls.
 // Can we require all of the controls at once, and then merge them?
-
 jsgui.parse_mount = require('./parse-mount');
-
 //jsgui.Toggle_Button =
-
-
-
 
 module.exports = jsgui;

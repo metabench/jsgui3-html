@@ -16,9 +16,6 @@ class Arrow_Button extends Button {
         super(spec);
         //this.__type_name = 'button';
 
-        
-
-
 
         /*
 

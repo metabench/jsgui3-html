@@ -35,6 +35,25 @@ var group = jsgui.group;
 //var Relative_Frame = Control.
 
 /*
+
+    Nav and layout like VS code
+
+    A new layout system that more specifically includes the tabs would work better.
+    Multiple documents / viewers are available through tabs like in vs code.
+
+    Definitely want to do more with dynamic / parsed user controls.
+
+
+
+    leftmost - menu
+    topmost - menu, title bar
+    left vertical menu - tool group select
+    left panel - navigation
+    main panel - tabs at top. shows content in main view.
+
+*/
+
+/*
  'fields': {
  'layout_mode': String
  },

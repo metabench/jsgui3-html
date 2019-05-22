@@ -1131,6 +1131,9 @@ class Control_Core extends Data_Object {
 	}
 
 	'add'(new_content) {
+
+		// maybe don't add it as a text node, add it as string content in some cases.
+
 		const tnc = tof(new_content);
 		let res;
 		//console.log('control add content tnc', tnc);

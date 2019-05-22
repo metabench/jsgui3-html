@@ -2,6 +2,9 @@
  * Created by James on 15/09/2016.
  */
 
+// Could swap this for lang-mini
+//  Less code to maintain that way.
+
 var are_equal = require('deep-equal');
 
 if (typeof window === 'undefined') {
@@ -1854,6 +1857,7 @@ var deep_arr_iterate = (arr, path = [], callback) => {
 }
 
 const hypot = (a, b) => Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+
 
 
 var jsgui = {

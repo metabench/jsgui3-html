@@ -1113,7 +1113,6 @@ class Control extends Control_Core {
 		});
 	}
 
-
 	'descendants'(search) {
 		var recursive_iterate = (ctrl, item_callback) => {
 			// callback on all of the child controls, and then iterate those.

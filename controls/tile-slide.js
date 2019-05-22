@@ -336,12 +336,7 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
         }
     }
 
-
     return Tile_Sliding_Ctrl;
-
-
-
-
 }
 
 //Tile_Slider

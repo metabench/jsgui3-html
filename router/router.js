@@ -40,6 +40,13 @@ class Wildcard_Routing_Tree_Node {
 
 // Want to be able to get the Routing_Tree_Node corresponding with a path
 
+// Could make this a tree-router
+
+// Could make this an Evented_Class / observable
+//  Evented_Class that raises its own log events.
+
+
+
 class Routing_Tree {
     constructor(spec) {
         this.root = new Routing_Tree_Node();

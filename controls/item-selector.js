@@ -34,7 +34,7 @@ const mx_popup = require('../control_mixins/popup');
 // Respond to control changes...
 //  Don't just want this on activation, as they are not DOM events, though many would originate there.
 
-
+// May be like a list.
 
 
 class Item_Selector extends Control {
@@ -238,8 +238,6 @@ class Item_Selector extends Control {
         if (!this.__active) {
             super.activate();
 
-
-
             let item_list = this.item_list;
             mx_popup(item_list);
             // touchstart - bring up the list
@@ -318,16 +316,8 @@ class Item_Selector extends Control {
                     }, 0);
                 }
 
-
-
-
-
             });
-
-
-
             this.finish_item_selector();
-
         }
     }
 }

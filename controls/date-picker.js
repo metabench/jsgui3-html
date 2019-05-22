@@ -9,8 +9,8 @@ const jsgui = require('../html-core/html-core');
 const stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 const Control = jsgui.Control;
 //var Calendar = require('./calendar');
-const Left_Right_Arrows_Selector = require('../controls/left-right-arrows-selector');
-const Month_View = require('../controls/month-view');
+const Left_Right_Arrows_Selector = require('./left-right-arrows-selector');
+const Month_View = require('./month-view');
 
 /*
 Being able to select dates (including times) in a nice user-friendly way is going to be worthwhile functionality for a variety of things.

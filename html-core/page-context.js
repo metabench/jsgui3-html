@@ -76,7 +76,8 @@ class Page_Context extends jsgui.Evented_Class {
         if (ctrl) {
             //console.log('core new_selection_scope ctrl._id()', ctrl._id());
             ctrl.selection_scope = res;
-            if (!document) {
+            if (typeof document === 'undefined') {
+                ctrl._fields = ctrl._fields || {};
                 ctrl._fields.selection_scope = res.id;
             }
         }

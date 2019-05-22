@@ -31,5 +31,10 @@ jsgui.Ordered_KVS = Ordered_KVS;
 jsgui.Ordered_String_List = Ordered_String_List;
 jsgui.Sorted_KVS = Sorted_KVS;
 
-module.exports = jsgui;
+// remake it as an ec
+
+let ec = new Evented_Class();
+Object.assign(ec, jsgui);
+
+module.exports = ec;
 

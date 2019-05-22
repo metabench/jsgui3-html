@@ -7,9 +7,7 @@ var stringify = jsgui.stringify,
     tof = jsgui.tof;
 var Control = jsgui.Control;
 */
-
 const {stringify, each, tof, def, Control} = jsgui;
-
 const Panel = require('./panel');
 const Title_Bar = require('./title-bar');
 const Tree_Node = require('./tree-node');
@@ -19,9 +17,7 @@ const {prop, field} = require('obext');
 //var fields = [
 //    ['text', String]
 //];
-
 // Could do with a File_Tree that can integrate with an FS_Resource
-
 // text alias being title?
 class Tree extends Control {
     // fields... text, value, type?
@@ -56,10 +52,8 @@ class Tree extends Control {
             this.compose_tree(spec);
         }
 
-
         // one way data binding.
         // this.bind('title', this.title_bar.text);
-
         // bind(this, 'title', this.title_bar.text)
 
         this.on('change', e_change => {
@@ -69,7 +63,6 @@ class Tree extends Control {
         }) 
     }
     compose_tree(spec) {
-
         //console.log('this.title', this.title);
         if (this.title !== undefined) {
             this.add(this.title_bar = new Title_Bar({
@@ -77,12 +70,10 @@ class Tree extends Control {
                 text: this.title
             }));
         }
-
         this.add(this.main = new Panel({
             context: this.context
         }));
         //var ctrl_fields = ;
-
         if (spec.nodes) {
             for (let node of spec.nodes) {
                 node.context = this.context;
@@ -91,15 +82,13 @@ class Tree extends Control {
                 this.main.add(tn);
             }
         }
-
         this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
             //'title_bar': this.title_bar,
             'main': this.main
         });
         if (this.title_bar) {
-            this._ctrl_fields.title_bar = title_bar;
+            this._ctrl_fields.title_bar = this.title_bar;
         }
-
         //this.dom.attributes['data-jsgui-ctrl-fields'] = stringify(ctrl_fields).replace(/"/g, "'");
     }
     clear() {

@@ -166,8 +166,8 @@ let selection_box_host = (ctrl) => {
                 md_offset_within_ctrl = v_subtract(md.pos, ctrl_pos);
                 md_offset_within_ctrl[1] -= window.scrollY;
                 md_pos[1] -= window.scrollY;
-                var el = ctrl.dom.el;
-                var elpos2 = [el.offsetLeft, el.offsetTop];
+                //var el = ctrl.dom.el;
+                //var elpos2 = [el.offsetLeft, el.offsetTop];
 
                 // Search for the 'main-box' controls
                 // dot for the css class

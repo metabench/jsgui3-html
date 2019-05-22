@@ -128,7 +128,6 @@ class Data_Object extends Evented_Class {
 		}
         this.__type_name = spec.__type_name || 'data_object';
 
-
         this.set_fields_from_spec(fields, spec);
 
         this.__data_object = true;
@@ -169,8 +168,6 @@ class Data_Object extends Evented_Class {
             if (!this.__type) {
                 this.__type = 'data_object';
             }
-
-            
 
             // 18/12/2016 getting rid of ._
 

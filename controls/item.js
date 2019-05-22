@@ -149,9 +149,7 @@ class Item extends Control {
             configurable: true
         });
 
-
         var active_fields = this.active_fields = {};
-
 
         if (this._expandable) {
             this.states = ['closed', 'open'];
@@ -160,7 +158,6 @@ class Item extends Control {
 
             this.state = new Data_Value('closed');
             this.i_state = 0;
-
 
             active_fields.states = this.states;
             active_fields.state = this.state;

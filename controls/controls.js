@@ -70,9 +70,8 @@ var controls = {
     Tree: require('./tree'),
     Tree_Node: require('./tree-node'),
     Vertical_Expander: require('./vertical-expander'),
-    Window: require('./window'),
-
-    mx: require('../control_mixins/mx')
+    Window: require('./window')//,
+    //mx: require('../control_mixins/mx')
 }
 
 module.exports = controls;

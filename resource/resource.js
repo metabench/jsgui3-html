@@ -10,10 +10,6 @@
 
 // Want to be able to remotely configure and access a Raspberry Pi as a Resource.
 
-
-
-
-
 var jsgui = require('../lang/lang');
 var Pool = require('./pool');
 
@@ -21,6 +17,15 @@ var Class = jsgui.Class, Data_Object = jsgui.Data_Object, Collection = jsgui.Col
 var is_defined = jsgui.is_defined, fp = jsgui.fp, stringify = jsgui.stringify, tof = jsgui.tof;
 var call_multi = jsgui.call_multi, get_a_sig = jsgui.get_a_sig;
 var each = jsgui.each;
+
+
+
+// Could move this to its own module.
+
+// Make Resource extend Evented_Class
+
+// Then could move it outside of jsgui3
+
 
 // Status to see if a resource has started or not?
 //  I think resource status is important.

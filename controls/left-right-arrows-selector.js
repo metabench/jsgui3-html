@@ -114,6 +114,8 @@ class Left_Right_Arrows_Selector extends Control {
         if (this.item_index) is_spec.item_index = this.item_index;
         if (this.loop) is_spec.loop = this.loop; 
 
+        // Should be able to parse these from an HTML-like document.
+
         let item_selector = new Item_Selector(is_spec);
 
         let right_arrow = new Arrow_Button({
@@ -149,10 +151,13 @@ class Left_Right_Arrows_Selector extends Control {
             super.activate();
             // Automatically disable arrow if we reach the first while not in loop mode.
 
-
-
             //console.log('Activate Left_Right_Arrows_Selector');
             let {left_arrow, item_selector, right_arrow} = this;
+
+
+            // on({subcontrol names, event names})
+            //  a different mechanism for 'on'?
+
 
             left_arrow.on('click', e_click => {
                 //console.log('left_arrow e_click',e_click);
