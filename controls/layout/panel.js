@@ -3,7 +3,7 @@
  */
 
 
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../html-core/html-core');
 //var Horizontal_Menu = require('./horizontal-menu');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, def = jsgui.is_defined;

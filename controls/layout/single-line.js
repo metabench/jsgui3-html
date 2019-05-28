@@ -10,7 +10,7 @@ var fields = [
     ['meta_field', String]
 ];
 
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 

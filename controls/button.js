@@ -2,13 +2,22 @@ var jsgui = require('../html-core/html-core');
 var Control = jsgui.Control;
 //const fast_touch_click = require('../control_mixins/fast-touch-click');
 
+/*
+    New system will lead to much smaller definitions of controls.
+*/
+
+
 class Button extends Control {
+
+
+    // Will do much more with parse_mount.
+
     constructor(spec, add, make) {
         // Wont fields have been set?
         //spec['class'] = spec['class'] || 'button';
         spec.__type_name = spec.__type_name || 'button';
         super(spec);
-        var that = this;
+        //let that = this;
         
         this.add_class('button');
         //this.add_class('button');

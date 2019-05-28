@@ -1,8 +1,8 @@
-const jsgui = require('../html-core/html-core');
+const jsgui = require('../../html-core/html-core');
 const Control = jsgui.Control;
 const def = jsgui.is_defined;
 const Arrow_Button = require('./arrow-button');
-const Item_Selector = require('./item-selector');
+const Item_Selector = require('../item-selector');
 /*
 
     Encapsulates an array with a range of possible values.

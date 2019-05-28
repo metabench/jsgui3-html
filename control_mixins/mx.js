@@ -1,3 +1,7 @@
+// More directory features here?
+//  Be able to mix in multiple at once?
+
+
 const mx = {
     coverable: require('./coverable'),
     date: require('./date'),

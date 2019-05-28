@@ -1,1 +1,0 @@
-// Not suitable for sorting arrays of pixel locations. Seems like a worst case, or close to it.

@@ -8,6 +8,10 @@ var jsgui = require('../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
+
+// This one is advanced / composite / possibly connected through a data api?
+
+
 class Calendar extends Control {
     // Can have different views open.
     // Can view by months, in different types.

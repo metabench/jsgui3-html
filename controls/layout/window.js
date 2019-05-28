@@ -1,6 +1,6 @@
 // Also want to make an MDI window system (Multiple Document Interface)
-var jsgui = require('../html-core/html-core');
-var Horizontal_Menu = require('./horizontal-menu');
+var jsgui = require('../../html-core/html-core');
+var Horizontal_Menu = require('../horizontal-menu');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 

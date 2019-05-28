@@ -2,7 +2,7 @@
  * Created by James on 16/09/2016.
  */
 // Functions to load a few of the most common functions as local variables
-var jsgui = require('../lang/lang');
+var jsgui = require('lang-tools');
 
 const {
 	get_a_sig,
@@ -17,18 +17,26 @@ const {
 	prom_or_cb
 } = require('fnl');
 
+const Text_Node = require('./text-node');
+
 /*
 var get_a_sig = jsgui.get_a_sig,
 	fp = jsgui.fp,
 	each = jsgui.each;
 	*/
 var Control_Core = require('./control-core');
+
+// need Text_Node
+
 //var Resize_Handle = require('../controls/resize-handle')
 //var tof = jsgui.tof;
 //const def = jsgui.is_defined;
 
 const mx_selectable = require('../control_mixins/selectable');
 //const mx_fast_touch_click = require('../control_mixins/fast-touch-click');
+
+
+// Need reference to text_node.
 
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
@@ -742,10 +750,12 @@ class Control extends Control_Core {
 				}
 				*/
 				//console.log('this.selectable', this.selectable);
+				/*
 				if (def(this.selectable)) {
 					//console.log('activating mx_selectable');
 					//mx_selectable(this);
 				}
+				*/
 				//console.log('pre raise activate');
 				this.raise('activate');
 				//})
@@ -825,7 +835,7 @@ class Control extends Control_Core {
 						}
 						var temp_el;
 						//console.log('item_tag_name', item_tag_name);
-						if (item_tag_name == 'circle' || item_tag_name == 'line' || item_tag_name == 'polyline') {
+						if (item_tag_name === 'circle' || item_tag_name === 'line' || item_tag_name === 'polyline') {
 							// Can make SVG inside an element, with the right namespace.
 
 							// TODO Maybe we can have a global temporary SVG container.
@@ -1030,7 +1040,7 @@ class Control extends Control_Core {
 					if (cn) {
 						var nt = cn.nodeType;
 						//console.log('* nt ' + nt);
-						if (nt == 1) {
+						if (nt === 1) {
 							var cn_jsgui_id = cn.getAttribute('data-jsgui-id');
 							//console.log('cn_jsgui_id ' + cn_jsgui_id);
 							var cctrl = context.map_controls[cn_jsgui_id];
@@ -1053,11 +1063,28 @@ class Control extends Control_Core {
 								cctrl.parent = this;
 							}
 						}
-						if (nt == 3) {
+						if (nt === 3) {
 							// text
+
+							// create a new jsgui text node.
+							//  don't want to push / add the data value
+
+							
+
+
 							var val = cn.nodeValue;
+							//console.log('val', val);
+
+							const tn = new Text_Node({
+								context: this.context,
+								text: val,
+								el: cn
+							})
 							//console.log('val ' + val);
-							content.push(val);
+							//content.push(val);
+							content.push(tn);
+
+
 						}
 					}
 				}
@@ -1069,7 +1096,12 @@ class Control extends Control_Core {
 	}
 
 	'activate_dom_attributes'() {
+
+		// .el direct reference?
 		var el = this.dom.el;
+
+		// .node?
+		// .dom.node?
 		//console.log('** el', el);
 		// may not have el....?
 		//var that = this;
@@ -1166,6 +1198,13 @@ p.on = p.add_event_listener;
 p.off = p.remove_event_listener;
 
 module.exports = Control;
+
+// Plugin mechansim...
+//  For things like span
+//   Want to add extra functionality in some places.
+
+// A text property where span text can be changed.
+
 
 // Adds to jsgui itself...
 //  It adds a whole number of default controls.

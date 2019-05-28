@@ -1,6 +1,16 @@
 const jsgui = require('../html-core/html-core');
 const Tree = require('./tree');
 
+// This may need to be connected with a resource.
+//  Specified with an API.
+//   Possibly move to a 'data' or 'connected' dir.
+//    or resource? As in it will need access to a resource to work.
+//   That resource will be available on the client-side.
+
+// Possibly some controls will only work in a connected mode.
+
+
+
 class File_Tree extends Tree {
     constructor(spec) {
         /*

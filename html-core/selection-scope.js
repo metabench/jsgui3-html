@@ -1,4 +1,4 @@
-var jsgui = require('../lang/lang');
+var jsgui = require('lang-tools');
 var each = jsgui.each;
 var tof = jsgui.tof;
 const Control = require('./control');

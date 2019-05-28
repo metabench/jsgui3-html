@@ -1,5 +1,5 @@
 var url = require('url-parse'),
-    jsgui = require('../lang/lang'),
+    jsgui = require('lang-tools'),
     //os = require('os'),
     //http = require('http');
     stringify = jsgui.stringify,
@@ -387,15 +387,11 @@ class Router {
         } else {
             return false;
         }
-
         //var 
         //console.log('parsed_url', parsed_url);
-
     }
 }
-
 //Router.prototype.type_levels = ['router'];
-
 Router.Routing_Tree = Routing_Tree;
 
 module.exports = Router;

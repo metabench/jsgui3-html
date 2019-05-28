@@ -7,6 +7,20 @@ var Media_Scrubber = require('./media-scrubber');
 
 var Control = jsgui.Control;
 
+
+// Composite?
+// Advanced?
+
+// Complex?
+// Platform?
+
+// Basic < Platform?
+
+
+
+
+
+
 class Audio_Player extends Control {
 
 	// could have a title field.

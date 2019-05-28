@@ -12,8 +12,11 @@ define(["../../jsgui-html", "./panel"],
     function(jsgui, Panel) {
 */
 
-var jsgui = require('../html-core/html-core');
-var Panel = require('./panel');
+// An app layout / full app layout
+
+var jsgui = require('../../../html-core/html-core');
+var Panel = require('../panel');
+var Tabbed_Panel = require('../tabbed-panel');
 
 var stringify = jsgui.stringify,
     each = jsgui.each,
@@ -43,8 +46,6 @@ var group = jsgui.group;
 
     Definitely want to do more with dynamic / parsed user controls.
 
-
-
     leftmost - menu
     topmost - menu, title bar
     left vertical menu - tool group select
@@ -59,9 +60,42 @@ var group = jsgui.group;
  },
  */
 
+/*
+ Layout_Inner_Swap may be a better way of handling multiple layouts
+ Would work on a different level
+
+*/
+
 var fields = {
     'layout_mode': String
 };
+
+// Making this handle tabs in its main area would make it more flexible in a nice way.
+
+// VSC influenced layout... Nav_View?
+//  VSC_Layout?
+//   IDE layout?
+//  IDE_Layout?
+//  VSC_Like?
+//   Seems best for now.
+
+// This may be a very worthwhile place to use composition parsing and building.
+//  parse_mount
+//   that seems like a good way to include content.
+//   Want to get that right before writing more UI composition code.
+
+
+
+// Like Multi layout mode
+//  Define a few panels.
+
+// Could base VSC_Layout on this.
+//  
+
+// But want to use parse_mount on some HTML-like code.
+//  Getting parse_mount etc working fully would be a better focus right now.
+
+
 class Multi_Layout_Mode extends Control {
 
     // could have a title field.
@@ -109,13 +143,40 @@ class Multi_Layout_Mode extends Control {
             'context': context,
             'name': 'navigation',
             'class': 'navigation'
-        })
+        });
+        // Make it so the navigation (on the left panel) can be changed to specific tools
+
+        // A tools panel would be quite useful
+        //  Could just be tools selection.
+
+        // Tool_Select
+        //  Not sure we need this right now.
+
         //panel_navigation.add_class('navigation');
+
+        // are we using tabs?
+        //  .using_tabs
+        //  .tabs exists
+
+        // tabs allows swapping between different items that are being viewed.
+
         var panel_main = new Panel({
             'context': context,
             'name': 'main',
             'class': 'main'
         })
+
+        // Make it so that the main panel can use tabs.
+        //  Tabbed main panel looks more useful.
+
+        // panel.tabs?
+        //  or use tabbed-panel
+        //  could have a tabs mixin?
+        //   tabs opens up a variety of internal controls.
+
+        // Tabbed panel looks like it could be useful here.
+
+
         //panel_main.add_class('main');
         var panel_misc = new Panel({
             'context': context,

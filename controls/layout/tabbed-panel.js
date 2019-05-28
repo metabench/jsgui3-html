@@ -1,15 +1,26 @@
 // Tab bar - selectable
 // multiple panel controls
 
+// Would contain internal panels that get swapped.
+//  Option to be able to close tabs too. Would be useful in many cases.
 
-const jsgui = require('../html-core/html-core');
+// Need to move this closer to being able to view nested observables.
+//  Advanced app data can be within that format.
+
+// Also will connect UIs to client-side data resources.
+//  Those resources will handle the communication abstractions.
+
+
+
+
+const jsgui = require('../../html-core/html-core');
 const Control = jsgui.Control;
 //const Panel = jsgui.Panel;
-const mx_selectable = require('../control_mixins/selectable');
+const mx_selectable = require('../../control_mixins/selectable');
 const each = jsgui.each;
 
 const Panel = require('./panel');
-const List = require('./list');
+const List = require('../list');
 
 class Tab extends Control {
     constructor(spec) {
@@ -19,6 +30,7 @@ class Tab extends Control {
         //console.log('Tab spec', spec);
 
 
+        // obext instead
         let _name;
         Object.defineProperty(this, 'name', {
             get() {

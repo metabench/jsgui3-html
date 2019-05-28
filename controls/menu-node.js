@@ -8,6 +8,7 @@ const {stringify, each, tof, Control} = jsgui;
 // Maybe we can just use 'item'.
 
 
+// Could make this API the same as tree node where possible.
 
 class Menu_Node extends Control {
     // fields... text, value, type?

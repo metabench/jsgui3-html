@@ -1,4 +1,4 @@
-var jsgui = require('../lang/lang');
+var jsgui = require('lang-tools');
 var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof,

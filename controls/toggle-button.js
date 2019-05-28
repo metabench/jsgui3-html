@@ -26,6 +26,8 @@ const {stringify, each, tof, def, Control} = jsgui;
 
 const { prop, field } = require('obext');
 
+// May do more with attempting state change?
+
 // Can we have an abstraction that will handle a variety of images in a variety of contexts?
 //  We want to have SVGs that are suitable for start and stop.
 //  Want to make use of the right images or the right image abstractions.

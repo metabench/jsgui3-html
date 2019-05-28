@@ -4,6 +4,8 @@ var Menu_Node = require('./menu-node');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
+// More advanced, but still comes as standard, basic in that way.
+
 class Context_Menu extends Control {
 	constructor(spec, add, make) {
 		super(spec);

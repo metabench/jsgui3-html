@@ -16,7 +16,26 @@ var Collection = jsgui.Collection;
 
 // will have a context menu by default
 
+// Swaps will be useful here.
+
 const mx_selectable = require('../control_mixins/selectable');
+
+// could use a mixin for active-data
+//  it would call an add function.
+
+// or raise an event called 'next'.
+//  .listen(obs)
+//  .observe(obs)
+
+// Do more programming for UI components observing observables.
+
+
+// This needs to be flexible.
+//  May be useful to have a .subscribe or .observe function to listen to an observable.
+//   Then create items out of the data that gets produced.
+//   Would need to focus on client-side observables.
+// Want to be able to give it an array or observable, or object, it renders it.
+//  But needs to work with resources and objects that interact with server data.
 
 
 class List extends Control {

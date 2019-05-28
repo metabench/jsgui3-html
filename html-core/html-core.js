@@ -2,12 +2,46 @@
  * Created by James on 16/09/2016.
  */
 //"use strict";
-var jsgui = require('../lang/lang');
-var str_arr_mapify = jsgui.str_arr_mapify;
-var get_a_sig = jsgui.get_a_sig;
-var each = jsgui.each;
-var Control = jsgui.Control = require('./control-enh');
+const jsgui = require('lang-tools');
+const Text_Node = require('./text-node');
+const obext = require('obext');
+//const {field, prop} = obext;
+// Want the documentation online!
 
+// prop(item, name, default_value)
+// then on change....
+
+// Need to have ctrls respond to these changes.
+
+// span.text being an important property.
+//  it was working, span code removed, now needs to be fixed.
+//  Don't want spans operating differently to other controls with some lower level things.
+
+
+
+/*
+
+
+jsgui.Page_Context = require('./page-context');
+jsgui.Selection_Scope = require('./selection-scope');
+jsgui.Intersection_Finder = Intersection_Finder;
+
+// And load in all or a bunch of the controls.
+// Can we require all of the controls at once, and then merge them?
+jsgui.parse_mount = require('./parse-mount');
+
+*/
+
+
+const Page_Context = require('./page-context');
+const Selection_Scope = require('./selection-scope');
+const parse_mount = require('./parse-mount');
+
+
+const str_arr_mapify = jsgui.str_arr_mapify;
+const get_a_sig = jsgui.get_a_sig;
+const each = jsgui.each;
+const Control = jsgui.Control = require('./control-enh');
 const Evented_Class = jsgui.Evented_Class;
 //jsgui.util = require('../lang/util');
 //var Control = jsgui.Control = require('./control-enh');
@@ -20,7 +54,8 @@ const {
 } = require('obext');
 
 var core_extension = str_arr_mapify(function (tagName) {
-    jsgui[tagName] = class extends Control {
+
+    jsgui.controls[tagName] = jsgui[tagName] = class extends Control {
         constructor(spec) {
             spec.__type_name = tagName;
             //console.log('spec.__type_name', spec.__type_name);
@@ -91,8 +126,8 @@ var recursive_dom_iterate_depth = function (el, callback) {
 var activate = function (context) {
     // The context should already have the map of controls.
 
-    console.log('jsgui activate');
-    console.trace();
+    //console.log('jsgui activate');
+    //console.trace();
     // Not so sure we can have the client page context here - does it use resources?
 
     //ensure_Context_Menu_loaded(function(_Context_Menu) {
@@ -130,8 +165,7 @@ var activate = function (context) {
         //return res;
         return parseInt(id.substr(id.lastIndexOf('_') + 1), 10);
     }
-
-
+    
     let map_els = () => {
         recursive_dom_iterate(document, (el) => {
 
@@ -216,18 +250,13 @@ var activate = function (context) {
                 if (Cstr) {
                     //console.log('arr_controls.length', arr_controls.length);
                     //console.log('!!map_controls[jsgui_id]', !!map_controls[jsgui_id]);
-
                     //console.log('3) jsgui_id', jsgui_id);
-
                     //console.log('creating constructor of type', type, 'jsgui_id', jsgui_id);
 
                     // Would re-apply the constructors?
                     //console.log('Cstr', Cstr);
-
                     //console.log('jsgui_id', jsgui_id);
-
                     // control not taking the id at the beginning.
-
                     // And params for this ctrl?
 
                     var ctrl = new Cstr({
@@ -236,13 +265,9 @@ var activate = function (context) {
                         'id': jsgui_id,
                         'el': el
                     });
-
                     //console.log('ctrl._id()', ctrl._id());
 
-
-
                     arr_controls.push(ctrl);
-
                     //console.log('el.tagName', el.tagName);
 
                     if (l_tag_name === 'html') {
@@ -258,7 +283,6 @@ var activate = function (context) {
 
 
                     //console.log('ctrl.dom.el', ctrl.dom.el);
-
                     //console.log('\n');
                     //console.log('ctrl._id()', ctrl._id());
                     //console.log('jsgui_id', jsgui_id);
@@ -344,36 +368,8 @@ var activate = function (context) {
 
 };
 
-var escape_html_replacements = [
-    [/&/g, '&amp;'],
-    [/</g, '&lt;'],
-    [/>/g, '&gt;'],
-    [/"/g, '&quot;'], //"
-    [/'/g, '&#x27;'], //'
-    [/\//g, '&#x2F;']
-];
 //var single_replacement;
 
-var escape_html = function (str) {
-
-    //console.log('tof(str) ' + tof(str));
-
-    //console.log('escape_html str ' + str);
-    //console.log('tof str ' + tof(str));
-
-    if (tof(str) == 'data_value') str = str.get();
-
-    var single_replacement;
-    for (var c = 0, l = escape_html_replacements.length; c < l; c++) {
-        single_replacement = escape_html_replacements[c]
-        str = str.replace(single_replacement[0], single_replacement[1]);
-    }
-    //each(escape_html_replacements, function (i, v) {
-    //    str = str.replace(v[0], v[1]);
-    //});
-
-    return str;
-};
 
 /*!
  * escape-html
@@ -442,7 +438,27 @@ function escapeHtml(string) {
         html
 }
 
-jsgui.controls = jsgui.controls || {};
+jsgui.controls = jsgui.controls || {
+    Control: Control
+};
+
+
+// Span should work through the underlying mechanisms.
+
+
+// Extend / redo span here?
+//  Need it to be very basic, but also have a text property and handle text changes.
+//   Very often we want to say span.text and include a text node.
+
+// Only a setter?
+//  
+
+// Make a getter and setter (prop) on the span.
+
+
+
+
+
 
 
 jsgui.controls.span = jsgui.span = class span extends Control {
@@ -454,30 +470,99 @@ jsgui.controls.span = jsgui.span = class span extends Control {
 
         //console.log('\nspec.text', spec.text);
 
+        prop(this, 'text', '');
+
+        this.on('change', e_change => {
+            //console.log('span e_change', e_change);
+            //console.log('this.dom.el', this.dom.el);
+            //console.log('this.content._arr', this.content._arr);
+
+            // data_value within the content...
+            //  should listen to changes in the data_value?
+
+            if (this.content._arr.length === 1) {
+                // a Data_Value?
+
+                // is it a Text_Node
+
+                if (this.content._arr[0] instanceof Text_Node) {
+                    //console.log('is a Text_Node');
+                    this.content._arr[0].text = e_change.value;
+                }
+
+                // Then when the data value changes, need to change the content.
+                //  Likely would be better as a Text_Node than Data_Value within the span.
+                //  Closer to HTML semantics.
+
+                // Could replace it with Text_Node here....
+
+                // Problem seems to be about activation putting in Data_Values.
+                //  Data_Value seems less important now.
+
+
+
+            } else {
+                throw 'NYI';
+            }
+
+
+        })
+
+        //console.log('span control created');
+
+        /*
         if (typeof spec.text !== 'undefined') {
             this._text = spec.text;
         } else {
             this._text = '';
         }
-        if (!spec.el) {
-            this.compose_span();
-        }
+        */
+        //if (!spec.el) {
+        //    this.compose_span();
+        //}
 
         //this.typeName = pr.typeName;
         //this.tagName = 'p';
     }
+    /*
     compose_span() {
-        let tn = this.tn = this.textNode = this.text_node = new textNode({
-            context: this.context,
-            text: this._text
-        });
-        this.add(tn);
+
+        // Maybe do it conventional and longwinded way
+        // Then make convenience macros / fns / sugar around it.
+
+        if (this._text && this._text.length > 0) {
+            let tn = this.tn = this.textNode = this.text_node = new textNode({
+                context: this.context,
+                text: this._text
+            });
+            this.add(tn);
+        }
+        
     }
+    */
+
+    // not using a text node as content.
+    //  though do use it within the browser.
+
+    // Being able to add text node(s) to a span makes sense.
+
+    // Can make a modified version where we listen for adding a text node.
+    //  Need to set the 
+
+    /*
+
     get text() {
         return this._text;
     }
     set text(value) {
+
         this._text = value;
+
+        // change an internal text node?
+        //  not sure the rendering shortcut makes sense when considering different modes of operation.
+        //  assumption that we will create a text node and add it in some cases.
+
+        // A span can not contain two text nodes in sequence?
 
         this.raise('change', {
             'name': 'text',
@@ -485,16 +570,47 @@ jsgui.controls.span = jsgui.span = class span extends Control {
         });
         // Should not really need to respond to such events anyway.
         //  principles of react etc.
-    }
 
+        console.log('span text changed to ' + value);
+        console.log('value.length', value.length);
+        console.trace();
+        //throw 'stop';
+    }
+    */
+
+
+    /*
+    add(content) {
+        super.add(content);
+
+        console.log('');
+        console.log('content', content);
+        console.log('content instanceof textNode', content instanceof textNode);
+
+        if (content instanceof textNode) {
+            // More situationally aware....
+            console.log('content.text', content.text);
+
+            this.text = content.text;
+        }
+
+    }
+    */
+
+
+    /*
     all_html_render_internal_controls() {
+
         return escapeHtml(this._text);
     }
 
 
     // Maybe move to client-side.
     //  All activation code in the client-side?
+    */
 
+
+    /*
     activate() {
         // get the text node reference?
 
@@ -531,6 +647,9 @@ jsgui.controls.span = jsgui.span = class span extends Control {
                 //this.add(tn);
 
                 this.on('change', e => {
+
+                    // while not activated...
+
                     //console.log('span text change', e);
                     if (e.name === 'text') {
                         dtn.nodeValue = e.value;
@@ -544,7 +663,11 @@ jsgui.controls.span = jsgui.span = class span extends Control {
 
         // May need to work with the text node element?
     }
+    */
 }
+
+
+
 
 class String_Control extends Control {
     constructor(spec) {
@@ -598,71 +721,42 @@ class String_Control extends Control {
 
 jsgui.activate = activate;
 //core_extension('html head title body div span h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col');
+
+// Making span work like default.
+
 core_extension('html head title body div h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col svg defs marker polygon line section code samp');
 core_extension_no_closing_tag('link input meta');
 
+// span?
+
 
 // Activated so it can listen for a change in the text?
-class textNode extends Control {
-    constructor(spec) {
-        spec.__type_name = spec.__type_name || 'text_node'
 
-        super(spec);
-        if (typeof spec == 'string') {
-            //this._.text = spec;
-            //this.innerHtml = spec;
-            spec = {
-                'text': spec
-            };
-        }
+// Don't extend Control?
+// Micro_Control?
+// Attributeless_Control?
+// Text_Only_Control?
+// String_Control?
+// String_Only_Control?
 
-        spec.nodeType = 3;
-        spec = spec || {};
+// Reimplement it from Data_Object?
 
+// Would make sense to significantly reimplement text-node.
+//  Hard for them to be active. They can't have IDs, hard to make them uniquely identifyable.
 
-        //ctrl_init_call(this, spec);
-
-        //this._super(spec);
-
-        // the underscore properties could make sense in Data_Objects and controls.
-        //  have the getters and setters that change the property and also raise the change event.
-
-        // Proxies seem like a possibility to listen for such changes.
-        //  However, we would make the changes to the proxy object.
-        //  Possibly could have something that raises a change event.
-
-        // Proxies could get trickier when they are in the object heirachy.
-
-        //this._ = {};
-
-        if (typeof spec.text !== 'undefined') {
-            this._text = spec.text;
-        }
-
-        //this.typeName = pr.typeName;
-        //this.tagName = 'p';
-
-    }
-    get text() {
-        return this._text;
-    }
-    set text(value) {
-        this._text = value;
-        this.raise('change', {
-            'name': 'text',
-            'value': value
-        });
-    }
-    'all_html_render'() {
-        return this.nx ? this._text || '' : escape_html(this._text || '') || '';
-
-    }
-
-    // getter and setter for the text itself?
-    //  A variety of properties will use getters and setters so that the updates get noted.
+// Want to do more with / for editable and editing text.
 
 
-};
+// define the text property on a span.
+
+// when it gets set, we change the text node content.
+
+
+// Also parsing of text nodes?
+//  May need to get these working when loading in the control's properties.
+
+// Bringing obext will help with this.
+
 
 class HTML_Document extends jsgui.Control {
     // no tag to render...
@@ -1020,19 +1114,28 @@ class Relative extends Control {
 }
 
 jsgui.Relative = Relative;
-jsgui.String_Control = String_Control;
-jsgui.textNode = textNode;
-jsgui.Text_Node = textNode;
+jsgui.String_Control = jsgui.controls.String_Control = String_Control;
+
+
+//jsgui.Text_Node = Text_Node;
+
+
 jsgui.HTML_Document = HTML_Document;
 jsgui.Blank_HTML_Document = Blank_HTML_Document;
 jsgui.Client_HTML_Document = Client_HTML_Document;
-jsgui.Page_Context = require('./page-context');
-jsgui.Selection_Scope = require('./selection-scope');
+
+jsgui.textNode = jsgui.controls.textNode = jsgui.Text_Node = jsgui.controls.Text_Node = Text_Node;
+
+// References much better at top.
+
+
+jsgui.Page_Context = Page_Context;
+jsgui.Selection_Scope = Selection_Scope
 jsgui.Intersection_Finder = Intersection_Finder;
 
 // And load in all or a bunch of the controls.
 // Can we require all of the controls at once, and then merge them?
-jsgui.parse_mount = require('./parse-mount');
+jsgui.parse_mount = parse_mount;
 //jsgui.Toggle_Button =
 
 module.exports = jsgui;

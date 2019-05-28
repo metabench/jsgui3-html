@@ -1,7 +1,7 @@
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../html-core/html-core');
 var Control = jsgui.Control;
 let def = jsgui.is_defined;
-const Button = require('./button');
+const Button = require('../button');
 
 class Arrow_Button extends Button {
     constructor(spec, add, make) {

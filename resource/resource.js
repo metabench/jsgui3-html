@@ -10,13 +10,23 @@
 
 // Want to be able to remotely configure and access a Raspberry Pi as a Resource.
 
-var jsgui = require('../lang/lang');
+var jsgui = require('lang-tools');
 var Pool = require('./pool');
 
 var Class = jsgui.Class, Data_Object = jsgui.Data_Object, Collection = jsgui.Collection;
 var is_defined = jsgui.is_defined, fp = jsgui.fp, stringify = jsgui.stringify, tof = jsgui.tof;
 var call_multi = jsgui.call_multi, get_a_sig = jsgui.get_a_sig;
 var each = jsgui.each;
+
+
+// Data_Resource extends Evented_Class
+//  or it's itself observable
+// Evented_Class with the observable events and API.
+
+
+
+
+
 
 
 
@@ -272,45 +282,6 @@ class Resource extends Data_Object {
         }
     }
 }
-
-/*
-var Web_Resource = Resource.extend({
-    'init': function(spec) {
-        this._super(spec);
-    },
-    'respond': function(res, req) {
-
-    }
-
-})
-
-var Html_Resource = Web_Resource.extend({
-    'init': function(spec) {
-        this._super(spec);
-    }
-})
-
-
-var Resource_Error = Data_Object.extend({
-    'init': function(spec) {
-        this._super(spec);
-
-        if (spec.text) {
-            this.set('text', spec.text);
-        }
-    }
-});
-
-var res = {
-        'Resource_Error': Resource_Error,
-        //'Resource_Connector': Resource_Connector,
-        'Resource': Resource,
-        'Web': Web_Resource,
-        'Html': Html_Resource
-}
-
-return res;
-*/
 
 Resource.Pool = Pool;
 

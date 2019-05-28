@@ -2,7 +2,7 @@
 
 
 //if (typeof define !== 'function') { var define = require('amdefine')(module) }
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../html-core/html-core');
 
 //var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;

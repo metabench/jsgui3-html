@@ -1,4 +1,4 @@
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../html-core/html-core');
 
 /*
 var stringify = jsgui.stringify,

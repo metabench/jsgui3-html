@@ -6,7 +6,7 @@ const {
 const {
 	each,
 	tof
-} = require('../lang/essentials');
+} = require('lang-mini');
 
 let dragable = (ctrl, opts = {}) => {
 	//let selection_action = 'mousedown';

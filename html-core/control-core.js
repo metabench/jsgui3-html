@@ -2,7 +2,7 @@
  * Created by James on 16/09/2016.
  */
 
-var jsgui = require('../lang/lang');
+var jsgui = require('lang-tools');
 var get_a_sig = jsgui.get_a_sig;
 //var remove_sig_from_arr_shell = jsgui.remove_sig_from_arr_shell;
 var each = jsgui.each;
@@ -396,6 +396,8 @@ class Control_Background extends Evented_Class {
 //	// already containing px?
 //}
 
+
+
 class Control_Core extends Data_Object {
 
 	constructor(spec, fields) {
@@ -504,15 +506,25 @@ class Control_Core extends Data_Object {
 		//this._icss = {};
 		//this._.dom = {'tagName': 'div'};
 		// Abstract controls won't have
+		var content = this.content = new Collection({});
 
 		// The DOM is a field that it should be getting from the control.
 		spec_content = spec.content;
 		if (spec_content) {
 			var tsc = tof(spec_content);
-			if (tsc == 'array') {
-				throw 'Content array not yet supported here.'
-			} else if (tsc == 'string' || tsc == 'control') {
-				this.content.add(spec_content);
+			if (tsc === 'array') {
+
+				// Content can be an array of controls.
+				//  Add them in turn.
+
+				
+				each(spec.content, item => {
+					content.add(item);
+				})
+
+				//throw 'Content array not yet supported here.'
+			} else if (tsc === 'string' || tsc === 'control') {
+				content.add(spec_content);
 			}
 		}
 
@@ -523,7 +535,7 @@ class Control_Core extends Data_Object {
 			//console.log('d.el', d.el);
 			//console.log('this._.dom._.el', this._.dom._.el);
 			//throw 'stop';
-			d.tagName = spec.el.tagName.toLowerCase();
+			if (spec.el.tagName) d.tagName = spec.el.tagName.toLowerCase();
 		}
 
 		//var that = this;
@@ -550,7 +562,7 @@ class Control_Core extends Data_Object {
 		// Content collection.
 
 		//var content = this.content = this.contents = new Collection({});
-		var content = this.content = new Collection({});
+		
 
 
 		if (spec.hide) {
@@ -598,6 +610,8 @@ class Control_Core extends Data_Object {
 		// The rendered control.
 		return this.all_html_render();
 	}
+
+	/*
 	set html(html) {
 		// Can include jsgui custom controls.
 
@@ -619,7 +633,10 @@ class Control_Core extends Data_Object {
 		// setting of HTML is not best to do right now.
 		// just use the page_context to create the new controls from markup for the moment.
 
+		// Leave this for the moment - but parse-mount could help here.
+
 	}
+	*/
 
 
 	get internal_relative_div() {
@@ -1807,3 +1824,4 @@ p.connect_fields = true;
 // assign_fields(Control, control_fields);
 
 module.exports = Control_Core;
+

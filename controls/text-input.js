@@ -17,6 +17,15 @@ var fields = [
     ['type', String]
 ];
 
+// Fairly simple wrapping around DOM.
+
+
+// Say this is a 'basic' control?
+//  Or an HTML control?
+//   So we have the controls that wrap HTML.
+//   Or markup, elements, svg, nodes etc. 
+
+
 class Text_Input extends Control {
     // is an Input element.
     //  type of either text or password.

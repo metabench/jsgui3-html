@@ -10,6 +10,8 @@ const tof = jsgui.tof;
 const Control = jsgui.Control;
 //const Tree_Node = require('./tree-node');
 
+// Then use a swap to change the controls when it's in place.
+
 /*
     <select> <option value="American">American flamingo</option> <option value="Andean">Andean flamingo</option> <option value="Chilean">Chilean flamingo</option> <option value="Greater">Greater flamingo</option> <option value="James's">James's flamingo</option> <option value="Lesser">Lesser flamingo</option> </select>
 
@@ -21,15 +23,12 @@ class Dropdown_List extends Control {
         super(spec);
         // and the options...
         //  an array of options.
-
         this.options = spec.options;
-
         // Compose functions look like they would be helpful again.
 
         // if it was called through activation?
 
         if (!spec.skip_compose) this.compose();
-        
     }
     compose() {
         let context = this.context;
@@ -44,9 +43,6 @@ class Dropdown_List extends Control {
                 ctrl_option.dom.attributes.value = option;
                 ctrl_option.add(new jsgui.textNode('option'));
             }
-
-            
-            
 
         });
     }

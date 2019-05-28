@@ -35,6 +35,14 @@ var jsgui = require('../html-core/html-core');
 //var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
+
+
+// Basic but then could be swapped.
+
+
+
+
+
 class Combo_Box extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'combo_box';

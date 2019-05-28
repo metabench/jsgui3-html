@@ -1,4 +1,4 @@
-let lang = require('../lang/lang');
+let lang = require('lang-mini');
 let is_defined = lang.is_defined;
 
 let date = (ctrl, spec) => {

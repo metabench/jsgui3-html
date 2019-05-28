@@ -8,8 +8,8 @@ var stringify = jsgui.stringify,
 var Control = jsgui.Control;
 */
 const {stringify, each, tof, def, Control} = jsgui;
-const Panel = require('./panel');
-const Title_Bar = require('./title-bar');
+const Panel = require('./layout/panel');
+const Title_Bar = require('./layout/title-bar');
 const Tree_Node = require('./tree-node');
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.

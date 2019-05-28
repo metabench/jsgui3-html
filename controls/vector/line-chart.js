@@ -1,6 +1,6 @@
 // Copyright James Vickers 2016, james@metabench.com
 
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../html-core/html-core');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, extend = jsgui.extend;
 var Control = jsgui.Control;

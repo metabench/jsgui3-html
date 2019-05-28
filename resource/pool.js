@@ -1,4 +1,4 @@
-var jsgui = require('../lang/lang');
+var jsgui = require('lang-tools');
 //var Resource = require('./resource');
 
 var stringify = jsgui.stringify,
@@ -35,6 +35,7 @@ var Collection = jsgui.Collection;
 //  Or just a client-side resource client (which itself is a resource)
 
 
+// Sort out and test collections and their indexing?
 
 
 
@@ -135,7 +136,7 @@ class Resource_Pool extends Evented_Class {
 				if (i == i_name) res.push(resource);
 			} else if (tof(i) == 'array') {
 				var done = true;
-				each(i, function (i2, v) {
+				each(i, function (v, i2) {
 					if (!done) {
 						if (i == i_name) res.push(resource);
 						done = true;
@@ -171,15 +172,19 @@ class Resource_Pool extends Evented_Class {
 
 	}
 
+
+	/*
+		// Typed function call selection.
+		//  Then with question marks - could call it if the specific function was not called and there is a match.
+
+		tfn(arr, {'[s,n]': fn...})
+	*/
+
 	'receive_resource_event'() {
 		//console.log('receive_resource_event sig ' + sig);
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
-
-
-		
-
 
 		if (sig == '[D,s,[s,s]]') {
 			var data_object = a[0];

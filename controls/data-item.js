@@ -6,6 +6,20 @@ var Control = jsgui.Control;
 
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
+
+
+// A 'Platform' Control.
+//  Any other word?
+//  Platform control makes sense as it's the platform that jsgui3 is providing.
+//  Basic controls are the ones that are simple / simpler abstractions over HTML elements with customization.
+
+// Basic controls
+// Platform controls
+
+// 
+
+
+
 var fields = [
     ['value', Object]
 ];

@@ -8,11 +8,11 @@ define(["../../../../jsgui-html-enh"],
 	function(jsgui) {
 */
 
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 var group = jsgui.group;
-var Button = require('./button');
+var Button = require('../button');
 
 class Up_Down_Arrow_Buttons extends Control {
     // Maybe should put this into a form, so that it does a form post.

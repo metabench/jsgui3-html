@@ -1,6 +1,6 @@
 var jsgui = require('../html-core/html-core');
 var Plus_Minus_Toggle_Button = require('./plus-minus-toggle-button');
-var Vertical_Expander = require('./vertical-expander');
+var Vertical_Expander = require('./layout/vertical-expander');
 
 const mx_selectable = require('../control_mixins/selectable');
 const {
@@ -169,11 +169,6 @@ class Tree_Node extends Control {
 
 		// Whenever the collection of nodes changes, if there are 0 nodes, then hide this plus minus button.
 
-
-
-
-
-
 		var main_box = top_line.add(new Control(my({
 			'class': 'main-box'
 		})));
@@ -337,8 +332,6 @@ class Tree_Node extends Control {
 				}
 			}
 		}
-
-
 
 	}
 }
