@@ -16,6 +16,14 @@ var Control = jsgui.Control;
 
 // Since this is now an advanced control...
 
+// relatively advanced.
+//  maybe a 'platform' or 'web-platform' control.
+//  jsgui3-html-controls-web-platform.
+//   dont like it, too long.
+
+
+
+
 class Login extends Control {
 
 	// Maybe should put this into a form, so that it does a form post.
@@ -25,10 +33,6 @@ class Login extends Control {
 	constructor(spec) {
 		super(spec);
 		var make = this.make;
-
-
-		
-
 		//this.add_class('login-control');
 		this.add_class('login-control');
 

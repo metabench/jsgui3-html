@@ -1,6 +1,8 @@
-const Control = require('./control-core');
-const {tof} = require('lang-mini');
+//const Control = require('./control-core');
+const {tof, Evented_Class} = require('lang-mini');
 
+// Using a field / prop may work better.
+//  Get closer to the more concise and reasonable functional way of coding this.
 
 const escape_html_replacements = [
     [/&/g, '&amp;'],
@@ -11,7 +13,7 @@ const escape_html_replacements = [
     [/\//g, '&#x2F;']
 ];
 
-const escape_html = function (str) {
+const escape_html = (str) => {
 
     //console.log('tof(str) ' + tof(str));
 
@@ -35,13 +37,15 @@ const escape_html = function (str) {
 // Want to be able to change the text of an active text node.
 //  So, the text node will have an 'el'. Maybe dom.node?
 
-
-
-class textNode extends Control {
+// Maybe don't extend control?
+class textNode extends Evented_Class {
+//class textNode extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'text_node'
 
-        super(spec);
+        super();
+
+        //super(spec);
         if (typeof spec == 'string') {
             //this._.text = spec;
             //this.innerHtml = spec;
@@ -52,6 +56,12 @@ class textNode extends Control {
 
         spec.nodeType = 3;
         spec = spec || {};
+
+        if (spec.el) {
+            this.dom = {
+                el: spec.el
+            }
+        }
 
 
         //ctrl_init_call(this, spec);

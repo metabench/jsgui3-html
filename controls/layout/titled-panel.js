@@ -5,7 +5,6 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined 
 var Control = jsgui.Control;
 
 var Panel = require('./panel');
-
 // Panel with a titlebar inside
 
 var Title_Bar = require('./title-bar');
@@ -55,11 +54,10 @@ class Titled_Panel extends Panel {
     'activate'() {
         super.activate();
 
-        var title_bar = this.title_bar;
-        var inner_control = this.inner_control;
+        const {title_bar, inner_control} = this;
 
-        console.log('title_bar', title_bar);
-        console.log('inner_control', inner_control);
+        //console.log('title_bar', title_bar);
+        //console.log('inner_control', inner_control);
 
     }
 }

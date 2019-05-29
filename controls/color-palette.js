@@ -758,7 +758,6 @@ class Color_Palette extends Control {
                             value: color
                         });
                     }
-
                 }
             });
 
@@ -772,7 +771,6 @@ class Color_Palette extends Control {
                 //console.log('cell.dom.attributes.style.background-color', cell.dom.attributes.style['background-color']);
 
                 //console.log('cell.color', cell.color);
-
 
                 // set color, but silently...
 
@@ -816,8 +814,6 @@ class Color_Palette extends Control {
         //this.grid.clear();
 
         //this.grid.grid_size = 
-
-
         // A problem clearing dynamically added?
 
         // clear the cells, reapply the colors
@@ -825,7 +821,6 @@ class Color_Palette extends Control {
         //this.compose_color_palette();
         this.compose_color_palette();
         //this.grid.active();
-
 
         //this.add_grid_cells();
     }

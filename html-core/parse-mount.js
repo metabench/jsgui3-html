@@ -23,6 +23,7 @@ const {tof, each} = require('lang-mini');
 // Parse and instantiate?
 // Parse and construct?
 
+const log = () => {}
 
 
 // Need a map of all controls that are available to use.
@@ -59,8 +60,8 @@ const parse_mount = (str_content, target, control_set) => {
 
     str_content = str_content.trim();
 
-    console.log('parse_mount str_content', str_content);
-    console.log('target._id()', target._id());
+    log('parse_mount str_content', str_content);
+    log('target._id()', target._id());
 
     // Recursively go through the html-like, creating jsgui controls.
     //  This will enable much more concise expression of jgsui controls.
@@ -69,11 +70,11 @@ const parse_mount = (str_content, target, control_set) => {
     //var rawHtml = "Xyz <script language= javascript>var foo = '<<bar>>';< /  script><!--<!-- Waah! -- -->";
     var handler = new htmlparser.DefaultHandler(function (error, dom) {
         if (error) {
-            console.log('parse error', error);
+            log('parse error', error);
         }
             //[...do something for errors...]
         else {
-            console.log('dom', dom);
+            log('dom', dom);
             // Then can recurse through the dom object.
             //  Nice that it parses non-standard elements.
 
@@ -87,8 +88,8 @@ const parse_mount = (str_content, target, control_set) => {
             let recurse = (dom, depth, callback) => {
                 let tdom = tof(dom);
                 let res;
-                console.log('tdom', tdom);
-                console.log('dom item', dom);
+                log('tdom', tdom);
+                log('dom item', dom);
 
                 if (tdom === 'array') {
                     //res = [];
@@ -109,7 +110,7 @@ const parse_mount = (str_content, target, control_set) => {
                         })
                     }
                 } else {
-                    console.log('dom', dom);
+                    log('dom', dom);
                 }
             }
             // want to create the items as well.
@@ -162,11 +163,11 @@ const parse_mount = (str_content, target, control_set) => {
                     context: target.context
                 });
 
-                //console.log('tn', tn);
-                //console.log('text', text);
-                //console.log('tn instanceof Text_Node', tn instanceof control_set.Text_Node);
-                //console.log('tn.text', tn.text);
-                //console.log('tn._text', tn._text);
+                //log('tn', tn);
+                //log('text', text);
+                //log('tn instanceof Text_Node', tn instanceof control_set.Text_Node);
+                //log('tn.text', tn.text);
+                //log('tn._text', tn._text);
                 //throw 'stop';
                 res_controls.unnamed = res_controls.unnamed || [];
                 res_controls.unnamed.push(tn);
@@ -229,7 +230,7 @@ const parse_mount = (str_content, target, control_set) => {
 
                 // Then the name property - need to use these named controls to set the control's _ctrl_fields
 
-                //console.log('handle_tag tag_with_no_children', tag_with_no_children);
+                //log('handle_tag tag_with_no_children', tag_with_no_children);
                 // maybe pass through the tag with no children. the children have been made into controls.
 
                 // will add to the collection of siblings.
@@ -239,26 +240,26 @@ const parse_mount = (str_content, target, control_set) => {
                 // and the children? content
                 const create_ctrl = (tag, content) => {
                     if (control_set[tag.name]) {
-                        //console.log('has jsgui control for ' + tag.name);
+                        //log('has jsgui control for ' + tag.name);
     
                         // need to look into if there are child jsgui controls within this.
     
                         let Ctrl = control_set[tag.name];
                         // work out the spec as well.
-                        console.log('tag', tag);
+                        log('tag', tag);
                         let a = tag.attribs || {};
 
                         // Why isnt content working in the spec?
                         //  Expecially with a Text_Node?
                         if (content) a.content = content;
-                        //console.log('content.length', content.length);
+                        //log('content.length', content.length);
 
                         each(content, item => {
-                            //console.log('content item', item);
-                            //console.log('Object.keys(content item)', Object.keys(item));
-                            //console.log('(content item.__type_name)', (item.__type_name));
-                            //console.log('(content item._text)', (item._text));
-                            //console.log('(content item.text)', (item.text));
+                            //log('content item', item);
+                            //log('Object.keys(content item)', Object.keys(item));
+                            //log('(content item.__type_name)', (item.__type_name));
+                            //log('(content item._text)', (item._text));
+                            //log('(content item.text)', (item.text));
                         })
 
                         // want an easier way to view the content.
@@ -266,10 +267,10 @@ const parse_mount = (str_content, target, control_set) => {
 
 
 
-                        console.log('attribs a', a);
-                        console.log('\n\n');
-                        //console.log('!!target', !!target);
-                        //console.log('!!target.context', !!target.context);
+                        log('attribs a', a);
+                        log('\n\n');
+                        //log('!!target', !!target);
+                        //log('!!target.context', !!target.context);
                         a.context = target.context;
     
                         let ctrl = new Ctrl(a);
@@ -290,12 +291,12 @@ const parse_mount = (str_content, target, control_set) => {
                         // The name property - possibly name could be stored by the control itself.
                         //  Different to its id.
     
-                        //console.log('!!ctrl', !!ctrl);
-                        //console.log('depth', depth);
+                        //log('!!ctrl', !!ctrl);
+                        //log('depth', depth);
 
                         return ctrl;
                     } else {
-                        //console.log('lacking jsgui control for ' + tag.name);
+                        //log('lacking jsgui control for ' + tag.name);
                         throw 'lacking jsgui control for ' + tag.name;
                     }
                 }
@@ -312,7 +313,7 @@ const parse_mount = (str_content, target, control_set) => {
 
                     // Likely will happen.
 
-                    console.log('depth > last_depth');
+                    log('depth > last_depth');
                     throw 'NYI';
 
 
@@ -331,42 +332,39 @@ const parse_mount = (str_content, target, control_set) => {
 
 
 
-                    //console.log('child_nodes', child_nodes);
+                    //log('child_nodes', child_nodes);
 
                     //child_nodes = [];
 
 
                 } else if (depth < last_depth) {
 
-                    //console.log('child_nodes', child_nodes);
+                    //log('child_nodes', child_nodes);
                     // create the control.
 
                     //child_nodes = [];
 
                     // my children in array!!!
 
-                    //console.log('last_depth', last_depth);
+                    //log('last_depth', last_depth);
 
                     my_children = map_siblings_at_depth[last_depth];
-                    //console.log('my_children', my_children);
+                    //log('my_children', my_children);
 
                     //throw 'stop';
 
                     if (my_children) {
-                        //console.log('my_children.length', my_children.length);
+                        //log('my_children.length', my_children.length);
                         ctrl = create_ctrl(tag_with_no_children, my_children);
                     } else {
                         ctrl = create_ctrl(tag_with_no_children);
                     }
-                    //console.log('ctrl.content._arr.length', ctrl.content._arr.length);
+                    //log('ctrl.content._arr.length', ctrl.content._arr.length);
                     map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
 
                     // do we need to keep these child controls now?
                     //  prob best not to.
                     map_siblings_at_depth[last_depth] = null;
-
-
-
                     map_siblings_at_depth[depth].push(ctrl);
 
                     // create the ctrl including the content.
@@ -402,8 +400,8 @@ const parse_mount = (str_content, target, control_set) => {
 
             // goes depth-first.
             recurse(dom, 0, (item, depth) => {
-                //console.log('item', item);
-                //console.log('depth', depth);
+                //log('item', item);
+                //log('depth', depth);
 
                 // analyse the item
                 //  is it an element (tag)?
@@ -412,12 +410,12 @@ const parse_mount = (str_content, target, control_set) => {
                     // These don't have children
                     //  They are also the inner-most.
                     // create a jsgui text node.
-                    //console.log('text item', item);
+                    //log('text item', item);
                     // trim it
 
                     let trimmed = item.data.trim();
-                    //console.log('trimmed', trimmed);
-                    //console.log('trimmed.length', trimmed.length);
+                    //log('trimmed', trimmed);
+                    //log('trimmed.length', trimmed.length);
 
                     if (trimmed.length > 0) {
                         handle_text(item.raw, depth);
@@ -430,14 +428,14 @@ const parse_mount = (str_content, target, control_set) => {
 
                     // then if it does, what are its control children?
 
-                    //console.log('tag item', item);
-                    //console.log('item.children.length', item.children.length);
+                    //log('tag item', item);
+                    //log('item.children.length', item.children.length);
 
                     handle_tag(item, depth);
 
                     /*
                     if (!item.children) {
-                        console.log('no children item', item);
+                        log('no children item', item);
                         throw 'stop';
                     }
                     */
@@ -451,12 +449,12 @@ const parse_mount = (str_content, target, control_set) => {
 
 
             // then once the recursion is done, see what's at level 0
-            console.log('');
-            //console.log('map_siblings_at_depth[0]', map_siblings_at_depth[0]);
+            log('');
+            //log('map_siblings_at_depth[0]', map_siblings_at_depth[0]);
 
-            console.log('map_siblings_at_depth[0].length', map_siblings_at_depth[0].length);
+            log('map_siblings_at_depth[0].length', map_siblings_at_depth[0].length);
 
-            //console.log('map_siblings_at_depth', map_siblings_at_depth);
+            //log('map_siblings_at_depth', map_siblings_at_depth);
             //throw 'stop';
 
 
@@ -467,9 +465,9 @@ const parse_mount = (str_content, target, control_set) => {
 
             target._ctrl_fields = target._ctrl_fields || {};
 
-            //console.log('res_controls', res_controls);
-            //console.log('Object.keys(res_controls)', Object.keys(res_controls));
-            //console.log('Object.keys(res_controls.named)', Object.keys(res_controls.named));
+            //log('res_controls', res_controls);
+            //log('Object.keys(res_controls)', Object.keys(res_controls));
+            //log('Object.keys(res_controls.named)', Object.keys(res_controls.named));
 
             // Go through the named controls.
             // should have both .named and .unnamed
@@ -496,66 +494,6 @@ const parse_mount = (str_content, target, control_set) => {
     });
     var parser = new htmlparser.Parser(handler);
     parser.parseComplete(str_content);
-
-    //throw 'stop';
-
-
-    // parser in other thread?
-
-    // .$('<a dom>');
-    //  begins with <
-
-    // Needs access to a load of different controls
-    //  They could be expressed in different cases.
-
-    
-
-    //var htmlparser = require("htmlparser2");
-
-    /*
-    var parser = new htmlparser.Parser({
-        onopentag: function (name, attribs) {
-            //if (name === "script" && attribs.type === "text/javascript") {
-            //    console.log("JS! Hooray!");
-            //}
-
-            console.log('name', name);
-            console.log('attribs', attribs);
-
-        },
-        ontext: function (text) {
-            console.log("-->", text);
-        },
-        onclosetag: function (tagname) {
-            if (tagname === "script") {
-                console.log("That's it?!");
-            }
-        },
-        onend: () => {
-            console.log('parsing complete');
-        }
-    }, {
-        decodeEntities: true
-    });
-    parser.write(html);
-    parser.end();
-
-    */
-
-    /*
-
-    var handler = new htmlparser.DomHandler((error, dom) => {
-        if (error)
-            throw 'err';
-        else {
-            console.log('dom', dom);
-        }
-        
-    });
-    var parser = new htmlparser.Parser(handler);
-    parser.write(html);
-    parser.end();
-    */
 }
 //
 

@@ -112,8 +112,6 @@ class Toggle_Button extends Control {
         //console.log('this', this);
         if (!this.__active) {
             super.activate();
-            
-
             this.on('click', e_click => {
                 //console.log('toggle button clicked');
                 // needs to toggle through states.
@@ -135,7 +133,7 @@ class Toggle_Button extends Control {
                     //console.log('i_current_state', i_current_state);
                     // then choose the next state
                     var i_next_state = i_current_state + 1;
-                    if (i_next_state == states.length) i_next_state = 0;
+                    if (i_next_state === states.length) i_next_state = 0;
                     var str_next_state = states[i_next_state];
                     //console.log('i_next_state', i_next_state);
                     //console.log('str_next_state', str_next_state);

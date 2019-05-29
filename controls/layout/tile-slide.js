@@ -25,12 +25,9 @@ class Tile_Slider extends Control {
         // Has 5 controls.
         //  
 
-
         if (!spec.el) {
             this.compose_tile_slider();
         }
-
-
 
     }
     compose_tile_slider() {
@@ -40,6 +37,10 @@ class Tile_Slider extends Control {
 
 
         // And the sizes of these containers.
+
+        // Good candidate for parse_mount.
+        //  Along with date editors / pickers / viewers / calendars.
+        //  Could treat it as building up a composition string.
 
 
         const context = this.context;
@@ -79,6 +80,9 @@ class Tile_Slider extends Control {
         this.central = central;
         this.right = right;
         this.below = below;
+
+        // .cf or cf function?
+        //  or use parse_mount / pm for this?
 
         this._ctrl_fields = {
             'above': above,
@@ -264,8 +268,6 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
 
             this.spec = spec;
 
-
-
             //console.log('prev_spec', prev_spec);
             //console.log('spec', spec);
 
@@ -296,6 +298,13 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
 
             if (this.spec.size) {
                 this.central.size = this.spec.size;
+
+                // .das? .s? .st?
+                //  ds? da.s?
+            
+                // .s accesses style directly.
+                //   maybe that would be a (little) layer about dom styling.
+
                 this.dom.attributes.style.overflow = 'hidden';
                 this.dom.attributes.style.position = 'relative';
 

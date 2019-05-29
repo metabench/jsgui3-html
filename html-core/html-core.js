@@ -54,17 +54,11 @@ const {
 } = require('obext');
 
 var core_extension = str_arr_mapify(function (tagName) {
-
     jsgui.controls[tagName] = jsgui[tagName] = class extends Control {
         constructor(spec) {
             spec.__type_name = tagName;
-            //console.log('spec.__type_name', spec.__type_name);
-            //spec.tagName = tagName;
-            //console.log('core extension tagName ' + tagName);
             super(spec);
-            //this.get('dom').set('tagName', tagName);
             this.dom.tagName = tagName;
-            // dom.tagName?
         }
     };
     jsgui[tagName].prototype._tag_name = tagName;
@@ -167,26 +161,24 @@ var activate = function (context) {
     }
     
     let map_els = () => {
-        recursive_dom_iterate(document, (el) => {
+        recursive_dom_iterate(document, el => {
 
             //console.log('recursive_dom_iterate el', el);
             //console.log('tof el', tof(el));
             //console.log('2) el.tagName ' + el.tagName);
-            var nt = el.nodeType;
+            const nt = el.nodeType;
             //console.log('nt ' + nt);
 
             // So for the 'HTML' tag name...
             //  We should make a control for the HTML document - or it should get activated.
 
-            if (nt == 1) {
-                var jsgui_id = el.getAttribute('data-jsgui-id');
+            if (nt === 1) {
+                const jsgui_id = el.getAttribute('data-jsgui-id');
                 // Give the HTML document an ID?
 
                 //console.log('jsgui_id ' + jsgui_id);
                 if (jsgui_id) {
-                    var ib = id_before__(jsgui_id);
-                    //console.log('ib', ib);
-                    var num = num_after(jsgui_id);
+                    const ib = id_before__(jsgui_id), num = num_after(jsgui_id);
                     //console.log('num', num);
                     if (!def(max_typed_ids[ib])) {
                         max_typed_ids[ib] = num;
@@ -196,6 +188,7 @@ var activate = function (context) {
                     //console.log('max_typed_ids', max_typed_ids);
 
                     map_jsgui_els[jsgui_id] = el;
+
                     var jsgui_type = el.getAttribute('data-jsgui-type');
                     //console.log('jsgui_type ' + jsgui_type);
                     map_jsgui_types[jsgui_id] = jsgui_type;
@@ -221,7 +214,11 @@ var activate = function (context) {
         //console.log('el', el);
         //console.log('jsgui_id ' + jsgui_id);
         //console.log('3) el.tagName ' + el.tagName);
-        var l_tag_name = el.tagName.toLowerCase();
+        // .tn?
+        // tn a global abbreviation for tag_name? not text_node
+        // tn function?
+        // txtn, tagn? tyn for type name?
+        const l_tag_name = el.tagName.toLowerCase();
         if (jsgui_id) {
             var type = map_jsgui_types[jsgui_id];
             //console.log('type ' + type);
@@ -326,6 +323,9 @@ var activate = function (context) {
         //console.log('el ', el);
         var nt = el.nodeType;
         //console.log('nt ' + nt);
+
+        // And add text nodes?
+
         if (nt === 1) {
             var jsgui_id = el.getAttribute('data-jsgui-id');
             //console.log('* jsgui_id ' + jsgui_id);
@@ -333,7 +333,7 @@ var activate = function (context) {
 
                 //console.log('map_controls', map_controls);
 
-                var ctrl = map_controls[jsgui_id];
+                const ctrl = map_controls[jsgui_id];
                 //console.log('!!ctrl', !!ctrl);
                 //ctrl.__activating = true;
 
@@ -381,7 +381,10 @@ var activate = function (context) {
 
 //'use strict'
 
-var matchHtmlRegExp = /["'&<>]/
+
+
+
+// Seems like this won't be needed here as we have it in Text_Node.
 
 /**
  * Escape special characters in the given string of html.
@@ -391,6 +394,8 @@ var matchHtmlRegExp = /["'&<>]/
  * @public
  */
 
+/*
+var matchHtmlRegExp = /["'&<>]/
 function escapeHtml(string) {
     var str = '' + string
     var match = matchHtmlRegExp.exec(str)
@@ -437,6 +442,7 @@ function escapeHtml(string) {
         html + str.substring(lastIndex, index) :
         html
 }
+*/
 
 jsgui.controls = jsgui.controls || {
     Control: Control
@@ -457,8 +463,14 @@ jsgui.controls = jsgui.controls || {
 
 
 
+// A new span file?
 
+// A set of actually 'core' controls?
+// Then basic controls?
+// Then platform controls?
+// Then other sets?
 
+// Dealing with and using control-sets would be very helpful.
 
 
 jsgui.controls.span = jsgui.span = class span extends Control {
@@ -470,7 +482,7 @@ jsgui.controls.span = jsgui.span = class span extends Control {
 
         //console.log('\nspec.text', spec.text);
 
-        prop(this, 'text', '');
+        prop(this, 'text', spec.text || '');
 
         this.on('change', e_change => {
             //console.log('span e_change', e_change);
@@ -480,30 +492,36 @@ jsgui.controls.span = jsgui.span = class span extends Control {
             // data_value within the content...
             //  should listen to changes in the data_value?
 
-            if (this.content._arr.length === 1) {
-                // a Data_Value?
+            const {name} = e_change;
 
-                // is it a Text_Node
-
-                if (this.content._arr[0] instanceof Text_Node) {
-                    //console.log('is a Text_Node');
-                    this.content._arr[0].text = e_change.value;
+            if (name === 'text') {
+                if (this.content._arr.length === 1) {
+                    // a Data_Value?
+    
+                    // is it a Text_Node
+    
+                    if (this.content._arr[0] instanceof Text_Node) {
+                        //console.log('is a Text_Node');
+                        this.content._arr[0].text = e_change.value;
+                    }
+    
+                    // Then when the data value changes, need to change the content.
+                    //  Likely would be better as a Text_Node than Data_Value within the span.
+                    //  Closer to HTML semantics.
+    
+                    // Could replace it with Text_Node here....
+    
+                    // Problem seems to be about activation putting in Data_Values.
+                    //  Data_Value seems less important now.
+    
+    
+    
+                } else {
+                    throw 'NYI';
                 }
-
-                // Then when the data value changes, need to change the content.
-                //  Likely would be better as a Text_Node than Data_Value within the span.
-                //  Closer to HTML semantics.
-
-                // Could replace it with Text_Node here....
-
-                // Problem seems to be about activation putting in Data_Values.
-                //  Data_Value seems less important now.
-
-
-
-            } else {
-                throw 'NYI';
             }
+
+            
 
 
         })
@@ -517,29 +535,41 @@ jsgui.controls.span = jsgui.span = class span extends Control {
             this._text = '';
         }
         */
-        //if (!spec.el) {
-        //    this.compose_span();
-        //}
+        if (!spec.el) {
+            this.compose_span();
+        }
 
         //this.typeName = pr.typeName;
         //this.tagName = 'p';
     }
-    /*
+    
     compose_span() {
 
         // Maybe do it conventional and longwinded way
         // Then make convenience macros / fns / sugar around it.
+        //console.log('this.text', this.text);
 
-        if (this._text && this._text.length > 0) {
-            let tn = this.tn = this.textNode = this.text_node = new textNode({
+        if (this.text && this.text.length > 0) {
+            //let tn = this.tn = this.Text_Node = this.text_node = new Text_Node({
+                /*
+            let tn = this.tn = this.text_node = new Text_Node({
                 context: this.context,
-                text: this._text
+                text: this.text
             });
-            this.add(tn);
+            */
+
+
+            // add function?
+            // add(this, ...)
+
+            this.add(this.tn = this.text_node = new Text_Node({
+                context: this.context,
+                text: this.text
+            }));
         }
         
     }
-    */
+    
 
     // not using a text node as content.
     //  though do use it within the browser.
@@ -585,9 +615,9 @@ jsgui.controls.span = jsgui.span = class span extends Control {
 
         console.log('');
         console.log('content', content);
-        console.log('content instanceof textNode', content instanceof textNode);
+        console.log('content instanceof Text_Node', content instanceof Text_Node);
 
-        if (content instanceof textNode) {
+        if (content instanceof Text_Node) {
             // More situationally aware....
             console.log('content.text', content.text);
 
@@ -639,7 +669,7 @@ jsgui.controls.span = jsgui.span = class span extends Control {
                 }
                 // Add to array without raising event.
 
-                let tn = this.tn = this.textNode = this.text_node = new textNode({
+                let tn = this.tn = this.Text_Node = this.text_node = new Text_Node({
                     context: this.context,
                     node: dtn
                 });
@@ -756,7 +786,6 @@ core_extension_no_closing_tag('link input meta');
 //  May need to get these working when loading in the control's properties.
 
 // Bringing obext will help with this.
-
 
 class HTML_Document extends jsgui.Control {
     // no tag to render...
@@ -1124,7 +1153,7 @@ jsgui.HTML_Document = HTML_Document;
 jsgui.Blank_HTML_Document = Blank_HTML_Document;
 jsgui.Client_HTML_Document = Client_HTML_Document;
 
-jsgui.textNode = jsgui.controls.textNode = jsgui.Text_Node = jsgui.controls.Text_Node = Text_Node;
+jsgui.Text_Node = jsgui.controls.Text_Node = jsgui.Text_Node = jsgui.controls.Text_Node = Text_Node;
 
 // References much better at top.
 

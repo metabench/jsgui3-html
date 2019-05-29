@@ -229,7 +229,7 @@ class Control extends Control_Core {
 		var a = arguments;
 		a.l = a.length;
 		var sig = get_a_sig(a, 1);
-		if (sig == '[]') {
+		if (sig === '[]') {
 			var el = this.dom.el;
 			var bcr = el.getBoundingClientRect();
 			var res = [
@@ -239,7 +239,7 @@ class Control extends Control_Core {
 			];
 			return res;
 		}
-		if (sig == '[a]') {
+		if (sig === '[a]') {
 			//console.log('bcr sig arr');
 			/*
 			var bcr_def = a[0];
@@ -283,7 +283,7 @@ class Control extends Control_Core {
 	}
 	'computed_style'() {
 		var a = arguments;
-		a.l = arguments.length;
+		a.l = a.length;
 		var sig = get_a_sig(a, 1);
 		var y;
 		if (sig == '[s]') {
@@ -300,8 +300,7 @@ class Control extends Control_Core {
 	// Likely to be within the core.
 	//  Meaning it's not done with progressive enhancement.
 	'padding'() {
-		var a = arguments;
-		a.l = arguments.length;
+		var a = arguments; a.l = a.length;
 		var sig = get_a_sig(a, 1);
 		if (sig == '[]') {
 
@@ -416,6 +415,10 @@ class Control extends Control_Core {
 		});
 	}
 
+
+	// Better with mixin I think.
+	//  Still required by selection_box_host. investigate there.
+	//  A mixin could likely be a better place / do the job better.
 	'drag_events'(hmd, hmm, hmu) {
 		// screen x rather than page x
 		//let md, mm, mu;
@@ -454,7 +457,6 @@ class Control extends Control_Core {
 				body.on('mouseup', mu);
 			};
 		});
-
 		// mouse up anywhere
 		// mouse move anywhere with the button not pressed.
 
@@ -470,9 +472,9 @@ class Control extends Control_Core {
 		var map_controls = context.map_controls;
 		var parent_control;
 		// does the control have a DOM node?
-		recursive_dom_iterate_depth(el, (el2) => {
+		recursive_dom_iterate_depth(el, el2 => {
 			//console.log('el ' + el);
-			var nt = el2.nodeType;
+			const nt = el2.nodeType;
 			//console.log('nt ' + nt);
 			if (nt == 1) {
 				var jsgui_id = el2.getAttribute('data-jsgui-id');
@@ -799,7 +801,7 @@ class Control extends Control_Core {
 		});
 	}
 	'activate_content_listen'() {
-		var context = this.context;
+		const context = this.context;
 		var map_controls = context.map_controls;
 		let el = this.dom.el;
 		this.content.on('change', (e_change) => {
@@ -934,7 +936,7 @@ class Control extends Control_Core {
 			var c, l, cns;
 			var jsgui_id;
 			var map_els = {};
-			dom_desc(el, (el) => {
+			dom_desc(el, el => {
 				//console.log('dom_desc el', el);
 				if (el.getAttribute) {
 					jsgui_id = el.getAttribute('data-jsgui-id');
@@ -986,7 +988,7 @@ class Control extends Control_Core {
 		desc(this, ctrl => {
 			// ensure the control is registered with the context.
 			//console.log('desc ctrl', ctrl);
-			var t_ctrl = tof(ctrl);
+			const t_ctrl = tof(ctrl);
 			//console.log('t_ctrl', t_ctrl);
 			if (t_ctrl === 'control') {
 				ctrl.activate();
@@ -1002,52 +1004,50 @@ class Control extends Control_Core {
 				this.dom.el = found_el;
 			}
 		}
-		var el = this.dom.el;
+		const el = this.dom.el;
 
 		if (el) {
-			var context = this.context;
-			var ctrl_fields = {};
-			//var that = this;
-			var c, l;
+			const context = this.context;
+			let ctrl_fields = {}, c, l;
 			//var my_content = this.content;
 
 			if (el.getAttribute) {
-				var str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
+				let str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
 				if (str_ctrl_fields) {
 					ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
 				}
-				var ctrl_fields_keys = Object.keys(ctrl_fields);
+				let ctrl_fields_keys = Object.keys(ctrl_fields);
 				//console.log('ctrl_fields_keys', ctrl_fields_keys);
 
-				var l_ctrl_fields_keys = ctrl_fields_keys.length;
-				var key, value;
+				let l_ctrl_fields_keys = ctrl_fields_keys.length;
+				let key, value;
 				for (c = 0; c < l_ctrl_fields_keys; c++) {
 					key = ctrl_fields_keys[c];
 					value = ctrl_fields[key];
-					var referred_to_control = context.map_controls[value];
-					this[key] = referred_to_control;
+					//var referred_to_control = context.map_controls[value];
+					this[key] = context.map_controls[value];
 					//console.log('referred_to_control', referred_to_control);
 
 				}
-				var cns = el.childNodes;
-				var content = this.content;
+				let cns = el.childNodes;
+				let content = this.content;
 				// Adding the content again?
 				//console.log('cns', cns);
 				//console.log('cns.length', cns.length);
 				for (c = 0, l = cns.length; c < l; c++) {
-					var cn = cns[c];
+					let cn = cns[c];
 
 					if (cn) {
-						var nt = cn.nodeType;
+						let nt = cn.nodeType;
 						//console.log('* nt ' + nt);
 						if (nt === 1) {
-							var cn_jsgui_id = cn.getAttribute('data-jsgui-id');
+							let cn_jsgui_id = cn.getAttribute('data-jsgui-id');
 							//console.log('cn_jsgui_id ' + cn_jsgui_id);
-							var cctrl = context.map_controls[cn_jsgui_id];
+							let cctrl = context.map_controls[cn_jsgui_id];
 							// quick check to see if the control is not already there.
-							var found = false;
+							let found = false;
 							if (cctrl) {
-								var ctrl_id = cctrl.__id;
+								let ctrl_id = cctrl.__id;
 								//console.log('* ctrl_id', ctrl_id);
 								if (ctrl_id) {
 									content.each((v, i) => {
@@ -1069,10 +1069,8 @@ class Control extends Control_Core {
 							// create a new jsgui text node.
 							//  don't want to push / add the data value
 
-							
 
-
-							var val = cn.nodeValue;
+							let val = cn.nodeValue;
 							//console.log('val', val);
 
 							const tn = new Text_Node({
@@ -1083,8 +1081,6 @@ class Control extends Control_Core {
 							//console.log('val ' + val);
 							//content.push(val);
 							content.push(tn);
-
-
 						}
 					}
 				}
@@ -1098,26 +1094,36 @@ class Control extends Control_Core {
 	'activate_dom_attributes'() {
 
 		// .el direct reference?
-		var el = this.dom.el;
+
+		// ctrl.e
+		// a .e function for the el
+		// .d for dom
+		// .da for dom attributes
+		// .a? that makes sense for dom attributes too.
+
+
+		const el = this.dom.el;
 
 		// .node?
 		// .dom.node?
 		//console.log('** el', el);
 		// may not have el....?
 		//var that = this;
-		var dom_attributes = this.dom.attributes;
-		var item, name, value;
+		const dom_attributes = this.dom.attributes;
+		let item, name, value, i;
 		if (el) {
-			if (el.attributes) {
-				for (var i = 0, attrs = el.attributes, l = attrs.length; i < l; i++) {
+			const attrs = el.attributes;
+			if (attrs) {
+				const l = attrs.length
+				for (i = 0; i < l; i++) {
 					item = attrs.item(i);
 					name = item.name;
 					value = item.value;
-					if (name == 'data-jsgui-id') {
+					if (name === 'data-jsgui-id') {
 						// Handled elsewhere - not so sure it should be but won't change that right now.
-					} else if (name == 'data-jsgui-type') {} else if (name == 'style') {
+					} else if (name === 'data-jsgui-type') {} else if (name === 'style') {
 						dom_attributes[name] = value;
-					} else if (name == 'class') {
+					} else if (name === 'class') {
 						dom_attributes[name] = value;
 					} else {
 						dom_attributes[name] = value;
@@ -1138,20 +1144,21 @@ class Control extends Control_Core {
 	}
 
 	'attach_dom_events'() {
+		// .be?
+		// ._b_e?
 		each(this._bound_events, (handlers, name) => {
-			each(handlers, (handler) => {
+			each(handlers, handler => {
 				this.add_dom_event_listener(name, handler);
 			});
 		});
 	}
 
 	'descendants'(search) {
-		var recursive_iterate = (ctrl, item_callback) => {
+		const recursive_iterate = (ctrl, item_callback) => {
 			// callback on all of the child controls, and then iterate those.
 			//console.log('recursive_iterate');
-			var content = ctrl.content;
-			var t_content = tof(content);
-			if (t_content == 'collection') {
+			const content = ctrl.content, t_content = tof(content);
+			if (t_content === 'collection') {
 				if (content.length() > 0) {
 					content.each((item, i) => {
 						//console.log('item', item);
@@ -1161,11 +1168,11 @@ class Control extends Control_Core {
 				}
 			}
 		}
-		var arr_matching = [];
+		const arr_matching = [];
 		recursive_iterate(this, (item) => {
-			var item_type = item.__type_name;
+			const item_type = item.__type_name;
 			//console.log('item_type', item_type);
-			if (item_type == search) {
+			if (item_type === search) {
 				arr_matching.push(item);
 			} else {
 				//return ctrl_parent.ancestor(search);
@@ -1178,7 +1185,7 @@ class Control extends Control_Core {
 	'ancestor'(search) {
 		// could maybe work when not activated too...
 		// need to get the ancestor control matching the search (in type).
-		let parent = this.parent;
+		const parent = this.parent;
 		if (parent) {
 			if (parent === search) {
 				return true;

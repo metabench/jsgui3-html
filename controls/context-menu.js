@@ -18,29 +18,29 @@ class Context_Menu extends Control {
 		console.log('Context_Menu init spec.el', spec.el);
 		if (!spec.abstract) {
 
-			var obj = spec.value;
+			const obj = spec.value;
 
-			console.log('menu obj', obj);
+			//console.log('menu obj', obj);
 
 			// Create the menu nodes from it.
-			var that = this;
+			//var that = this;
 
 			var tobj = tof(obj);
 			//console.log('tobj', tobj);
-			if (tobj == 'object') {
-				each(obj, function (v, key) {
+			if (tobj === 'object') {
+				each(obj, (v, key) => {
 					var menu_node = make(Menu_Node({
 						'text': key,
 						'value': v,
-						'menu': that
+						'menu': this
 					}))
-					that.add(menu_node);
+					this.add(menu_node);
 
 				})
 
 			}
-			if (tobj == 'array') {
-				each(obj, function (v, index) {
+			if (tobj === 'array') {
+				each(obj, (v, index) => {
 
 					var tv = tof(v);
 					//console.log('tv', tv);
@@ -57,9 +57,9 @@ class Context_Menu extends Control {
 						var menu_node = make(Menu_Node({
 							'text': text,
 							'value': text,
-							'menu': that
+							'menu': this
 						}))
-						that.add(menu_node);
+						this.add(menu_node);
 					}
 				})
 			}

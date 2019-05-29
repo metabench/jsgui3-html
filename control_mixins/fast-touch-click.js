@@ -16,11 +16,8 @@ let fast_touch_click = (ctrl) => {
     ctrl.on('touchstart', ets => {
         //console.log('ets', ets);
         // Then cancel the event.
-
         //console.log('Object.keys(ets)', Object.keys(ets));
-
         // Returning false from such a DOM event should cancel the event propagation.
-
         ets.preventDefault();
         //return false;
     })
@@ -36,9 +33,6 @@ let fast_touch_click = (ctrl) => {
         has_moved_away = true;
         //console.log('etm', etm);
     })
-
-
-
 }
 
 module.exports = fast_touch_click;

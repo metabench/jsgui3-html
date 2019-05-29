@@ -77,7 +77,6 @@ class Item_View extends Control {
 
 		// So it updates the view differently depending on the rendering mode.
 
-
 		// Need to respond to item changes.
 
 		let _item;
@@ -177,8 +176,6 @@ class Item_View extends Control {
 			this.add(ctrl_expand_contract);
 		}
 
-
-
 		//  More work on controls will help.
 		//   Give them more convenient methods. Make them faster too.
 
@@ -205,6 +202,9 @@ class Item_View extends Control {
 
 		let t_item = tof(this.item);
 		if (t_item === 'object') {
+
+			// Use Object Viewer?
+
 			var ctrl_item_info = new Control({
 				'context': this.context
 			});

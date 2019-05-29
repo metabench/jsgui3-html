@@ -4,6 +4,16 @@ var Control = jsgui.Control;
 
 /*
     New system will lead to much smaller definitions of controls.
+
+
+    // Simple / basic control.
+
+    // Would be great to define them all in one file.
+
+    // Functional hooks may help.
+    //  Could make react-compatible?
+
+
 */
 
 

@@ -176,7 +176,7 @@ class Selection_Scope extends jsgui.Data_Object {
 				}
 			}
 			*/
-			if (tsel == 'boolean') {
+			if (tsel === 'boolean') {
 				if (sel) {
 					//ctrl.remove_class('selected');
 					ctrl.selected = false;
@@ -196,7 +196,6 @@ class Selection_Scope extends jsgui.Data_Object {
 		if (!silent) {
 			this.raise('change');
 		}
-		
 	}
 }
 

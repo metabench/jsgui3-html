@@ -8,6 +8,42 @@ var stringify = jsgui.stringify,
 var Control = jsgui.Control;
 */
 const {stringify, each, tof, def, Control} = jsgui;
+
+// Registration of controls within jsgui.
+//  where it adds it to the map of controls.
+
+// jsgui.controls is now the / a map of controls.
+
+// Again, a 'platform' control.
+//  Ways to merge in different controls / control sets?
+//   That will come. It needs to be convenient.
+
+// Could download the bare minimum.
+//  Bare minimum / core controls.
+
+// Could separate out the core controls ie document, div, span, svg, many others.
+//  Pay them more attention. Could have plugins.
+//   Styling shortcuts.
+// Really advanced and flexible core that deals mostly with single controls, but sets the groundwork for 'platform' controls.
+
+// Platform controls - separate from the core controls.
+//  eos-live-www just seems to need to show some very basic controls ie have control over some span contents.
+//   it has its own controls. then module-view as well.
+//    so does not need much in terms of jsgui controls at all at this stage.
+
+
+
+
+
+//  Then download a control set all at once in another file.
+
+
+
+
+
+
+
+
 const Panel = require('./layout/panel');
 const Title_Bar = require('./layout/title-bar');
 const Tree_Node = require('./tree-node');
@@ -64,6 +100,12 @@ class Tree extends Control {
     }
     compose_tree(spec) {
         //console.log('this.title', this.title);
+
+        // Can try the new parse_mount with controls.
+
+
+
+
         if (this.title !== undefined) {
             this.add(this.title_bar = new Title_Bar({
                 context: this.context,

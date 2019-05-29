@@ -4,6 +4,16 @@ var Toggle_Button = require('./toggle-button');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
+// Maybe a bit more niche.
+//  Could make an extra controls expansion....
+
+// Specifying / having a smaller default control set would help.
+//  So would a function for declaring controls.
+//   May have some more tricks for keeping things in a closure.
+
+
+
+
 class Start_Stop_Toggle_Button extends Toggle_Button {
 
 	//'fields': [
@@ -30,10 +40,13 @@ class Start_Stop_Toggle_Button extends Toggle_Button {
 		// needs to be client-side event only.
 		//  Maybe just on activation.
 
+		// a 'changes' util function.
+
+		
+
 		this.on('change', (e_change) => {
 			//console.log('Start_Stop_Toggle_Button e_change', e_change);
-			var name = e_change.name;
-			var value = e_change.value;
+			const {name, value} = e_change;
 			if (name === 'state') {
 				// the state is just what the button says/will say.
 				if (value === 'stop') {

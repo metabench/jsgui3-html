@@ -44,8 +44,8 @@ if (typeof document === 'undefined') {
 
     let basic_css_path = libpath.join(__dirname, 'css', 'basic.css');
 
-    console.log('__dirname', __dirname);
-    console.log('basic_css_path', basic_css_path);
+    //console.log('__dirname', __dirname);
+    //console.log('basic_css_path', basic_css_path);
     var basic_css = fs.readFileSync(basic_css_path, 'utf8');
 
     // Want the css strings.

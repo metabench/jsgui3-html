@@ -2,17 +2,19 @@
  * Created by James on 16/09/2016.
  */
 
-var jsgui = require('lang-tools');
-var get_a_sig = jsgui.get_a_sig;
+const jsgui = require('lang-tools');
+const get_a_sig = jsgui.get_a_sig;
 //var remove_sig_from_arr_shell = jsgui.remove_sig_from_arr_shell;
-var each = jsgui.each;
-var clone = jsgui.clone;
-var Evented_Class = jsgui.Evented_Class;
+const each = jsgui.each;
+const clone = jsgui.clone;
+const Evented_Class = jsgui.Evented_Class;
 //var Data_Value = jsgui.Data_Value;
-var Data_Object = jsgui.Data_Object;
-var Collection = jsgui.Collection;
-var tof = jsgui.tof;
-var stringify = jsgui.stringify;
+const Data_Object = jsgui.Data_Object;
+const Collection = jsgui.Collection;
+const tof = jsgui.tof;
+const stringify = jsgui.stringify;
+
+const Text_Node = require('./text-node');
 
 const {
 	prop,
@@ -1041,6 +1043,7 @@ class Control_Core extends Data_Object {
 		// Does not have content?
 		//  That's very strange.
 
+		/*
 		if (!content.length) {
 			console.log('!!!no content length!!!');
 			console.log('');
@@ -1051,6 +1054,7 @@ class Control_Core extends Data_Object {
 			console.log('tof(content) ' + tof(content));
 			throw 'stop';
 		}
+		*/
 
 
 		var contentLength = content.length();
@@ -1076,12 +1080,12 @@ class Control_Core extends Data_Object {
 
 			//console.log('tn', tn);
 
-			if (tn == 'string') {
+			if (tn === 'string') {
 				res.push(jsgui.output_processors['string'](n));
-			} else if (tn == 'data_value') {
+			} else if (tn === 'data_value') {
 				res.push(n._);
 			} else {
-				if (tn == 'data_object') {
+				if (tn === 'data_object') {
 					//console.log('n', n);
 					//
 					throw 'stop';
@@ -1166,7 +1170,7 @@ class Control_Core extends Data_Object {
 				if (tnc === 'string') {
 					//console.log('new content is string');
 
-					new_content = new jsgui.textNode({
+					new_content = new Text_Node({
 						'text': new_content,
 						'context': this.context
 					});
@@ -1205,10 +1209,10 @@ class Control_Core extends Data_Object {
 
 		// The parent of a content Collection being a Control?
 		//  Probably makes sense.
-		var target_parent = target.parent;
+		const target_parent = target.parent;
 		//console.log('target_parent', target_parent);
-		var target_index = target._index;
-		var content = target_parent.content;
+		const target_index = target._index;
+		const content = target_parent.content;
 		content.insert(this, target_index);
 	}
 	/*
@@ -1219,7 +1223,7 @@ class Control_Core extends Data_Object {
 	}
 	*/
 	'style'() {
-		var a = arguments,
+		const a = arguments,
 			sig = get_a_sig(a, 1);;
 		a.l = a.length;
 		//var sig = get_a_sig(a, 1);
@@ -1328,10 +1332,17 @@ class Control_Core extends Data_Object {
 			//console.log('tCtrl', tCtrl);
 			if (tCtrl === 'control') {
 				// if it's a text node then no
+
+				/*
+
 				if (ctrl instanceof jsgui.textNode || ctrl instanceof jsgui.code) {
 
 				} else {
 					//console.log('ctrl', ctrl);
+					ctrl.active();
+				}
+				*/
+				if (typeof(ctrl.active) === 'function') {
 					ctrl.active();
 				}
 			}

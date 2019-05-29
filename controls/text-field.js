@@ -1,17 +1,19 @@
 // Maybe just change to Field control
 // Then Field_Group control would avoid confusion with an HTML form.
 
-var jsgui = require('../html-core/html-core');
-var Text_Input = require('./text-input');
-var Text_Item = require('./text-item');
+const jsgui = require('../html-core/html-core');
+const Text_Input = require('./text-input');
+const Text_Item = require('./text-item');
+/*
 var stringify = jsgui.stringify,
 	each = jsgui.each,
 	tof = jsgui.tof;
-var Control = jsgui.Control;
+	*/
+const Control = jsgui.Control;
 
 // fields could have default values too.
 
-var fields = [
+const fields = [
 	['text', String],
 	['name', String],
 	['value', String],
@@ -37,11 +39,17 @@ class Text_Field extends Control {
 			this.compose_text_field();
 		}
 
+		// obext this.editable property.
+		//  Will show different layouts / compositions depending on that property.
+
+
 		//this.add_event_listener('change', function(e) {
 		//console.log('Text_Field change event e ' + stringify(e));
 		//});
 	}
 	compose_text_field() {
+		// Parse-mount could take less space.
+
 		var left = new jsgui.div({
 			'context': this.context
 		});
@@ -62,6 +70,8 @@ class Text_Field extends Control {
 		clearall.add_class('clearall');
 		this.add(clearall);
 
+
+
 		if (this.show_text) {
 			var label = new jsgui.label({
 				'context': this.context
@@ -75,6 +85,8 @@ class Text_Field extends Control {
 
 		const _ctrl_fields = this._ctrl_fields = this._ctrl_fields || {};
 
+		// Needs to work differently.
+		//  Define two modes, it will swap between modes based on editable property and changes to it.
 		if (this.editable) {
 
 			let o_spec = {
@@ -86,6 +98,10 @@ class Text_Field extends Control {
 
 			var textInput = new Text_Input(o_spec);
 			var tiid = textInput._id();
+
+			// da(ctrl, str attr name, attr value)
+			// da([arr of ctrl dom attr changes])
+
 			textInput.dom.attributes.id = tiid;
 			textInput.dom.attributes.name = this.name;
 			label.dom.attributes.for = tiid;

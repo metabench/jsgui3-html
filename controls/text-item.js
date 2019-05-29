@@ -16,8 +16,6 @@ var fields = [
 // Maybe not much need for this?
 
 
-
-
 class Text_Item extends Control {
     // is an Input element.
     //  type of either text or password.

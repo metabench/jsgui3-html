@@ -1,7 +1,7 @@
-const jsgui = require('../html-core/html-core');
-const Tree_Node = require('./tree-node');
+const jsgui = require('../../html-core/html-core');
+const Tree_Node = require('../tree-node');
 
-const mx_selection_box_host = require('../control_mixins/selection-box-host');
+//const mx_selection_box_host = require('../control_mixins/selection-box-host');
 
 class File_Tree_Node extends Tree_Node {
     constructor(spec) {
@@ -22,9 +22,6 @@ class File_Tree_Node extends Tree_Node {
 
         super(spec);
         this.add_class('file');
-
-        
-        
         
         
         // Camera could be a camera object that can provide data.
@@ -34,7 +31,7 @@ class File_Tree_Node extends Tree_Node {
         //console.log('File_Tree_Node spec', spec);
 
         if (!spec.el) {
-            let tn;
+            //let tn;
             /*
             this.add(tn = new Tree_Node({
                 context: this.context,

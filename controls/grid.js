@@ -52,12 +52,18 @@ const {
 
 // grid.set('data', ...);
 
+// Multiple composition modes.
+
+
 class Grid_Cell extends Control {
     constructor(spec) {
         (spec = spec || {}).__type_name = 'grid_cell';
         super(spec);
         this.add_class('cell');
 
+
+        // field o,o
+        //  where we only need to call the field function once.
         field(this, 'x', spec.x);
         field(this, 'y', spec.y);
         field(this, 'data', spec.data);
@@ -660,6 +666,9 @@ class Grid extends Control {
             console.log('activate Grid');
             //var _arr_rows;
             this.selection_scope = this.context.new_selection_scope(this);
+
+            // A Collection of rows may be better.
+
             var load_rows = () => {
                 //console.log('load_rows');
                 //console.log('this.content.length', this.content.length);

@@ -137,6 +137,9 @@ class Tree_Node extends Control {
 			'class': 'top-line'
 		})));
 		let rest_of_top_line;
+
+		// Could try with parse_mount. Maybe it's not the best for loops
+
 		if (def(this.depth)) {
 			// add that many depth blocks
 			//console.log('this.depth', this.depth);
@@ -289,6 +292,7 @@ class Tree_Node extends Control {
 		if (!this.__active) {
 			super.activate(el);
 
+			// Maybe shouldn't need this.
 			this.rec_desc_ensure_ctrl_el_refs();
 			//this.selectable();
 

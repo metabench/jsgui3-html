@@ -3,7 +3,7 @@ var jsgui = require('../html-core/html-core');
 //var Horizontal_Menu = require('./horizontal-menu');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
-var Control = jsgui.Control;
+//var Control = jsgui.Control;
 
 var Button = require('./button');
 var Item = require('./item');
@@ -16,6 +16,11 @@ var Data_Value = jsgui.Data_Value;
 // Want to keep panel simple. Could have Titled_Panel, maybe Resizable_Panel.
 //  If we want a panel with a lot of functionality, it would be the Flexi_Panel.
 
+
+// A 'platform' control.
+//  Not basic. Will still have its own file for the moment.
+
+
 class Popup_Menu_Button extends Button {
     // panel name?
 
@@ -25,7 +30,12 @@ class Popup_Menu_Button extends Button {
     //}
     // maybe add before make would be better. add will probably be used more.
     constructor(spec, add, make) {
+
+        
         spec.no_compose = true;
+
+
+
         spec['class'] = 'popup-menu-button';
         super(spec);
 
@@ -98,9 +108,9 @@ class Popup_Menu_Button extends Button {
 
             if (spec.items) {
                 //console.log('spec.items', spec.items);
-                this.items = new Collection(spec.items);
+                let items = this.items = new Collection(spec.items);
                 //console.log('this.items', this.items);
-                each(this.items, (item) => {
+                each(items, (item) => {
                     //console.log('item', item);
 
                     var menu_item = new Item({
@@ -205,7 +215,7 @@ class Popup_Menu_Button extends Button {
                 //    root_menu_item.open();
                 //}
 
-                if (val == 'open') {
+                if (val === 'open') {
                     //ui_open();
                     //root_menu_item.open();
                     root_menu_item.inner.pop_into_body();

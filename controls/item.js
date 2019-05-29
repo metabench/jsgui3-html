@@ -20,6 +20,8 @@ var Data_Value = jsgui.Data_Value;
 //var Data_Object = jsgui.Data_Object;
 
 // Could make this into an open-close mixin.
+//  It's a bit vague. Then the Item implementation is a bit specific.
+//   So maybe use mixins and controls. Controls / divs / whatever can be items.
 
 class Item extends Control {
 
@@ -267,10 +269,7 @@ class Item extends Control {
                 }
             }
             set_value(value);
-
         }
-
-
 
         //var ctrl_secondary = new Control({
         //    'context': this.context
@@ -287,15 +286,12 @@ class Item extends Control {
         depth = depth || 0;
         var path;
         // 
-
         each(this.inner.content, (sub_item) => {
 
             cb_item(sub_item, depth);
             sub_item.iterate_sub_items(cb_item, depth + 1);
         });
-
         // But then recursively iterate those sub items too
-
     }
 
     'activate'() {

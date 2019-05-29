@@ -32,6 +32,10 @@
 
 // May be worth taking Data_Resource out of jsgui3
 
+// jsgui3-html-minimal?
+//  just the core controls.
+
+
 
 
 // Be able to connect the UI to the Data_Resource_Pool
@@ -42,10 +46,6 @@
 //    A general purpose KVS for use as a cms would help.
 //   Specialised image cms would be very useful too.
 //    Different versions of images, getting file hashes of them, resized versions including small thumbnails.
-
-
-
-
 
 //  Data_Resource_Pool
 //  Client_Data_Resource_Pool
@@ -59,6 +59,47 @@
 
 // Need a few data adapter sets.
 //  May be able to specify them using functional programming.
+
+// Unsure about separating the controls for the moment.
+//  There may be ways to make a significantly smaller build.
+//  Referencing what's needed.
+
+
+// Many of these controls won't be used in various simple projects.
+//  Better not to reference them?
+
+// jsgui3-html-core
+//  So other systems can access core which does not have these controls and mixins.
+
+
+// jsgui3-html-base-controls
+// jsgui3-controls
+// jsgui3-html
+
+// jsgui3-core-controls
+//  Not that sure how necessary a few controls are really.
+
+//  Maybe the more advanced controls will do a whole lot more / be better.
+
+// Cutting all / most of these out of the core would help.
+
+// There will be basic controls?
+//  DOM controls?
+//  el controls?
+//   elementary? - catchy name for library perhaps?
+
+// A way of only building the necessary ones into the client...?
+//  Also not having the mixins in the core / minimal build.
+
+
+// Consider 'platform' mixins.
+//  So the core doesn't have much at all.
+//   But has more flexibility.
+
+// Detect which controls are used in the app?
+//  Then bundle them?
+
+
 
 
 
@@ -86,10 +127,10 @@ var controls = {
     Date_Picker: require('./date-picker'),
     Dropdown_List: require('./dropdown-list'),
 
+    // Exclude the connected ones for the moment. Moment passed.
 
-    // Exclude the connected ones for the moment.
-    //File_Tree: require('./connected/file-tree'),
-    //File_Tree_Node: require('./connected/file-tree-node'),
+    File_Tree: require('./connected/file-tree'),
+    File_Tree_Node: require('./connected/file-tree-node'),
 
     Item: require('./item'),
     Item_Selector: require('./item-selector'),
@@ -99,10 +140,8 @@ var controls = {
     Line_Chart: require('./vector/line-chart'),
     List: require('./list'),
 
-
     // could be in forms / standard forms.
     Login: require('./login'),
-
 
     //Media_Scrubber: require('./media-scrubber'),
     Menu_Node: require('./menu-node'),

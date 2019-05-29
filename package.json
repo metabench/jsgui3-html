@@ -8,9 +8,11 @@
     "htmlparser": "^1.7.7",
     "lang-mini": "^0.0.9",
     "lang-tools": "^0.0.1",
-    "obext": "^0.0.4",
+    "obext": "^0.0.5",
     "url-parse": "^1.4.7"
   },
+  "notes": [
+    "Making a jsgui3-html-core module would help / be the way. It would include ways to load more controls and then there will still be jsgui3-html"],
   "engines": {
     "node": ">=10.0.0"
   },
@@ -20,5 +22,5 @@
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
-  "version": "0.0.69"
+  "version": "0.0.71"
 }

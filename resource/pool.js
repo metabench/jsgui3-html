@@ -27,17 +27,13 @@ var Collection = jsgui.Collection;
 // Keeps track of resources available within JavaScript process (browser or node.js).
 
 
-
 // Client-side resources may need to work differently.
 
 // Want a general purpose client-side data resource.
 // Makes a request to the server-side resource.
 //  Or just a client-side resource client (which itself is a resource)
 
-
 // Sort out and test collections and their indexing?
-
-
 
 class Resource_Pool extends Evented_Class {
 
@@ -78,16 +74,10 @@ class Resource_Pool extends Evented_Class {
 				//  It gets the data for the attached object.
 				// {'attached': {'meta': 'name'}}
 
-
 				//'sorted': [[{'attached': {'meta': 'name'}}]]
-
 
 				// just sorted by name will be best.
 				//  Won't use as in depth a structure in jsgui2.
-
-
-
-
 
 				//sorted: [[['attached', 'meta', 'name']]]
 			}
@@ -120,6 +110,7 @@ class Resource_Pool extends Evented_Class {
 	}
 	*/
 
+	/*
 	'_get_resources_by_interface'(i_name) {
 		var res = [];
 
@@ -149,7 +140,9 @@ class Resource_Pool extends Evented_Class {
 		return res[0];
 
 	}
+	*/
 
+	/*
 	'index_resource'(obj) {
 		// will get some metadata from the resource.
 
@@ -171,6 +164,7 @@ class Resource_Pool extends Evented_Class {
 
 
 	}
+	*/
 
 
 	/*
@@ -180,40 +174,12 @@ class Resource_Pool extends Evented_Class {
 		tfn(arr, {'[s,n]': fn...})
 	*/
 
-	'receive_resource_event'() {
-		//console.log('receive_resource_event sig ' + sig);
-		var a = arguments;
-		a.l = arguments.length;
-		var sig = get_a_sig(a, 1);
-
-		if (sig == '[D,s,[s,s]]') {
-			var data_object = a[0];
-			//console.log('data_object ' + stringify(data_object));
-			//console.log('a[1] ' + a[1]);
-			//console.log('a[2] ' + stringify(a[2]));
-		}
-
-		if (sig == '[D,s]') {
-			var data_object = a[0];
-			//console.log('data_object ' + stringify(data_object));
-			//console.log('a[1] ' + a[1]);
-			var event_name = a[1];
-			//console.log('event_name ' + event_name);
-			// could be that it has started?
-			// then need to raise this event.
-			// so if an resource has started, could have a particular handler for that.
-			// There will be groups of resources that are needed for other ones to start.
-			//  When one of these resources has loaded, it will check to see if others have also loaded.
-			// This should be done with fairly fast algorithms, we don't want the system to slow down as it is getting going.
-		}
-
-	}
 
 	'add'(obj) {
 		// adds the resource obj to the pool.
 		// Each resource will have its own individual name within the pool.
 		//  There may be resources that get put into groups too.
-		var that = this;
+		//var that = this;
 
 		//console.log('obj ' + stringify(obj));
 
@@ -240,7 +206,15 @@ class Resource_Pool extends Evented_Class {
 			//this._dict_resources[obj_name] = obj;
 			// raise an event saying that the resource was added.
 
+			console.log('resource pool adding resource to collection', obj);
+			console.log('this.resources._arr.length', this.resources._arr.length);
+
+			console.log('this.resources', this.resources);
+
 			this.resources.add(obj);
+			console.log('post add');
+			console.log('this.resources._arr.length', this.resources._arr.length);
+			console.log('this.resources', this.resources);
 
 			// Resources have an indexing function?
 
@@ -338,7 +312,7 @@ class Resource_Pool extends Evented_Class {
 
 
 
-		if (sig == '[s]') {
+		if (sig === '[s]') {
 			// one string value, that will be the value of the unique primary index
 
 			var obj_lookup_val = a[0];
@@ -439,7 +413,7 @@ class Resource_Pool extends Evented_Class {
 
 
 
-		if (arr_resources_meeting_requirements.length == l_resources) {
+		if (arr_resources_meeting_requirements.length === l_resources) {
 
 			var fns = [];
 
@@ -463,7 +437,7 @@ class Resource_Pool extends Evented_Class {
 				}
 			}
 
-			each(arr_resources_meeting_requirements, function (resource_ready_to_start) {
+			each(arr_resources_meeting_requirements, resource_ready_to_start => {
 				//console.log('');
 				//console.log('');
 				//console.log('resource_ready_to_start ', resource_ready_to_start);

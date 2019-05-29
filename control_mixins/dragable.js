@@ -116,8 +116,6 @@ let dragable = (ctrl, opts = {}) => {
 			// need to calculate move offsets.
 			//  measure the item's initial position.
 			//console.log('parent.size', parent.size);
-
-
 			item_start_pos = ctrl.pos;
 
 			//item_start_pos = ctrl.bcr()[0];

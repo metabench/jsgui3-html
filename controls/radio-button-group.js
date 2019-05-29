@@ -40,7 +40,7 @@ class Radio_Button_Group extends Control {
         //console.log('spec.el', spec.el);
 
         var context = this.context;
-        var that = this;
+        //var that = this;
 
 
         if (!spec.abstract && !spec.el) {
@@ -51,7 +51,7 @@ class Radio_Button_Group extends Control {
             //console.log('items', items);
             //throw 'stop';
 
-            each(items, function(v, i) {
+            each(items, (v, i) => {
 
                 // jsgui advanced Radio Buttons will also be able to have a text label next to them.
                 //  May render itself as an item inside a div, with the value next to it.
@@ -89,7 +89,7 @@ class Radio_Button_Group extends Control {
                     'value': v
                 });
 
-                that.add(radio_button);
+                this.add(radio_button);
             });
 
 
@@ -111,13 +111,13 @@ class Radio_Button_Group extends Control {
     //'resizable': function() {
     //},
     'activate'() {
-        console.log('1) Activate radio_button_group');
+        //console.log('1) Activate radio_button_group');
         if (!this.__active) {
             var that = this;
             super.activate();
 
             var ctrl_checked;
-            console.log('2) Activate radio_button_group');
+            //console.log('2) Activate radio_button_group');
             this.content.each(function(ctrl, i) {
 
                 ctrl.on('change', false, function(e_change) {

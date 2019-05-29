@@ -7,9 +7,11 @@ var Control = jsgui.Control;
 var Data_Item = require('./data-item');
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
+/*
 var fields = [
     ['text', String]
 ];
+*/
 class Data_Row extends Control {
     // fields... text, value, type?
     //  type could specify some kind of validation, or also 'password'.
@@ -22,14 +24,14 @@ class Data_Row extends Control {
 
         // Contains data items
 
-        this.items = [];
+        let items = this.items = [];
 
         // Or use the inner collection of controls?
 
         if (spec.items) {
             each(spec.items, item => {
                 //console.log('item', item);
-                this.items.push(this.add(new Data_Item({
+                items.push(this.add(new Data_Item({
                     'context': context,
                     'value': item
                 })));

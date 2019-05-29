@@ -37,7 +37,7 @@ class Dropdown_List extends Control {
 
             let t = tof(option);
             let ctrl_option = new jsgui.option({
-                context: this.context
+                context: context
             });
             if (t === 'string') {
                 ctrl_option.dom.attributes.value = option;

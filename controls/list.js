@@ -148,19 +148,14 @@ class List extends Control {
     }
 
     'activate' () {
-
         //console.log('');
         //console.log('activate list');
-
-
         if (!this.__active) {
             super.activate();
 
             each(this.$('item'), item => {
                 item.selectable = true;
             })
-
-
             let ss = this.find_selection_scope();
             if (ss.on) {
                 //console.log('ss', ss);
@@ -180,8 +175,6 @@ class List extends Control {
                 })
             }
         }
-
-
 
         // Could use delegated click events.
         //  Would save having to wire up each item.

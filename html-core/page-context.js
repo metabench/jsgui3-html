@@ -1,4 +1,8 @@
 var jsgui = require('lang-tools');
+
+const {each, tof, is_defined, get_a_sig, Evented_Class} = jsgui;
+
+/*
 var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof,
@@ -9,13 +13,38 @@ var fp = jsgui.fp;
 var group = jsgui.group;
 var get_a_sig = jsgui.get_a_sig;
 var get_window_size = jsgui.get_window_size;
-const Selection_Scope = require('./selection-scope');
+
+*/
 // this is the enhanced HTML module.
 
-class Page_Context extends jsgui.Evented_Class {
+// Selection scope could be made optional.
+//  With some apps, selecting won't matter.
+
+const Selection_Scope = require('./selection-scope');
+
+
+
+class Page_Context extends Evented_Class {
     constructor(spec) {
         spec = spec || {};
         super(spec);
+
+        // // merge or assign from spec.
+        //  use is_def / def
+
+        // .rp .r_p
+        //  shorthands would be useful and save bandwidth too.
+        ///  especially where the code does not naturally compress.
+        //    then load it into a local variable with its full name.
+
+        // jsgui3-wide shorthands will be of use.
+        //  The tutorials will show the longhand version first / by default.
+
+
+        // Maybe simplify the stuff to do with IDs.
+        //  Maybe go further with full guids.
+
+
         if (spec.browser_info) {
             this.browser_info = spec.browser_info;
         };
@@ -52,6 +81,9 @@ class Page_Context extends jsgui.Evented_Class {
         }
 
         this.new_id = _get_new_typed_object_id;
+
+
+
         this.set_max_ids = (map_max_ids) => {
             each(map_max_ids, (v, i) => {
                 map_new_ids[i] = v + 1;
@@ -61,7 +93,8 @@ class Page_Context extends jsgui.Evented_Class {
         var map_Controls = this.map_Controls = {};
         //  they are constructors
         var map_controls = this.map_controls = {};
-        map_Controls['control'] = Control;
+
+        //map_Controls['control'] = Control;
     }
 
     'new_selection_scope'(ctrl) {
@@ -72,6 +105,7 @@ class Page_Context extends jsgui.Evented_Class {
             'id': this.selection_scope_id_counter++,
             'ctrl': ctrl
         })
+        // .s_s / .ss
         this.selection_scopes[res.id] = res;
         if (ctrl) {
             //console.log('core new_selection_scope ctrl._id()', ctrl._id());
@@ -104,11 +138,16 @@ class Page_Context extends jsgui.Evented_Class {
         }
     }
     'update_Controls' () {
+
+
+        // Multisig functions.
+        // Try them. mfp({})
+
         //console.log('update_Controls sig ' + sig);
         var a = arguments;
         a.l = arguments.length;
         var sig = get_a_sig(a, 1);
-        if (sig == '[o]') {
+        if (sig === '[o]') {
             // a map of keys and constructors values.
             var o = a[0];
             var map_Controls = this.map_Controls;
@@ -118,7 +157,7 @@ class Page_Context extends jsgui.Evented_Class {
                 map_Controls[name] = Constructor;
             });
         }
-        if (sig == '[s,f]') {
+        if (sig === '[s,f]') {
             var name = a[0];
             var Constructor = a[1];
             name = name.toLowerCase();
@@ -157,6 +196,13 @@ class Page_Context extends jsgui.Evented_Class {
         });
         return res;
     }
+
+
+    /* Seems better to do this with mixins */
+    //  Don't think we are using this for drag and drop reently.
+
+
+    /*
     'begin_drag_ctrl' (e_begin, ctrl) {
         // Though the ctrl should probably go in the event object - maybe need to formalise an API.
         // Different types of drag could be made modular to make builds smaller.
@@ -164,18 +210,18 @@ class Page_Context extends jsgui.Evented_Class {
         this.raise('drag-ctrl-begin', e_end, ctrl);
     }
     'move_drag_ctrl' (e_move, ctrl) {
-        var window_size = get_window_size();
-        var from_left, from_top, from_right, from_bottom;
-        var clientX = e_move.clientX;
-        var clientY = e_move.clientY;
+        const window_size = get_window_size();
+        let from_left, from_top, from_right, from_bottom;
+        let clientX = e_move.clientX;
+        let clientY = e_move.clientY;
         // see if it's at the top or bottom...
         //  would be nice to have different distances, so halfway to the margin anchors it in a way that it hides itself.
 
-        var margin = 64;
-        var is_left = clientX <= margin;
-        var is_top = clientY <= margin;
-        var is_right = clientX >= window_size[0] - margin;
-        var is_bottom = clientY >= window_size[1] - margin;
+        let margin = 64;
+        let is_left = clientX <= margin;
+        let is_top = clientY <= margin;
+        let is_right = clientX >= window_size[0] - margin;
+        let is_bottom = clientY >= window_size[1] - margin;
 
         // need more generic event binding for objects.
         // listen
@@ -216,6 +262,16 @@ class Page_Context extends jsgui.Evented_Class {
             //  The anchor zone will be a part of the grid_9 (or other mechanism)
         }
     }
+    */
+
+
+
+    // Again, looks better through mixins
+    //  May be woth speccing out exactly what this should do and making it as a mixin.
+    //  Seems more active client side.
+
+
+    /*
     'anchor' (ctrl, zone) {
         console.log('page context anchor ');
         if (this.full_window) {
@@ -282,6 +338,7 @@ class Page_Context extends jsgui.Evented_Class {
             this.ctrl_abs = null;
         }
     }
+    */
     /*
     'ensure_dock_placeholder': function(pos) {
         //console.log('Page Context ensure_dock_placeholder ' + pos);

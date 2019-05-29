@@ -207,6 +207,8 @@ class Resource extends Data_Object {
 
     }
 
+    /*
+
     '_old_set'() {
 
         console.log('resource set');
@@ -235,6 +237,7 @@ class Resource extends Data_Object {
         }
 
     }
+    */
 
     'get'(name, callback) {
         var al = arguments.length;
@@ -250,7 +253,7 @@ class Resource extends Data_Object {
 
 
 
-
+    /*
     '_old_get'() {
         var a = arguments; a.l = arguments.length; var sig = get_a_sig(a, 1);
 
@@ -281,6 +284,7 @@ class Resource extends Data_Object {
             //return super(a);
         }
     }
+    */
 }
 
 Resource.Pool = Pool;

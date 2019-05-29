@@ -78,7 +78,7 @@ class Radio_Button extends Control {
 
         this.add_class('radio-button');
         var context = this.context;
-        var that = this;
+        //var that = this;
 
         // A different way of raising change events?
         //  .on('change') often translates to the dom el's onchange.
@@ -96,7 +96,7 @@ class Radio_Button extends Control {
 
         if (!spec.abstract && !spec.el) {
 
-            var name = this.get('name').value();
+            var name = this.name;
 
             // Will need to render its ID in the DOM.
 
@@ -116,7 +116,7 @@ class Radio_Button extends Control {
             html_label.set('dom.tagName', 'label');
             //console.log('that._', that._);
 
-            var text_value = that.get('text').value();
+            var text_value = this.get('text').value();
 
             //console.log('spec.text', spec.text);
 
@@ -155,14 +155,14 @@ class Radio_Button extends Control {
 
             html_label.set('dom.attributes.for', html_radio._id());
 
-            that.add(html_radio);
-            that.add(html_label);
-            that.set('radio', html_radio);
-            that.set('label', html_label);
+            this.add(html_radio);
+            this.add(html_label);
+            this.set('radio', html_radio);
+            this.set('label', html_label);
             //html_radio.set('dom.attributes.type', 'radio');
 
-            that.set('dom.attributes.data-jsgui-fields', stringify({
-                'value': that.get('value')
+            this.set('dom.attributes.data-jsgui-fields', stringify({
+                'value': this.get('value')
             }).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
 
             // Look at the items.
@@ -193,25 +193,26 @@ class Radio_Button extends Control {
         if (!this.__active) {
             super.activate();
 
-            var radio = this.get('radio');
-            var el_radio = radio.dom.el.value();
-            var label = this.get('label');
-            var that = this;
+            var radio = this.radio;
+            var el_radio = radio.dom.el;//???
+            var label = this.label;
+            //var that = this;
 
             //var el = this.dom.el;
             //
 
             // No, refer specifically to the radio button element's control.
 
-
-
             // Changes upon becoming checked?
-            radio.on('change', function(e_change) {
+            radio.on('change', e_change => {
                 //console.log('el_radio.checked', el_radio.checked);
 
-                if (el_radio.checked) {
-                    that.raise('change');
-                }
+                //if (el_radio.checked) {
+                    this.raise('change', {
+                        name: 'checked',
+                        value: el_radio.checked
+                    });
+                //}
             });
 
             // Need to listen for DOM change events. That will chage the value.

@@ -101,8 +101,6 @@ class Item_Selector extends Control {
         // current_item
         // item_list
 
-
-
         let current_item_view = this.current_item_view = new Item_View({
             context: this.context,
             item: this.items[this.item_index]
@@ -308,14 +306,11 @@ class Item_Selector extends Control {
                             body.off('click', body_click_handler);
                             replace();
                         }
-
-
                     }
                     setTimeout(() => {
                         body.on('click', body_click_handler);
                     }, 0);
                 }
-
             });
             this.finish_item_selector();
         }
