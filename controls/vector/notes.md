@@ -1,0 +1,1 @@
+07/06/19 - Could make these all derive from a 'shape' or 'vector' class.

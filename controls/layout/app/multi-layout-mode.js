@@ -4,10 +4,7 @@
 /*
 
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-
-
 // Also want to make an MDI window system (Multiple Document Interface)
-
 define(["../../jsgui-html", "./panel"],
     function(jsgui, Panel) {
 */
@@ -38,9 +35,7 @@ var group = jsgui.group;
 //var Relative_Frame = Control.
 
 /*
-
     Nav and layout like VS code
-
     A new layout system that more specifically includes the tabs would work better.
     Multiple documents / viewers are available through tabs like in vs code.
 
@@ -84,7 +79,7 @@ var fields = {
 //   that seems like a good way to include content.
 //   Want to get that right before writing more UI composition code.
 
-
+// Features ._features feature
 
 // Like Multi layout mode
 //  Define a few panels.
@@ -94,7 +89,6 @@ var fields = {
 
 // But want to use parse_mount on some HTML-like code.
 //  Getting parse_mount etc working fully would be a better focus right now.
-
 
 class Multi_Layout_Mode extends Control {
 
@@ -119,6 +113,25 @@ class Multi_Layout_Mode extends Control {
         if (!spec.el) {
             this.compose_mlm();
         }
+
+        this._features = this._features || []; // an array is cool but map is better for testing for specific ones.
+
+        // map of features may be better for quick checking?
+
+
+
+        //each(['app', 'title', 'navigation', 'main', 'misc'], this._features.push);
+
+        // other features could be
+        //  editor, viewer, versitile???, responsive-size
+        //   try a few where it would help for feature checking.
+        //    also would be useful when they are in a library if the features are described as standard.
+        //  basic?, layout?, flexi-layout?
+        //   once these mean something more we can include them in ._features.
+        
+
+
+
     }
     'compose_mlm'() {
         var layout_mode = this.layout_mode;
@@ -175,7 +188,6 @@ class Multi_Layout_Mode extends Control {
         //   tabs opens up a variety of internal controls.
 
         // Tabbed panel looks like it could be useful here.
-
 
         //panel_main.add_class('main');
         var panel_misc = new Panel({
@@ -263,7 +275,7 @@ class Multi_Layout_Mode extends Control {
 
         this._ctrl_fields = this._ctrl_fields || {};
 
-        console.log('pre add ctrl fields');
+        //console.log('pre add ctrl fields');
         
         Object.assign(this._ctrl_fields, {
             'title': panel_title,

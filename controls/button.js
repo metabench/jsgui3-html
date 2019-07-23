@@ -17,6 +17,9 @@ var Control = jsgui.Control;
 */
 
 
+// Change filename to 'Button.js'?
+
+
 class Button extends Control {
 
 
@@ -26,10 +29,11 @@ class Button extends Control {
         // Wont fields have been set?
         //spec['class'] = spec['class'] || 'button';
         spec.__type_name = spec.__type_name || 'button';
+        spec.tag_name = 'button';
         super(spec);
         //let that = this;
         
-        this.add_class('button');
+        this.add_class('button'); // ???
         //this.add_class('button');
         // Want to have a system of accessing icons.
         //  Will be possible to do using a Postgres website db resource

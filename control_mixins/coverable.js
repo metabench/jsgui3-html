@@ -8,6 +8,9 @@ const { Control } = jsgui;
 
 // Want to make modal windows with this.
 
+// Different to the virtual frame. That could be used to cover a control too.
+//  suspended frame suspended_frame
+
 
 let coverable = (ctrl, opts) => {
     let select_toggle = false;

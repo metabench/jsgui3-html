@@ -25,24 +25,27 @@ class Context_Menu extends Control {
 			// Create the menu nodes from it.
 			//var that = this;
 
-			var tobj = tof(obj);
+			const tobj = tof(obj);
 			//console.log('tobj', tobj);
 			if (tobj === 'object') {
 				each(obj, (v, key) => {
-					var menu_node = make(Menu_Node({
+					const menu_node = make(Menu_Node({
 						'text': key,
 						'value': v,
 						'menu': this
 					}))
 					this.add(menu_node);
-
 				})
-
 			}
+
+			// typed each
+			//  would be useful with if statements and an item sig
+			//  then also with mfp typed each!!! :)
+
 			if (tobj === 'array') {
 				each(obj, (v, index) => {
 
-					var tv = tof(v);
+					//const tv = tof(v);
 					//console.log('tv', tv);
 
 					// then if it's string and function...
@@ -64,6 +67,9 @@ class Context_Menu extends Control {
 				})
 			}
 		}
+
+		this._features = this._features || []; // an array is cool but map is better for testing for specific ones.
+        each(['menu'], this._features.push);
 
 	}
 	'activate'() {

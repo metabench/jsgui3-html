@@ -209,12 +209,12 @@ class Resource_Pool extends Evented_Class {
 			console.log('resource pool adding resource to collection', obj);
 			console.log('this.resources._arr.length', this.resources._arr.length);
 
-			console.log('this.resources', this.resources);
+			//console.log('this.resources', this.resources);
 
 			this.resources.add(obj);
-			console.log('post add');
+			//console.log('post add');
 			console.log('this.resources._arr.length', this.resources._arr.length);
-			console.log('this.resources', this.resources);
+			//console.log('this.resources', this.resources);
 
 			// Resources have an indexing function?
 

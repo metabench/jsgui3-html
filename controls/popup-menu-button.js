@@ -21,6 +21,11 @@ var Data_Value = jsgui.Data_Value;
 //  Not basic. Will still have its own file for the moment.
 
 
+// limited states feature.
+//  can oble be one of a few.
+//  may as well give as an array or list in many cases.
+
+
 class Popup_Menu_Button extends Button {
     // panel name?
 
@@ -30,27 +35,16 @@ class Popup_Menu_Button extends Button {
     //}
     // maybe add before make would be better. add will probably be used more.
     constructor(spec, add, make) {
-
-        
         spec.no_compose = true;
-
-
-
         spec['class'] = 'popup-menu-button';
         super(spec);
-
         this.__type_name = 'popup_menu_button';
         //this.add_class('panel');
         //console.log('pre add class');
         //console.log('1) this.dom.attrs', this.dom.attrs);
-       
-
         //this.add_class('popup-menu-button');
         //console.log('2) this.dom.attrs', this.dom.attrs);
-
         // Should set the class in the DOM if its not set already.
-
-
 
         var context = this.context;
         // that = this;
@@ -82,6 +76,8 @@ class Popup_Menu_Button extends Button {
             )
         }
 
+
+        // Update this!
         this.states = ['closed', 'open'];
         this.state = new Data_Value('closed');
         this.i_state = 0;
@@ -110,7 +106,7 @@ class Popup_Menu_Button extends Button {
                 //console.log('spec.items', spec.items);
                 let items = this.items = new Collection(spec.items);
                 //console.log('this.items', this.items);
-                each(items, (item) => {
+                each(items, item => {
                     //console.log('item', item);
 
                     var menu_item = new Item({
@@ -139,18 +135,15 @@ class Popup_Menu_Button extends Button {
 
         if (!spec.abstract && !spec.el) {
             // Render the menu itself as a bunch of items / an item tree.
-
             // Create the top level menu item.
             compose();
         }
 
         if (spec.el) {
             // A different type of constructor usage. Most likely client-side / within a web browser.
-
             // The element could be empty.
             //  If so, we need to carry out the compose stage.
             compose();
-
             // Needs to reflect changes within itself to the DOM.
             //  Possibly this is where react could come in.
 
@@ -158,9 +151,6 @@ class Popup_Menu_Button extends Button {
             //  Want small and to-the-point client-side rendering.
 
         }
-
-
-
     }
     //'resizable': function() {
     //},
@@ -169,10 +159,6 @@ class Popup_Menu_Button extends Button {
             super.activate();
 
             // Activating should set the CSS class of the node if necessary.
-
-
-
-
 
             var root_menu_item = this.root_menu_item;
 
@@ -231,15 +217,11 @@ class Popup_Menu_Button extends Button {
                             that.state.set('closed'); // closed
                         });
                         */
-                        
-
                         setTimeout(function () {
                             //resolve(func.apply(null, args));
                             this.i_state = 0;
                             this.state.set('closed'); // closed
                         }, 300);
-                        
-
                         // close it.
                         //console.log('pre close');
 
@@ -275,18 +257,24 @@ class Popup_Menu_Button extends Button {
                 //}
 
             });
-
-
             // When it's disconnected from the DOM, the events from inner controls don't reach above.
 
             // Need to go through the internal menu items...
+            // prototype.description.
+            //  description function to set it up.
+            //  .api?
+            //   info on the API?
+
+            // prototype.api?
+            //  seems useful info there.
+
+
 
 
 
             //console.log('root_menu_item.inner.content', root_menu_item.inner.content);
             root_menu_item.inner.content.each((inner_menu_item) => {
                 //console.log('inner_menu_item', inner_menu_item);
-
                 inner_menu_item.on('click', (e_click) => {
                     //console.log('root_menu_item clicked e_click', e_click);
 
@@ -303,11 +291,8 @@ class Popup_Menu_Button extends Button {
                     root_menu_item.state.set('closed');
                     this.i_state = 0;
                     //}
-
                 });
-
             })
-
 
             // Listen for the various changes on inner buttons.
             //  Want an easy way to iterate them.
@@ -315,9 +300,7 @@ class Popup_Menu_Button extends Button {
 
             // Could attach the events earlier.
             //  Want to try that.
-
             /*
-
             root_menu_item.iterate_sub_items((item, str_path) => {
                 //console.log('item', item);
                 item.on('click', (e_click) => {
@@ -328,13 +311,7 @@ class Popup_Menu_Button extends Button {
             });
 
             */
-
-
-            
-
         }
-
-
     }
 }
 module.exports = Popup_Menu_Button;

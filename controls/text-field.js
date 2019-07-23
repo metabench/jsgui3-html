@@ -50,6 +50,10 @@ class Text_Field extends Control {
 	compose_text_field() {
 		// Parse-mount could take less space.
 
+		// Probably a significant improvement.
+
+
+
 		var left = new jsgui.div({
 			'context': this.context
 		});
@@ -69,8 +73,6 @@ class Text_Field extends Control {
 		});
 		clearall.add_class('clearall');
 		this.add(clearall);
-
-
 
 		if (this.show_text) {
 			var label = new jsgui.label({

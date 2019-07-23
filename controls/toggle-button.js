@@ -24,6 +24,12 @@ const {stringify, each, tof, def, Control} = jsgui;
 //  Would be useful for a start/stop button.
 //  Toggle button toggling between two images.
 
+// Nice of obext did a bit in terms of object.grammar.
+//  Defining the grammar of objects and functions seems very useful.
+//   In some cases, it could be used to make more concise and declarative code.
+
+
+
 const { prop, field } = require('obext');
 
 // May do more with attempting state change?
@@ -45,11 +51,14 @@ const { prop, field } = require('obext');
 // If we defined something as a Collection, we would need to have different handling.
 //  Want to be able to have collections as fields.
 
+
+/*
 var fields = [
     ['text', String],
     ['state', String],
     ['states', Array]
 ];
+*/
 
 class Toggle_Button extends Control {
 
@@ -72,18 +81,32 @@ class Toggle_Button extends Control {
 
         if (!spec.abstract && !spec.el) {
             //console.log('1) this.state', this.state);
-            var span_state = this.span_state = new jsgui.span({ 'context': this.context, text: this.state });
-            //span_state.active();
-            // Add a new text node?
-            //span_state.add(state + '');
-            /*
-            span_state.add(new jsgui.Text_Node({
-                context: this.context,
-                text: state
-            }));
-            */
-            this.add(span_state);
-            //this.span_state = span_state;
+
+            // this should be composition.
+            //  composition back in the constructor?
+            //   because composition can be defined with a string now.
+
+            // Data binding may be a good feature soon.
+
+            const _compose = () => {
+                var span_state = this.span_state = new jsgui.span({ 'context': this.context, text: this.state });
+                //span_state.active();
+                // Add a new text node?
+                //span_state.add(state + '');
+                /*
+                span_state.add(new jsgui.Text_Node({
+                    context: this.context,
+                    text: state
+                }));
+                */
+                this.add(span_state);
+                //this.span_state = span_state;
+            }
+            const compose = () => jsgui.parse_mount(`<span name='span_state'>${this.state}</span>`, this, jsgui.controls);
+            compose();
+
+
+            
         }
 
         this.on('change', e_change => {

@@ -721,12 +721,19 @@ class Control extends Control_Core {
 	}
 
 	'activate'(el) {
+
+		//console.log('ctrl-enh activate', this);
+
 		//if (document) {
 
 		//}
 		// Should really activate with a dom element.
 		if (typeof document !== 'undefined' && !this.__active) {
-			this.__active = true;
+			//console.log('proceeding');
+			this.__active = true;	
+
+			//console.log('!!this.dom.el', !!this.dom.el);
+
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id()] || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')[0];
 				//console.log('found_el', found_el);
@@ -735,16 +742,30 @@ class Control extends Control_Core {
 				}
 			}
 			//var el = this.dom.el;
+
+			console.log('!!this.dom.el', !!this.dom.el);
+
 			if (!this.dom.el) {
 				//console.log('no el, this', this);
 				//console.trace();
 				//throw 'expected el'
+
+				// timeout and retry? max retries too?
+
 			} else {
 				//requestAnimationFrame(() => {
+
+				// Seems like it should run for the body?
+
+				//console.log('pre running the 4 sub-activate fns', this);
+
 				this.activate_dom_attributes();
 				this.activate_content_controls();
 				this.activate_content_listen();
 				this.activate_other_changes_listen();
+
+				//console.log('post running the 4 sub-activate fns', this);
+
 				/*
 				// This disables mobile UI events eg scroll, set focus. 
 				if ('ontouchstart' in document.documentElement) {
@@ -760,9 +781,15 @@ class Control extends Control_Core {
 				*/
 				//console.log('pre raise activate');
 				this.raise('activate');
+
+				// context body function not working?
+
 				//})
 
 			}
+		} else {
+			console.log('not proceeding');
+			console.log('this.__active', this.__active);
 		}
 	}
 	//'attach_unattached_dom_event_listeners'() {
@@ -776,7 +803,7 @@ class Control extends Control_Core {
 			var property_name = e_change.name || e_change.key,
 				dval = e_change.value || e_change.new;
 			var t_dval = tof(dval);
-			if (t_dval == 'string' || t_dval == 'number') {
+			if (t_dval === 'string' || t_dval === 'number' || t_dval === 'boolean') {
 				//el.setAttribute('style', dval);
 			} else {
 				//el.setAttribute('style', dval.value());

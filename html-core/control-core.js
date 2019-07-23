@@ -750,6 +750,14 @@ class Control_Core extends Data_Object {
 			throw 'expecting dom_attrs';
 		} else {
 
+			/*
+
+			dom_attributes['data-jsgui-id'] = id;  this._id();
+			dom_attributes['data-jsgui-type'] = this.__type_name;
+
+			*/
+
+
 			if (this._) {
 				var keys = Object.keys(this._);
 				var key;
@@ -811,6 +819,37 @@ class Control_Core extends Data_Object {
 
 			}
 			var arr = [];
+
+
+			/*
+
+			dom_attributes['data-jsgui-id'] = id; ._id();
+			dom_attributes['data-jsgui-type'] = this.__type_name;
+
+			*/
+
+			// Always?
+			arr.push(' data-jsgui-id="' + this._id() + '"');
+			// only if its not an html / svg / browser tag.
+
+
+			// and div?
+			const exempt_types = {
+				html: true,
+				head: true,
+				body: true
+			}
+
+			if (this.__type_name) {
+
+				// Still seems as though the body is not being activated properly.
+				//  New controls not appearing in the body as they should right now.
+				if (!exempt_types[this.__type_name]) {
+					arr.push(' data-jsgui-type="' + this.__type_name + '"');
+				}
+			}
+
+
 			//var arr_dom = dom_attrs._arr;
 			//for (var c = 0, l = arr_dom.length; c < l; c++) {
 			//  arr.push(' ', c, '="', arr_dom[c], '"');
@@ -834,14 +873,74 @@ class Control_Core extends Data_Object {
 					item = dom_attrs[key];
 
 					if (typeof item !== 'function') {
-						let is = item.toString();
-						//console.log('item', item);
-						//console.log('item', item.toString());
-						//console.log('item.__empty', item.__empty);
 
-						if (!item.__empty && is.length > 0) {
-							arr.push(' ', key, '="', is, '"');
+						// if its an object, need to build up the string.
+						//  and ignore functions in there, such as 'off'.
+
+						if (typeof item === 'object') {
+
+							// for style in particular..
+							//console.log('key', key);
+
+							if (key === 'style') {
+
+								// can join an array with ;.
+								const sprops = [];
+
+								each(item, (v, k) => {
+									// the type of the value... has to be string or number?
+	
+									const tval = typeof v;
+									if (tval !== 'function') {
+										// need to write out the inline css here.
+
+										if (k !== '__empty') {
+											const sprop = k + ':' + v;
+											sprops.push(sprop);
+										}
+	
+									}
+								});
+
+								arr.push(' ', key, '="', sprops.join(';'), '"');
+
+							} else {
+								console.trace();
+								throw 'NYI';
+							}
+
+							
+
+						} else {
+
+
+							//console.log('typeof item', typeof item);
+							//console.log('style css item', item);
+							let is = item.toString();
+							//console.log('is', is);
+
+							// need to ignore some items by name / key?
+							//  or is the style function adding these incorrectly?
+
+							// Seems like the styling stsyem needs an overhaul?
+							//  Some styles are getting set wrong.
+
+
+							//console.log('item', item);
+							//console.log('item', item.toString());
+							//console.log('item.__empty', item.__empty);
+
+							// Ignore some keys?
+
+							if (!item.__empty && is.length > 0) {
+								arr.push(' ', key, '="', is, '"');
+							}
+
 						}
+
+
+
+						
 					}
 
 
@@ -874,6 +973,18 @@ class Control_Core extends Data_Object {
 		// do we have 'get'?
 		//var dom = this.get('dom');
 		//var tagName = this.get('dom.tagName'),
+
+
+
+		/*
+
+		dom_attributes['data-jsgui-id'] = id;
+		dom_attributes['data-jsgui-type'] = this.__type_name;
+
+		*/
+
+
+
 		const tagName = this.dom.tagName;
 		//console.log('this._.dom', this._.dom._.attributes);
 		//console.log('tagName', tagName);
@@ -1294,7 +1405,23 @@ class Control_Core extends Data_Object {
 
 		}
 	}
+
+	// Seems best to remove this?
+	//  Automatic rendering of the data-jsgui-id and data-jsgui-type makes the most sense
+	//   Option of surpressing them...?
+
+
+
+	// It seems we always want the generated jsgui html to be active.
+	//  If it turns out we don't, we can sort that out.
+
 	'active'() {
+		// do nothing for the moment.
+
+		console.log('Deprecated active. Functionality now part of standard control rendering.');
+	}
+
+	'____active'() {
 		const id = this._id();
 		let dom = this.dom,
 			dom_attributes = dom.attributes,
@@ -1309,6 +1436,14 @@ class Control_Core extends Data_Object {
 			'value': this.__type_name
 		});
 		*/
+
+
+		// Likely best to make this a general part of all rendering.
+		//  where if we have those, they get rendered.
+		//   maybe best not to even add them to the dom attributes here.
+		//   could shortcut it and render it 
+
+
 		dom_attributes['data-jsgui-id'] = id;
 		dom_attributes['data-jsgui-type'] = this.__type_name;
 		//var el = this._.el || dom._.el;

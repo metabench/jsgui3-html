@@ -42,8 +42,6 @@ class Start_Stop_Toggle_Button extends Toggle_Button {
 
 		// a 'changes' util function.
 
-		
-
 		this.on('change', (e_change) => {
 			//console.log('Start_Stop_Toggle_Button e_change', e_change);
 			const {name, value} = e_change;

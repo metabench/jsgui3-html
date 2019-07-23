@@ -87,7 +87,7 @@ class File_Tree extends Tree {
 
 
 
-            throw 'stop';
+            //throw 'stop';
 
         }
 

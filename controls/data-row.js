@@ -12,6 +12,11 @@ var fields = [
     ['text', String]
 ];
 */
+
+/*
+    May be unnecessary with a more flexible core.
+*/
+
 class Data_Row extends Control {
     // fields... text, value, type?
     //  type could specify some kind of validation, or also 'password'.

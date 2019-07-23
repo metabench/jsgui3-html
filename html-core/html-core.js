@@ -35,7 +35,8 @@ jsgui.parse_mount = require('./parse-mount');
 
 const Page_Context = require('./page-context');
 const Selection_Scope = require('./selection-scope');
-const parse_mount = require('./parse-mount');
+
+const {parse_mount, parse} = require('./parse-mount');
 
 
 const str_arr_mapify = jsgui.str_arr_mapify;
@@ -120,12 +121,24 @@ var recursive_dom_iterate_depth = function (el, callback) {
 var activate = function (context) {
     // The context should already have the map of controls.
 
-    //console.log('jsgui activate');
+    console.log('jsgui html-core activate');
     //console.trace();
     // Not so sure we can have the client page context here - does it use resources?
 
     //ensure_Context_Menu_loaded(function(_Context_Menu) {
     //Context_Menu = _Context_Menu;
+
+    console.log('jsgui.def_server_resources', jsgui.def_server_resources);
+    // But making the calls uses client-side mechanisms.
+
+    // Maybe do this in on activate on the client, in the client module.
+
+
+
+
+
+
+
     if (!context) {
         throw 'jsgui-html-enh activate(context) - need to supply context parameter.';
     }
@@ -191,7 +204,9 @@ var activate = function (context) {
 
                     var jsgui_type = el.getAttribute('data-jsgui-type');
                     //console.log('jsgui_type ' + jsgui_type);
-                    map_jsgui_types[jsgui_id] = jsgui_type;
+
+                    // only if we have a type!
+                    if (jsgui_type) map_jsgui_types[jsgui_id] = jsgui_type;
                     //console.log('jsgui_type ' + jsgui_type);
                 }
             }
@@ -203,7 +218,7 @@ var activate = function (context) {
     //console.log('map_controls', map_controls);
     //throw 'stop';
 
-    //console.log('Object.keys(map_jsgui_els)', Object.keys(map_jsgui_els));
+    console.log('Object.keys(map_jsgui_els)', Object.keys(map_jsgui_els));
 
     // Whenever they get added, they should be added to the context. This appears missing.
     // Control construction and registration
@@ -212,7 +227,7 @@ var activate = function (context) {
     each(map_jsgui_els, (el, jsgui_id) => {
 
         //console.log('el', el);
-        //console.log('jsgui_id ' + jsgui_id);
+        console.log('activate jsgui_id ' + jsgui_id);
         //console.log('3) el.tagName ' + el.tagName);
         // .tn?
         // tn a global abbreviation for tag_name? not text_node
@@ -221,7 +236,12 @@ var activate = function (context) {
         const l_tag_name = el.tagName.toLowerCase();
         if (jsgui_id) {
             var type = map_jsgui_types[jsgui_id];
-            //console.log('type ' + type);
+
+
+            console.log('');
+            console.log('core activate type ' + type);
+            console.log('el', el);
+            console.log('map_jsgui_types', map_jsgui_types);
             //var cstr = jsgui.constructor_from_type(type);
 
             //var cstr = jsgui.constructor_from_type(type);
@@ -286,6 +306,9 @@ var activate = function (context) {
                     //console.log('\n');
                 } else {
                     console.log('Missing context.map_Controls for type ' + type + ', using generic Control');
+                    // null type name?
+
+
                     var ctrl = new Control({
                         'context': context,
                         '__type_name': type,
@@ -364,6 +387,8 @@ var activate = function (context) {
             }
         }
     });
+
+    console.log('code complete: jsgui html-core activate');
 
 
 };
@@ -1165,6 +1190,7 @@ jsgui.Intersection_Finder = Intersection_Finder;
 // And load in all or a bunch of the controls.
 // Can we require all of the controls at once, and then merge them?
 jsgui.parse_mount = parse_mount;
+jsgui.parse = parse;
 //jsgui.Toggle_Button =
 
 module.exports = jsgui;

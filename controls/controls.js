@@ -1,6 +1,14 @@
 /**
  * Created by James on 16/09/2016.
  */
+
+// Would be good to have control descriptions, currently just in English.
+//  Descriptions of APIs?
+//  Interfaces?
+
+
+
+
 // Standard control set
 // Addon projects?
 //  Control projects?
@@ -145,6 +153,8 @@ var controls = {
 
     //Media_Scrubber: require('./media-scrubber'),
     Menu_Node: require('./menu-node'),
+    Modal: require('./layout/modal'),
+
     Month_View: require('./month-view'),
     //Multi_Document_Interface: require('./multi-document-interface'),
     Multi_Layout_Mode: require('./layout/app/multi-layout-mode'),
@@ -157,8 +167,14 @@ var controls = {
     Resize_Handle: require('./resize-handle'),
     Scroll_View: require('./scroll-view'),
     Scrollbar: require('./scrollbar'),
+
+    Search_Bar: require('./search-bar'),
+
     Single_Line: require('./layout/single-line'),
     Start_Stop_Toggle_Button: require('./start-stop-toggle-button'),
+
+    String_Span: require('./string-span'),
+
     Tabbed_Panel: require('./layout/tabbed-panel'),
     Text_Field: require('./text-field'),
     Text_Item: require('./text-item'),

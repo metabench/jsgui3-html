@@ -22,6 +22,20 @@ const {
 // It will be a text box but the selection list appears below.
 //  So we will use List with its own scrollbar.
 
+// Platform control.
+//  Move the colours somewhere else.
+//   Facility for general jsgui data.
+
+// Data plugins maybe.
+//  Optional loading of data plugins from the server side?
+
+// In a later HTTP request?
+//  Local storage and caching mechanism, generalised.
+
+
+
+
+
 var pal_crayola = [{
         "hex": "#EFDECD",
         "name": "Almond",
