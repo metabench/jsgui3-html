@@ -18,6 +18,14 @@ const Control = jsgui.Control;
     Read more: https://html.com/tags/select/#ixzz5NXFlnCLS
 */
 
+// Different states - open, closed
+
+
+// This will do more than just wrap the HTML control(s)
+//  Maybe work on the combo-box control.
+
+
+
 class Dropdown_List extends Control {
     constructor(spec) {
         super(spec);

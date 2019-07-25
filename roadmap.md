@@ -38,6 +38,19 @@ tiny, small, medium, large, huge
 //  could be done with some kinds of sizing table(s).
 
 
+Icons
+-----
+
+Being able to make access to icons very easy will be very useful.
+Load / register icons on the server
+Be able to reference and use them on both the server and the client.
+    Serving with auto-resizing too?
+        Would make sense.
+
+So will have more capabilities within jsgui server for the moment.
+
+
+
 
 
 

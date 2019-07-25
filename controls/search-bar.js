@@ -25,32 +25,37 @@ const {Control} = jsgui;
 
 const {prop, field} = require('obext');
 
+// The search bar having toolboxes would make sense.
+//  For holding buttons etc.
+
 class Search_Bar extends Control {
     constructor(spec) {
         // Capitalise type names?
         spec.__type_name = spec.__type_name || 'search_bar';
-
         super(spec);
 
         // Composed of the button and the text input.
         // Needs to itself raise an event / events from the search button being pressed.
         //  How to do that with parse_mount?
         //   Would get the created items back, and then be able in interact with them.
-
         this.add_class('search-bar');
-
         // a prop for the text being enough?
-
         /*
         prop(this, 'value', (e_change) => {
             console.log('text prop e_change', e_change);
         });
         */
-
         field(this, 'value');
 
         if (!spec.el) {
             //this.compose_block_summary();
+
+            // Flexibility with buttons?
+            //  A toolbox or two?
+            //  jsgui toolbox control?
+            //   yes would make sense for some guis such as drawing apps, IDEs.
+            //   a bit like a menu. 
+
             const jsguiml = '<Text_Input name="input"></Text_Input><Button name="btn"></Button>';
             //console.log('Search_Bar constructor pre parse_mount Object.keys(jsgui.controls)', Object.keys(jsgui.controls));
 
@@ -108,7 +113,6 @@ class Search_Bar extends Control {
         }
         
     }
-
 }
 
 module.exports = Search_Bar;

@@ -186,6 +186,7 @@ var controls = {
     Title_Bar: require('./layout/title-bar'),
     Titled_Panel: require('./layout/titled-panel'),
     Toggle_Button: require('./toggle-button'),
+    Toolbox: require('./toolbox'),
     Tree: require('./tree'),
     Tree_Node: require('./tree-node'),
     Vertical_Expander: require('./layout/vertical-expander'),

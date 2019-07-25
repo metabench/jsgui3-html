@@ -40,6 +40,18 @@ var Control = jsgui.Control;
 // Basic but then could be swapped.
 
 
+// Allow searching / choosing with text.
+
+
+// This should also allow flexibility in terms of how the items are displayed???
+
+
+// Just allow a single icon next to the items?
+
+// A text input part
+// A list part
+
+
 
 
 

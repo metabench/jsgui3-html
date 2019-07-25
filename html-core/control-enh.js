@@ -743,7 +743,7 @@ class Control extends Control_Core {
 			}
 			//var el = this.dom.el;
 
-			console.log('!!this.dom.el', !!this.dom.el);
+			//console.log('!!this.dom.el', !!this.dom.el);
 
 			if (!this.dom.el) {
 				//console.log('no el, this', this);
@@ -788,8 +788,8 @@ class Control extends Control_Core {
 
 			}
 		} else {
-			console.log('not proceeding');
-			console.log('this.__active', this.__active);
+			//console.log('not proceeding');
+			//console.log('this.__active', this.__active);
 		}
 	}
 	//'attach_unattached_dom_event_listeners'() {
@@ -1158,7 +1158,6 @@ class Control extends Control_Core {
 				}
 			}
 		}
-
 		/*
 		dom_attributes.style.on('change', e_style_change => {
 			console.log('e_style_change', e_style_change);

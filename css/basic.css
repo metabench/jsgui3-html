@@ -1026,15 +1026,12 @@ div.grid .row .cell span {
 }
 
 button.button, div.button {
-
     /*
     min-width: 60px;
     max-width: 120px;
     min-height: 22px;
     max-height: 60px;
     */
-
-
     background-color: #CCCCCC;
 }
 

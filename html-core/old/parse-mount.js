@@ -24,10 +24,31 @@ const {tof, each} = require('lang-mini');
 
 const log = () => {}
 
+// Need a map of all controls that are available to use.
+//  This gets given as 3rd parameter.
+
+// Probably need to treat this as async right now.
+//  Could even make it new style observable async.
+
+// Want to be able to parse it, but not mount it to a target.
+
+// parse function needs to know the context
+//  parse, init?
+//  parse create?
+
+// just call it parse for the moment.
+
+// Strange that the new version is broken.
+//  Maybe its got to do with timings / syncronicity.
+
+// Possibly the part that calls it needs to operate in an async way?
+//  Wonder if this has introduced any more delays?
+
+// parse function using a callback...
+//  needs a callback too.
+//  runs immediately though.
+
 const parse = function(str_content, context, control_set, callback) {
-    console.log('Parsing');
-    console.log('-------');
-    console.log('');
     str_content = str_content.trim();
 
     const handler = new htmlparser.DefaultHandler(function (error, dom) {
@@ -37,7 +58,15 @@ const parse = function(str_content, context, control_set, callback) {
             //[...do something for errors...]
         else {
             log('dom', dom);
-            
+            // Then can recurse through the dom object.
+            //  Nice that it parses non-standard elements.
+
+            // depth-first recursion for creation of the elements.
+            //  Then will add them to the parents as they get created.
+            // replace the children with controls?
+
+            // when doing 
+
             let recurse = (dom, depth, callback) => {
                 let tdom = tof(dom);
                 let res;
@@ -49,6 +78,7 @@ const parse = function(str_content, context, control_set, callback) {
                     each(dom, v => {
                         //res.push(recurse)
                         recurse(v, depth + 1, callback);
+
                         // then later (depth first) callback
                         callback(v, depth);
 
@@ -65,25 +95,119 @@ const parse = function(str_content, context, control_set, callback) {
                     log('dom', dom);
                 }
             }
+            // want to create the items as well.
+            //  start with innermost, adding the child controls to the outer ones.
+            //   need to be able to run controls from these strings which come as templates.
+            //   eliminate the need for much of the control construction code, at least make it much more concise.
+
+            /*
+            const new_ctrl_made = (ctrl) => {
+                // this will need to assemble to controls into a heirachy.
+                //  May need to know the depth so to know which to join together.
+
+                // includes text controls
+            }
+            */
+
+            // handle text
+            //  should know what level the text is at
+            //   needs to know when the level decreases so we can put the children in the parent.
+
             let last_depth = 0;
+
+            // maybe need a map of siblings at depth
+            //let child_nodes = [];
+            // siblings in a list, children in a list?
+            //  or only need one list with depth-first?
+            // can build it up within the closure.
+
+            // sounds like we need it as we add to the tree at different depths.
+            // map of open arrays at different depths?
+
+            // need to push the text node at the depth.
+
             let map_siblings_at_depth = {};
+            // Then when moving up a depth we nullify the array
+            //  Then moving down the depth we create a new array.
+            //  Do this for controls.
+            //  Including text controls.
+
             let res_controls = {};
+
+            // return res_controls as well...?
+            //  makes sense
+
             const handle_text = (text, depth) => {
+
+                //child_nodes.push(text);
+
+                // Maybe don't need the text node control here.
+                //  When we have the text as a single child, we can declare it as a property.
+                //  However, the full text node instantiation makes sense for not taking shortcuts.
+
                 let tn = new control_set.Text_Node({
                     text: text,
                     context: context
                 });
+
+                //log('tn', tn);
+                //log('text', text);
+                //log('tn instanceof Text_Node', tn instanceof control_set.Text_Node);
+                //log('tn.text', tn.text);
+                //log('tn._text', tn._text);
+                //throw 'stop';
                 res_controls.unnamed = res_controls.unnamed || [];
                 res_controls.unnamed.push(tn);
+                // push it into siblings at depth too.
                 map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
                 map_siblings_at_depth[depth].push(tn);
+
+                // doesn't have a name though.
+                //  there will be other unnamed controls that should be returned in the results.
+                // The names maybe will not be so important.
+
                 last_depth = depth;
             }
 
+            // an array of siblings at levels
+            //  then remove? the array when going up a level, use it as the children for a node?
+
+            // need to be able to start up a node while specifying its content?
+            //  including the content in the spec could work well.
+            //   
+
+            // Get rid of the span rendering shortcut?
+            //  Always use the textNode?
+            //  Have the .text property a shortcut to modifying that text node?
+
+            // Span .text is really convenient in many cases.
+            // Spans can contain other elements so it's worth being careful.
+
+            // The .text shortcut looks like its not carrying out the underlying dom functionality.
+            //  Better to have it do the underlying dom tasks properly, and then have sugar around that.
+
+            // So don't have special rendering for the span element.
+            // Divs / controls can take text nodes too.
+
+            // Maybe have .text read-only.
+            //  .set_text too?
+            //  .set_text for convenience in some situations.
+            //   In other situations, we use proper text nodes alongside whatever else goes inside a span.
+
+            // the .text set and get property could stay for convienience.
+            //  It needs to deal with textNode object underneith though.
+
+            // General route is to handle things in the conventional DOM way on a lower level
+            //  Then on a higher level there will be systems of convenience for the programmer.
+
+            // So setting text will replace the content.
+            //  Get rid of the specialised span rendering.
+            //  Get rid of text property for the moment?
+            //   Or have it do its stuff on a lower level.
+
+
             const handle_tag = (tag, depth) => {
-                console.log('handle_tag tag', tag);
-                console.log('depth', depth);
-                console.log('last_depth', last_depth);
+                //console.log('handle_tag tag', tag);
                 const tag_with_no_children = {};
                 if (tag.raw) tag_with_no_children.raw = tag.raw;
                 if (tag.data) tag_with_no_children.data = tag.data;
@@ -91,16 +215,36 @@ const parse = function(str_content, context, control_set, callback) {
                 if (tag.name) tag_with_no_children.name = tag.name;
                 if (tag.attribs) tag_with_no_children.attribs = tag.attribs;
 
+                // Then the name property - need to use these named controls to set the control's _ctrl_fields
+
+                //log('handle_tag tag_with_no_children', tag_with_no_children);
+                // maybe pass through the tag with no children. the children have been made into controls.
+
+                // will add to the collection of siblings.
+                // has the depth increased?
+                // create control...
+
+                // and the children? content
                 const create_ctrl = (tag, content) => {
-
-                    console.log('tag.name', tag.name);
-                    console.log('!!control_set[tag.name]', !!control_set[tag.name]);
-
                     if (control_set[tag.name]) {
+                        //log('has jsgui control for ' + tag.name);
+    
+                        // need to look into if there are child jsgui controls within this.
+    
                         let Ctrl = control_set[tag.name];
+                        // work out the spec as well.
                         log('tag', tag);
                         let a = tag.attribs || {};
+
+                        // Why isnt content working in the spec?
+                        //  Expecially with a Text_Node?
+
+
                         if (content) a.content = content;
+
+                        // A 'content' attribute?
+                        //log('content.length', content.length);
+
                         each(content, item => {
                             //log('content item', item);
                             //log('Object.keys(content item)', Object.keys(item));
@@ -108,21 +252,46 @@ const parse = function(str_content, context, control_set, callback) {
                             //log('(content item._text)', (item._text));
                             //log('(content item.text)', (item.text));
                         })
+
                         // want an easier way to view the content.
                         //  don't want large printouts of the jsgui controls.
+
                         log('attribs a', a);
                         log('\n\n');
                         //log('!!target', !!target);
                         //log('!!target.context', !!target.context);
                         a.context = context;
+    
+
+                        // Some DOM attributes not recognised in ctrl construction.
+                        //  Could make it so that controls apply unknown attributes to the DOM.
+                        //   Or put in a 'dom attributes' part of the spec?
+                        //   May be better that way.
+
+
                         let ctrl = new Ctrl(a);
                         if (a.name) {
                             res_controls.named = res_controls.named || {};
                             res_controls.named[a.name] = ctrl;
+
+                            // Expected behaviour to replace existing composition code.
+
+                            //target[a.name] = ctrl;
+
+                            //res_controls[a.name] = ctrl;
                         } else {
                             res_controls.unnamed = res_controls.unnamed || [];
                             res_controls.unnamed.push(ctrl);
                         }
+
+                        // Then the rest of the read attributes go as dom attributes...?
+                        //  But dont do that with some particular attributes.
+
+                        // jsgui system attributes:
+                        //  name
+                        //   class?
+                        //    yes it gets handles internally by the ctrl.
+
                         const map_jsgui_attr_names = {
                             'name': true,
                             'class': true,
@@ -130,59 +299,165 @@ const parse = function(str_content, context, control_set, callback) {
                             '__type_name': true,
                             'context': true
                         }
+
+
                         const arr_dom_attrs = [];
                         each(a, (a_value, a_name) => {
+                            //console.log('a_value, a_name', [a_value, a_name]);
+
                             if (!map_jsgui_attr_names[a_name]) {
                                 arr_dom_attrs.push([a_name, a_value])
                             }
+
+
                         })
+
+                        //console.log('arr_dom_attrs', arr_dom_attrs);
+
                         each(arr_dom_attrs, attr => {
                             const [name, value] = attr;
                             ctrl.dom.attributes[name] = value;
                         });
+
+
+                        // and unnamed controls
+                        //  an array of them...
+    
+                        // The name property - possibly name could be stored by the control itself.
+                        //  Different to its id.
+    
+                        //log('!!ctrl', !!ctrl);
+                        //log('depth', depth);
+
                         return ctrl;
                     } else {
                         // The app's controls need to be loaded / registered previous to this.
                         //log('lacking jsgui control for ' + tag.name);
+
                         // The server app should register it?
+
                         //console.log('tag', tag);
                         console.trace();
                         throw 'lacking jsgui control for ' + tag.name;
                     }
                 }
+
+                // create the control at this stage?
+                //  having a 'content' or 'children' property could work well here.
+                //  setting .content would make sense well.
+
                 let my_children;
                 let ctrl;
 
                 if (depth > last_depth) {
+
+                    // Likely will happen.
+                    //  The fix I put in got lost before.
+                    //  It does not need to do that much where there are no child nodes.
+
+                    
+
                     ctrl = create_ctrl(tag_with_no_children);
+                    //map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
+
                     map_siblings_at_depth[depth] = []; // because its a new depth?
                     map_siblings_at_depth[depth].push(ctrl);
 
+                    console.log('depth > last_depth [depth, last_depth]', [depth, last_depth]);
+                    console.trace();
+                    //throw 'NYI';
+
+                    // Not sure how this will happen as the depth should move outwards?
+                    //  Will need to check / measure recursion order.
+
+                    // depth increase.
+                    //  means moving to new child.
+                    //   this does depth first, but starting from the first.
+                    //    not sure that makes sense, need to check that it works.
+
+                    // 
+                    map_siblings_at_depth[depth] = [];
+
+                    // but need to add the item.
+                    //map_siblings_at_depth[depth].push();
+
+                    //log('child_nodes', child_nodes);
+
+                    //child_nodes = [];
+
+
                 } else if (depth < last_depth) {
-                    console.log('depth decrease');
+
+                    //log('child_nodes', child_nodes);
+                    // create the control.
+
+                    //child_nodes = [];
+                    // my children in array!!!
+                    //log('last_depth', last_depth);
+
                     my_children = map_siblings_at_depth[last_depth];
+                    //log('my_children', my_children);
+
+                    //throw 'stop';
+
                     if (my_children) {
+                        //log('my_children.length', my_children.length);
                         ctrl = create_ctrl(tag_with_no_children, my_children);
                     } else {
                         ctrl = create_ctrl(tag_with_no_children);
                     }
+                    //log('ctrl.content._arr.length', ctrl.content._arr.length);
                     map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
+
+                    // do we need to keep these child controls now?
+                    //  prob best not to.
                     map_siblings_at_depth[last_depth] = null;
                     map_siblings_at_depth[depth].push(ctrl);
+
+                    // create the ctrl including the content.
+
+                    // create the control with the children.
+                    //  maybe just say they are 'content'.
+
+                    // being able to choose content subcontrols at declaration seems very important here.
+
+
                 } else {
                     ctrl = create_ctrl(tag_with_no_children);
                     map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
                     map_siblings_at_depth[depth].push(ctrl);
+
+                    // I think that means that this one doesn't have children either.
+                    // same depth - sibling
+                    //  create a new control.
+                    //   I think this means that the last control in the loop had no subcontrols.
+                    // Will need to observe the algo in operation to make sure it works correctly.
+                    //child_nodes.push(tag)
+
                 }
                 // Create a control out of the tag
                 last_depth = depth;
             }
+
             // goes depth-first.
             recurse(dom, 0, (item, depth) => {
+                //log('item', item);
+                //log('depth', depth);
+
+                // analyse the item
+                //  is it an element (tag)?
+
                 if (item.type === 'text') {
+                    // These don't have children
+                    //  They are also the inner-most.
+                    // create a jsgui text node.
+                    //log('text item', item);
+                    // trim it
+
                     let trimmed = item.data.trim();
                     //log('trimmed', trimmed);
                     //log('trimmed.length', trimmed.length);
+
                     if (trimmed.length > 0) {
                         handle_text(item.raw, depth);
                     }
@@ -191,19 +466,456 @@ const parse = function(str_content, context, control_set, callback) {
                     // does it have children?
                     // if not, create a control from the children.
                     // then if it does, what are its control children?
+
                     //log('tag item', item);
                     //log('item.children.length', item.children.length);
+
                     handle_tag(item, depth);
+
+                    /*
+                    if (!item.children) {
+                        log('no children item', item);
+                        throw 'stop';
+                    }
+                    */
+
                 }
             });
+            // Really not that good parse-mount being async.
+            //  May need to fix that for it to work.
+            //   Composition should be instant, but does not need to return a value.
+
+            // Would be best to separate out the parsing.
+            //
+            // the parse result is the depth 0 controls.
+
             const depth_0_ctrls = map_siblings_at_depth[0];
             callback(null, [depth_0_ctrls, res_controls]);
+            
         }
             //[...parsing done, do something...]
     });
     var parser = new htmlparser.Parser(handler);
     parser.parseComplete(str_content);
+
 }
+
+const _parse = function(str_content, context, control_set) {
+
+    // Well this needs to be a promise or observable.
+    //  Observable could be cool...?
+
+    str_content = str_content.trim();
+    return new Promise((solve, jettison) => {
+        const handler = new htmlparser.DefaultHandler(function (error, dom) {
+            if (error) {
+                log('parse error', error);
+            }
+                //[...do something for errors...]
+            else {
+                log('dom', dom);
+                // Then can recurse through the dom object.
+                //  Nice that it parses non-standard elements.
+    
+                // depth-first recursion for creation of the elements.
+                //  Then will add them to the parents as they get created.
+                // replace the children with controls?
+    
+                // when doing 
+    
+                let recurse = (dom, depth, callback) => {
+                    let tdom = tof(dom);
+                    let res;
+                    log('tdom', tdom);
+                    log('dom item', dom);
+    
+                    if (tdom === 'array') {
+                        //res = [];
+                        each(dom, v => {
+                            //res.push(recurse)
+                            recurse(v, depth + 1, callback);
+    
+                            // then later (depth first) callback
+                            callback(v, depth);
+    
+                        })
+                    } else if (tdom === 'object') {
+                        if (dom.children) {
+                            each(dom.children, child => {
+                                recurse(child, depth + 1, callback);
+    
+                                callback(child, depth);
+                            })
+                        }
+                    } else {
+                        log('dom', dom);
+                    }
+                }
+                // want to create the items as well.
+                //  start with innermost, adding the child controls to the outer ones.
+                //   need to be able to run controls from these strings which come as templates.
+                //   eliminate the need for much of the control construction code, at least make it much more concise.
+    
+    
+                /*
+                const new_ctrl_made = (ctrl) => {
+                    // this will need to assemble to controls into a heirachy.
+                    //  May need to know the depth so to know which to join together.
+    
+                    // includes text controls
+                }
+                */
+    
+                // handle text
+                //  should know what level the text is at
+                //   needs to know when the level decreases so we can put the children in the parent.
+    
+                let last_depth = 0;
+    
+                // maybe need a map of siblings at depth
+                //let child_nodes = [];
+                // siblings in a list, children in a list?
+                //  or only need one list with depth-first?
+                // can build it up within the closure.
+    
+                // sounds like we need it as we add to the tree at different depths.
+                // map of open arrays at different depths?
+    
+                // need to push the text node at the depth.
+    
+                let map_siblings_at_depth = {};
+                // Then when moving up a depth we nullify the array
+                //  Then moving down the depth we create a new array.
+                //  Do this for controls.
+                //  Including text controls.
+    
+                let res_controls = {};
+
+                // return res_controls as well...?
+                //  makes sense
+
+
+    
+                const handle_text = (text, depth) => {
+    
+                    //child_nodes.push(text);
+    
+                    // Maybe don't need the text node control here.
+                    //  When we have the text as a single child, we can declare it as a property.
+                    //  However, the full text node instantiation makes sense for not taking shortcuts.
+    
+                    let tn = new control_set.Text_Node({
+                        text: text,
+                        context: context
+                    });
+    
+                    //log('tn', tn);
+                    //log('text', text);
+                    //log('tn instanceof Text_Node', tn instanceof control_set.Text_Node);
+                    //log('tn.text', tn.text);
+                    //log('tn._text', tn._text);
+                    //throw 'stop';
+                    res_controls.unnamed = res_controls.unnamed || [];
+                    res_controls.unnamed.push(tn);
+                    // push it into siblings at depth too.
+                    map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
+                    map_siblings_at_depth[depth].push(tn);
+    
+                    // doesn't have a name though.
+                    //  there will be other unnamed controls that should be returned in the results.
+                    // The names maybe will not be so important.
+    
+                    last_depth = depth;
+                }
+    
+                // an array of siblings at levels
+                //  then remove? the array when going up a level, use it as the children for a node?
+    
+                // need to be able to start up a node while specifying its content?
+                //  including the content in the spec could work well.
+                //   
+    
+                // Get rid of the span rendering shortcut?
+                //  Always use the textNode?
+                //  Have the .text property a shortcut to modifying that text node?
+    
+                // Span .text is really convenient in many cases.
+                // Spans can contain other elements so it's worth being careful.
+    
+                // The .text shortcut looks like its not carrying out the underlying dom functionality.
+                //  Better to have it do the underlying dom tasks properly, and then have sugar around that.
+    
+                // So don't have special rendering for the span element.
+                // Divs / controls can take text nodes too.
+    
+                // Maybe have .text read-only.
+                //  .set_text too?
+                //  .set_text for convenience in some situations.
+                //   In other situations, we use proper text nodes alongside whatever else goes inside a span.
+    
+                // the .text set and get property could stay for convienience.
+                //  It needs to deal with textNode object underneith though.
+    
+                // General route is to handle things in the conventional DOM way on a lower level
+                //  Then on a higher level there will be systems of convenience for the programmer.
+    
+                // So setting text will replace the content.
+                //  Get rid of the specialised span rendering.
+                //  Get rid of text property for the moment?
+                //   Or have it do its stuff on a lower level.
+    
+    
+                const handle_tag = (tag, depth) => {
+                    //console.log('handle_tag tag', tag);
+                    const tag_with_no_children = {};
+                    if (tag.raw) tag_with_no_children.raw = tag.raw;
+                    if (tag.data) tag_with_no_children.data = tag.data;
+                    if (tag.type) tag_with_no_children.type = tag.type;
+                    if (tag.name) tag_with_no_children.name = tag.name;
+                    if (tag.attribs) tag_with_no_children.attribs = tag.attribs;
+    
+                    // Then the name property - need to use these named controls to set the control's _ctrl_fields
+    
+                    //log('handle_tag tag_with_no_children', tag_with_no_children);
+                    // maybe pass through the tag with no children. the children have been made into controls.
+    
+                    // will add to the collection of siblings.
+                    // has the depth increased?
+                    // create control...
+    
+                    // and the children? content
+                    const create_ctrl = (tag, content) => {
+                        if (control_set[tag.name]) {
+                            //log('has jsgui control for ' + tag.name);
+        
+                            // need to look into if there are child jsgui controls within this.
+        
+                            let Ctrl = control_set[tag.name];
+                            // work out the spec as well.
+                            log('tag', tag);
+                            let a = tag.attribs || {};
+    
+                            // Why isnt content working in the spec?
+                            //  Expecially with a Text_Node?
+                            if (content) a.content = content;
+                            //log('content.length', content.length);
+    
+                            each(content, item => {
+                                //log('content item', item);
+                                //log('Object.keys(content item)', Object.keys(item));
+                                //log('(content item.__type_name)', (item.__type_name));
+                                //log('(content item._text)', (item._text));
+                                //log('(content item.text)', (item.text));
+                            })
+    
+                            // want an easier way to view the content.
+                            //  don't want large printouts of the jsgui controls.
+    
+                            log('attribs a', a);
+                            log('\n\n');
+                            //log('!!target', !!target);
+                            //log('!!target.context', !!target.context);
+                            a.context = context;
+        
+                            let ctrl = new Ctrl(a);
+                            if (a.name) {
+                                res_controls.named = res_controls.named || {};
+                                res_controls.named[a.name] = ctrl;
+    
+                                // Expected behaviour to replace existing composition code.
+
+                                //target[a.name] = ctrl;
+    
+                                //res_controls[a.name] = ctrl;
+                            } else {
+                                res_controls.unnamed = res_controls.unnamed || [];
+                                res_controls.unnamed.push(ctrl);
+                            }
+                            // and unnamed controls
+                            //  an array of them...
+        
+                            // The name property - possibly name could be stored by the control itself.
+                            //  Different to its id.
+        
+                            //log('!!ctrl', !!ctrl);
+                            //log('depth', depth);
+    
+                            return ctrl;
+                        } else {
+                            // The app's controls need to be loaded / registered previous to this.
+                            //log('lacking jsgui control for ' + tag.name);
+    
+                            // The server app should register it?
+    
+    
+                            //console.log('tag', tag);
+                            console.trace();
+    
+                            throw 'lacking jsgui control for ' + tag.name;
+                        }
+                    }
+    
+                    // create the control at this stage?
+                    //  having a 'content' or 'children' property could work well here.
+                    //  setting .content would make sense well.
+    
+                    let my_children;
+                    let ctrl;
+    
+                    if (depth > last_depth) {
+    
+                        // Likely will happen.
+                        //  The fix I put in got lost before.
+                        //  It does not need to do that much where there are no child nodes.
+    
+                        
+    
+                        ctrl = create_ctrl(tag_with_no_children);
+                        //map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
+    
+                        map_siblings_at_depth[depth] = []; // because its a new depth?
+                        map_siblings_at_depth[depth].push(ctrl);
+    
+                        console.log('depth > last_depth [depth, last_depth]', [depth, last_depth]);
+                        console.trace();
+                        //throw 'NYI';
+    
+                        // Not sure how this will happen as the depth should move outwards?
+                        //  Will need to check / measure recursion order.
+    
+                        // depth increase.
+                        //  means moving to new child.
+                        //   this does depth first, but starting from the first.
+                        //    not sure that makes sense, need to check that it works.
+    
+                        // 
+                        map_siblings_at_depth[depth] = [];
+    
+                        // but need to add the item.
+                        //map_siblings_at_depth[depth].push();
+    
+                        //log('child_nodes', child_nodes);
+    
+                        //child_nodes = [];
+    
+    
+                    } else if (depth < last_depth) {
+    
+                        //log('child_nodes', child_nodes);
+                        // create the control.
+    
+                        //child_nodes = [];
+                        // my children in array!!!
+                        //log('last_depth', last_depth);
+    
+                        my_children = map_siblings_at_depth[last_depth];
+                        //log('my_children', my_children);
+    
+                        //throw 'stop';
+    
+                        if (my_children) {
+                            //log('my_children.length', my_children.length);
+                            ctrl = create_ctrl(tag_with_no_children, my_children);
+                        } else {
+                            ctrl = create_ctrl(tag_with_no_children);
+                        }
+                        //log('ctrl.content._arr.length', ctrl.content._arr.length);
+                        map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
+    
+                        // do we need to keep these child controls now?
+                        //  prob best not to.
+                        map_siblings_at_depth[last_depth] = null;
+                        map_siblings_at_depth[depth].push(ctrl);
+    
+                        // create the ctrl including the content.
+    
+                        // create the control with the children.
+                        //  maybe just say they are 'content'.
+    
+                        // being able to choose content subcontrols at declaration seems very important here.
+    
+    
+                    } else {
+                        ctrl = create_ctrl(tag_with_no_children);
+                        map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
+                        map_siblings_at_depth[depth].push(ctrl);
+    
+                        // I think that means that this one doesn't have children either.
+                        // same depth - sibling
+                        //  create a new control.
+                        //   I think this means that the last control in the loop had no subcontrols.
+                        // Will need to observe the algo in operation to make sure it works correctly.
+                        //child_nodes.push(tag)
+    
+                    }
+                    // Create a control out of the tag
+                    last_depth = depth;
+                }
+    
+                // goes depth-first.
+                recurse(dom, 0, (item, depth) => {
+                    //log('item', item);
+                    //log('depth', depth);
+    
+                    // analyse the item
+                    //  is it an element (tag)?
+    
+                    if (item.type === 'text') {
+                        // These don't have children
+                        //  They are also the inner-most.
+                        // create a jsgui text node.
+                        //log('text item', item);
+                        // trim it
+    
+                        let trimmed = item.data.trim();
+                        //log('trimmed', trimmed);
+                        //log('trimmed.length', trimmed.length);
+    
+                        if (trimmed.length > 0) {
+                            handle_text(item.raw, depth);
+                        }
+                        // Need to rapidly 
+                    } else if (item.type === 'tag') {
+                        // does it have children?
+    
+                        // if not, create a control from the children.
+    
+                        // then if it does, what are its control children?
+    
+                        //log('tag item', item);
+                        //log('item.children.length', item.children.length);
+    
+                        handle_tag(item, depth);
+    
+                        /*
+                        if (!item.children) {
+                            log('no children item', item);
+                            throw 'stop';
+                        }
+                        */
+    
+                    }
+                });
+                // Really not that good parse-mount being async.
+                //  May need to fix that for it to work.
+                //   Composition should be instant, but does not need to return a value.
+    
+                // Would be best to separate out the parsing.
+                //
+                // the parse result is the depth 0 controls.
+    
+                const depth_0_ctrls = map_siblings_at_depth[0];
+                solve([depth_0_ctrls, res_controls]);
+                
+            }
+                //[...parsing done, do something...]
+        });
+        var parser = new htmlparser.Parser(handler);
+        parser.parseComplete(str_content);
+    })
+
+}
+
 
 // Not sure why this separation breaks things.
 //  Timing - cant be async, needs to be immediate with callback. Cant await the parsing promise and have it work.
@@ -211,6 +923,9 @@ const parse = function(str_content, context, control_set, callback) {
 
 // Maybe change back to old parse_mount and fix tomorrow?
 //  Or parse function will always / just use a callback?
+
+
+
 
 const parse_mount = function(str_content, target, control_set) {
 
