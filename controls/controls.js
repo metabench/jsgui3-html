@@ -139,10 +139,10 @@ var controls = {
 
     File_Tree: require('./connected/file-tree'),
     File_Tree_Node: require('./connected/file-tree-node'),
-
+    Icon: require('./icon'),
     Item: require('./item'),
     Item_Selector: require('./item-selector'),
-    Item_View: require('./item-view'),
+    //Item_View: require('./old/item-view'),
     Left_Right_Arrows_Selector: require('./vector/left-right-arrows-selector'),
     //Vector: require('./vector'),
     Line_Chart: require('./vector/line-chart'),

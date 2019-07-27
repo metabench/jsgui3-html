@@ -6,7 +6,7 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined 
 //var Control = jsgui.Control;
 
 var Button = require('./button');
-var Item = require('./item');
+var Item = require('./old/item');
 var Collection = jsgui.Collection;
 var Data_Value = jsgui.Data_Value;
 
@@ -114,12 +114,10 @@ class Popup_Menu_Button extends Button {
                         'item': item
                     });
                     menu_item.add_class('popup-menu');
-
                     root_menu_item.inner.add(menu_item);
 
                     // Then add a callback event, if we have that.
                     //  Post-activation I suppose.
-
 
                 });
             };

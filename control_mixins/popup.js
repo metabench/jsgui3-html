@@ -13,6 +13,9 @@
     // .popup
     // Some content will be hidden until it shows through popup.
 
+    // 
+
+
 */
 
 // The page context could give a floating layer if asked.
@@ -26,9 +29,13 @@ const Control = jsgui.Control;
 const context_ensure_popup_layer = (context) => {
     let ctrl_document = context.ctrl_document;
     // then body...
-
     // .child_controls
     // .content.length
+
+
+    // Can get the popup layer from the context now.
+
+    // context.overlay property
 
     console.log('ctrl_document', ctrl_document);
 
@@ -93,9 +100,6 @@ const popup = (ctrl) => {
 
             popup_layer.add(absolute_container);
             absolute_container.add(placeholder);
-
-
-
 
             parent.content.swap(ctrl, placeholder);
             //ctrl.remove_class('hidden');

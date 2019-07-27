@@ -292,12 +292,16 @@ const parse = function(str_content, context, control_set, callback) {
                         //   class?
                         //    yes it gets handles internally by the ctrl.
 
+
+                        // Not the best way? Need this to be more adaptable?
                         const map_jsgui_attr_names = {
                             'name': true,
                             'class': true,
                             'content': true,
                             '__type_name': true,
-                            'context': true
+                            'context': true,
+                            'key': true,
+                            'size': true
                         }
 
 
@@ -308,7 +312,6 @@ const parse = function(str_content, context, control_set, callback) {
                             if (!map_jsgui_attr_names[a_name]) {
                                 arr_dom_attrs.push([a_name, a_value])
                             }
-
 
                         })
 

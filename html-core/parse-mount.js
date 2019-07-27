@@ -16,6 +16,16 @@
 var htmlparser = require("htmlparser");
 const {tof, each} = require('lang-mini');
 
+const map_jsgui_attr_names = {
+    'name': true,
+    'class': true,
+    'content': true,
+    '__type_name': true,
+    'context': true,
+    'key': true,
+    'size': true
+}
+
 // Maybe redo this, making use of a recursion function.
 
 // Just parse and add?
@@ -23,7 +33,6 @@ const {tof, each} = require('lang-mini');
 // Parse and construct?
 
 const log = () => {}
-
 const parse = function(str_content, context, control_set, callback) {
     console.log('Parsing');
     console.log('-------');
@@ -123,13 +132,7 @@ const parse = function(str_content, context, control_set, callback) {
                             res_controls.unnamed = res_controls.unnamed || [];
                             res_controls.unnamed.push(ctrl);
                         }
-                        const map_jsgui_attr_names = {
-                            'name': true,
-                            'class': true,
-                            'content': true,
-                            '__type_name': true,
-                            'context': true
-                        }
+                        
                         const arr_dom_attrs = [];
                         each(a, (a_value, a_name) => {
                             if (!map_jsgui_attr_names[a_name]) {
@@ -213,14 +216,11 @@ const parse = function(str_content, context, control_set, callback) {
 //  Or parse function will always / just use a callback?
 
 const parse_mount = function(str_content, target, control_set) {
-
     // And this should be a promise too, it seems.
     //  Not so sure though.
     //  Promise puts in some kind of a delay.
 
     // Maybe this fn would be better with a callback too.
-
-
     return new Promise(async(solve, jettison) => {
         let container;
         let a = arguments;
@@ -232,7 +232,6 @@ const parse_mount = function(str_content, target, control_set) {
             container = target;
         }
         const {context} = target;
-
         // And make it async to announce when it's complete?
         //  Won't take long though.
 

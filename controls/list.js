@@ -6,7 +6,7 @@
  */
 
 var jsgui = require('../html-core/html-core');
-var Item = require('./item');
+var Item = require('./old/item');
 
 var stringify = jsgui.stringify,
     each = jsgui.each,

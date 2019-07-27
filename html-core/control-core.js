@@ -75,6 +75,8 @@ var style_input_handlers = {
 // Setproperty / prop on all of the styles.
 
 
+// Seems best to redo dom, attrs, style, not using proxy.
+//  Using grammar. More interpretation / intelligent transformation of params.
 
 
 var new_obj_style = () => {
@@ -91,7 +93,10 @@ var new_obj_style = () => {
 		each(style, (value, key) => {
 			//console.log('descriptor', Reflect.getOwnPropertyDescriptor(style, key));
 			//console.log('key', key);
-			if (key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger' && key !== {}) {
+
+			const tval = typeof value;
+
+			if (tval !== 'function' && key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger' && key !== {}) {
 				if (first) {
 					first = false;
 				} else {
@@ -749,14 +754,10 @@ class Control_Core extends Data_Object {
 		if (!dom_attrs) {
 			throw 'expecting dom_attrs';
 		} else {
-
 			/*
-
 			dom_attributes['data-jsgui-id'] = id;  this._id();
 			dom_attributes['data-jsgui-type'] = this.__type_name;
-
 			*/
-
 
 			if (this._) {
 				var keys = Object.keys(this._);
@@ -832,14 +833,12 @@ class Control_Core extends Data_Object {
 			arr.push(' data-jsgui-id="' + this._id() + '"');
 			// only if its not an html / svg / browser tag.
 
-
 			// and div?
 			const exempt_types = {
 				html: true,
 				head: true,
 				body: true
 			}
-
 			if (this.__type_name) {
 
 				// Still seems as though the body is not being activated properly.
@@ -848,8 +847,6 @@ class Control_Core extends Data_Object {
 					arr.push(' data-jsgui-type="' + this.__type_name + '"');
 				}
 			}
-
-
 			//var arr_dom = dom_attrs._arr;
 			//for (var c = 0, l = arr_dom.length; c < l; c++) {
 			//  arr.push(' ', c, '="', arr_dom[c], '"');
@@ -867,82 +864,59 @@ class Control_Core extends Data_Object {
 				//console.log('key', key);
 				if (key == '_bound_events') {
 
-				}
-				//else if (key === 'raise') {} 
-				else if (key === 'style') {
+				} else if (key === 'style') {
 					item = dom_attrs[key];
-
 					if (typeof item !== 'function') {
-
 						// if its an object, need to build up the string.
 						//  and ignore functions in there, such as 'off'.
-
 						if (typeof item === 'object') {
-
 							// for style in particular..
 							//console.log('key', key);
-
 							if (key === 'style') {
-
 								// can join an array with ;.
 								const sprops = [];
-
 								each(item, (v, k) => {
+									// no 'off' style. thats been giving problems.
+									//console.log('k', k);
+									//console.log('v', v);
 									// the type of the value... has to be string or number?
-	
 									const tval = typeof v;
+									//console.log('tval', tval);
+									// if its an object???
+									//  ignore for the moment.
 									if (tval !== 'function') {
 										// need to write out the inline css here.
-
 										if (k !== '__empty') {
 											const sprop = k + ':' + v;
 											sprops.push(sprop);
 										}
-	
 									}
 								});
-
-								arr.push(' ', key, '="', sprops.join(';'), '"');
-
+								if (sprops.length > 0) arr.push(' ', key, '="', sprops.join(';'), '"');
 							} else {
 								console.trace();
 								throw 'NYI';
 							}
-
-							
-
 						} else {
-
-
 							//console.log('typeof item', typeof item);
 							//console.log('style css item', item);
 							let is = item.toString();
 							//console.log('is', is);
-
 							// need to ignore some items by name / key?
 							//  or is the style function adding these incorrectly?
 
 							// Seems like the styling stsyem needs an overhaul?
 							//  Some styles are getting set wrong.
 
-
 							//console.log('item', item);
 							//console.log('item', item.toString());
 							//console.log('item.__empty', item.__empty);
-
 							// Ignore some keys?
-
 							if (!item.__empty && is.length > 0) {
 								arr.push(' ', key, '="', is, '"');
 							}
-
 						}
-
-
-
-						
 					}
-
 
 				} else {
 					item = dom_attrs[key];
@@ -950,7 +924,6 @@ class Control_Core extends Data_Object {
 					if (item && item.toString) {
 						arr.push(' ', key, '="', item.toString(), '"');
 					}
-
 				}
 			}
 			//dom_attrs.each(function (i, v) {
@@ -963,7 +936,6 @@ class Control_Core extends Data_Object {
 		//return res;
 	}
 	'renderBeginTagToHtml'() {
-
 		// will be in _.dom.tagName
 		//  I think that's why we need the further level properties.
 
@@ -974,16 +946,12 @@ class Control_Core extends Data_Object {
 		//var dom = this.get('dom');
 		//var tagName = this.get('dom.tagName'),
 
-
-
 		/*
 
 		dom_attributes['data-jsgui-id'] = id;
 		dom_attributes['data-jsgui-type'] = this.__type_name;
 
 		*/
-
-
 
 		const tagName = this.dom.tagName;
 		//console.log('this._.dom', this._.dom._.attributes);

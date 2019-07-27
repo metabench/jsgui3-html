@@ -81,9 +81,6 @@ class Page_Context extends Evented_Class {
         }
 
         this.new_id = _get_new_typed_object_id;
-
-
-
         this.set_max_ids = (map_max_ids) => {
             each(map_max_ids, (v, i) => {
                 map_new_ids[i] = v + 1;

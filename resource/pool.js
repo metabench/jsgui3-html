@@ -206,14 +206,14 @@ class Resource_Pool extends Evented_Class {
 			//this._dict_resources[obj_name] = obj;
 			// raise an event saying that the resource was added.
 
-			console.log('resource pool adding resource to collection', obj);
-			console.log('this.resources._arr.length', this.resources._arr.length);
+			//console.log('resource pool adding resource to collection', obj);
+			//console.log('this.resources._arr.length', this.resources._arr.length);
 
 			//console.log('this.resources', this.resources);
 
 			this.resources.add(obj);
 			//console.log('post add');
-			console.log('this.resources._arr.length', this.resources._arr.length);
+			//console.log('this.resources._arr.length', this.resources._arr.length);
 			//console.log('this.resources', this.resources);
 
 			// Resources have an indexing function?
@@ -249,21 +249,15 @@ class Resource_Pool extends Evented_Class {
 		return this.add(obj);
 	}
 	'has_resource'() {
-		var a = arguments;
-		a.l = arguments.length;
-		var sig = get_a_sig(a, 1);
-
+		const a = arguments;
+		//a.l = arguments.length;
+		const sig = get_a_sig(a, 1);
 		//return is_defined(this._dict_resources[resource_name]);
-
 		//return
-
 		if (sig == '[s]') {
 			// one string value, that will be the value of the unique primary index
-
-			var obj_lookup_val = a[0];
-
+			const obj_lookup_val = a[0];
 			return this.resources.has(obj_lookup_val);
-
 		}
 	}
 
@@ -284,7 +278,6 @@ class Resource_Pool extends Evented_Class {
 		})
 		return res;
 	}
-
 
 	/*
 

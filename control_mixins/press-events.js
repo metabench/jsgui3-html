@@ -38,9 +38,25 @@
 
 */
 
-let press_events = (ctrl) => {
+// And options
+
+
+let press_events = (ctrl, options = {}) => {
     const body = ctrl.context.body();
     //console.log('body', body);
+
+    // And do the press events styling too. Automating a 'pressed' class here would make it easy to use elsewhere.
+
+    const {css} = options;
+
+    if (css) {
+        ctrl.on({
+            'press-start': () => ctrl.add_class('pressed'),
+            'press-end': () => ctrl.remove_class('pressed')
+        });
+    }
+
+
 
     let pos_start;
     let movement_offsets;

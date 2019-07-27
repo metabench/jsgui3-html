@@ -5,6 +5,12 @@
 const jsgui = require('lang-tools');
 const Text_Node = require('./text-node');
 const obext = require('obext');
+
+// const load_type = (name, abbreviation, fn_detect_instance) => {
+
+
+
+
 //const {field, prop} = obext;
 // Want the documentation online!
 
@@ -43,6 +49,16 @@ const str_arr_mapify = jsgui.str_arr_mapify;
 const get_a_sig = jsgui.get_a_sig;
 const each = jsgui.each;
 const Control = jsgui.Control = require('./control-enh');
+
+
+// Seems to make a problem with rendering or something....
+//  Likely makes sense to have Control loaded though.
+
+// Not sure where in composition / rendering it treats controls as normal objects / whatever else.
+//  needs to be lower case c in its full name.
+jsgui.load_type('control', 'C', item => (item instanceof Control));
+
+
 const Evented_Class = jsgui.Evented_Class;
 //jsgui.util = require('../lang/util');
 //var Control = jsgui.Control = require('./control-enh');
