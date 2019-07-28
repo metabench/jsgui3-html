@@ -212,8 +212,6 @@ class Control extends Control_Core {
 		//  and therefore can add .context itself
 		// other objects - [Control_Constructor, spec]
 
-
-
 		this._ctrl_fields = this._ctrl_fields || {};
 		let cf = this._ctrl_fields;
 		each(obj_ctrls, (ctrl, name) => {
@@ -274,6 +272,9 @@ class Control extends Control_Core {
 	}
 
 	'add_text'(value) {
+		
+		console.log('add_text', value);
+		console.trace();
 		var tn = new Text_Node({
 			'context': this.context,
 			'text': value + ''
@@ -697,6 +698,7 @@ class Control extends Control_Core {
 	//
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
 
+	// maybe will use on activate instead.
 	'once_active'(cb) {
 		// maintain a list of once active callbacks...
 		if (typeof document !== 'undefined') {
@@ -814,7 +816,6 @@ class Control extends Control_Core {
 				//requestAnimationFrame(() => {
 				el.setAttribute(property_name, dval);
 				//})
-
 			}
 		});
 	}
@@ -1023,7 +1024,15 @@ class Control extends Control_Core {
 		});
 	}
 
+	// Activation may need more testing and attention.
+	//  Auto activation.
+	//  Making sure parse_mount works fine.
+
 	'activate_content_controls'() {
+
+		// Need to deal with text nodes as well.
+		//  Maybe just need to activate the content, not create the controls.
+
 		if (!this.dom.el) {
 			let found_el = this.context.get_ctrl_el(this);
 			//console.log('found_el', found_el);
@@ -1068,6 +1077,9 @@ class Control extends Control_Core {
 						let nt = cn.nodeType;
 						//console.log('* nt ' + nt);
 						if (nt === 1) {
+
+							// Only adds them if not already found.
+
 							let cn_jsgui_id = cn.getAttribute('data-jsgui-id');
 							//console.log('cn_jsgui_id ' + cn_jsgui_id);
 							let cctrl = context.map_controls[cn_jsgui_id];
@@ -1091,23 +1103,84 @@ class Control extends Control_Core {
 							}
 						}
 						if (nt === 3) {
+
+							//console.log('node type 3 (text)');
+
+							// Go through the controls we have...
+							//  See if there is the corresponding text node.
+
+							const i_sibling = c;
+							//console.log('i_sibling', i_sibling);
+
+							// See if we can look up the control in the content....
+
+							const corresponding_ctrl = content._arr[i_sibling];
+							//console.log('corresponding_ctrl', corresponding_ctrl);
+							//console.log('cn', cn);
+							//console.log('Object.keys(cn)', Object.keys(cn));
+							//console.log('cn.nodeValue', cn.nodeValue);
+
+							if (corresponding_ctrl) {
+								if (corresponding_ctrl.text === cn.nodeValue) {
+									//console.log('*** have match');
+
+									// has no 'dom' yet.
+
+									corresponding_ctrl.dom.el = cn; // though its a node, not an el.
+								}
+							} else {
+								console.log('&&& no corresponding control');
+								// Maybe now is the right time to create it.
+
+							}
+
+							// Compare the nodeValue to the ._text or .text property of the corresponding ctrl.
+
+
+
+
+							// Checking whether the textNode controls have been created already...?
+
+
+
+
+
+							// Possibly do the work on activating child controls, reconsiliating text nodes with their jsgui control.
+
+							// Could reconnect the text node here?
+							//  Yes, seems like reconnecting text nodes is important.
+							//  Do it just after adding it into the DOM.
+							//   Maybe that would be activation.
+							//   Have text node activate code....
+
 							// text
 
 							// create a new jsgui text node.
 							//  don't want to push / add the data value
 
+							// Have we already got the text node control?
+							//  Different when activating from the sent HTML?
 
-							let val = cn.nodeValue;
-							//console.log('val', val);
+							const do_add = () => {
+								let val = cn.nodeValue;
+								//console.log('val', val);
+								console.log('adding Text_Node control', val);
+								const tn = new Text_Node({
+									context: this.context,
+									text: val,
+									el: cn
+								})
+								//console.log('val ' + val);
+								//content.push(val);
+								//content.push(tn);
 
-							const tn = new Text_Node({
-								context: this.context,
-								text: val,
-								el: cn
-							})
-							//console.log('val ' + val);
-							//content.push(val);
-							content.push(tn);
+								// Is it already there???
+								//  Seems to already have something....
+								console.log('content._arr.length', content._arr.length);
+								content.add(tn);
+							}
+
+							// content .add or .push ???
 						}
 					}
 				}

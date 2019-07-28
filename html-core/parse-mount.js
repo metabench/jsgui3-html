@@ -55,19 +55,19 @@ const parse = function(str_content, context, control_set, callback) {
 
                 if (tdom === 'array') {
                     //res = [];
-                    each(dom, v => {
+                    each(dom, (v, i) => {
                         //res.push(recurse)
                         recurse(v, depth + 1, callback);
                         // then later (depth first) callback
-                        callback(v, depth);
+                        callback(v, depth, i);
 
                     })
                 } else if (tdom === 'object') {
                     if (dom.children) {
-                        each(dom.children, child => {
+                        each(dom.children, (child, i) => {
                             recurse(child, depth + 1, callback);
 
-                            callback(child, depth);
+                            callback(child, depth, i);
                         })
                     }
                 } else {
@@ -77,22 +77,35 @@ const parse = function(str_content, context, control_set, callback) {
             let last_depth = 0;
             let map_siblings_at_depth = {};
             let res_controls = {};
-            const handle_text = (text, depth) => {
+            const handle_text = (text, depth, sibling_index) => {
+                // Not so sure we can give it the parent right here.
+                //  Can only reconnect it once it's been put into the DOM.
+
                 let tn = new control_set.Text_Node({
                     text: text,
-                    context: context
+                    context: context,
+                    sibling_index: sibling_index
                 });
                 res_controls.unnamed = res_controls.unnamed || [];
                 res_controls.unnamed.push(tn);
                 map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
                 map_siblings_at_depth[depth].push(tn);
                 last_depth = depth;
+
+                // Any way of reconnecting the text node back with the DOM element?
+                //  sibling_index property could help them to be reconnected later on, once its in the DOM.
+
+                // Does seem like work on reconnecting text content / nodes with the activation of controls will be useful.
+                //  Want the jsgui text node controls to have a reference to the DOM node.
+
+                // Will look them up using the sibling index.
+
             }
 
-            const handle_tag = (tag, depth) => {
-                console.log('handle_tag tag', tag);
-                console.log('depth', depth);
-                console.log('last_depth', last_depth);
+            const handle_tag = (tag, depth, sibling_index) => {
+                //console.log('handle_tag tag', tag);
+                //console.log('depth', depth);
+                //console.log('last_depth', last_depth);
                 const tag_with_no_children = {};
                 if (tag.raw) tag_with_no_children.raw = tag.raw;
                 if (tag.data) tag_with_no_children.data = tag.data;
@@ -100,10 +113,13 @@ const parse = function(str_content, context, control_set, callback) {
                 if (tag.name) tag_with_no_children.name = tag.name;
                 if (tag.attribs) tag_with_no_children.attribs = tag.attribs;
 
+                // Probably only worth giving the sibling index for text nodes, as that's where its needed to reconnect them.
+                //  Need to make sure things work right with non-parse-mount too.
+
                 const create_ctrl = (tag, content) => {
 
-                    console.log('tag.name', tag.name);
-                    console.log('!!control_set[tag.name]', !!control_set[tag.name]);
+                    //console.log('tag.name', tag.name);
+                    //console.log('!!control_set[tag.name]', !!control_set[tag.name]);
 
                     if (control_set[tag.name]) {
                         let Ctrl = control_set[tag.name];
@@ -162,7 +178,7 @@ const parse = function(str_content, context, control_set, callback) {
                     map_siblings_at_depth[depth].push(ctrl);
 
                 } else if (depth < last_depth) {
-                    console.log('depth decrease');
+                    //console.log('depth decrease');
                     my_children = map_siblings_at_depth[last_depth];
                     if (my_children) {
                         ctrl = create_ctrl(tag_with_no_children, my_children);
@@ -181,13 +197,14 @@ const parse = function(str_content, context, control_set, callback) {
                 last_depth = depth;
             }
             // goes depth-first.
-            recurse(dom, 0, (item, depth) => {
+            //  want the item's sibling index too.
+            recurse(dom, 0, (item, depth, sibling_index) => {
                 if (item.type === 'text') {
                     let trimmed = item.data.trim();
                     //log('trimmed', trimmed);
                     //log('trimmed.length', trimmed.length);
                     if (trimmed.length > 0) {
-                        handle_text(item.raw, depth);
+                        handle_text(item.raw, depth, sibling_index);
                     }
                     // Need to rapidly 
                 } else if (item.type === 'tag') {
@@ -196,7 +213,7 @@ const parse = function(str_content, context, control_set, callback) {
                     // then if it does, what are its control children?
                     //log('tag item', item);
                     //log('item.children.length', item.children.length);
-                    handle_tag(item, depth);
+                    handle_tag(item, depth, sibling_index);
                 }
             });
             const depth_0_ctrls = map_siblings_at_depth[0];
@@ -245,7 +262,7 @@ const parse_mount = function(str_content, target, control_set) {
                 const [depth_0_ctrls, res_controls] = res_parse;
 
                 //console.log('depth_0_ctrls', depth_0_ctrls);
-                console.log('res_controls', res_controls);
+                //console.log('res_controls', res_controls);
 
                 // Go through all named controls.
                 //  Set the name of target[a.name] = ctrl;
@@ -261,9 +278,9 @@ const parse_mount = function(str_content, target, control_set) {
                     //console.log('pre add new_ctrl');
 
                     // how many children within this control?
-                    console.log('');
-                    console.log('new_ctrl._id()', new_ctrl._id());
-                    console.log('new_ctrl', new_ctrl);
+                    //console.log('');
+                    //console.log('new_ctrl._id()', new_ctrl._id());
+                    //console.log('new_ctrl', new_ctrl);
 
                     // parse does not add content (correctly) to the first level 0.
 

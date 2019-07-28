@@ -38,6 +38,18 @@ const escape_html = (str) => {
 //  So, the text node will have an 'el'. Maybe dom.node?
 
 // Maybe don't extend control?
+
+// Do need to have activation as well...?
+//  Need to correlate the text node with its dom element.
+//   That can't be done through the use of jsgui ids.
+//    Will use sibling_index instead.
+
+// When activating controls containing text nodes, can then correlate the textNode class with the element, by referring to the sibling index.
+
+// Can give its parent control or element in the spec?
+//  That means we could get access to the element very quickly.
+
+
 class textNode extends Evented_Class {
 //class textNode extends Control {
     constructor(spec) {
@@ -61,11 +73,13 @@ class textNode extends Evented_Class {
             this.dom = {
                 el: spec.el
             }
+        } else {
+            this.dom = {};
         }
 
+        if (spec.sibling_index) this.sibling_index = spec.sibling_index;
 
         //ctrl_init_call(this, spec);
-
         //this._super(spec);
 
         // the underscore properties could make sense in Data_Objects and controls.
@@ -82,7 +96,6 @@ class textNode extends Evented_Class {
         if (typeof spec.text !== 'undefined') {
             this._text = spec.text;
         }
-
         //this.typeName = pr.typeName;
         //this.tagName = 'p';
 
@@ -96,6 +109,15 @@ class textNode extends Evented_Class {
             }
         })
 
+    }
+    activate() {
+        if (!this.__active) {
+
+            console.log('activate textNode control');
+            console.log('this.sibling_index', this.sibling_index);
+
+            this.__active = true;
+        }
     }
     get text() {
         return this._text;

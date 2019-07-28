@@ -536,6 +536,9 @@ jsgui.controls.span = jsgui.span = class span extends Control {
             const {name} = e_change;
 
             if (name === 'text') {
+
+                //console.log('this.content', this.content);
+
                 if (this.content._arr.length === 1) {
                     // a Data_Value?
     
@@ -558,6 +561,7 @@ jsgui.controls.span = jsgui.span = class span extends Control {
     
     
                 } else {
+                    console.trace();
                     throw 'NYI';
                 }
             }
