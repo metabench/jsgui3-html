@@ -1,3 +1,26 @@
+
+
+/*
+
+maybe should have size-binding?
+bind-size mixin.
+
+bind mixin?
+  binds one control to another
+  so the size can depend on the amount of space it has available.
+  defining the amount of size available or finding it in some cases 
+    change those cases so the size gets bound rather than set just once.
+
+bind-dimensions?
+
+UI to enable the user to resize it, by integrating handles?
+
+
+
+ui-resizable? or assumed.
+*/
+
+
 let resizable = (ctrl) => {
     // Respond to touch events.
 

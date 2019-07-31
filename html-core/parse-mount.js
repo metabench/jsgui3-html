@@ -34,9 +34,9 @@ const map_jsgui_attr_names = {
 
 const log = () => {}
 const parse = function(str_content, context, control_set, callback) {
-    console.log('Parsing');
-    console.log('-------');
-    console.log('');
+    //console.log('Parsing');
+    //console.log('-------');
+    //console.log('');
     str_content = str_content.trim();
 
     const handler = new htmlparser.DefaultHandler(function (error, dom) {

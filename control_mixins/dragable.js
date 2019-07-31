@@ -8,7 +8,23 @@ const {
 	tof
 } = require('lang-mini');
 
+// Get working with ghost drag too?
+//  Want to get features demo working soon.
+//  Probably separate pages will help to keep it simpler to begin with.
+//  Maybe CMS should be finished to power it.
+
+
+
+
+
+
 let dragable = (ctrl, opts = {}) => {
+
+	// And may use pointer press events instead?
+	//  Or that's to replace click...?
+
+
+
 	//let selection_action = 'mousedown';
 	// select on mousedown?
 

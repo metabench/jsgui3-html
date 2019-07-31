@@ -12,7 +12,6 @@ let fast_touch_click = (ctrl) => {
     // Could have an emulate_clicks option.
 
     let has_moved_away = false;
-
     ctrl.on('touchstart', ets => {
         //console.log('ets', ets);
         // Then cancel the event.
@@ -23,7 +22,6 @@ let fast_touch_click = (ctrl) => {
     })
     ctrl.on('touchend', ete => {
         //console.log('ete', ete);
-
         if (!has_moved_away) {
             ctrl.raise('click', ete);
         }

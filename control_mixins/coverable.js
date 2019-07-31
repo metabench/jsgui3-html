@@ -11,6 +11,9 @@ const { Control } = jsgui;
 // Different to the virtual frame. That could be used to cover a control too.
 //  suspended frame suspended_frame
 
+// Will also have overlays available too.
+//  coverable works differently.
+
 
 let coverable = (ctrl, opts) => {
     let select_toggle = false;
@@ -18,7 +21,6 @@ let coverable = (ctrl, opts) => {
     // select only...
     let select_multi = false;
     if (!opts) {
-
 
     }
 
@@ -36,7 +38,6 @@ let coverable = (ctrl, opts) => {
             context: ctrl.context,
             class: 'cover'
         });
-
         // then the cover has a background
 
         let ctrl_cover_bg = new Control({
@@ -50,7 +51,6 @@ let coverable = (ctrl, opts) => {
         });
         
         content.remove();
-        
         ctrl_cover.add(ctrl_cover_bg);
         ctrl_cover.add(ctrl_cover_fg);
         ctrl_cover_fg.add(content);
@@ -74,7 +74,6 @@ let coverable = (ctrl, opts) => {
     //field(ctrl, 'select_unique');
 
     //};
-
     /*
     if (true) {
         // but it won't be defined.

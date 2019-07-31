@@ -193,14 +193,21 @@ class Control extends Control_Core {
 		}
 	}
 	'ctrls'(obj_ctrls) {
+
 		// Another way of doing it.
+
 		// It's not a control, it's a different type of object.
+
 		// .is_control returning true for all controls.
+
+
 		//nu(Constructor, spec)
 
 		// Taking it as a name as well.
 		//  Constructors are registered by name.
 		//   Can add the context and create the spec from the attributes.
+
+
 
 		//  and therefore can add .context itself
 		// other objects - [Control_Constructor, spec]
@@ -358,11 +365,9 @@ class Control extends Control_Core {
 	}
 
 	// Also more likely to return as a mixin.
-	/*
 	'ghost'() {
 
 	}
-	*/
 
 	// one mousedown elsewhere.
 
@@ -373,8 +378,6 @@ class Control extends Control_Core {
 
 	// One mousedown elsewhere... needs to respond to all body events, while checking to see if the event originates from within this control.
 	//  Relies on tracing back through the DOM to see if a DOM node is connected to this control, or an inner part of it.
-
-	/*
 
 	'one_mousedown_elsewhere'(callback) {
 		var body = this.context.body();
@@ -401,7 +404,6 @@ class Control extends Control_Core {
 		body.on('mousedown', fn_mousedown);
 	}
 	// one_click_anywhere
-	*/
 
 
 	// this may go into a mixin that detects touch events outside a control.
@@ -420,7 +422,8 @@ class Control extends Control_Core {
 
 
 
-	/*
+
+
 	'one_mousedown_anywhere'(callback) {
 		//var ctrl_html_root = this.context.ctrl_document;
 		//console.log('this.context', this.context);
@@ -434,14 +437,11 @@ class Control extends Control_Core {
 			callback(e_mousedown);
 		});
 	}
-	*/
 
 
 	// Better with mixin I think.
 	//  Still required by selection_box_host. investigate there.
 	//  A mixin could likely be a better place / do the job better.
-
-	/*
 	'drag_events'(hmd, hmm, hmu) {
 		// screen x rather than page x
 		//let md, mm, mu;
@@ -482,10 +482,10 @@ class Control extends Control_Core {
 		});
 		// mouse up anywhere
 		// mouse move anywhere with the button not pressed.
+
+
 		//return [md, mm, mu];
 	}
-	*/
-
 
 	// Activation of dynamically added content
 	'activate_recursive'() {
@@ -518,164 +518,167 @@ class Control extends Control_Core {
 
 	// Just does the DOM part.
 	'add_dom_event_listener'(event_name, fn_handler) {
+		//console.log('add_dom_event_listener', event_name, this.__id);
+		// Not sure we even need the listener here.
+		// The target control
+		//  Which control was directly interacted with / clicked on / pressed.
 		const {context} = this;
-		const el = this.dom.el;
-
-		// Mapping from the given function to its handler does indeed seem useful.
-		//  Better by far than amending the fn_handler. 
-		//  Need to be able to remove the same function that was added to the DOM.
-
-		// see if we have the fn_handler mapped to its outer_handler.
-		// map of handlers to outer handlers.
-
-		const m = this.map_handlers_to_outer_handlers = this.map_handlers_to_outer_handlers || new Map();
-		let outer_handler;
-
-		if (m.has(fn_handler)) {
-			outer_handler = m.get(fn_handler);
-		} else {
-			outer_handler = e => {
-				const {target} = e;
-				const jid = target.getAttribute('data-jsgui-id');
-				if (jid) {
-					e.ctrl_target = context.map_controls[jid];
-				}
-				fn_handler(e);
-			};
-			console.log('map setting outer handler', event_name);
-			m.set(fn_handler, outer_handler);
-		}
-
-
+		var el = this.dom.el;
+		// A map of dom event handlers by name...?
 		if (el) {
-
-			// A map of the outer handlers to the inner handlers?
-			//  
-
-			// Return the outer handler?
-			//  Need a way to remove it while referring to the original function.
-
-			// A Map object? (actual one);
-
-			// Can't remove a wrapped function so easily.
-			//  Best to find a way to do it.
-
-			//  ES6 map object probably does look like the best tool for this job.
-			// an array of pairings could work as well.
-			//  And the pairings are arranged in a map by name too.
-
-			// A map of the outer / handler functions?
-
-
-			// Handler function created for every add_dom_event_listener.
-			
-			// Maybe worth getting rid of the handler function (at this stage)
-			//  and making the .ctrl_target feature appear elsewhere (prob on higher level).
-
-			// Though this handler in here is very convenient because of the ctrl_target.
-
-			// Easier construction of advanced handler functions?
-			//  Or do get into function amendments. 
-
-			/*
+			// need to keep track of the handler...?
+			// here we have the raise_handler
+			// a map between the handlers and the function names.
+			// Need to be able to detatch by using the handler.
+			// Would be worth getting the ctrl_target here I assume.
+			//  So another layer on the function call stack.
+			// Keep track of the function to enable removing it more easily...?
 			const fn_outer_handler = e => {
-				const {target} = e;
+				// Worth looking up the target and ctrl_target here...?
+				const {target} = e; // working now, data goes to higher levels :).
+				//console.log('event_name', event_name);
+				//console.log('target', target); // Lots of events happen, ie mousemove.
+				// Maybe track what added them...?
 				const jid = target.getAttribute('data-jsgui-id');
 				if (jid) {
 					e.ctrl_target = context.map_controls[jid];
 				}
 				fn_handler(e);
 			};
+			fn_outer_handler.event_inner = fn_handler;
+			
+			el.addEventListener(event_name, fn_outer_handler, false);
+			//el.addEventListener(event_name, fn_handler, false);
+			// better to pass the handler itself through.
+			/*
+			el.addEventListener(event_name, (e) => {
+				//console.log('this.disabled', this.disabled);
+				//console.log('this', this);
+				e.ctrl = this;
+				if (!this.disabled) {
+					this.raise(event_name, e);
+				}
+			}, false);
 			*/
-			//fn_outer_handler.event_inner = fn_handler;
-
-			// fn_handler.outer?
-			//  not so keen on changing / amending the function given.
-			// Need to still be able tounbind the function.
-			el.addEventListener(event_name, outer_handler, false);
 		}
+
+		const old_code_to_skip = () => {
+			var listener = this._bound_events[event_name];
+			//var that = this;
+			var el = this.dom.el;
+
+			// Pointless below...?
+
+			if (el) {
+				var t_listener = tof(listener);
+
+				// What if the listeners are the same?
+				//console.log('t_listener', t_listener);
+
+				if (t_listener === 'array') {
+
+					// Not sure if this should be skipped or improved on.
+
+					const old_code_to_skip = () => {
+						//console.log('listener.length', listener.length);
+						console.log('event_name', event_name);
+						console.log('listener', listener);
+						console.trace();
+						console.log('t_listener', t_listener);
+
+						// Presumably will be an array...
+
+
+						throw 'NYI';
+						el.addEventListener(event_name, (e) => {
+							//console.log('this.disabled', this.disabled);
+							//console.log('this', this);
+							e.ctrl = this;
+							if (!this.disabled) {
+								//console.log('listener.length', listener.length)
+
+								// Better not to add separate listeners.
+
+								/*
+								each(listener, l => {
+									if (l) {
+										l(e);
+									}
+								});
+								*/
+
+								// add the last listener in the array?
+
+								//this.raise(event_name, e);
+							}
+						}, false);
+					}
+
+				} else {
+
+					// Maybe unnecessary.
+
+					console.log('ctrl-enh add_dom_event_listener listener is not an array');
+					throw 'stop';
+					el.addEventListener(event_name, (e) => {
+						//console.log('this.disabled', this.disabled);
+						//if (!this.disabled && listener) listener(e);
+
+						// The event target corresponding with a control...?
+
+						const el_target = e.target;
+						console.log('el_target', el_target);
+
+						const target_jsgui_id = el_target.getAttribute('data-jsgui-id');
+						if (target_jsgui_id) {
+							e.ctrl_target = context.map_controls[target_jsgui_id];
+						}
+
+
+						this.raise(event_name, e);
+					}, false);
+				}
+				//console.log('post el add listener');
+			}
+			//*/
+		}
+		//console.trace();
+		// Return an object that enables removing it?
+		//  Or a remove function?
 	}
 
 	'remove_dom_event_listener'(event_name, fn_handler) {
-		console.log('remove_dom_event_listener event_name', event_name);
-
-		// other part deals with the bound events
-		const m = this.map_handlers_to_outer_handlers;
-		console.log('m', m);
-		let outer_handler;
-		if (m) {
-			console.log('m.has(fn_handler)', m.has(fn_handler));
-			if (m.has(fn_handler)) {
-				console.log('has outer handler.');
-				outer_handler = m.get(fn_handler);
-			}
-		}
-		outer_handler = outer_handler || fn_handler;
-		const el = this.dom.el;
+		var listener = this._bound_events[event_name];
+		// Different listener now...?
+		//  As it 
+		var el = this.dom.el;
+		// Its not the same handler function now.
+		//  The handler function has been wrapped.
+		//  
 		if (el) {
-			el.removeEventListener(event_name, outer_handler, false);
-		}
-
-		const old_way = () => {
-
-			// Do we even need to access this listener?
-			var listener = this._bound_events[event_name];
-			// array of them... not sure this is the best way for dealing with the DOM side of things.
-			//   could be a listener array....
-
-			let outer_handler;
-			const m = this.map_handlers_to_outer_handlers;
-			if (m) {
-				if (m.has(fn_handler)) {
-					outer_handler = m.get(fn_handler);
-				}
-			}
-			outer_handler = outer_handler || fn_handler;
-
-			var el = this.dom.el;
-			if (el) {
-				console.log('control-enh remove_dom_event_listener');
-				var t_listener = tof(listener);
+			var t_listener = tof(listener);
+			if (t_listener === 'array') {
+				//console.log('listener.length', listener.length);
+				let c_removed = 0;
 				let tfnh;
-				//console.log('fn_handler.event_inner', fn_handler.event_inner);
-				//console.log('fn_handler', fn_handler);
-				//console.log('t_listener', t_listener);
-
-				//tfnh = fn_handler.event_inner || fn_handler;
-				tfnh = fn_handler;
-
-				// Just remove the function handler from the dom element?
-				//  That's it here?
-
-				if (t_listener === 'array') {
-					//console.log('listener.length', listener.length);
-					let c_removed = 0;
-					each(listener, (listener) => {
-
-						// Match the listener to the outer handler?
-						//  As the element has been given an outer handler rather than the listener function itself.
-						//   Best not to set any properties of the function itself. Could mess up using that function again.
-
-
-						// only if its that specific handler?
-						if (listener === tfnh) {
-							el.removeEventListener(event_name, listener, false);
-							c_removed++;
-						}
-					});
-					if (c_removed === listener.length) {
-						this.map_raises_dom_events[event_name] = false;
-					}
-				} else {
-					let tfnh;
+				each(listener, (listener) => {
+					// only if its that specific handler?
 					tfnh = fn_handler.event_inner || fn_handler;
 					if (listener === tfnh) {
 						el.removeEventListener(event_name, listener, false);
+						c_removed++;
 					}
+				});
+				if (c_removed === listener.length) {
+					this.map_raises_dom_events[event_name] = false;
+				}
+			} else {
+				let tfnh;
+				tfnh = fn_handler.event_inner || fn_handler;
+				if (listener === tfnh) {
+					el.removeEventListener(event_name, listener, false);
 				}
 			}
-
-			
 		}
 	}
 	// Need to remove event listener from the DOM as well.
@@ -684,16 +687,25 @@ class Control extends Control_Core {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
-		//console.log('');
-		//console.log('control-enh remove_event_listener sig', sig);
+		console.log('control-enh remove_event_listener sig', sig);
+		// And system with DOM events too?
+		//  Need to have this correspond with adding events.
+
 		if (sig === '[s,f]') {
+			//var event_name = a[0];
+			//var fn_handler = a[1];
 			let [event_name, fn_handler] = a;
-			//console.log('event_name', event_name);
-			//console.log('!!mapDomEventNames[event_name]', !!mapDomEventNames[event_name]);
 			if (mapDomEventNames[event_name]) {
-				//console.log('pre remove dom event listener');
+				//console.log('we have a DOM event: ' + event_name);
+				//console.log('pre call add_dom_event_listener from add_event_listener');
+				//console.log('this.dom.el', !!this.dom.el);
+				// Want a way of recording that the event has been added to the DOM?
+				// 
+
 				this.remove_dom_event_listener(event_name, fn_handler);
+				//super.add_event_listener.apply(that, arguments);
 			}
+			// Evented_Class remove_event_listener I presume.
 			Control_Core.prototype.remove_event_listener.apply(this, a);
 		} else if (sig === '[o]') {
 			each(a[0], (v, i) => {
@@ -707,7 +719,12 @@ class Control extends Control_Core {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
+
+		// So, it should also bind the event to the control, so a listener will hear that.
+		// But does this apply itself???
 		if (a.l === 1) {
+			//this._super.apply(this, a);
+			//return super.add_event_listener(a[0]);
 			each(a[0], (v, i) => {
 				//console.log('vk_pair', vk_pair);
 				this.add_event_listener(i, v);
@@ -722,6 +739,7 @@ class Control extends Control_Core {
 			super.add_event_listener(a[0], a[2]);
 		}
 		// then if it appears in the dom events, attach it.
+
 		if (sig === '[s,f]' || sig === '[s,b,f]') {
 			var event_name = a[0];
 			var using_dom = true;
@@ -739,10 +757,7 @@ class Control extends Control_Core {
 
 	// likely will be within a mixin ie popup / overlay
 	//  functionality elsewhere that will get added to controls, not within the control prototype.
-
-	/*
 	'pop_into_body'() {
-		// Changed to using overlay layer. Maybe a mixin too.... Removing 30/07/2019
 		this.show();
 		var bcr = this.bcr();
 		// Maybe need to make it visible first.
@@ -760,7 +775,6 @@ class Control extends Control_Core {
 		});
 		document.body.appendChild(this.dom.el);
 	}
-	*/
 	// not recursive
 	//  maybe call activate_individual?
 	//
@@ -1305,12 +1319,7 @@ class Control extends Control_Core {
 		//});
 	}
 
-	// Where does this happen?
 	'attach_dom_events'() {
-
-		console.trace();
-		throw 'stop - look into this';
-
 		// .be?
 		// ._b_e?
 		each(this._bound_events, (handlers, name) => {

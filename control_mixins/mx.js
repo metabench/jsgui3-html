@@ -12,7 +12,8 @@ const mx = {
     selected_resizable: require('./selected-resizable'),
     selection_box_host: require('./selection-box-host'),
     dragable: require('./dragable'),
-    press_events: require('./press-events')
+    press_events: require('./press-events'),
+    press_outside: require('./press-outside')
 }
 
 module.exports = mx;

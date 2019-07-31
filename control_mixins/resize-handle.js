@@ -1,9 +1,11 @@
 /*
     Makes it so a control is resize handle to a target.
-
     If that control is dragable, it uses that control's position, otherwise it uses its value.
+    Resize handles could use bind.
 
 */
+
+
 
 const {
     prop,

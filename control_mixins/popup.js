@@ -31,8 +31,6 @@ const context_ensure_popup_layer = (context) => {
     // then body...
     // .child_controls
     // .content.length
-
-
     // Can get the popup layer from the context now.
 
     // context.overlay property
@@ -40,6 +38,8 @@ const context_ensure_popup_layer = (context) => {
     console.log('ctrl_document', ctrl_document);
 
     let body = context.map_controls['body_0'];
+
+    // May use overlay from the context.
 
     if (!body.popup_layer) {
         body.popup_layer = new Control({
@@ -119,8 +119,6 @@ const popup = (ctrl) => {
             absolute_container.dom.attrs.style.left = bcr.left + 'px';
             absolute_container.dom.attrs.style.top = bcr.top + 'px';
 
-
-
             //setTimeout(() => {
             //    ctrl.remove_class('hidden');
             //}, 1000);
@@ -130,8 +128,6 @@ const popup = (ctrl) => {
             
 
         }, 0);
-
-
 
         // controls won't have 2 parents.
 
@@ -143,8 +139,6 @@ const popup = (ctrl) => {
             parent.content.swap(placeholder, ctrl);
         }
         return replace;
-
-
     }
 
 }

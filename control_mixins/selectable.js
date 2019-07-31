@@ -3,6 +3,34 @@ const {
     field
 } = require('obext');
 
+
+// Worth redoing this / changing it later
+//  Support press-events
+//  Default to selecting on complete press.
+//  Half-select or something on press-down?
+
+// Seems rather important to fix this / upgrade this.
+//  Always??? use press-events?
+//   Makes sense as long as press-events works well.
+
+
+// Makes a capability as a mixin.
+//  Selectable can be true or false.
+//  Mixins should generally provide capabilities rather than switch on functionality...?
+//   Could switch some thing on with intelligent defaults.
+
+
+// Maybe this can be rewritten and simplified.
+//  Code made less complex here?
+//  Change it gradually?
+
+// Click, press, pointer dowm, pointer up etc...
+//  Choice about what action triggers the selection.
+
+
+
+
+
 let selectable = (ctrl, ctrl_handle, opts) => {
     // A few variables concerning how selection works.
     // ui action -> selection action
@@ -28,7 +56,17 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     // and then options for selecting multiple with the meta / ctrl key
     // Or it could be a selection scope mode.
     //let multi_select = 
+
+    // Press events will be better
+    //  And be able to respond to press-end as well as press-start, that will be configurable.
+    
+
     let selection_action = ['mousedown', 'touchstart'];
+
+    // want select on press-end
+    //  could make sense to use press-events here.
+    //  more versitile. press-events could become a greater part of the platform.
+
     if (!opts) {
 
         if (ctrl_handle) {
@@ -138,7 +176,6 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     const apply_all = ctrl => {
         let id = ctrl._id();
         //ctrl.once_active(() => {
-
         // 
 
         ctrl.on('change', e_change => {

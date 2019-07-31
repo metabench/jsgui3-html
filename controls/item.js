@@ -64,14 +64,14 @@ class Item extends Control {
         const {context} = this;
         const compose = () => {
             const tfitem = tf(item);
-            console.log('tfitem', tfitem);
+            //console.log('tfitem', tfitem);
 
             if (tfitem === 'o') {
                 // see what keys there are...
                 //  use mfp?
 
                 const item_keys = Object.keys(item).sort();
-                console.log('item_keys', item_keys);
+                //console.log('item_keys', item_keys);
 
                 // icon and text?
 
@@ -80,7 +80,7 @@ class Item extends Control {
 
                 if (item_keys.length === 2) {
                     if (are_equal(item_keys, ['icon', 'text'])) {
-                        console.log('item with icon and text');
+                        //console.log('item with icon and text');
                         
                         // then compose it this way.
                         //  probably want a left part and a right part.
