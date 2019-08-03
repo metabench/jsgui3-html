@@ -22,8 +22,6 @@ var get_window_size = jsgui.get_window_size;
 
 const Selection_Scope = require('./selection-scope');
 
-
-
 class Page_Context extends Evented_Class {
     constructor(spec) {
         spec = spec || {};
@@ -90,6 +88,14 @@ class Page_Context extends Evented_Class {
         var map_Controls = this.map_Controls = {};
         //  they are constructors
         var map_controls = this.map_controls = {};
+
+        // map_control_iids
+        //  mapping from the jgsui name to the int ids.
+        //  iid  = int id.
+        this.map_control_iids = {};
+        this.next_iid = 1;
+
+        // iids will be used to store the dimensions of controls within a single typed array.
 
         //map_Controls['control'] = Control;
     }
@@ -175,6 +181,9 @@ class Page_Context extends Evented_Class {
         // Seems a control (not basic control) did not get its ID.
         //console.log('registering control id', id);
         this.map_controls[id] = control;
+        control.iid = this.next_iid;
+        this.map_control_iids[id] = this.next_iid++;
+
     }
     
     'first_ctrl_matching_type' (type_name) {

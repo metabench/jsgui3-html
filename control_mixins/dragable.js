@@ -16,13 +16,12 @@ const {
 
 
 
-
-
 let dragable = (ctrl, opts = {}) => {
 
 	// And may use pointer press events instead?
 	//  Or that's to replace click...?
 
+	//console.log('applying dragable mixin');
 
 
 	//let selection_action = 'mousedown';
@@ -45,23 +44,23 @@ let dragable = (ctrl, opts = {}) => {
 
 	start_action = start_action || ['touchstart', 'mousedown'];
 
+	console.log('start_action', start_action);
+
 	if (tof(start_action) === 'string') start_action = [start_action];
 
+	console.log('ctrl.parent', ctrl.parent);
+	console.log('bounds', bounds);
 
 	// boundary control
 	let bounds_pos;
-	let bounds_is_parent = bounds === ctrl.parent;
+	let bounds_is_parent = bounds && bounds === ctrl.parent;
 	// if the bounding control is the parent, it doesn't require copying to the body.
-
-
 
 	if (bounds === 'parent') {
 		bounds = ctrl.parent;
 		bounds_is_parent = true;
 	}
-
 	//console.log('bounds', bounds);
-
 
 	if (bounds) {
 		bounds_pos = bounds.pos || [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
@@ -75,11 +74,18 @@ let dragable = (ctrl, opts = {}) => {
 	// Also drag within bounds?
 	//  Within bounds of parent?
 
-	let drag_mode = opts.mode || 'body';
+	let drag_mode = opts.drag_mode || opts.mode || 'body';
+
+	console.log('bounds_is_parent', bounds_is_parent);
+
+
 	if (bounds_is_parent) {
 		drag_mode = 'within-parent';
 		//bounds = 
 	}
+
+
+	console.log('1) drag_mode', drag_mode);
 
 	//console.log('dragable drag_mode', drag_mode);
 
@@ -123,8 +129,89 @@ let dragable = (ctrl, opts = {}) => {
 	let bounds_offset;
 	let half_item_width, item_width;
 
+
+	// translate, set position, set absolute position...?
+
+	// different options for how the movement gets done.
+
+	// absolute pos
+	// relative pos
+	//  a block with neither of them... can use transform translate.
+	//   include translation vectors in the control's dims?
+	//    using that css 3d translate makes a lot of sense.
+
+	//  dims allowing for 3d translations too??
+	//   that would be 3 more items
+	//   could even remove the size from this?
+	//    calculate the size?
+	//    or when the positions are not set, can still have the size.
+
+
+	const el = ctrl.dom.el;
+
+
+	let ctrl_translation3d = new Float32Array(3);   // ???
+	//  now can set (2d) translation properties directly.
+
+	//  will make use of them do do the translate drag mode.
+
+
+	//  and could make direct reference to this... original ctrl translation
+	let initial_ctrl_translation3d;
+	let initial_ctrl_translate;
+
+	// Does seem better to set some properties of translation 3d using this animation frame update system.
+	//  Include scaling and rotation in dims?
+
+	//  Or wider than dims... numeric presentation properties....
+	//  Could have different modes for how many properties get tracked
+
+	// x, y, w, h, tx, ty, tz, rotation, scalex, scalez?
+	//  There could be plenty mores
+	//  Especially with setting colors (primary and secondary, and onwards)
+	//  Quite a lot of properties could be expressed and changed through a ta system.
+
+	// Lets leave out translate z for the moment??? Rotation, lets keep that.
+	//  Keep it 2d for the moment.
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
 	const begin_drag = (pos) => {
-		//console.log('begin_drag', pos);
+		console.log('begin_drag', pos);
+
+		// drag mode transform xy?
+
+		// drag mode translate?
+		//  could be used with ghost and other options too....
+
+
+		// popup-copy method
+		//  then when it's lower opacity it's ghost.
+
+
+		// Setting dims values would help with positioning.
+		//  It could be fast programatically too.
+
+		console.log('drag_mode', drag_mode);
+
 
 		if (drag_mode === 'within-parent') {
 			dragging = true;
@@ -132,6 +219,9 @@ let dragable = (ctrl, opts = {}) => {
 			// need to calculate move offsets.
 			//  measure the item's initial position.
 			//console.log('parent.size', parent.size);
+
+			//console.log('ctrl.pos', ctrl.pos);
+
 			item_start_pos = ctrl.pos;
 
 			//item_start_pos = ctrl.bcr()[0];
@@ -141,6 +231,8 @@ let dragable = (ctrl, opts = {}) => {
 			//console.log('1) ctrl.pos', ctrl.pos);
 			//console.log('ctrl', ctrl);
 
+			//throw 'stop';
+
 
 			//let new_pos = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
 			//ctrl.pos = new_pos;
@@ -149,7 +241,55 @@ let dragable = (ctrl, opts = {}) => {
 
 			//console.log('2) ctrl.pos', ctrl.pos);
 			//let new_item_pos = 
+		} if (drag_mode === 'translate') {
+			// Don't need to keep track of the original position.
+			// Need to know the original press pos.
+			//console.log('drag_mode: translate');
+
+			initial_ctrl_translate = ctrl.ta.slice(6, 8);
+			//console.log('initial_ctrl_translate', initial_ctrl_translate);
+
+
+			// find out the inital translate properties
+			//  all css transform properties... need to parse that?
+			//   may need more lower level work on css transforms
+			//   also probably move away from proxies with styles.
+			//    defineproperty is all we need for defined cases.
+
+			// var style = window.getComputedStyle(element [, pseudoElt]);
+			//const style = window.getComputedStyle(el);
+			//console.log('style', style);
+			dragging = true;
+
+			// no need to use an initial translate position...?
+
+			// initial translate position does make sense here.
+			//  or some way to build up / aggregate translations / transformations.
+
+			
+
+
+			//  better to go into the element's styles?
+			//   getting 3d translation vector as a typed array, referring to it there would help a lot.
+
+			// matrix3d will be powerful in places....
+
+			// want to fish out the translate3d value.
+
+			//  other framework code on the animation and positioning would be nice.
+			//   would mean that the style property actually gets changed when requestAnimationFrame happens.
+			//    movement itself would also be simpler and a more optimised call.
+
+
+			// 
+
+			// Need to know any initial translation and modify that.
+
+
 		} else {
+
+			// Horizontal restriction - do this elsewhere?
+
 			if (drag_mode === 'x') {
 				dragging = true;
 				item_start_pos = ctrl.pos || [ctrl.dom.el.offsetLeft, ctrl.dom.el.offsetTop];
@@ -185,10 +325,19 @@ let dragable = (ctrl, opts = {}) => {
 		//console.log('ctrl_size', ctrl_size);
 
 		//console.log('move_drag pos', pos);
-		//console.log('movement_offset', movement_offset);
-		//console.log('item_start_pos', item_start_pos);
 
-		if (drag_mode === 'within-parent') {
+		if (drag_mode === 'translate') {
+			//console.log('translate drag move');
+			// will use movement_offset
+
+			//console.log('movement_offset', movement_offset);
+
+			// Yes, initial translation info matters.
+
+			ctrl.ta[6] = movement_offset[0] + initial_ctrl_translate[0];
+			ctrl.ta[7] = movement_offset[1] + initial_ctrl_translate[1];
+
+		} else if (drag_mode === 'within-parent') {
 			//console.log('bounds', bounds);
 			bounds = bounds || ctrl.parent;
 			bounds_size = bounds.bcr()[2];
@@ -204,8 +353,7 @@ let dragable = (ctrl, opts = {}) => {
 
 			//console.log('new_pos', new_pos);
 			ctrl.pos = new_pos;
-		}
-		if (drag_mode === 'x') {
+		} else if (drag_mode === 'x') {
 			//bounds_size = bounds.bcr()[2];
 			bounds_size = [bounds.dom.el.offsetWidth, bounds.dom.el.offsetHeight];
 			//console.log('bounds.dom.el', bounds.dom.el);
@@ -237,8 +385,14 @@ let dragable = (ctrl, opts = {}) => {
 		let touch_count = 1;
 		if (e_mm.touches) touch_count = e_mm.touches.length;
 
+		pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 
 		// could store a variable that tracks the last event.
+
+		//console.log('movement_offset', movement_offset);
+		//console.log('item_start_pos', item_start_pos);
+		//console.log('pos_md', pos_md);
+		//console.log('pos_mm', pos_mm);
 
 
 		if (touch_count === 1) {
@@ -298,11 +452,18 @@ let dragable = (ctrl, opts = {}) => {
 		end_drag(e_mu);
 	}
 
+
+
 	const h_md = (e_md) => {
-		//console.log('dragable e_md', e_md);
+		console.log('dragable e_md', e_md);
+
+		console.log('e_md.pageX', e_md.pageX);
+
 		// use offset
 		// [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 		if (!condition || condition()) {
+
+			// Strange...
 			if (e_md.pageX) {
 				pos_md_within_ctrl = [e_md.offsetX, e_md.offsetX];
 			} else {
@@ -319,6 +480,21 @@ let dragable = (ctrl, opts = {}) => {
 			//  Want to recognise pinch / 2 finger rotate events.
 
 			pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
+
+			console.log('pos_md', pos_md);
+
+			// get the 3d translation value...
+			//  possibly using the system of dims to set the translate value will help too.
+
+			// .t3d typed array
+			//  and can listen to changes in these values in between frames.
+
+
+
+
+
+			// need to mm pos like this too...
+
 			//} else {
 			//pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
 			//}
@@ -333,23 +509,25 @@ let dragable = (ctrl, opts = {}) => {
 		//e_md.preventDefault();
 	}
 
+	/*
 	ctrl.on('change', e_change => {
 		let {
 			name,
 			value
 		} = e_change;
-		/*
-		if (name === 'selected') {
-		    //console.log('selected value', value);
-		    if (value) {
-		        ctrl.add_class('selected');
-		    } else {
-		        ctrl.remove_class('selected');
-		    }
-		}
-		*/
+		/// *
+		//if (name === 'selected') {
+		//    //console.log('selected value', value);
+		//    if (value) {
+		//        ctrl.add_class('selected');
+		//    } else {
+		//        ctrl.remove_class('selected');
+		//    }
+		//}
+		//* /
 		//return true;
 	})
+	*/
 
 	//console.log('old_dragable', old_dragable);
 

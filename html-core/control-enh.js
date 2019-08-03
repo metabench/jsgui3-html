@@ -897,7 +897,8 @@ class Control extends Control_Core {
 		});
 	}
 	'activate_content_listen'() {
-		const context = this.context;
+		//const context = this.context;
+		const {context} = this;
 		var map_controls = context.map_controls;
 		let el = this.dom.el;
 		this.content.on('change', (e_change) => {
@@ -991,16 +992,40 @@ class Control extends Control_Core {
 				}
 			}
 			if (type === 'clear') {
+				// Remove all? Raise remove events on all?
 				if (el) {
 					el.innerHTML = '';
 				}
 			}
 			if (type === 'remove') {
 				if (e_change.value.dom.el) {
-					//el.innerHTML = '';
-					requestAnimationFrame(() => {
-						e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
-					});
+
+					// Best to do it immediately?
+
+					//  controls_being_added_in_frame
+
+
+					// these will both help with reassignment of item indexes..
+					//  or there are ctrl maps generated as needed, and kept and returned alongside the indexed arrays or tas.
+
+					// or not here? do it on the remove function itself? would make more sense.
+					//context.controls_being_removed_in_frame.push(e_change.value);
+					
+
+
+					//  Or add to controls_being_removed_in_frame, then have it done within the next animation frame.
+
+					// Best with no delay?
+					//  And then in the next animation frame we verify that it was removed?
+
+					e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
+
+					////el.innerHTML = '';  // older code commented out, dont use this
+
+					// was this
+					//requestAnimationFrame(() => {
+					//	e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
+					//});
 
 				}
 				//if (el) el.innerHTML = '';
@@ -1320,7 +1345,9 @@ class Control extends Control_Core {
 		});
 	}
 
-	'descendants'(search) {
+	// change to search_descendents or _search_descentents
+
+	'_search_descendents'(search) {
 		const recursive_iterate = (ctrl, item_callback) => {
 			// callback on all of the child controls, and then iterate those.
 			//console.log('recursive_iterate');
@@ -1350,7 +1377,7 @@ class Control extends Control_Core {
 	}
 
 	// is the 'search' amongst the ancestors?
-	'ancestor'(search) {
+	'_search_ancestor'(search) {
 		// could maybe work when not activated too...
 		// need to get the ancestor control matching the search (in type).
 		const parent = this.parent;
@@ -1366,6 +1393,85 @@ class Control extends Control_Core {
 			return false;
 		}
 	}
+
+	
+
+
+	'add'(new_content) {
+		const {context} = this;
+		const m = context.map_controls_being_added_in_frame = context.map_controls_being_added_in_frame || {};
+		// maybe don't add it as a text node, add it as string content in some cases.
+		const tnc = tof(new_content);
+		// Need to also add the descendents of all new content.
+		//console.log('control add content tnc', tnc);
+		if (tnc === 'array') {
+			//let res = [];
+			each(new_content, (v) => {
+				//res.push(this.add(v));
+				// And go through the content and descendents too.
+				const candd = v.this_and_descendents;
+				if (candd) {
+					each(candd, ctrl => {
+						if (ctrl._id) {
+							m[ctrl._id()] = ctrl;
+						}
+					})
+				}
+			});
+			//res = new_content;
+		} else {
+			if (new_content) {
+				const candd = new_content.this_and_descendents;
+				if (candd) {
+					each(candd, ctrl => {
+						if (ctrl._id) {
+							m[ctrl._id()] = ctrl;
+						}
+					})
+				}
+			}
+		}
+		return super.add(new_content);
+	}
+
+	// A new 'add' function here will help.
+	//  Though it's handled well on a lower level, combined with DOM things that are activated, it would be nice to have a version that uses map_controls_being_added_in_frame
+	//   This is browser-client specific functionality.
+
+
+	'clear'() {
+		// clear all the contents.
+		// ui should react to the change.
+		//return this.content.clear();
+		// will raise a 'remove' event on all controls removed?
+		//  seems like the lower level tracking of controls added and removed between frames (or checks) should be written to here.
+
+		//  only if it's in the context...
+		//   so put it in the enh ctrl.
+
+		// will need to get this and all descendent controls in an array.
+		//  family, with ctrl as the head.
+		//  family_down...
+		//  family() gets family line, ancestors and descendent tree.
+		//const arr_tad = this.this_and_descendents;
+		// $search?
+		//console.log('ctrl-enh clear arr_tad', arr_tad);
+		//console.log('arr_tad.length', arr_tad.length);
+		const {context} = this;
+		context.map_controls_being_removed_in_frame = context.map_controls_being_removed_in_frame || {};
+		//context.map_controls_being_removed_in_frame[this._id()] = this;
+		//console.log('this.descendents', this.descendents);
+		each(this.descendents, ctrl => {
+			if (ctrl._id) context.map_controls_being_removed_in_frame[ctrl._id()] = ctrl;
+		});
+		super.clear();
+		//this.content.clear();
+		// ui seems not to react to this.
+		// remove all dom nodes?
+		// Or have a different part that responds to content events?
+		// content event handlers seem important.
+	}
+
 };
 
 let p = Control.prototype;

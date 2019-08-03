@@ -1029,6 +1029,21 @@ class Control_Core extends Data_Object {
 	}
 	*/
 
+	'iterate_subcontrols'(ctrl_callback) {
+		//ctrl_callback(this);
+		const content = this.content;
+		//let tv;
+		content.each(v => {
+			ctrl_callback(v);
+			//console.log('v', v);
+			//tv = tof(v);
+			if (v && v.iterate_subcontrols) {
+				//v.iterate_this_and_subcontrols.call(v, ctrl_callback);
+				v.iterate_subcontrols(ctrl_callback);
+			}
+		});
+	}
+
 	'iterate_this_and_subcontrols'(ctrl_callback) {
 		ctrl_callback(this);
 		const content = this.content;
@@ -1048,7 +1063,8 @@ class Control_Core extends Data_Object {
 				// it should not be null, but can ignore it for the moment / forever
 
 				if (v && v.iterate_this_and_subcontrols) {
-					v.iterate_this_and_subcontrols.call(v, ctrl_callback);
+					//v.iterate_this_and_subcontrols.call(v, ctrl_callback);
+					v.iterate_this_and_subcontrols(ctrl_callback);
 				}
 			}
 		});
@@ -1237,7 +1253,7 @@ class Control_Core extends Data_Object {
 		const tnc = tof(new_content);
 		let res;
 		//console.log('control add content tnc', tnc);
-		if (tnc == 'array') {
+		if (tnc === 'array') {
 			let res = [];
 			each(new_content, (v) => {
 				res.push(this.add(v));
@@ -1389,6 +1405,8 @@ class Control_Core extends Data_Object {
 		console.log('Deprecated active. Functionality now part of standard control rendering.');
 	}
 
+
+	/*
 	'____active'() {
 		const id = this._id();
 		let dom = this.dom,
@@ -1396,14 +1414,14 @@ class Control_Core extends Data_Object {
 			el;
 		//console.log('dom_attributes', dom_attributes);
 		//throw 'stop';
-		/*
-		dom_attributes['data-jsgui-id'] = new Data_Value({
-			'value': id
-		});
-		dom_attributes['data-jsgui-type'] = new Data_Value({
-			'value': this.__type_name
-		});
-		*/
+		// *
+		//dom_attributes['data-jsgui-id'] = new Data_Value({
+		//	'value': id
+		//});
+		//dom_attributes['data-jsgui-type'] = new Data_Value({
+		//	'value': this.__type_name
+		//});
+		//* /
 
 
 		// Likely best to make this a general part of all rendering.
@@ -1436,21 +1454,22 @@ class Control_Core extends Data_Object {
 			if (tCtrl === 'control') {
 				// if it's a text node then no
 
-				/*
+				/// *
 
-				if (ctrl instanceof jsgui.textNode || ctrl instanceof jsgui.code) {
+				//if (ctrl instanceof jsgui.textNode || ctrl instanceof jsgui.code) {
 
-				} else {
-					//console.log('ctrl', ctrl);
-					ctrl.active();
-				}
-				*/
-				if (typeof(ctrl.active) === 'function') {
-					ctrl.active();
-				}
+				//} else {
+				//	//console.log('ctrl', ctrl);
+				//	ctrl.active();
+				//}
+				//* /
+				//if (typeof(ctrl.active) === 'function') {
+				//	ctrl.active();
+				//}
 			}
 		});
 	}
+	*/
 	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope'() {
 		//console.log('find_selection_scope', this._id());
@@ -1465,10 +1484,18 @@ class Control_Core extends Data_Object {
 		this.on('click', handler);
 	}
 
+
+
+
+	/*
+
 	// Hover could be a simple mixin
 	//  Could raise events.
 
+
+
 	// DOM can do that now.
+	//  As can mixin
 
 	'hover'(fn_in, fn_out) {
 		this.on('mouseover', e => {
@@ -1481,6 +1508,8 @@ class Control_Core extends Data_Object {
 			fn_out();
 		})
 	}
+
+	// can just use hover css pseudoselector.
 	'hover_class'(class_name) {
 		//var that = this;
 		this.hover(e_in => {
@@ -1491,6 +1520,8 @@ class Control_Core extends Data_Object {
 			//ctrl_key_close_quote.remove_class(hover_class);
 		})
 	}
+	*/
+
 	'add_class'(class_name) {
 		// Should have already set these up on activation.
 		//console.log('Control add_class ' + class_name);
@@ -1760,7 +1791,18 @@ class Control_Core extends Data_Object {
 		// No, remove it from collection in parent.
 		//  Have DOM respond to that.
 
+		// Definitely want to fix this.
+		//  The activate part will deal with removal from the DOM.
+
+
+
+
+		throw 'stop';
+
 		console.log('TO CHANGE: control-core.remove(). need to remove from collection and parent too in ctrl world');
+
+		// Need to remove from parent control!
+		//  .delete, .destroy will deregister it from the jsgui.map_controls.
 
 		var el = this.dom.el;
 		if (el) {
@@ -1906,11 +1948,25 @@ class Control_Core extends Data_Object {
 	//  .size works like this already. Should be similar.
 	///  ??? or not???
 
-
+	// ctrl-enh clear with update controls removed in frame array.
 	'clear'() {
 		// clear all the contents.
 		// ui should react to the change.
 		//return this.content.clear();
+
+
+		// will raise a 'remove' event on all controls removed?
+		//  seems like the lower level tracking of controls added and removed between frames (or checks) should be written to here.
+
+		//  only if it's in the context...
+		//   so put it in the enh ctrl.
+
+		// will need to get this and all descendent controls in an array.
+		//  family, with ctrl as the head.
+		//  family_down...
+		//  family() gets family line, ancestors and descendent tree.
+
+
 		this.content.clear();
 		// ui seems not to react to this.
 		// remove all dom nodes?
@@ -1928,6 +1984,20 @@ class Control_Core extends Data_Object {
 
 		// Or, enhance the activations of the prototypes?
 		//  I'd prefer to have the enhancements become higher up the chain.
+	}
+
+	get this_and_descendents() {
+		const res = [];
+		// then iterate the descendents.
+		this.iterate_this_and_subcontrols(ctrl => res.push(ctrl));
+		return res;
+	}
+	get descendents() {
+		const res = [];
+		// then iterate the descendents.
+		this.iterate_subcontrols(ctrl => res.push(ctrl));
+		return res;
+
 	}
 };
 

@@ -14,12 +14,11 @@ bind mixin?
 bind-dimensions?
 
 UI to enable the user to resize it, by integrating handles?
-
-
+// Will use dimension and overlays in various ways to facilitate this.
+//  Maybe work on this a bit later.
 
 ui-resizable? or assumed.
 */
-
 
 let resizable = (ctrl) => {
     // Respond to touch events.
@@ -30,11 +29,8 @@ let resizable = (ctrl) => {
     // Could raise a press or click event.
     //  Press could cover click and touch.
     //  Click could specifically be a mouse event to make least confusion / ambiguity long term.
-
     // Could have an emulate_clicks option.
-
     // Setting deletable to true or false...
-
     
     /*
     console.log('ctrl.delete', ctrl.delete);

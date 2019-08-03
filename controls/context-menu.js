@@ -78,7 +78,7 @@ class Context_Menu extends Control {
 		super.activate();
 		//var body = this.context.body;
 		//var that = this;
-		//var nodes = this.descendants('menu_node');
+		//var nodes = this.descendents('menu_node');
 
 	}
 	'close_all'() {
