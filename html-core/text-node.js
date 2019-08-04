@@ -93,6 +93,8 @@ class textNode extends Evented_Class {
 
         //this._ = {};
 
+        // Value would be better than text - more generic. Better to use it as standard.
+
         if (typeof spec.text !== 'undefined') {
             this._text = spec.text;
         }

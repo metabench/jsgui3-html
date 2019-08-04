@@ -21,12 +21,14 @@ const jsgui = require('../html-core/html-core');
 // could inherit span control?
 
 const {controls, parse, each, are_equal} = jsgui;
-const {Control} = controls;
+const {Control, Text_Node} = controls;
 
 const Button = require('./button');
 
 const {field, prop} = require('obext');
 const press_events = require('../control_mixins/press-events');
+
+
 
 // Should extend span control?
 
@@ -132,7 +134,7 @@ const watch_resize = (ctrl) => {
 
 }
 
-
+// Likely to move this elswhere, ie mixins.
 
 const suspended_frame = (ctrl, opts = {
     offset: 0
@@ -399,6 +401,7 @@ const suspended_frame = (ctrl, opts = {
 
 
 
+// Edit mode mixin?
 
 
 const editable = (ctrl) => {
@@ -713,6 +716,9 @@ const editable = (ctrl) => {
 //  Makes it easier to move elsewhere, and makes this code clearer and more concise.
 
 
+
+
+
 // String_Editor_Span?
 class String_Span extends Control {
     constructor(spec) {
@@ -721,8 +727,54 @@ class String_Span extends Control {
         spec.class = 'string';
         super(spec);
         // But be able to read the text from what's inside?
-        field(this, 'text', spec.text);
+        field(this, 'value', spec.value);
         editable(this);
+
+        const {context} = this;
+
+        const compose = () => {
+            //console.log('Text_Node', Text_Node);
+            let tn = new Text_Node({
+                context: context,
+                text: spec.value
+            })
+            this.add(tn);
+        }
+        if (!spec.el) {
+            compose();
+        }
+
+
+        // Were we given a value in the spec?
+        //  If so, need to add the inner text node.
+
+
+        // New client-side lifecycle idea:
+        //  reconstruct stage.
+        //  reconstructs the control from the rendered HTML.
+        //   populating some values where necessary.
+
+
+        // having a reconstruct function as standard within the ctrl-enh lifecycle could be very useful.
+
+
+
+
+
+
+
+
+
+
+
+
+        // Need to respond to text change events.
+
+        // Will sometimes have another text node added within this during construction, rather than using the .value field.
+
+
+
+
     }
 
     // listen for edit-complete to update the .text property.
@@ -735,9 +787,9 @@ class String_Span extends Control {
             this.on({
                 'edit-complete': e => {
                     const {old, value} = e;
-                    console.log('String span edit complete', [old, value]);
+                    //console.log('String span edit complete', [old, value]);
                     if (old !== value) {
-                        this.text = value;
+                        this.value = value;
                     }
                 }
             })

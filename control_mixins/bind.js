@@ -1,6 +1,13 @@
 const bind = (ctrl, location) => {
 
     // Sets position / size of ctrl relative to another / location.
+    //  Now able to monitor the positions of things better.
+    //   still need to respond to a redim event?
+
+    //  redim being a change in dimensions.
+    //   if the amount of space available for a control changes, then we need to be able to
+
+
 
     // Binds the ctrl into free space?
 
@@ -19,17 +26,13 @@ const bind = (ctrl, location) => {
 
     // Bound control will likely be in a body-relative absolute layer.
 
-
     // Control being within an overlay / modal layer / background layer...
     // May need to get info about the control's parent.
-
 
     // Functional binding?
 
     // More work on resize events and notifications.
     //  Worth making an example / demo for this.
-
-
 
     // resize_events mixin?
     // dims_events mixin?
@@ -42,7 +45,18 @@ const bind = (ctrl, location) => {
     // Possibly do a little lower level framework work on repositioning and resizing.
     //  Get some things working an then reach for tools & polyfills.
 
+    // Spatial binding will make use of noticing and monitoring changes to dimensions.
+
+    // Possibly some will only happen after screen resize.
+    //  Not so sure about frequent getBoundingClientRect regarding performance.
     
+    // Possibly having a smaller set of components to actively check.
+    //  Check for changed values being given to the system.
+
+    
+
+
+
 
 
 

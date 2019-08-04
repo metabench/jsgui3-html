@@ -1246,6 +1246,53 @@ class Control_Core extends Data_Object {
 		}, callback);
 	}
 
+	'remove'() {
+		// No, remove it from collection in parent.
+		//  Have DOM respond to that.
+
+		// Definitely want to fix this.
+		//  The activate part will deal with removal from the DOM.
+		//  The DOM response should not be in the core.
+
+		// Or the item gets removed from the parent's collection.
+		//  Functionality in Data_Object?
+
+		// Removes self.
+
+		const {parent} = this;
+		//console.log('parent', parent);
+
+		//console.log('pre parent content remove this');
+		//console.log('parent.content._arr', parent.content._arr);
+		parent.content.remove(this);
+		//console.log('post parent content remove this');
+		//console.log('parent.content._arr', parent.content._arr);
+
+		/*
+		
+
+
+
+
+		throw 'stop';
+
+		console.log('TO CHANGE: control-core.remove(). need to remove from collection and parent too in ctrl world');
+
+		// Need to remove from parent control!
+		//  .delete, .destroy will deregister it from the jsgui.map_controls.
+
+		var el = this.dom.el;
+		if (el) {
+			if (el.parentNode) {
+				el.parentNode.removeChild(el);
+			}
+		}
+
+		// remove it from the collection too.
+		*/
+
+	}
+
 	'add'(new_content) {
 
 		// maybe don't add it as a text node, add it as string content in some cases.
@@ -1787,33 +1834,7 @@ class Control_Core extends Data_Object {
 		}
 	}
 
-	'remove'() {
-		// No, remove it from collection in parent.
-		//  Have DOM respond to that.
-
-		// Definitely want to fix this.
-		//  The activate part will deal with removal from the DOM.
-
-
-
-
-		throw 'stop';
-
-		console.log('TO CHANGE: control-core.remove(). need to remove from collection and parent too in ctrl world');
-
-		// Need to remove from parent control!
-		//  .delete, .destroy will deregister it from the jsgui.map_controls.
-
-		var el = this.dom.el;
-		if (el) {
-			if (el.parentNode) {
-				el.parentNode.removeChild(el);
-			}
-		}
-
-		// remove it from the collection too.
-
-	}
+	
 
 	'shallow_copy'() {
 		//console.log('Control shallow_copy');

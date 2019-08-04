@@ -38,6 +38,8 @@ const mx_selectable = require('../control_mixins/selectable');
 
 // Need reference to text_node.
 
+const has_window = typeof window !== 'undefined';
+
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
 		var content = ctrl.get('content');
@@ -518,106 +520,117 @@ class Control extends Control_Core {
 
 	// Just does the DOM part.
 	'add_dom_event_listener'(event_name, fn_handler) {
-		const {context} = this;
-		const el = this.dom.el;
 
-		// Mapping from the given function to its handler does indeed seem useful.
-		//  Better by far than amending the fn_handler. 
-		//  Need to be able to remove the same function that was added to the DOM.
+		if (has_window) {
 
-		// see if we have the fn_handler mapped to its outer_handler.
-		// map of handlers to outer handlers.
+			const {context} = this;
+			const el = this.dom.el;
 
-		const m = this.map_handlers_to_outer_handlers = this.map_handlers_to_outer_handlers || new Map();
-		let outer_handler;
+			// Mapping from the given function to its handler does indeed seem useful.
+			//  Better by far than amending the fn_handler. 
+			//  Need to be able to remove the same function that was added to the DOM.
 
-		if (m.has(fn_handler)) {
-			outer_handler = m.get(fn_handler);
-		} else {
-			outer_handler = e => {
-				const {target} = e;
-				const jid = target.getAttribute('data-jsgui-id');
-				if (jid) {
-					e.ctrl_target = context.map_controls[jid];
-				}
-				fn_handler(e);
-			};
-			console.log('map setting outer handler', event_name);
-			m.set(fn_handler, outer_handler);
+			// see if we have the fn_handler mapped to its outer_handler.
+			// map of handlers to outer handlers.
+
+			const m = this.map_handlers_to_outer_handlers = this.map_handlers_to_outer_handlers || new Map();
+			let outer_handler;
+
+			//console.log('has_window', has_window);
+
+			if (m.has(fn_handler)) {
+				outer_handler = m.get(fn_handler);
+			} else {
+				outer_handler = e => {
+					const {target} = e;
+					const jid = target.getAttribute('data-jsgui-id');
+					if (jid) {
+						e.ctrl_target = context.map_controls[jid];
+					}
+					fn_handler(e);
+				};
+				//console.log('map setting outer handler', event_name);
+				m.set(fn_handler, outer_handler);
+			}
+
+
+			if (el) {
+
+				// A map of the outer handlers to the inner handlers?
+				//  
+
+				// Return the outer handler?
+				//  Need a way to remove it while referring to the original function.
+
+				// A Map object? (actual one);
+
+				// Can't remove a wrapped function so easily.
+				//  Best to find a way to do it.
+
+				//  ES6 map object probably does look like the best tool for this job.
+				// an array of pairings could work as well.
+				//  And the pairings are arranged in a map by name too.
+
+				// A map of the outer / handler functions?
+
+
+				// Handler function created for every add_dom_event_listener.
+				
+				// Maybe worth getting rid of the handler function (at this stage)
+				//  and making the .ctrl_target feature appear elsewhere (prob on higher level).
+
+				// Though this handler in here is very convenient because of the ctrl_target.
+
+				// Easier construction of advanced handler functions?
+				//  Or do get into function amendments. 
+
+				/*
+				const fn_outer_handler = e => {
+					const {target} = e;
+					const jid = target.getAttribute('data-jsgui-id');
+					if (jid) {
+						e.ctrl_target = context.map_controls[jid];
+					}
+					fn_handler(e);
+				};
+				*/
+				//fn_outer_handler.event_inner = fn_handler;
+
+				// fn_handler.outer?
+				//  not so keen on changing / amending the function given.
+				// Need to still be able tounbind the function.
+				el.addEventListener(event_name, outer_handler, false);
+			}
 		}
-
-
-		if (el) {
-
-			// A map of the outer handlers to the inner handlers?
-			//  
-
-			// Return the outer handler?
-			//  Need a way to remove it while referring to the original function.
-
-			// A Map object? (actual one);
-
-			// Can't remove a wrapped function so easily.
-			//  Best to find a way to do it.
-
-			//  ES6 map object probably does look like the best tool for this job.
-			// an array of pairings could work as well.
-			//  And the pairings are arranged in a map by name too.
-
-			// A map of the outer / handler functions?
-
-
-			// Handler function created for every add_dom_event_listener.
-			
-			// Maybe worth getting rid of the handler function (at this stage)
-			//  and making the .ctrl_target feature appear elsewhere (prob on higher level).
-
-			// Though this handler in here is very convenient because of the ctrl_target.
-
-			// Easier construction of advanced handler functions?
-			//  Or do get into function amendments. 
-
-			/*
-			const fn_outer_handler = e => {
-				const {target} = e;
-				const jid = target.getAttribute('data-jsgui-id');
-				if (jid) {
-					e.ctrl_target = context.map_controls[jid];
-				}
-				fn_handler(e);
-			};
-			*/
-			//fn_outer_handler.event_inner = fn_handler;
-
-			// fn_handler.outer?
-			//  not so keen on changing / amending the function given.
-			// Need to still be able tounbind the function.
-			el.addEventListener(event_name, outer_handler, false);
-		}
+			// ignore if not in the browser?
+		
 	}
 
 	'remove_dom_event_listener'(event_name, fn_handler) {
-		console.log('remove_dom_event_listener event_name', event_name);
 
-		// other part deals with the bound events
-		const m = this.map_handlers_to_outer_handlers;
-		console.log('m', m);
-		let outer_handler;
-		if (m) {
-			console.log('m.has(fn_handler)', m.has(fn_handler));
-			if (m.has(fn_handler)) {
-				console.log('has outer handler.');
-				outer_handler = m.get(fn_handler);
+		if (has_window) {
+			//console.log('remove_dom_event_listener event_name', event_name);
+
+			// other part deals with the bound events
+			const m = this.map_handlers_to_outer_handlers;
+			//console.log('m', m);
+			let outer_handler;
+			if (m) {
+				//console.log('m.has(fn_handler)', m.has(fn_handler));
+				if (m.has(fn_handler)) {
+					//console.log('has outer handler.');
+					outer_handler = m.get(fn_handler);
+				}
+			}
+			outer_handler = outer_handler || fn_handler;
+			const el = this.dom.el;
+			if (el) {
+				el.removeEventListener(event_name, outer_handler, false);
 			}
 		}
-		outer_handler = outer_handler || fn_handler;
-		const el = this.dom.el;
-		if (el) {
-			el.removeEventListener(event_name, outer_handler, false);
-		}
 
+		// TODO: Best to remove this fairly soon.
 		const old_way = () => {
-
 			// Do we even need to access this listener?
 			var listener = this._bound_events[event_name];
 			// array of them... not sure this is the best way for dealing with the DOM side of things.
@@ -651,12 +664,9 @@ class Control extends Control_Core {
 					//console.log('listener.length', listener.length);
 					let c_removed = 0;
 					each(listener, (listener) => {
-
 						// Match the listener to the outer handler?
 						//  As the element has been given an outer handler rather than the listener function itself.
 						//   Best not to set any properties of the function itself. Could mess up using that function again.
-
-
 						// only if its that specific handler?
 						if (listener === tfnh) {
 							el.removeEventListener(event_name, listener, false);
@@ -674,16 +684,14 @@ class Control extends Control_Core {
 					}
 				}
 			}
-
-			
 		}
 	}
 	// Need to remove event listener from the DOM as well.
 
 	'remove_event_listener'() {
-		var a = arguments;
-		a.l = arguments.length;
-		var sig = get_a_sig(a, 1);
+		const a = arguments;
+		//a.l = arguments.length;
+		const sig = get_a_sig(a, 1);
 		//console.log('');
 		//console.log('control-enh remove_event_listener sig', sig);
 		if (sig === '[s,f]') {
@@ -704,32 +712,32 @@ class Control extends Control_Core {
 	}
 
 	'add_event_listener'() {
-		var a = arguments;
-		a.l = arguments.length;
-		var sig = get_a_sig(a, 1);
-		if (a.l === 1) {
+		const a = arguments;
+		const l = a.length;
+		const sig = get_a_sig(a, 1);
+		if (l === 1) {
 			each(a[0], (v, i) => {
 				//console.log('vk_pair', vk_pair);
 				this.add_event_listener(i, v);
 			});
 		}
-		if (a.l === 2) {
+		if (l === 2) {
 			//this._super.apply(this, a);
 			super.add_event_listener(a[0], a[1]);
 		}
-		if (a.l === 3) {
+		if (l === 3) {
 			//this._super.apply(this, [a[0], a[2]]);
 			super.add_event_listener(a[0], a[2]);
 		}
 		// then if it appears in the dom events, attach it.
 		if (sig === '[s,f]' || sig === '[s,b,f]') {
-			var event_name = a[0];
-			var using_dom = true;
-			if (a.l === 3 && a[1] === false) using_dom = false;
+			let event_name = a[0];
+			let using_dom = true;
+			if (l === 3 && a[1] === false) using_dom = false;
 			//console.log('using_dom', using_dom);
-			var fn_handler;
-			if (a.l === 2) fn_handler = a[1];
-			if (a.l === 3) fn_handler = a[2];
+			let fn_handler;
+			if (l === 2) fn_handler = a[1];
+			if (l === 3) fn_handler = a[2];
 			if (mapDomEventNames[a[0]] && using_dom) {
 				this.add_dom_event_listener(event_name, fn_handler);
 				//super.add_event_listener.apply(that, arguments);
@@ -870,19 +878,20 @@ class Control extends Control_Core {
 		var el = this.dom.el;
 		dom_attributes.on('change', (e_change) => {
 			//console.log('dom_attributes e_change', e_change);
-			var property_name = e_change.name || e_change.key,
-				dval = e_change.value || e_change.new;
-			var t_dval = tof(dval);
+			var property_name = e_change.name || e_change.key, val = e_change.value || e_change.new;
+			//var t_dval = tof(dval);
+			/*
 			if (t_dval === 'string' || t_dval === 'number' || t_dval === 'boolean') {
 				//el.setAttribute('style', dval);
 			} else {
 				//el.setAttribute('style', dval.value());
 				dval = dval.value();
 			}
-			//console.log('property_name, dval', property_name, dval);
+			*/
+			//console.log('property_name, dval', [property_name, dval]);
 			if (el && el.nodeType === 1) {
 				//requestAnimationFrame(() => {
-				el.setAttribute(property_name, dval);
+				el.setAttribute(property_name, val);
 				//})
 			}
 		});
@@ -934,6 +943,9 @@ class Control extends Control_Core {
 						}
 						var temp_el;
 						//console.log('item_tag_name', item_tag_name);
+
+						// Use a map of SVG tags instead.
+
 						if (item_tag_name === 'circle' || item_tag_name === 'line' || item_tag_name === 'polyline') {
 							// Can make SVG inside an element, with the right namespace.
 
@@ -998,6 +1010,9 @@ class Control extends Control_Core {
 				}
 			}
 			if (type === 'remove') {
+
+				//console.log('remove', e_change);
+
 				if (e_change.value.dom.el) {
 
 					// Best to do it immediately?
