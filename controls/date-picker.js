@@ -28,6 +28,9 @@ const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
 const mx_date = require(`../control_mixins/date`);
 
+// Picker control...
+//  Always has a 'value'.
+
 class Year_Picker extends Left_Right_Arrows_Selector {
     constructor(spec) {
         Object.assign(spec, {
@@ -60,6 +63,10 @@ class Date_Picker extends Control {
 
         mx_date(this, spec);
 
+        // mx picker?
+        
+
+
 
         // Could start with a current date
         // Maybe this renders a calendar?
@@ -91,8 +98,6 @@ class Date_Picker extends Control {
         // or just day in this context
 
         // will have various properties, get other controls to change their properties based on changes here.
-
-
     }
     finish_date_picker() {
         this.year_picker.on('change', e_change => {

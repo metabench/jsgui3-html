@@ -74,6 +74,12 @@ const Item_Selector = require('../item-selector');
 
 // Item_Selector interface?
 //  By passing on Item_Selector 
+
+// An item picker?
+//  Abstract away the left and right arrows somehow?
+
+// Indexed_Item_Picker?
+
 class Left_Right_Arrows_Selector extends Control {
     constructor (spec) {
 

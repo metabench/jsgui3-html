@@ -51,7 +51,13 @@ So will have more capabilities within jsgui server for the moment.
 
 
 
-
+changes
+ctrl.changes({obj change functions})
+Would be a useful API lower down.
+such as in evented_class?
+//  so if there is a 'change' call it checks aganst a specific changes map
+    Seems like it would be fastest.
+  
 
 
 

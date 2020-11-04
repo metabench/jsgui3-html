@@ -4,7 +4,7 @@
 //"use strict";
 const jsgui = require('lang-tools');
 const Text_Node = require('./text-node');
-const obext = require('obext');
+const obext = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
 
 // const load_type = (name, abbreviation, fn_detect_instance) => {
 
@@ -68,7 +68,7 @@ const def = jsgui.is_defined;
 
 const {
     prop
-} = require('obext');
+} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
 
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui.controls[tagName] = jsgui[tagName] = class extends Control {
@@ -561,8 +561,16 @@ jsgui.controls.span = jsgui.span = class span extends Control {
     
     
                 } else {
-                    console.trace();
-                    throw 'NYI';
+
+                    if (this.content._arr.length === 0) {
+
+                    } else {
+                        console.log('this.content._arr', this.content._arr);
+                        console.trace();
+                        throw 'NYI';
+                    }
+
+                    
                 }
             }
 

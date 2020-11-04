@@ -19,7 +19,7 @@ const Text_Node = require('./text-node');
 const {
 	prop,
 	field
-} = require('obext');
+} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
 // Won't be fields, just items within the control.
 
 // class Control_DOM
@@ -392,7 +392,7 @@ class Control_Background extends Evented_Class {
 	}
 }
 
-// Control_Size = size2d
+// Control_Size = Size2D
 
 // further control-oriented JS types/classes would be useful.
 //  raising specific change properties.
@@ -1933,6 +1933,7 @@ class Control_Core extends Data_Object {
 		if (parsed.length === 1) {
 			return parsed[0]();
 		} else {
+			console.trace();
 			throw 'NYI';
 		}
 		// Does this match the selector?

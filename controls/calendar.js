@@ -11,6 +11,11 @@ var Control = jsgui.Control;
 
 // This one is advanced / composite / possibly connected through a data api?
 
+// Advanced calendar / date picker control.
+//  Flexible. Will use other smaller, more specific components.
+
+
+
 
 class Calendar extends Control {
     // Can have different views open.

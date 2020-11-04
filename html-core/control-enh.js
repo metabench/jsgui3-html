@@ -419,9 +419,6 @@ class Control extends Control_Core {
 	// Yes, press outside mixin will be very useful for a variety of popups, eg dorp down lists and context menus.
 
 
-
-
-
 	/*
 	'one_mousedown_anywhere'(callback) {
 		//var ctrl_html_root = this.context.ctrl_document;
@@ -442,6 +439,8 @@ class Control extends Control_Core {
 	// Better with mixin I think.
 	//  Still required by selection_box_host. investigate there.
 	//  A mixin could likely be a better place / do the job better.
+
+	// Maybe drag_events could be undernieth the draggable mixin.
 
 	/*
 	'drag_events'(hmd, hmm, hmu) {
@@ -520,7 +519,6 @@ class Control extends Control_Core {
 
 	// Just does the DOM part.
 	'add_dom_event_listener'(event_name, fn_handler) {
-
 		if (has_window) {
 
 			const {context} = this;
@@ -989,7 +987,7 @@ class Control extends Control_Core {
 				}
 				//console.log('!!itemDomEl', !!itemDomEl);
 				if (itemDomEl) {
-					e_change.item.active();
+					//e_change.item.active();
 
 
 					//requestAnimationFrame(() => {
@@ -1014,20 +1012,13 @@ class Control extends Control_Core {
 				//console.log('remove', e_change);
 
 				if (e_change.value.dom.el) {
-
 					// Best to do it immediately?
-
 					//  controls_being_added_in_frame
-
-
 					// these will both help with reassignment of item indexes..
 					//  or there are ctrl maps generated as needed, and kept and returned alongside the indexed arrays or tas.
 
 					// or not here? do it on the remove function itself? would make more sense.
 					//context.controls_being_removed_in_frame.push(e_change.value);
-					
-
-
 					//  Or add to controls_being_removed_in_frame, then have it done within the next animation frame.
 
 					// Best with no delay?

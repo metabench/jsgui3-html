@@ -4,11 +4,11 @@
   "license": "MIT",
   "dependencies": {
     "deep-equal": "^1.0.1",
-    "fnl": "^0.0.12",
+    "fnl": "^0.0.17",
     "htmlparser": "^1.7.7",
-    "lang-mini": "^0.0.12",
-    "lang-tools": "^0.0.3",
-    "obext": "^0.0.8",
+    "lang-mini": "^0.0.15",
+    "lang-tools": "^0.0.4",
+    "obext": "^0.0.16",
     "url-parse": "^1.4.7"
   },
   "notes": [
@@ -22,5 +22,5 @@
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
-  "version": "0.0.81"
+  "version": "0.0.82"
 }

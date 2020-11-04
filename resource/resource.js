@@ -11,9 +11,13 @@
 // Want to be able to remotely configure and access a Raspberry Pi as a Resource.
 
 var jsgui = require('lang-tools');
+
+//const {Evented_Class} = jsgui;
+
 var Pool = require('./pool');
 
-var Class = jsgui.Class, Data_Object = jsgui.Data_Object, Collection = jsgui.Collection;
+const Evented_Class = jsgui.Evented_Class;
+var Class = jsgui.Class, Collection = jsgui.Collection;
 var is_defined = jsgui.is_defined, fp = jsgui.fp, stringify = jsgui.stringify, tof = jsgui.tof;
 var call_multi = jsgui.call_multi, get_a_sig = jsgui.get_a_sig;
 var each = jsgui.each;
@@ -54,7 +58,7 @@ var each = jsgui.each;
 //  Look into how the publisher deals with them.
 
 
-class Resource extends Data_Object {
+class Resource extends Evented_Class {
     // The link between the abstract resource and the resource on the internet / network / computer.
     //'fields': {
     //	//'meta': Data_Object

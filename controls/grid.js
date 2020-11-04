@@ -37,7 +37,7 @@ const mx_selectable = require('../control_mixins/selectable');
 const {
     prop,
     field
-} = require('obext');
+} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
 
 
 // presentation
@@ -188,12 +188,8 @@ class Grid extends Control {
 
         // size property should read from the DOM when there is the DOM - or have corresponding values at least.
         //  (or not - could have dom size)
-
         // need to measure border and possibly some other sizes.
-
         // Part of an overhaul of css and styling?
-
-
         // data property.
 
         // if it's an array...
@@ -218,7 +214,6 @@ class Grid extends Control {
                 _grid_size = [max_x, ly];
             }
         }
-
 
         if (!spec.el) {
             var data;
@@ -267,6 +262,13 @@ class Grid extends Control {
         }
         // on resize, resize all of the cells.
         // on activate, will need to reconnect all of the cells.
+
+        // .changes used to exist elsewhere.
+        //  specific changes monitoring would be useful.
+
+
+        
+
 
         this.changes({
             grid_size: v => {

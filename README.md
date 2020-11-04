@@ -1,4 +1,4 @@
-# Jsgui HTML
+# Jsgui3 HTML
 
 This is the isomorphic \(for both the client and server\) core of the jsgui framework\. It uses the "lang\-mini" package for utility functions as well as its Evented\_Class\, which Control inherits from\. Evented\_Class allows events to be listened to and raised\.
 

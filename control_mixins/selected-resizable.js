@@ -1,7 +1,7 @@
 const {
     prop,
     field
-} = require('obext');
+} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
 
 let selected_resizable = (ctrl, ctrl_handle) => {
     //let selection_action = 'mousedown';
