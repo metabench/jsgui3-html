@@ -1,7 +1,7 @@
 const {
     prop,
     field
-} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+} = require('obext');
 
 const deletable = require('./deletable');
 let selected_deletable = (ctrl) => {

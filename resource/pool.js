@@ -194,6 +194,9 @@ class Resource_Pool extends Evented_Class {
 		}
 		//log_trace();
 
+
+		// Items able to name themselves?
+
 		if (obj_name === undefined) {
 			console.log('obj', obj);
 			console.trace();

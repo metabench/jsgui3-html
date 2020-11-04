@@ -10,7 +10,7 @@
 const {
     prop,
     field
-} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+} = require('obext');
 
 let selectable = (ctrl, target) => {
     //let selection_action = 'mousedown';

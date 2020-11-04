@@ -49,7 +49,7 @@ const Title_Bar = require('./layout/title-bar');
 const Tree_Node = require('./tree-node');
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
-const {prop, field} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+const {prop, field} = require('obext');
 //var fields = [
 //    ['text', String]
 //];

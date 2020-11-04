@@ -7,7 +7,7 @@ var jsgui = require('../../html-core/html-core');
 //var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
-const {prop, field} = require('../../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+const {prop, field} = require('obext');
 
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.

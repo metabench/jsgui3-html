@@ -1,7 +1,7 @@
 const {
     prop,
     field
-} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+} = require('obext');
 
 var jsgui = require('../html-core/html-core');
 const { Control } = jsgui;

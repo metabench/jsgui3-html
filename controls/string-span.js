@@ -25,7 +25,7 @@ const {Control, Text_Node} = controls;
 
 const Button = require('./button');
 
-const {field, prop} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+const {field, prop} = require('obext');
 const press_events = require('../control_mixins/press-events');
 
 

@@ -23,7 +23,7 @@ const {Control} = jsgui;
 // or ._ being an evented class that stores properties?
 // specific change events for specific properties?
 
-const {prop, field} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+const {prop, field} = require('obext');
 
 // The search bar having toolboxes would make sense.
 //  For holding buttons etc.

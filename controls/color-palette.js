@@ -14,7 +14,7 @@ var v_subtract = jsgui.util.v_subtract;
 const {
     field,
     prop
-} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+} = require('obext');
 
 // Could accept only some specific types of data eg numeric.
 //  May well want nicer / custom scrollbars.

@@ -1,6 +1,6 @@
 const jsgui = require('../html-core/html-core');
 const {Control} = jsgui;
-const {prop, field} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+const {prop, field} = require('obext');
 
 class Toolbox extends Control {
     constructor(spec) {

@@ -12,7 +12,7 @@ var Control = jsgui.Control;
 // The basic controls should not do too much on top of normal HTML, but make it easier to do a few things
 //  there.
 
-const {prop, field} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+const {prop, field} = require('obext');
 
 /*
 var fields = [

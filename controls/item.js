@@ -1,7 +1,7 @@
 const jsgui = require('../html-core/html-core');
 const {Control, controls, tf, are_equal, each} = jsgui;
 const {span} = controls;
-const {prop, field} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+const {prop, field} = require('obext');
 
 // Use some mixins here...
 //  Expandable

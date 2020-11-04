@@ -19,7 +19,7 @@ const Text_Node = require('./text-node');
 const {
 	prop,
 	field
-} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+} = require('obext');
 // Won't be fields, just items within the control.
 
 // class Control_DOM
@@ -1451,72 +1451,6 @@ class Control_Core extends Data_Object {
 
 		console.log('Deprecated active. Functionality now part of standard control rendering.');
 	}
-
-
-	/*
-	'____active'() {
-		const id = this._id();
-		let dom = this.dom,
-			dom_attributes = dom.attributes,
-			el;
-		//console.log('dom_attributes', dom_attributes);
-		//throw 'stop';
-		// *
-		//dom_attributes['data-jsgui-id'] = new Data_Value({
-		//	'value': id
-		//});
-		//dom_attributes['data-jsgui-type'] = new Data_Value({
-		//	'value': this.__type_name
-		//});
-		//* /
-
-
-		// Likely best to make this a general part of all rendering.
-		//  where if we have those, they get rendered.
-		//   maybe best not to even add them to the dom attributes here.
-		//   could shortcut it and render it 
-
-
-		dom_attributes['data-jsgui-id'] = id;
-		dom_attributes['data-jsgui-type'] = this.__type_name;
-		//var el = this._.el || dom._.el;
-		//var el;
-		if (dom.el) {
-			el = dom.el;
-		}
-
-		if (el) {
-			if (el.nodeType === 1) { // element
-				//console.log('Removed dome update.');
-				//el.setAttribute('data-jsgui-id', id);
-				//el.setAttribute('data-jsgui-type', this.__type_name);
-			}
-		}
-		let tCtrl;
-
-		this.content.each(ctrl => {
-			//console.log('active i', i);
-			tCtrl = tof(ctrl);
-			//console.log('tCtrl', tCtrl);
-			if (tCtrl === 'control') {
-				// if it's a text node then no
-
-				/// *
-
-				//if (ctrl instanceof jsgui.textNode || ctrl instanceof jsgui.code) {
-
-				//} else {
-				//	//console.log('ctrl', ctrl);
-				//	ctrl.active();
-				//}
-				//* /
-				//if (typeof(ctrl.active) === 'function') {
-				//	ctrl.active();
-				//}
-			}
-		});
-	}
-	*/
 	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope'() {
 		//console.log('find_selection_scope', this._id());
@@ -1530,45 +1464,6 @@ class Control_Core extends Data_Object {
 
 		this.on('click', handler);
 	}
-
-
-
-
-	/*
-
-	// Hover could be a simple mixin
-	//  Could raise events.
-
-
-
-	// DOM can do that now.
-	//  As can mixin
-
-	'hover'(fn_in, fn_out) {
-		this.on('mouseover', e => {
-			//console.log('hover mouseover');
-			fn_in();
-		})
-
-		this.on('mouseout', e => {
-			//console.log('hover mouseout');
-			fn_out();
-		})
-	}
-
-	// can just use hover css pseudoselector.
-	'hover_class'(class_name) {
-		//var that = this;
-		this.hover(e_in => {
-			this.add_class(class_name);
-			//ctrl_key_close_quote.add_class(hover_class);
-		}, e_out => {
-			this.remove_class(class_name);
-			//ctrl_key_close_quote.remove_class(hover_class);
-		})
-	}
-	*/
-
 	'add_class'(class_name) {
 		// Should have already set these up on activation.
 		//console.log('Control add_class ' + class_name);
@@ -1739,7 +1634,7 @@ class Control_Core extends Data_Object {
 
 
 	'matches_selector'(selector) {
-
+		throw 'NYI'
 	}
 
 	// Want to see if an element (or control) is a descendant of this.
@@ -1833,8 +1728,6 @@ class Control_Core extends Data_Object {
 			return search(this);
 		}
 	}
-
-	
 
 	'shallow_copy'() {
 		//console.log('Control shallow_copy');

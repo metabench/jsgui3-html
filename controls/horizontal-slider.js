@@ -22,7 +22,7 @@ var v_subtract = jsgui.v_subtract;
 const {
 	prop,
 	field
-} = require('../../../tools/tensor-imgs/ImageFormat/formats/shared/Tree/Ui32Binary/obext');
+} = require('obext');
 
 const mx_dragable = require('../control_mixins/dragable');
 
