@@ -3,13 +3,16 @@
   "main": "html.js",
   "license": "MIT",
   "dependencies": {
-    "deep-equal": "^2.0.3",
-    "fnl": "^0.0.17",
+    
+    "fnl": "^0.0.19",
     "htmlparser": "^1.7.7",
-    "lang-mini": "^0.0.15",
-    "lang-tools": "^0.0.4",
-    "obext": "^0.0.16",
+    "lang-mini": "^0.0.18",
+    "lang-tools": "^0.0.7",
+    "obext": "^0.0.17",
     "url-parse": "^1.4.7"
+  },
+  "removedDeps": {
+    "deep-equal": "^2.0.3"
   },
   "notes": [
     "Making a jsgui3-html-core module would help / be the way. It would include ways to load more controls and then there will still be jsgui3-html"
@@ -23,5 +26,5 @@
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
-  "version": "0.0.84"
+  "version": "0.0.88"
 }
