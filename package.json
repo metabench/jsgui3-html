@@ -7,7 +7,7 @@
     "htmlparser": "^1.7.7",
     "lang-mini": "^0.0.24",
     "lang-tools": "^0.0.8",
-    "obext": "^0.0.21",
+    "obext": "^0.0.22",
     "url-parse": "^1.5.10"
   },
   "removedDeps": {
@@ -26,7 +26,7 @@
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
   "devDependencies": {
-    "esbuild": "^0.14.31"
+    "esbuild": "^0.14.32"
   },
-  "version": "0.0.90"
+  "version": "0.0.91"
 }

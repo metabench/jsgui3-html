@@ -31,6 +31,8 @@ var map_Controls = jsgui.map_Controls = {};
 jsgui.Router = require('./router/router');
 jsgui.Resource = require('./resource/resource');
 jsgui.Resource_Pool = require('./resource/pool');
+jsgui.Resource.Data_KV = require('./resource/data-kv-resource');
+jsgui.Resource.Data_Transform = require('./resource/data-transform-resource');
 
 // sync load of css.
 //  need to be able to serve that CSS to the user.
