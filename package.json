@@ -3,12 +3,11 @@
   "main": "html.js",
   "license": "MIT",
   "dependencies": {
-    
-    "fnl": "^0.0.20",
+    "fnl": "^0.0.21",
     "htmlparser": "^1.7.7",
-    "lang-mini": "^0.0.23",
+    "lang-mini": "^0.0.24",
     "lang-tools": "^0.0.8",
-    "obext": "^0.0.19",
+    "obext": "^0.0.21",
     "url-parse": "^1.5.10"
   },
   "removedDeps": {
@@ -26,5 +25,8 @@
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
-  "version": "0.0.89"
+  "devDependencies": {
+    "esbuild": "^0.14.31"
+  },
+  "version": "0.0.90"
 }
