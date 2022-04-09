@@ -19,6 +19,8 @@ var get_item_sig = jsgui.get_item_sig;
 // Not a Data_Object.
 //  Adding this to a Collection should not put it inside a Data_Object layer.
 
+// Should make this able to deal with routing to different 'host' value servers.
+
 const Routing_Tree = require('./routing-tree');
 
 class Router {

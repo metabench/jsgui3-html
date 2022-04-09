@@ -11,6 +11,10 @@ var jsgui = require('../../html-core/html-core');
 class Standard_Web_Page extends jsgui.Client_HTML_Document {
     constructor(spec) {
         super(spec);
+
+        // Set its title, an h1, one or more paragraphs of text?
+
+        
     }
 }
 

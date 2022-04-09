@@ -29,9 +29,19 @@ const Resource = require('./resource');
 
 // A resource here to populate HTML templates?
 
+// Looks programatically like the right place for JSX compilation.
+//  Keep that on the server for the moment.
+
+// Compiling jsx to js?
+// data pipeline type work...? render data to an HTML template?
 
 
 
+
+
+// Could (in theory at least here) be a remote resource.
+
+// Could be a streaming codec, remote or local, even a codec suite.
 class Data_Transform_Resource extends Resource {
     // The link between the abstract resource and the resource on the internet / network / computer.
     //'fields': {
@@ -41,48 +51,90 @@ class Data_Transform_Resource extends Resource {
 
     // Problem with how it sets the fields.
 
+    // JSON input data description info object
+    // JSON output data description info object
+    // JSON transformation data description info object.
+
+    // .info
+    // .meta.info
+
+    // Will be POJOs.???
+
+    // .i.i .i.o .i.t
+    //  input schema, output schema, transformation function
+    //  make it possible to express the algo here / in the constructor.
+    //  also should be able to work remotely when the resource is remote.
+
+    // .m.i.i
+
+
     constructor(spec) {
         //console.log('Resource init');
-        //
         if (!is_defined(spec)) spec = {};
 
         super(spec);
 
         if (is_defined(spec.name)) {
-            // Need to deal with both resource properties and inner properties.
-            //  Not sure about having resource.set('name') naming the resource.
-            //   Sounds OK normally, but Resource needs to be flexible, eg a resource could provide
-            //   translations of a work to a different language, so get('name') needs to just be calling
-            //   the resource with that value.
-
-            // Perhaps some kind of inner get and set?
-            // Or inner is the normal.
-            //  An object to represent a resource's external properties?
-
-            // Could have .name for it's name
-            //  or .self for a Data_Object that refers to itself.
-            //  or .inner or .resource for the Data_Object that is the resource's inner data?
-            //  .data
-
-            // I like having .get and .set for dealing with the resource's data.
-            //  and different ways for indexing the resource.
-
-            // .metadata
-
-            // and name is part of the metadata.
-
-            // this.set('meta.name')
-
-            // This way there is a .meta object which holds the name
-
-
-
-
-            //this.set('meta.name', spec.name);
         }
 
         if (spec.name) this.name = spec.name;
         if (spec.pool) this.pool = spec.pool;
+
+        const meta = {
+            info: {},
+            fn: {}
+        };
+
+        Object.defineProperty(this, 'meta', {
+            get() {
+                return meta;
+            }
+        });
+        Object.defineProperty(this, 'm', {
+            get() {
+                return meta;
+            }
+        });
+        Object.defineProperty(meta, 'i', {
+            get() {
+                return meta.info;
+            }
+        });
+        Object.defineProperty(meta, 'fns', {
+            get() {
+                return meta.fn;
+            }
+        });
+
+        Object.defineProperty(meta, 'fn', {
+            get() {
+                return meta.fn;
+            }
+        });
+        Object.defineProperty(meta, 'f', {
+            get() {
+                return meta.fn;
+            }
+        });
+
+        if (spec.fn_transform) {
+            if (tof(spec.transform) === 'function') {
+                meta.fn.transform = spec.fn_transform;
+            } else {
+
+            }
+        }
+
+        // this.m.f
+
+        // setter for the meta function transform property?
+
+        // meta.fn_transform
+        // meta.fn_validate_input
+        // meta.fn_validate_output
+
+
+
 
         /*
         this.meta = new Data_Object({
@@ -110,8 +162,8 @@ class Data_Transform_Resource extends Resource {
             this.startup_type = spec.startup_type;
         }
 
-        this.getters = {};
-        this.setters = {};
+        //this.getters = {};
+        //this.setters = {};
 
     }
 
@@ -147,14 +199,11 @@ class Data_Transform_Resource extends Resource {
 
     // may have toJson / to_json.
     'get_abstract'() {
-
         // Abstract_Resource - would be a description of a resource?
         //  Perhaps we'll only need json and json schema.
         //  Making the data_object and collection conform to json schema would be nice.
         //  Would have something very nice to do with creating a gui for forms.
         /*
-
-
         var res = new AR.Abstract_Resource({
 
         })
@@ -181,31 +230,6 @@ class Data_Transform_Resource extends Resource {
         throw 'Need specific implementation';
 
     }
-
-    /*
-
-    'set'(name, value, callback) {
-        var al = arguments.length;
-
-        // self setter?
-
-        if (al === 3) {
-            if (this.setters[name]) {
-                this.setters[name](value, callback);
-            }
-        }
-    }
-
-    'get'(name, callback) {
-        var al = arguments.length;
-        if (al === 2) {
-            if (this.getters[name]) {
-                this.getters[name](callback);
-            }
-        }
-    }
-
-    */
 }
 
 Resource.Pool = Pool;

@@ -912,25 +912,6 @@ class Blank_HTML_Document extends HTML_Document {
 // Want a body function in other nodes, available throughout the document?
 
 class Client_HTML_Document extends Blank_HTML_Document {
-
-    // Want to get over some jsgui properties
-    //  Such as info on the available server APIs
-    //  This means that resource functions could automatically be wired up on the client, whatever that requires.
-    //  Want it to be very simple to publish and consume data services.
-    //   That would even be data services that controls use to automatically update themselves.
-
-    // May require some kind of data core object.
-    //  The page_context acts like a global right now.
-    //  Want it so that on the client, some data interaction with the server automatically gets set up.
-    //   Will raise client events.
-
-    // Possibly there should be a main / single data events producer on the client.
-    //  Data_Resource will fulfil this role.
-
-    // Including some JS itself on the client would make a lot of sense.
-    //  It will render a JS object.
-    //  Including some JS directly within the client html document would work very well.
-
     constructor(spec) {
         //console.log('Client_HTML_Document');
         super(spec);
@@ -944,20 +925,12 @@ class Client_HTML_Document extends Blank_HTML_Document {
         */
         //var head = this.get('head');
         const body = this.get('body');
-        // create jsgui.script
         var script = new jsgui.script({
             //<script type="text/JavaScript" src="abc.js"></script>
             'context': this.context
-        })
-        // <script data-main="scripts/main" src="scripts/require.js"></script>
+        });
         var dom = script.dom;
-        //console.log('* dom ' + stringify(dom));
-        //var domAttributes = script.get('dom.attributes');
         var domAttributes = dom.attributes;
-        //console.log('domAttributes ' + domAttributes);
-        //domAttributes.set('type', 'text/javascript');
-        //domAttributes.set('src', '/js/require.js');
-        //domAttributes.set('src', url);
         domAttributes.type = 'text/javascript';
         domAttributes.src = url;
         body.add(script);
@@ -965,19 +938,13 @@ class Client_HTML_Document extends Blank_HTML_Document {
 
     'include_css'(url) {
         var head = this.get('head');
-        // create jsgui.script
-        // <link rel="stylesheet" type="text/css" href="theme.css">
         var link = new jsgui.link({
             //<script type="text/JavaScript" src="abc.js"></script>
             'context': this.context
         })
         // <script data-main="scripts/main" src="scripts/require.js"></script>
         var dom = link.dom;
-        //console.log('* dom ' + stringify(dom));
-        //var domAttributes = script.get('dom.attributes');
         var domAttributes = dom.attributes;
-        //console.log('domAttributes ' + domAttributes);
-
         domAttributes['rel'] = 'stylesheet';
         domAttributes['type'] = 'text/css';
         //domAttributes.set('src', '/js/require.js');
@@ -986,39 +953,13 @@ class Client_HTML_Document extends Blank_HTML_Document {
     }
 
     'include_jsgui_client'(js_file_require_data_main) {
-
-        // But want this to be last within the body.
-
-        // would be better to add it to the end of the body.
-        // Could add the default client file.
-        // Or a specific client file with a control that also has client-side code.
-        //  The client-side code won't get processed on the server.
-        //  There will be a specific place where client side code gets called upon activation.
-        // could include a specific parameter for js_file_require_data_main
         js_file_require_data_main = js_file_require_data_main || '/js/web/jsgui-html-client';
-        // Needs to add various script references to the body.
-        //  May just be one client.js file
-        //  Then will work on having it build quickly
-        //  Then will work on making it stay fast to build and be smaller.
-        // include the script in the body?
-        //  is there a way to keep it at the end of the body?
-        //  could put it in the head for the moment.
-
         var head = this.head;
         var body = this.body;
-        // create jsgui.script
-
         var script = new jsgui.script({
             //<script type="text/JavaScript" src="abc.js"></script>
             'context': this.context
         })
-        // <script data-main="scripts/main" src="scripts/require.js"></script>
-
-        //var dom = script.get('dom');
-        //console.log('* dom ' + stringify(dom));
-
-        //var domAttributes = script.get('dom.attributes');
-        //var domAttributes = dom.get('attributes');
         var domAttributes = script.dom.attributes;
         domAttributes.set({
             'type': 'text/javascript',
@@ -1026,38 +967,14 @@ class Client_HTML_Document extends Blank_HTML_Document {
             'data-main': js_file_require_data_main
         });
         body.add(script);
-        //throw 'stop';
     }
-
-    /*
-    'include_jsgui_resource_client'(path) {
-        // Could add the default client file.
-        // Or a specific client file with a control that also has client-side code.
-        //  The client-side code won't get processed on the server.
-        //  There will be a specific place where client side code gets called upon activation.
-        // could include a specific parameter for js_file_require_data_main
-        var js_file_require_data_main = path || '/js/web/jsgui-html-resource-client';
-        this.include_jsgui_client(js_file_require_data_main);
-
-        // Seems like resources will be made available automatically.
-
-    }
-    */
     'include_client_css'() {
         var head = this.get('head');
         var link = new jsgui.link({
             //<script type="text/JavaScript" src="abc.js"></script>
             'context': this.context
         });
-        //var lda = link.get('dom.attributes');
-        //var dom = link.get('dom');
-        //console.log('* dom ' + stringify(dom));
-        //var domAttributes = script.get('dom.attributes');
         var domAttributes = link.dom.attributes;
-        // link.dom.attrs
-        //domAttributes.set('rel', 'stylesheet');
-        //domAttributes.set('type', 'text/css');
-        //domAttributes.set('href', '/css/basic.css');
         domAttributes.rel = 'stylesheet';
         domAttributes.type = 'text/css';
         domAttributes.href = '/css/basic.css';

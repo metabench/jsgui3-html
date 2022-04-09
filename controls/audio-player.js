@@ -57,7 +57,7 @@ class Audio_Player extends Control {
 		var rp = this.context.resource_pool;
 		var site_audio = rp.get_resource('Site Audio');
 
-		console.log('site_audio', site_audio);
+		//console.log('site_audio', site_audio);
 		//  Making this a Resource Client for the moment.
 
 		var that = this;
@@ -68,7 +68,7 @@ class Audio_Player extends Control {
 		if (!spec.abstract && !spec.el) {
 
 			var albums = site_audio.meta.get('albums');
-			console.log('albums', albums);
+			//console.log('albums', albums);
 
 			var div_relative = add(Control({ 'class': 'relative' }));
 
@@ -97,7 +97,7 @@ class Audio_Player extends Control {
 			console.log('tracks', tracks);
 
 			each(tracks, function (track, i) {
-				console.log('track', track);
+				//console.log('track', track);
 
 				var div_track = make(Control({ 'class': 'track' }));
 				ctrl_tracks.add(div_track);
@@ -119,7 +119,7 @@ class Audio_Player extends Control {
 				div_track.add(div_length);
 
 				var ms_duration = track.ms_duration;
-				console.log('ms_duration', ms_duration);
+				//console.log('ms_duration', ms_duration);
 
 				var s_duration = ms_duration / 1000;
 

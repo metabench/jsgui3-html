@@ -33,6 +33,29 @@ jsgui.Resource = require('./resource/resource');
 jsgui.Resource_Pool = require('./resource/pool');
 jsgui.Resource.Data_KV = require('./resource/data-kv-resource');
 jsgui.Resource.Data_Transform = require('./resource/data-transform-resource');
+jsgui.Resource.Compilation = require('./resource/compilation-resource');
+jsgui.Resource.Compiler = require('./resource/compiler-resource');
+
+
+// Should possibly have means to compile HTML and a few other things,
+//  Possibly having compilers loaded when needed with their own require / import statement.
+
+// Compilers often operate on disk.
+//  How to use compilers with programmatic streams?
+//  Maybe will need to run some of them on disk.
+jsgui.Resource.load_compiler = (name, jsfn, options) => {
+
+
+}
+
+// jsgui.compile(input, options) gets observable or stream or something like that.
+
+
+
+// Need an easy way to config and load compiler resources.
+//  Standard and simple interface.
+
+
 
 // sync load of css.
 //  need to be able to serve that CSS to the user.
