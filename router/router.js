@@ -1,19 +1,20 @@
 // Tree_Router?
 
 var url = require('url-parse'),
-    jsgui = require('lang-tools'),
+    //jsgui = require('lang-tools'),
+    jsgui = require('lang-mini'),
     //os = require('os'),
     //http = require('http');
-    stringify = jsgui.stringify,
-    each = jsgui.each,
-    arrayify = jsgui.arrayify,
+    //stringify = jsgui.stringify,
+    //each = jsgui.each,
+    //arrayify = jsgui.arrayify,
     tof = jsgui.tof;
-var filter_map_by_regex = jsgui.filter_map_by_regex;
-var Class = jsgui.Class,
-    Data_Object = jsgui.Data_Object;
-var fp = jsgui.fp,
-    is_defined = jsgui.is_defined;
-var Collection = jsgui.Collection;
+//var filter_map_by_regex = jsgui.filter_map_by_regex;
+//var Class = jsgui.Class,
+//    Data_Object = jsgui.Data_Object;
+//var fp = jsgui.fp,
+//    is_defined = jsgui.is_defined;
+//var Collection = jsgui.Collection;
 var get_item_sig = jsgui.get_item_sig;
 
 // Not a Data_Object.
@@ -42,7 +43,7 @@ class Router {
         return true;
     }
     'process'(req, res) {
-        var remoteAddress = req.connection.remoteAddress;
+        //var remoteAddress = req.connection.remoteAddress;
         //var rt = this.get('routing_tree');
         var rt = this.routing_tree;
 

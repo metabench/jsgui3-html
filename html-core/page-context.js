@@ -1,5 +1,4 @@
-var jsgui = require('lang-tools');
-
+const jsgui = require('lang-tools');
 const {each, tof, is_defined, get_a_sig, Evented_Class} = jsgui;
 
 /*
@@ -122,18 +121,6 @@ class Page_Context extends Evented_Class {
         return res;
     }
 
-    /*
-    'get_selection_scope_by_id'(id) {
-        if (!this.selection_scopes[id]) {
-            this.selection_scopes[id] = new Selection_Scope({
-                'context': this,
-                'id': id
-            });
-        }
-        return this.selection_scopes[id];
-    }
-    */
-
     'make' (source) {
         let t_source = tof(source);
         if (t_source === 'string') {
@@ -141,8 +128,6 @@ class Page_Context extends Evented_Class {
         }
     }
     'update_Controls' () {
-
-
         // Multisig functions.
         // Try them. mfp({})
 
@@ -202,158 +187,6 @@ class Page_Context extends Evented_Class {
         });
         return res;
     }
-
-
-    /* Seems better to do this with mixins */
-    //  Don't think we are using this for drag and drop reently.
-
-
-    /*
-    'begin_drag_ctrl' (e_begin, ctrl) {
-        // Though the ctrl should probably go in the event object - maybe need to formalise an API.
-        // Different types of drag could be made modular to make builds smaller.
-        //  For the moment need to add functionality then work on build size later.
-        this.raise('drag-ctrl-begin', e_end, ctrl);
-    }
-    'move_drag_ctrl' (e_move, ctrl) {
-        const window_size = get_window_size();
-        let from_left, from_top, from_right, from_bottom;
-        let clientX = e_move.clientX;
-        let clientY = e_move.clientY;
-        // see if it's at the top or bottom...
-        //  would be nice to have different distances, so halfway to the margin anchors it in a way that it hides itself.
-
-        let margin = 64;
-        let is_left = clientX <= margin;
-        let is_top = clientY <= margin;
-        let is_right = clientX >= window_size[0] - margin;
-        let is_bottom = clientY >= window_size[1] - margin;
-
-        // need more generic event binding for objects.
-        // listen
-        // raise
-        // then for the combinations...
-        //console.log('is_top ' + is_top);
-        if (is_top) {
-            // raise the event...
-            // then some things will listen for it.
-            this.raise('drag-ctrl-top');
-        } else if (is_bottom) {
-            // raise the event...
-            // then some things will listen for it.
-            this.raise('drag-ctrl-bottom');
-        } else if (is_left) {
-            // raise the event...
-            // then some things will listen for it.
-            this.raise('drag-ctrl-left');
-        } else if (is_right) {
-            // raise the event...
-            // then some things will listen for it.
-            this.raise('drag-ctrl-right');
-        } else {
-            this.raise('drag-ctrl-no-zone');
-        }
-    }
-    'end_drag_ctrl' (e_end, ctrl) {
-        // raise the event...
-        this.raise('drag-ctrl-end', e_end, ctrl);
-    }
-    'drop_ctrl' (ctrl, zone) {
-        //console.log('page context drop control ctrl ' + ctrl);
-        //console.log('zone ' + zone);
-        if (this.full_window) {
-            // anchor the control in that zone.
-            this.anchor(ctrl, zone);
-            // Basically we need to anchor one control inside another.
-            //  The anchor zone will be a part of the grid_9 (or other mechanism)
-        }
-    }
-    */
-
-
-
-    // Again, looks better through mixins
-    //  May be woth speccing out exactly what this should do and making it as a mixin.
-    //  Seems more active client side.
-
-
-    /*
-    'anchor' (ctrl, zone) {
-        console.log('page context anchor ');
-        if (this.full_window) {
-            var fw = this.full_window;
-            // and then does the full window control have a grid_9?
-            var g9 = fw.get('grid_9');
-            //console.log('g9 ' + g9);
-            if (g9) {
-                g9.anchor_ctrl(ctrl, zone);
-            }
-            var fwtn = fw.__type_name;
-            //console.log('fwtn ' + fwtn);
-        }
-    }
-    // Ending a control drag.
-    //  If we are to dock the control somewhere, we have some docking code that does this that can be called separately from the
-    //  event.
-    // more than notify, this does some UI too.
-    'begin_drag_selection_scope' (e_begin, selection_scope) {
-        //console.log('page context drag selection_scope ' + selection_scope);
-        var map_selected_controls = selection_scope.map_selected_controls;
-        //console.log('map_selected_controls ' + stringify(map_selected_controls));
-        // true keys...
-        var arr_selected = jsgui.true_vals(map_selected_controls);
-        //console.log('arr_selected.length ' + arr_selected.length);
-        // make shallow copies of these selected controls.
-        var shallow_copies_selected = jsgui.shallow_copy(arr_selected);
-        this.drag_selected = arr_selected;
-        var ctrl_abs = this.make(Control({
-
-        }));
-        ctrl_abs.add(shallow_copies_selected);
-        var screenX = e_begin.screenX;
-        //console.log('screenX ' + screenX);
-        var screenY = e_begin.screenY;
-        var clientX = e_begin.clientX;
-        var clientY = e_begin.clientY;
-        ctrl_abs.set('dom.attributes.style', 'position: absolute; left: ' + clientX + 'px; top:' + clientY + 'px; height: 200px; width: 320px; background-color: #EEEEEE');
-        var html = ctrl_abs.all_html_render();
-        var el_ctr = document.createElement('div');
-        el_ctr.innerHTML = html;
-        var el_abs = el_ctr.childNodes[0];
-        document.body.appendChild(el_abs);
-        //ctrl_abs.set('el', el_abs);
-        // within the context, we can make new controls and put them in the document.
-        // an absolutely positioned div.
-        this.ctrl_abs = ctrl_abs;
-        //throw 'stop';
-    }
-    'move_drag_selection_scope' (e_move) {
-        console.log('page context move_drag_selection_scope');
-        var clientX = e_move.clientX;
-        var clientY = e_move.clientY;
-        // definitely would be useful to have the abstraction that covers individual style properties.
-        var style = 'position: absolute; left: ' + clientX + 'px; top:' + clientY + 'px; height: 200px; width: 320px; background-color: #EEEEEE'
-        //console.log('style ' + style);
-        var el = this.ctrl_abs.dom.el;
-        //console.log('el ' + el);
-        el.style.cssText = style;
-    }
-    'end_drag_selection_scope' (e_end) {
-        if (this.ctrl_abs) {
-            this.ctrl_abs.remove();
-            this.ctrl_abs = null;
-        }
-    }
-    */
-    /*
-    'ensure_dock_placeholder': function(pos) {
-        //console.log('Page Context ensure_dock_placeholder ' + pos);
-        var fw = this.full_window;
-        if (fw) {
-            fw.ensure_dock_placeholder(pos);
-        }
-    }
-    */
 }
 
 module.exports = Page_Context;

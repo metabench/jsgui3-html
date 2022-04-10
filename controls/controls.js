@@ -1,86 +1,101 @@
 
-var controls = {
-    Arrow_Button: require('./vector/arrow-button'),
+
+
+const controls = {
+    Arrow_Button: require('./organised/0-core/1-advanced/vector/arrow-button'),
     //Audio_Player: require('./audio-player'),
-    Audio_Volume: require('./audio-volume'),
-    Button: require('./button'),
-    Context_Menu: require('./context-menu'),
+    Audio_Volume: require('./organised/1-standard/5-ui/audio-volume'),
+    Button: require('./organised/0-core/0-basic/button'),
+
+    // Maybe more advanced?
+    Context_Menu: require('./organised/0-core/0-basic/context-menu'),
     //Control: 
-    Color_Palette: require('./color-palette'),
-    Combo_Box: require('./combo-box'),
+    Color_Palette: require('./organised/0-core/0-basic/color-palette'),
+    Combo_Box: require('./organised/0-core/0-basic/combo-box'),
 
 
     // Not using (data-)connected controls.
     //Data_Grid: require('./connected/data-grid'),
 
-    File_Upload: require('./file-upload'),
-    Grid: require('./grid'),
-    Horizontal_Menu: require('./horizontal-menu'),
-    Horizontal_Slider: require('./horizontal-slider'),
+    File_Upload: require('./organised/0-core/0-basic/file-upload'),
+
+    // maybe 0-basic/0-layout?
+    //  A layout control may be / need to be displayed a little differently.
+
+    Grid: require('./organised/0-core/0-basic/grid'),
+    Horizontal_Menu: require('./organised/1-standard/5-ui/horizontal-menu'),
+    Horizontal_Slider: require('./organised/1-standard/5-ui/horizontal-slider'),
     //Data_Item: require('./data-item'),
-    Data_Row: require('./data-row'),
-    Date_Picker: require('./date-picker'),
-    Dropdown_List: require('./dropdown-list'),
+    Data_Row: require('./organised/1-standard/4-data/data-row'),
+    Date_Picker: require('./organised/1-standard/5-ui/date-picker'),
+    Dropdown_List: require('./organised/0-core/0-basic/dropdown-list'),
 
     // Exclude the connected ones for the moment. Moment passed.
 
-    File_Tree: require('./connected/file-tree'),
-    File_Tree_Node: require('./connected/file-tree-node'),
-    Icon: require('./icon'),
-    Item: require('./item'),
-    Item_Selector: require('./item-selector'),
+
+    // May not need to actually be 'connected'?
+    //  Or other controls may get data connections too.
+    File_Tree: require('./organised/1-standard/5-ui/file-tree'),
+    File_Tree_Node: require('./organised/1-standard/5-ui/file-tree-node'),
+    Icon: require('./organised/0-core/0-basic/icon'),
+    Item: require('./organised/0-core/0-basic/item'),
+    Item_Selector: require('./organised/0-core/0-basic/item-selector'),
     //Item_View: require('./old/item-view'),
-    Left_Right_Arrows_Selector: require('./vector/left-right-arrows-selector'),
+    Left_Right_Arrows_Selector: require('./organised/1-standard/2-misc/left-right-arrows-selector'),
     //Vector: require('./vector'),
-    Line_Chart: require('./vector/line-chart'),
-    List: require('./list'),
+    Line_Chart: require('./organised/1-standard/5-ui/line-chart'),
+    List: require('./organised/0-core/0-basic/list'),
 
     // could be in forms / standard forms.
-    Login: require('./login'),
+    Login: require('./organised/0-core/1-advanced/login'),
 
     //Media_Scrubber: require('./media-scrubber'),
-    Menu_Node: require('./menu-node'),
-    Modal: require('./layout/modal'),
+    Menu_Node: require('./organised/0-core/0-basic/menu-node'),
+    Modal: require('./organised/1-standard/6-layout/modal'),
 
-    Month_View: require('./month-view'),
+    Month_View: require('./organised/1-standard/5-ui/month-view'),
     //Multi_Document_Interface: require('./multi-document-interface'),
-    Multi_Layout_Mode: require('./layout/app/multi-layout-mode'),
+    Multi_Layout_Mode: require('./organised/1-standard/6-layout/app/multi-layout-mode'),
     //Object_Editor: require('./editor/object'),
-    Panel: require('./layout/panel'),
-    Plus_Minus_Toggle_Button: require('./plus-minus-toggle-button'),
-    Popup_Menu_Button: require('./popup-menu-button'),
-    Radio_Button: require('./radio-button'),
-    Radio_Button_Group: require('./radio-button-group'),
-    Resize_Handle: require('./resize-handle'),
-    Scroll_View: require('./scroll-view'),
-    Scrollbar: require('./scrollbar'),
+    Panel: require('./organised/1-standard/6-layout/panel'),
 
-    Search_Bar: require('./search-bar'),
 
-    Single_Line: require('./layout/single-line'),
+    Plus_Minus_Toggle_Button: require('./organised/0-core/0-basic/plus-minus-toggle-button'),
 
-    Standard_Web_Page: require('./page/standard-web-page'),
+    // More advanced functionality - may require more work to keep it with the right APIs.
+    Popup_Menu_Button: require('./organised/0-core/1-advanced/popup-menu-button'),
+    Radio_Button: require('./organised/0-core/0-basic/radio-button'),
+    Radio_Button_Group: require('./organised/0-core/0-basic/radio-button-group'),
+    Resize_Handle: require('./organised/0-core/0-basic/resize-handle'),
+    Scroll_View: require('./organised/0-core/0-basic/scroll-view'),
+    Scrollbar: require('./organised/0-core/0-basic/scrollbar'),
 
-    Start_Stop_Toggle_Button: require('./start-stop-toggle-button'),
+    Search_Bar: require('./organised/1-standard/5-ui/search-bar'),
 
-    String_Span: require('./string-span'),
+    Single_Line: require('./organised/1-standard/6-layout/single-line'),
 
-    Tabbed_Panel: require('./layout/tabbed-panel'),
-    Text_Field: require('./text-field'),
-    Text_Item: require('./text-item'),
-    Text_Input: require('./text-input'),
-    Tile_Slider: require('./layout/tile-slide'),
+    Standard_Web_Page: require('./organised/1-standard/3-page/standard-web-page'),
+
+    Start_Stop_Toggle_Button: require('./organised/1-standard/5-ui/start-stop-toggle-button'),
+
+    String_Span: require('./organised/0-core/1-advanced/string-span'),
+
+    Tabbed_Panel: require('./organised/1-standard/6-layout/tabbed-panel'),
+    Text_Field: require('./organised/0-core/0-basic/text-field'),
+    Text_Item: require('./organised/0-core/0-basic/text-item'),
+    Text_Input: require('./organised/0-core/0-basic/text-input'),
+    Tile_Slider: require('./organised/1-standard/6-layout/tile-slide'),
 
     // May be moved to vector?
-    Timespan_Selector: require('./timespan-selector'),
-    Title_Bar: require('./layout/title-bar'),
-    Titled_Panel: require('./layout/titled-panel'),
-    Toggle_Button: require('./toggle-button'),
-    Toolbox: require('./toolbox'),
-    Tree: require('./tree'),
-    Tree_Node: require('./tree-node'),
-    Vertical_Expander: require('./layout/vertical-expander'),
-    Window: require('./layout/window')//,
+    Timespan_Selector: require('./organised/1-standard/5-ui/timespan-selector'),
+    Title_Bar: require('./organised/1-standard/6-layout//title-bar'),
+    Titled_Panel: require('./organised/1-standard/6-layout/titled-panel'),
+    Toggle_Button: require('./organised/0-core/0-basic/toggle-button'),
+    Toolbox: require('./organised/1-standard/5-ui/toolbox'),
+    Tree: require('./organised/1-standard/5-ui/tree'),
+    Tree_Node: require('./organised/1-standard/5-ui/tree-node'),
+    Vertical_Expander: require('./organised/1-standard/6-layout/vertical-expander'),
+    Window: require('./organised/1-standard/6-layout/window')//,
     //mx: require('../control_mixins/mx')
 }
 

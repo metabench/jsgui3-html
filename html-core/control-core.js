@@ -854,7 +854,7 @@ class Control_Core extends Data_Object {
 	'active'() {
 		// do nothing for the moment.
 
-		console.log('Deprecated active. Functionality now part of standard control rendering.');
+		//console.log('Deprecated active. Functionality now part of standard control rendering.');
 	}
 	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope'() {

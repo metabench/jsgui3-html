@@ -60,6 +60,32 @@ such as in evented_class?
   
 
 
+0.0.92 onwards:
+Will make jsgui3-server work as a standalone command line app.
+Various pieces of functionality useful for web servers will be available.
+Could even operate as an FTP server?
+Want it so that when an empty server is started, it's possible to configure it from a server admin console.
+Maybe not to do all that much to start with
+Things like compiling code, or viewing through an admin interface what code has compiled.
+A file viewer perhaps, viewing files in that directory from where jsgui-server was called.
+Installing it to run from the command line.
+    probably npm install jsgui3-server -g
+
+Even showing it within a WebView type window, packaged maybe with Electron.
+
+The jsgui3-server app, through its admin interface, should have some place where compilation can be done and monitored.
+A file manager type interface would help with directories and items on the FS to be compiled.
+Also want compilations that work in memory without needed into access the FS. I think Babel can do this once the
+references are loaded, and it outputs as one file.
+
+
+Babel may become a dev dependency?
+Lightweight code deployments will remain a priority, may even increase.
+Allowing for compilation of other langs' code to WASM seems very important too.
+
+
+
+
 
 
 
