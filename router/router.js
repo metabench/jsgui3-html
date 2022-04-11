@@ -29,7 +29,11 @@ class Router {
         spec = spec || {};
         //super(spec);
         //this.set('type_levels', ['router']);
-        if (spec.name) this.name = spec.name;
+        if (spec.name) {
+            this.name = spec.name;
+        } else {
+            this.name = 'Router';
+        }
         this.routing_tree = new Routing_Tree();
     }
     'start'(callback) {
@@ -41,6 +45,9 @@ class Router {
     }
     'meets_requirements'() {
         return true;
+    }
+    get arr_paths() {
+        
     }
     'process'(req, res) {
         //var remoteAddress = req.connection.remoteAddress;

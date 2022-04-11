@@ -37,6 +37,25 @@ class Routing_Tree {
     constructor(spec) {
         this.root = new Routing_Tree_Node();
     }
+    get arr_paths() {
+        const res = [];
+        const iterate = (node) => {
+
+
+            if (node.mapNormalPathChildren) {
+                // Object.entries()
+                console.log('node.name', node.name);
+                const children = Object.entries(node.mapNormalPathChildren);
+
+                if (children.length > 0) {
+                    for (let c = 0; c < children.length; c++) {
+                        iterate(children[c]);
+                    }
+                }
+            }
+        }
+        return res;
+    }
     'setRoot404'(handler) {
         this.root404Handler = handler;
     }
