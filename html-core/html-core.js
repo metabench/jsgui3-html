@@ -753,7 +753,7 @@ jsgui.controls.span = jsgui.span = class span extends Control {
 
 
 class String_Control extends Control {
-    constructor(spec) {
+    constructor(spec = {}) {
         spec.__type_name = 'string_control';
         super(spec);
         this.dom.tagName = undefined;
@@ -843,7 +843,9 @@ core_extension_no_closing_tag('link input meta');
 class HTML_Document extends jsgui.Control {
     // no tag to render...
     //  but has dtd.
-    constructor(spec) {
+    constructor(spec = {}) {
+        spec.tag_name = 'html';
+        // but give it the tag_name 'html'.
         super(spec);
     }
 
@@ -855,7 +857,7 @@ class HTML_Document extends jsgui.Control {
 }
 
 class Blank_HTML_Document extends HTML_Document {
-    constructor(spec) {
+    constructor(spec = {}) {
         //console.log('super', typeof super);
         //console.log('Blank_HTML_Document');
         //HTML_Document.prototype.constructor.call(this, spec);
@@ -863,7 +865,7 @@ class Blank_HTML_Document extends HTML_Document {
         var context = this.context;
         //console.log('context ' + context);
         if (!spec.el) {
-            this.dom.tagName = 'html';
+            //this.dom.tagName = 'html';
             var head = new jsgui.head({
                 'context': context
             });
@@ -912,7 +914,7 @@ class Blank_HTML_Document extends HTML_Document {
 // Want a body function in other nodes, available throughout the document?
 
 class Client_HTML_Document extends Blank_HTML_Document {
-    constructor(spec) {
+    constructor(spec = {}) {
         //console.log('Client_HTML_Document');
         super(spec);
         //spec.context.ctrl_document = this;

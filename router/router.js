@@ -47,9 +47,14 @@ class Router {
         return true;
     }
     get arr_paths() {
-        
+        return this.routing_tree.arr_paths;
     }
     'process'(req, res) {
+
+        // hmmm... maybe could have already extracted req.url.
+        
+
+
         //var remoteAddress = req.connection.remoteAddress;
         //var rt = this.get('routing_tree');
         var rt = this.routing_tree;

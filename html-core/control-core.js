@@ -199,8 +199,8 @@ class Control_DOM extends Evented_Class {
 // Outside of dom attributes and style.
 //  Dom attributes / style need to get updated from these properties.
 class Control_Background extends Evented_Class {
-	constructor(spec) {
-		super();
+	constructor(spec = {}) {
+		super(spec);
 		let _color, _opacity;
 		Object.defineProperty(this, 'color', {
 			get() {
@@ -231,9 +231,9 @@ class Control_Background extends Evented_Class {
 
 class Control_Core extends Data_Object {
 
-	constructor(spec, fields) {
+	constructor(spec = {}, fields) {
 		// but process / normalize the spec here?
-		spec = spec || {};
+		//spec = spec || {};
 		spec.__type_name = spec.__type_name || 'control';
 		super(spec, fields);
 		if (spec.id) {
@@ -313,7 +313,7 @@ class Control_Core extends Data_Object {
 				}
 			}
 		});
-		var tagName = spec.tagName || spec.tag_name || 'div';
+		let tagName = spec.tagName || spec.tag_name || 'div';
 		//this.set('dom.tagName', tagName);
 		d.tagName = tagName;
 		//this._icss = {};
@@ -344,6 +344,8 @@ class Control_Core extends Data_Object {
 		var context = this.context || spec.context;
 		//console.log('context', context);
 		// 
+
+		// Context does not seem manditory right now.
 		if (context) {
 			if (context.register_control) context.register_control(this);
 		} else {
@@ -656,6 +658,9 @@ class Control_Core extends Data_Object {
 		});
 	}
 	'all_html_render'(callback) {
+
+		// observable result may be better.
+
 		//console.log('all render callback', tof(callback));
 		if (callback) {
 			//var that = this;

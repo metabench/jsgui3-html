@@ -36,7 +36,7 @@
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
   "devDependencies": {
-    "esbuild": "^0.14.34"
+    "esbuild": "^0.14.36"
   },
-  "version": "0.0.94"
+  "version": "0.0.95"
 }
