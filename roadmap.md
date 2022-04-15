@@ -85,8 +85,14 @@ Allowing for compilation of other langs' code to WASM seems very important too.
 
 
 
+Could do with examples
+    Rendering a few pages of HTML?
+    Does that need to be on the server?
+    Can it happen within the HTML module?
 
+Examples within server could make most sense.
+Integration of CSS seems important here...
 
-
+Want to make a few decent examples on the server.
 
 
