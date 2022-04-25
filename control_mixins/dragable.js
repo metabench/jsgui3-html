@@ -13,7 +13,8 @@ const {
 //  Probably separate pages will help to keep it simpler to begin with.
 //  Maybe CMS should be finished to power it.
 
-
+// disables console logging in this module.
+//const console = {log: () => {}};
 
 
 let dragable = (ctrl, opts = {}) => {
@@ -44,12 +45,12 @@ let dragable = (ctrl, opts = {}) => {
 
 	start_action = start_action || ['touchstart', 'mousedown'];
 
-	console.log('start_action', start_action);
+	//console.log('start_action', start_action);
 
 	if (tof(start_action) === 'string') start_action = [start_action];
 
-	console.log('ctrl.parent', ctrl.parent);
-	console.log('bounds', bounds);
+	//console.log('ctrl.parent', ctrl.parent);
+	//console.log('bounds', bounds);
 
 	// boundary control
 	let bounds_pos;
@@ -76,7 +77,7 @@ let dragable = (ctrl, opts = {}) => {
 
 	let drag_mode = opts.drag_mode || opts.mode || 'body';
 
-	console.log('bounds_is_parent', bounds_is_parent);
+	//console.log('bounds_is_parent', bounds_is_parent);
 
 
 	if (bounds_is_parent) {
@@ -85,7 +86,7 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 
-	console.log('1) drag_mode', drag_mode);
+	//console.log('1) drag_mode', drag_mode);
 
 	//console.log('dragable drag_mode', drag_mode);
 
@@ -195,7 +196,7 @@ let dragable = (ctrl, opts = {}) => {
 
 
 	const begin_drag = (pos) => {
-		console.log('begin_drag', pos);
+		//console.log('begin_drag', pos);
 
 		// drag mode transform xy?
 
@@ -210,7 +211,7 @@ let dragable = (ctrl, opts = {}) => {
 		// Setting dims values would help with positioning.
 		//  It could be fast programatically too.
 
-		console.log('drag_mode', drag_mode);
+		//console.log('drag_mode', drag_mode);
 
 
 		if (drag_mode === 'within-parent') {
@@ -455,9 +456,9 @@ let dragable = (ctrl, opts = {}) => {
 
 
 	const h_md = (e_md) => {
-		console.log('dragable e_md', e_md);
+		//console.log('dragable e_md', e_md);
 
-		console.log('e_md.pageX', e_md.pageX);
+		//console.log('e_md.pageX', e_md.pageX);
 
 		// use offset
 		// [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
@@ -481,7 +482,7 @@ let dragable = (ctrl, opts = {}) => {
 
 			pos_md = [e_md.pageX || e_md.touches[0].pageX, e_md.pageY || e_md.touches[0].pageY];
 
-			console.log('pos_md', pos_md);
+			//console.log('pos_md', pos_md);
 
 			// get the 3d translation value...
 			//  possibly using the system of dims to set the translate value will help too.
