@@ -27,6 +27,11 @@ var Control = jsgui.Control;
 //var group = jsgui.group;
 
 const mx_selectable = require('./../../../../control_mixins/selectable');
+
+
+// mx_autoscale perhaps?
+
+
 // Not as complex, or designed to be as responsive to data as the Data_Grid.
 
 // This will need to be versatile as well as operating simply with little configuration.
@@ -68,6 +73,22 @@ class Grid_Cell extends Control {
         field(this, 'x', spec.x);
         field(this, 'y', spec.y);
         field(this, 'data', spec.data);
+
+        // A cell size property here (maybe)?
+        //  Maybe would be more efficient in the CSS?
+
+        // Rendering inline styles in the HTML would at least be reliable and clear.
+        //  
+
+        // does 'Control' have a 'size' property anyway???
+        //   and have that render inline?
+        //  .options / .meta
+        //    .render_size_using_inline_css  bool   ??
+
+
+
+
+
 
         //console.log('new grid cell');
 
@@ -163,18 +184,8 @@ class Grid extends Control {
 
 
         field(this, 'cell_size');
-
         //console.log('spec.cell_size', spec.cell_size);
-
         if (spec.cell_size) this.cell_size = spec.cell_size;
-
-
-        // row headers property
-        // column headers property
-
-        // A translate property?
-        //  could be objects
-
 
         field(this, 'column_headers', false);
         field(this, 'row_headers', false);
@@ -182,18 +193,6 @@ class Grid extends Control {
 
         this.map_cells = {};
         this.arr_cells = {};
-
-        // size prop
-        //  however, controls in general could do with an upgrade here.
-        //  sizes could still be undefined when not set and there is no element to measure the size of.
-
-        // size property should read from the DOM when there is the DOM - or have corresponding values at least.
-        //  (or not - could have dom size)
-        // need to measure border and possibly some other sizes.
-        // Part of an overhaul of css and styling?
-        // data property.
-
-        // if it's an array...
 
         if (spec.data) {
             let t_data = tof(spec.data);
@@ -218,35 +217,6 @@ class Grid extends Control {
 
         if (!spec.el) {
             var data;
-
-            /*
-            if (spec_data) {
-                if (spec_data instanceof Data_Grid) {
-                    this.set('data', spec_data);
-                    data = spec_data;
-                } else {
-                    console.log('pre create Data_Grid');
-                    var dg = new Data_Grid(spec_data);
-                    this.set('data', dg);
-                    data = dg;
-                }
-            }
-
-            var range = data.get('range');
-            */
-            //console.log('range', range);
-
-            // Render all cells as table.
-            // Render all cells as divs
-
-            // Then we may want to do partial rendering
-            //  Becomes more complicated when the heights/sizes of items vary.
-
-            //console.log('pre full_compose_as_table');
-
-            // Table grid
-
-            //this.full_compose_as_table();
             this.full_compose_as_divs();
 
             this._fields = this._fields || {};
@@ -258,19 +228,8 @@ class Grid extends Control {
                 //  Really column width values.
                 // 'all_columns': { width: 200px }
             });
-
             //this._fields = ;
         }
-        // on resize, resize all of the cells.
-        // on activate, will need to reconnect all of the cells.
-
-        // .changes used to exist elsewhere.
-        //  specific changes monitoring would be useful.
-
-
-        
-
-
         this.changes({
             grid_size: v => {
                 this.clear();

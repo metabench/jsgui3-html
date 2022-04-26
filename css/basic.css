@@ -843,11 +843,14 @@ div.grid {
     user-select: none;
     clear: both;
     overflow: auto;
+
 }
 
 div.grid .header.row .cell {
     text-align: center;
     background-color: #ffeba8;
+    width: 24px;
+    height: 24px;
 }
 
 div.grid .row {
@@ -1033,23 +1036,23 @@ button.button, div.button {
     max-height: 60px;
     */
     background-color: #CCCCCC;
-}
+};
 
 .search-bar {
     padding-top: 8px;
     padding-bottom: 8px;
-}
+};
 
 .search-bar * {
     display: inline-block;
     vertical-align: top;
-}
+};
 
 .search-bar input {
     
-}
+};
 
 span.string.editing {
     background-color: #FFFFC2
-}
+};
 

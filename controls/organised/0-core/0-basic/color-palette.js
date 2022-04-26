@@ -16,6 +16,12 @@ const {
     prop
 } = require('obext');
 
+// Looks like we will need to fix grid sizes & sizing.
+//  Perhaps a new mixin, autosizing / autosize-to-fill-space could work?
+
+
+
+
 // Could accept only some specific types of data eg numeric.
 //  May well want nicer / custom scrollbars.
 
@@ -776,7 +782,7 @@ class Color_Palette extends Control {
             });
 
             // go through the cells, getting their color values from the DOM
-            console.log('pre grid each cell');
+            //console.log('pre grid each cell');
             this.grid.each_cell(cell => {
 
                 //console.log('cell', cell);
