@@ -32,7 +32,7 @@ var Control_Core = require('./control-core');
 //var tof = jsgui.tof;
 //const def = jsgui.is_defined;
 
-const mx_selectable = require('../control_mixins/selectable');
+//const mx_selectable = require('../control_mixins/selectable');
 //const mx_fast_touch_click = require('../control_mixins/fast-touch-click');
 
 
@@ -161,7 +161,66 @@ class Control extends Control_Core {
 
 		this.map_raises_dom_events = {};
 
+		// Can we add functions to a post-construction queue?
+		//  Or would settimeout be OK for this even?
+
+		// No, prefer doing this after construction of other parts that can respond to values being set.
+		//  setTimeout is too far into the future.
+		// Once active may be enough?
+		//  Really we want pre activation but right at the end of the construction.
+		//   Would not always be activated anyway, don't want to assume activation always happens.
+
+		// After the construction of the subcontrols? Control gets ceded to them normally.
+
+		// Or loading the field values is a fairly early stage but needs more specific care?
+		//  Really needs to be done after all of the subclasses' constructors.
+		//   Hard right now to indicate when the subclass's constructor is complete.
+
+		// Maybe read values back into the spec?
+
+
+
+		//const do_after_construction = () => {
+			if (spec.el) {
+				var jgf = spec.el.getAttribute('data-jsgui-fields');
+	
+				if (jgf) {
+					var s_pre_parse = jgf.replace(/\[DBL_QT\]/g, '"').replace(/\[SNG_QT\]/g, '\'');
+					s_pre_parse = s_pre_parse.replace(/\'/g, '"');
+					var props = JSON.parse(s_pre_parse);
+	
+					let exempt_prop_names = {
+						//'selection_scope': true
+					}
+					//let props_to_apply = {};
+	
+					// hmmm can this be done later on, once the getter / setters have been set up?
+					//  as in, in after_constructor function.
+	
+	
+	
+					each(props, (v, i) => {
+						if (exempt_prop_names[i]) {
+	
+						} else {
+							//props_to_apply[i] = v;
+
+							//this[i] = v;
+							spec[i] = v;
+
+							//console.log('field apply i', i);
+							//console.log('field apply v', v);
+							// Should have been applied...
+						}
+					});
+				}
+			}
+		//}
+		//setTimeout(do_after_construction, 0);
+
 		if (spec.el) {
+
+			/*
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
 
 			if (jgf) {
@@ -173,15 +232,25 @@ class Control extends Control_Core {
 					//'selection_scope': true
 				}
 				//let props_to_apply = {};
+
+				// hmmm can this be done later on, once the getter / setters have been set up?
+				//  as in, in after_constructor function.
+
+
+
 				each(props, (v, i) => {
 					if (exempt_prop_names[i]) {
 
 					} else {
 						//props_to_apply[i] = v;
 						this[i] = v;
+						console.log('field apply i', i);
+						console.log('field apply v', v);
+						// Should have been applied...
 					}
 				});
 			}
+			*/
 
 			if (def(this.selection_scope)) {
 				this.selection_scope = this.context.new_selection_scope(this);
@@ -1308,6 +1377,13 @@ class Control extends Control_Core {
 		if (el) {
 			const attrs = el.attributes;
 			if (attrs) {
+				// Can look for the data-jsgui-fields.
+				//  Values that need to be taken as property values.
+				//   this[field_name] = field_value;
+
+
+
+
 				const l = attrs.length
 				for (i = 0; i < l; i++) {
 					item = attrs.item(i);
@@ -1319,6 +1395,8 @@ class Control extends Control_Core {
 						dom_attributes[name] = value;
 					} else if (name === 'class') {
 						dom_attributes[name] = value;
+					//} else if (name === 'data-jsgui-fields') {
+					//	dom_attributes[name] = value;
 					} else {
 						dom_attributes[name] = value;
 					}

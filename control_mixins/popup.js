@@ -35,7 +35,7 @@ const context_ensure_popup_layer = (context) => {
 
     // context.overlay property
 
-    console.log('ctrl_document', ctrl_document);
+    //console.log('ctrl_document', ctrl_document);
 
     let body = context.map_controls['body_0'];
 
@@ -108,7 +108,7 @@ const popup = (ctrl) => {
             let bcr = placeholder.dom.el.getBoundingClientRect();
 
             
-            console.log('bcr', bcr);
+            //console.log('bcr', bcr);
             
 
 

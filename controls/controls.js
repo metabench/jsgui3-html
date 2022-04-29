@@ -11,6 +11,7 @@ const controls = {
     Context_Menu: require('./organised/0-core/0-basic/context-menu'),
     //Control: 
     Color_Palette: require('./organised/0-core/0-basic/color-palette'),
+    Checkbox: require('./organised/0-core/0-basic/checkbox'),
     Combo_Box: require('./organised/0-core/0-basic/combo-box'),
 
 
@@ -23,6 +24,7 @@ const controls = {
     //  A layout control may be / need to be displayed a little differently.
 
     Grid: require('./organised/0-core/0-basic/grid'),
+    Grid_Cell: require('./organised/0-core/0-basic/grid').Cell,
     Horizontal_Menu: require('./organised/1-standard/5-ui/horizontal-menu'),
     Horizontal_Slider: require('./organised/1-standard/5-ui/horizontal-slider'),
     //Data_Item: require('./data-item'),

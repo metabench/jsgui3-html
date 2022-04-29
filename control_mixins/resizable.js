@@ -4,6 +4,18 @@
 
 
 autosizing perhaps
+smart-size?
+size-options?
+size?
+sizes?
+display-modes? and sizes?
+navigation modes too?
+  eg popup-explore interface
+need to separate the abstractions of the content itself and the structure its displayed in
+  eg could show a tree as a tree component of through navigation of (virtual) pages.
+
+  
+
 
 
 
@@ -24,6 +36,10 @@ UI to enable the user to resize it, by integrating handles?
 
 ui-resizable? or assumed.
 */
+
+// Seem like quite a lot of different potential ways to do UI for resize.
+//  This would be the place for them.
+
 
 let resizable = (ctrl) => {
     // Respond to touch events.

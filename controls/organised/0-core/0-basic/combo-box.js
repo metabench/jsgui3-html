@@ -51,6 +51,12 @@ var Control = jsgui.Control;
 // A text input part
 // A list part
 
+// A control suite would make sense
+//  But maybe as another module.
+
+// This in its default form uses a kind of popup-resizing.
+//  There would need to be room for it to be displayed. Possibly in a popup overlay layer.
+
 
 
 

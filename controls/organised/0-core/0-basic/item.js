@@ -50,6 +50,11 @@ const c_left_right = (context, l_content, r_content) => {
 // Post browserify, pre babel...
 //  That would be a decent time to remove these statements.
 
+// What mode is it being displayed in?
+
+// display_mode property could be useful.
+
+
 
 
 class Item extends Control {

@@ -8,6 +8,17 @@ const {
 	tof
 } = require('lang-mini');
 
+
+// Want to make it simpler to create more specific behaviours like drag to grid position.
+//  Drop targets could be one way to do that.
+
+// Dynamic_Size could be an interesting one.
+//  Uses the space available or the space it's given as a property.
+
+
+
+
+
 // Get working with ghost drag too?
 //  Want to get features demo working soon.
 //  Probably separate pages will help to keep it simpler to begin with.

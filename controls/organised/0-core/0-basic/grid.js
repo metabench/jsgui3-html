@@ -26,6 +26,15 @@ var Control = jsgui.Control;
 */
 //var group = jsgui.group;
 
+
+// mx_dynamic_size possibly
+//  maybe we need more in the core / activation part.
+//  maybe we need more on the server in terms of view composition.
+
+
+
+
+
 const mx_selectable = require('./../../../../control_mixins/selectable');
 
 
@@ -157,7 +166,23 @@ class Grid extends Control {
         this.add_class('grid');
         var spec_data = spec.data;
         this._arr_rows = [];
-        var composition_mode = 'divs';
+
+
+        // Be able to get the composition mode from the spec.
+
+        //var composition_mode = 'divs';
+
+        field(this, 'composition_mode');
+        //console.log('spec.cell_size', spec.cell_size);
+        if (spec.composition_mode) {
+            this.composition_mode = spec.composition_mode
+        } else {
+            this.composition_mode = 'divs'
+        }
+
+
+        // Could make this get the property out of fields....
+        //  should have been set on activation?
 
         let _grid_size;
         Object.defineProperty(this, 'grid_size', {
@@ -169,6 +194,7 @@ class Grid extends Control {
                 if (Array.isArray(value) && value.length === 2) {
                     let old = _grid_size
                     _grid_size = value;
+                    console.log('set _grid_size', value);
                     this.raise('change', {
                         'name': 'grid_size',
                         'old': old,
@@ -221,19 +247,33 @@ class Grid extends Control {
 
             this._fields = this._fields || {};
             Object.assign(this._fields, {
-                'composition_mode': composition_mode,
-                'grid_size': this.grid_size
+                'composition_mode': this.composition_mode,
+                'grid_size': this.grid_size//,
+                //'cell_size': this.cell_size
 
                 // Cell size options.
                 //  Really column width values.
                 // 'all_columns': { width: 200px }
             });
+            if (this.cell_size) {
+                this._fields.cell_size = this.cell_size;
+            }
             //this._fields = ;
         }
         this.changes({
             grid_size: v => {
-                this.clear();
-                this.full_compose_as_divs();
+                // No, not while the property is loading.
+                //  Need to be careful with refreshes.
+                //  
+
+                if (!spec.el) {
+                    this.clear();
+                    this.full_compose_as_divs();
+
+                }
+
+                //this.clear();
+                //this.full_compose_as_divs();
             }
         });
     }
@@ -241,6 +281,7 @@ class Grid extends Control {
     'refresh_size'() {
 
         // Don't necessarily refresh the cell size.
+        console.log('grid.js refresh_size this.composition_mode', this.composition_mode);
         if (this.composition_mode === 'divs') {
 
             // resize or refresh_grid_size
@@ -254,24 +295,46 @@ class Grid extends Control {
             var cell_border_thickness = 1;
             var _2_cell_border_thickness = cell_border_thickness * 2;
 
+            if (this.size) {
+                var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+                //var that = this;
+                var cell_v_border_thickness = 2;
+
+                this.each_row((row) => {
+                    // not enough to trigger the event it seems.
+                    //  need to get changing a style property to raise the relevant event.
+                    //row.dom.attrs.style.height = cell_size[1];
+                    row.size = [this.size[0], cell_size[1] + cell_v_border_thickness];
+                });
+
+                this.each_cell((cell) => {
+                    cell.size = cell_size;
+                });
+            } else {
+                console.log('.size was not available');
+            }
+
             // could be given the cell size.
             // cell sizes by row. 
             // if cell_size is already defined...
 
-            var cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
-            var that = this;
-            var cell_v_border_thickness = 2;
 
-            this.each_row((row) => {
-                // not enough to trigger the event it seems.
-                //  need to get changing a style property to raise the relevant event.
-                //row.dom.attrs.style.height = cell_size[1];
-                row.size = [that.size[0], cell_size[1] + cell_v_border_thickness];
-            });
+            // Maybe don't (yet) have own size? Not set or measured.
+            //  Should assume we have a this.size property (at all times??)
+            //   Sometimes would not be set?
+            //   Should have some way of autosetting it.
+            //   Bounding client rect on the client.
+            //    But should have some defaults in the CSS that get used?
+            
+            // Maybe have a sizing and layout model on the server.
+            //  For serving pages with different content sizes....
+            //  So the server could know that something gets sized 32x32 to fit in place on an iPhone for example.
+            //   iPhone in a specific view mode.
+            //  
 
-            this.each_cell((cell) => {
-                cell.size = cell_size;
-            });
+            //console.log('this.size', this.size);
+
+            
         }
     }
 
@@ -312,7 +375,7 @@ class Grid extends Control {
 
 
             //if (this.cell_selection) {
-            //cell.selectable = true;
+            cell.selectable = true;
             //}
         } else {
             //mx_selectable(cell);
@@ -334,11 +397,22 @@ class Grid extends Control {
     }
 
     'full_compose_as_divs'() {
+
+        console.log('full_compose_as_divs')
+
         let main = this.main = new Control({
             context: this.context,
             class: 'main'
         });
         this.add(main);
+
+        let rows = this.main = new Control({
+            context: this.context,
+            class: 'rows'
+        });
+        main.add(rows);
+
+
 
         // Compose row and column headers here, if they are in use.
         // row header width
@@ -375,6 +449,8 @@ class Grid extends Control {
 
             if (this.size) {
                 cell_size = this.cell_size || [Math.floor(this.size[0] / num_columns) - _2_cell_border_thickness, Math.floor(this.size[1] / num_rows) - _2_cell_border_thickness];
+            } else {
+                cell_size = this.cell_size;
             }
 
             
@@ -419,7 +495,7 @@ class Grid extends Control {
                 if (row_width) {
                     header_row.style('width', row_width);
                 }
-                main.add(header_row);
+                rows.add(header_row);
 
                 if (this.row_headers) {
                     var cell = new Control({
@@ -432,6 +508,7 @@ class Grid extends Control {
                     if (row_header_width) {
                         cell.size = [row_header_width, cell_size[1]];
                     } else {
+                        // Work on size property probably. Would render / appear as inline width and height css.
                         cell.size = cell_size;
                     }
                     header_row.add(cell);
@@ -474,7 +551,7 @@ class Grid extends Control {
 
                 row_container.add_class('row');
                 this._arr_rows.push(row_container);
-                main.add(row_container);
+                rows.add(row_container);
                 //row_container.activate();
                 // if we have a row header...
 
@@ -543,6 +620,7 @@ class Grid extends Control {
         }
         this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.main = main;
+        this._ctrl_fields.rows = rows;
     }
 
     'full_compose_as_table'() {
@@ -638,12 +716,14 @@ class Grid extends Control {
                 //console.log('this.main.content', this.main.content);
                 //console.log('load_rows this.main.content._arr.length', this.main.content._arr.length);
                 var _arr_rows = this._arr_rows = [];
-                this.main.content._arr.forEach((v) => {
+                this.rows.content._arr.forEach((v) => {
                     //console.log('v', v);
                     _arr_rows.push(v);
                 });
             }
             load_rows();
+
+
             var load_cells = () => {
                 each(this._arr_rows, (row) => {
                     each(row.content._arr, (cell) => {

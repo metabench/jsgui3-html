@@ -16,6 +16,9 @@ var stringify = jsgui.stringify,
 var Control = jsgui.Control;
 var Collection = jsgui.Collection;
 
+// Could be folded. Could show all items.
+//  Could show just a view of a range of items in the list.
+
 // will have a context menu by default
 
 // Swaps will be useful here.
@@ -80,6 +83,8 @@ class List extends Control {
         //console.log('spec.items', spec.items);
         //throw 'stop';
         if (spec.items) {
+            // is the type a Collection? An Array?
+
             //this.items.set(spec.items);
             this.items = spec.items;
         } else {

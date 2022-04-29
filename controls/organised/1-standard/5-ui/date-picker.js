@@ -31,6 +31,13 @@ const mx_date = require('./../../../../control_mixins/date');
 // Picker control...
 //  Always has a 'value'.
 
+// What it picks
+//  How it picks it.
+//  Effectively 2 different interfaces.
+//  A selector
+//   What gets selected
+//   How it gets selected.
+
 class Year_Picker extends Left_Right_Arrows_Selector {
     constructor(spec) {
         Object.assign(spec, {
@@ -54,6 +61,8 @@ class Month_Picker extends Left_Right_Arrows_Selector {
         this.add_class('month-picker');
     }
 }
+
+// And options to use the platform default components too?
 
 class Date_Picker extends Control {
     constructor(spec) {

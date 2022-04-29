@@ -264,6 +264,9 @@ class Control_Core extends Data_Object {
 			// or a change tuplet kvp.
 		});
 		prop(this, 'disabled', false);
+
+		// size property - but also need way to measure property or obtain it from the DOM.
+		//  ctrl-enh needs to be initialised with the correct size property if possible.
 		prop(this, 'size', spec.size, (e_change) => {
 			//console.log('e_change', e_change);
 			let {value, old} = e_change;
