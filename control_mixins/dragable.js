@@ -15,6 +15,18 @@ const {
 // Dynamic_Size could be an interesting one.
 //  Uses the space available or the space it's given as a property.
 
+// Maybe need drag-events mixin?
+// Or drag-within?
+//  the click-and-drag could be used for different things in different situations.
+//  eg box select too.
+// Want some kinds of specific handling, or mid-specificity handling.
+//  Meaning on the higher level there is not much code to write in order to use the functionality.
+//  Maybe it's a grid upgrade?
+//   Such as dragging on a grid?
+//   Or part of press-events?
+
+
+
 
 
 

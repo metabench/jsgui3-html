@@ -34,6 +34,13 @@
 
 
 */
+
+// Should cancel default?
+//  Maybe more granular options for what gets cancelled and where.
+//  Make this easy to control.
+//   Mixins to do this.
+//   
+
 // And options
 
 // Need to be able to detect press outside events.
@@ -109,8 +116,9 @@ let press_events = (ctrl, options = {}) => {
         // Top of the path...?
         //  Different to 'target'?
         //let top_el = e.targetTouches[0].target;
-        el = e.el = e.path[0];
-        console.log('md', e);
+        let path = e.path || e.composedPath();
+        el = e.el = path[0];
+        //console.log('md', e);
 
         return ps(e);
     }
@@ -121,6 +129,15 @@ let press_events = (ctrl, options = {}) => {
     }
     const tm = e => {
         e.pos = [e.pageX = e.touches[0].pageX, e.pageY = e.touches[0].pageY];
+        // change the element too?
+
+
+        // moved over a different el?
+        //console.log('tm e.touches[0]', e.touches[0]);
+        // May need to use other lookup to get the specific element the mouse is over...?
+        
+
+
         return pm(e);
     }
 
@@ -145,6 +162,8 @@ let press_events = (ctrl, options = {}) => {
         movement_offsets.push(movement_offset);
         e.movement_offsets = movement_offsets;
         e.move_mag = move_mag = Math.sqrt(Math.pow(movement_offset[0], 2) + Math.pow(movement_offset[1], 2));
+
+        // the original control.
         e.ctrl = ctrl;
 
         // find the ctrl_target
@@ -256,7 +275,6 @@ let press_events = (ctrl, options = {}) => {
             'touchstart': ts,
             'mousedown': md
         });
-
         // Think these should be removed at the end of the press anyway.
         /*
         body.off({
@@ -266,7 +284,6 @@ let press_events = (ctrl, options = {}) => {
             mousemove: mm
         })
         */
-        
         //console.log('post ctrl off mousedown');
         handling_is_setup = false;
     }
@@ -386,7 +403,8 @@ let press_events = (ctrl, options = {}) => {
             // Top of the path...?
             //  Different to 'target'?
             //let top_el = e.targetTouches[0].target;
-            el = e.el = e.path[0];
+            let path = e.path || e.composedPath();
+            el = e.el = path[0];
 
             return ps(e);
         }

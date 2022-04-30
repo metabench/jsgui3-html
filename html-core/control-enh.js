@@ -587,6 +587,7 @@ class Control extends Control_Core {
 	}
 
 	// Just does the DOM part.
+	//  Perhaps could be made into a Mixin?
 	'add_dom_event_listener'(event_name, fn_handler) {
 		if (has_window) {
 
@@ -605,11 +606,15 @@ class Control extends Control_Core {
 
 			//console.log('has_window', has_window);
 
+			// Not sure why ctrl_target could / would be wrong on iOS...?
+
 			if (m.has(fn_handler)) {
 				outer_handler = m.get(fn_handler);
 			} else {
 				outer_handler = e => {
+					// Can target be wrong within the event?
 					const {target} = e;
+
 					const jid = target.getAttribute('data-jsgui-id');
 					if (jid) {
 						e.ctrl_target = context.map_controls[jid];
@@ -619,7 +624,6 @@ class Control extends Control_Core {
 				//console.log('map setting outer handler', event_name);
 				m.set(fn_handler, outer_handler);
 			}
-
 
 			if (el) {
 
@@ -714,7 +718,7 @@ class Control extends Control_Core {
 
 			var el = this.dom.el;
 			if (el) {
-				console.log('control-enh remove_dom_event_listener');
+				//console.log('control-enh remove_dom_event_listener');
 				var t_listener = tof(listener);
 				let tfnh;
 				//console.log('fn_handler.event_inner', fn_handler.event_inner);
