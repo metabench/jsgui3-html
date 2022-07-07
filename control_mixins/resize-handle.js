@@ -3,6 +3,8 @@
     If that control is dragable, it uses that control's position, otherwise it uses its value.
     Resize handles could use bind.
 
+    Maybe should not be a mixin...?
+
 */
 
 
@@ -12,7 +14,7 @@ const {
     field
 } = require('obext');
 
-let selectable = (ctrl, target) => {
+let resize_handle = (ctrl, target) => {
     //let selection_action = 'mousedown';
     // select on mousedown?
     ctrl_handle = ctrl_handle || ctrl;
@@ -46,4 +48,4 @@ let selectable = (ctrl, target) => {
 
 }
 
-module.exports = selectable;
+module.exports = resize_handle;

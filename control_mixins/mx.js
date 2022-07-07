@@ -5,6 +5,8 @@
 const mx = {
     coverable: require('./coverable'),
     date: require('./date'),
+    display: require('./display'),
+    display_modes: require('./display-modes'),
     fast_touch_click: require('./fast-touch-click'),
     popup: require('./popup'),
     selectable: require('./selectable'),

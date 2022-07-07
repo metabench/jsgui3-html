@@ -1,7 +1,20 @@
+
+// data_prop_date?
+//  This sets up the 'date' property.
+//  Very much a 'model' mixin.
+//   Possibly will not be used. Will make .model and .view properties, likely through mixins.
+
+
+
+
+
 let lang = require('lang-mini');
 let is_defined = lang.is_defined;
 
 // obext instead.
+
+
+// Maybe this is just to do with the data type controlled by the control.
 
 let date = (ctrl, spec) => {
 
@@ -153,11 +166,7 @@ let date = (ctrl, spec) => {
                 ctrl.year = ctrl.year - 1;
                 ctrl.refresh_month_view();
             }
-        })
-    
-        
-
-
+        });
 
     }
 

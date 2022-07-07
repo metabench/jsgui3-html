@@ -9,6 +9,24 @@ const jsgui = require('./../../../../html-core/html-core');
 // A general purpose grid...
 //  Have something with a similar API to Vectorious?
 //var Data_Grid = jsgui.Data_Grid;
+
+// Also multiple views I suppose
+//   However, in many cases will have a repeated layout with float: left or similar, within a container.
+
+
+// A view:
+//  Constructor
+//  Composition
+//  Render
+//  Activate
+
+// Could present the render function(s) as functional hooks.
+//   May be worth finding and moving the Control's rendering to its own function(s), and then putting them back in
+//   place within .view
+//    And then can have the render functions directly on the control point to the ones in the view.
+//     Could have read-only property to retrieve them.
+
+
 const {
     stringify,
     each,
@@ -38,7 +56,7 @@ var Control = jsgui.Control;
 const mx_selectable = require('./../../../../control_mixins/selectable');
 
 // not sure we use them by default.
-const mx_press_events = require('./../../../../control_mixins/press-events');
+//const mx_press_events = require('./../../../../control_mixins/press-events');
 // mx_autoscale perhaps?
 
 
@@ -69,6 +87,8 @@ const {
 // grid.set('data', ...);
 
 // Multiple composition modes.
+
+// Could fix / improve this for press events?
 
 
 class Grid_Cell extends Control {

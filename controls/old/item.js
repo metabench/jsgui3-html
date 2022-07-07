@@ -8,6 +8,12 @@ const {
     Data_Value
 } = jsgui;
 
+// 2022 - Generally will become more MVC oriented.
+//          Different ways to represent the same data
+//          Subtly different types of data representation
+//            (different type representation, same signified type)
+//          
+
 /*
 var stringify = jsgui.stringify,
     each = jsgui.each,
@@ -36,6 +42,24 @@ var Data_Value = jsgui.Data_Value;
 //  List is about a loop.
 
 // Will look into the item given and have some automatic type of rendering.
+//  New way(s) of coding a Conrol...
+//  Creating the Control_View class makes a lot of sense.
+//    HTML_Control_View perhaps...?
+//  And different views for different represented (or signified?) types...
+//    The view needs to deal with how the type is represented in the UI.
+
+//   {views: { 'represented type': Control_View }}
+//  And separate creation of views.
+//    Control would need to use the .view mixin?
+//      Or just at this stage be very clear about what a View is and what the mixin does?
+//    Only the view would become activated, I suppose.
+
+// Try upgrading an existing control this way, seeing that it still works....
+
+
+
+
+
 
 
 

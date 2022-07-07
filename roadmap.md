@@ -89,10 +89,125 @@ Could do with examples
     Rendering a few pages of HTML?
     Does that need to be on the server?
     Can it happen within the HTML module?
+    Maybe just rendering the HTML would be enough here.
+
 
 Examples within server could make most sense.
 Integration of CSS seems important here...
 
 Want to make a few decent examples on the server.
+
+Multiple available models per Control should be supported - meaning its only using one model at once (or not... could be interesting, could code active_models_limit = 1 and then do other coding in the future to support multiple active models)
+
+Control_Models extends Collection
+Control_Views extends Collection
+
+Definitely seems as though building a new Control class from scratch makes the most sense for the MMMVC or MultiModelMultiViewControl class.
+
+MultiModelMultiViewViewModelControl even
+  Each view has 1 viewmodel
+    Could it have the standard properties model as well as extended properties model?
+      Or make the extended properties model extend the standard properties model?
+        Will do model extension code if necessary in the future.
+
+May be worth making separate module for these multi-model multi-view (view view-model) controls.
+  Get back to breaking some functionality (incl new and upgraded) out of jsgui3?
+
+mmmv-control module perhaps
+  The core of it will / should be separated from HTML DOM assumptions?
+  And have a specific type of View which gets rendered as HTML.
+  Other View type could be rendered as React-Native for example.
+
+A View supporting multiple ViewModels?
+  Kind of, in that a model can support different data types?
+  Could make sense with both general and control-specific properties. Each model could be or be like an interface.
+
+  Multiple (active) models could work for comparer controls for example. 
+
+Model supporting being substituted for other models?
+Multiple signifiers - 'calendar' is an English word, it could be signified in other languages.
+  And then a simple text definition of a calendar? Text explanation of it?
+  Could (later) involve AI for code writing, which learns how to do the conversions / syntaxes from training data.
+
+srtypes works as a name because there will be a system to register these SR_Types (or SRTypes)
+
+Signifier being a type of representation.
+  Symbolic (signifier) representation
+Consider compositional representation (eg a large red car), large and red being adjectives that describe the composition of the object.
+  Consider adjective use....
+    Adjective as descriptive
+
+Compositional / descriptive representation
+  Signifiers of those types of representation as well.
+
+Exact composition?
+Composition rules?
+Definition being part of a system to identify it?
+When is the definition built into the word being used?
+
+String names for various types, but put in a framework where it knows the context, and that those names are themselves symbolic representations.
+
+Types being compositional...
+  Or the representations being compositional
+
+  Maybe it's all representations, or almost...
+
+  A type definition?
+    Though it's more of a definition of the type in one sort of representation or system.
+
+  Different systems may be a good word. As in there are different calendar systems.
+    The calendar system could be named, and also have programmatic and/or logical rules.
+
+Sooner or later, want to make a GUI app for dealing with these types.
+
+Type signifiers will generally be words, or programming words and phrases.
+Maybe the signifier could be (much more like) a simple English sentence that expresses what it is.
+Type notations... these notations are themselves different systems to represent them.
+
+Don't want to get stuck in definitions - want to get stuck into definitions.
+
+Does look like making this elsewhere and putting the core and/or basics into lang-mini would work best.
+Lang-types may be best even.
+
+Different types in different languages...
+
+lang-types uses lang-mini
+and lang-tools uses / has lang-types
+
+So lang-types won't be in lang-mini for a while at least.
+Perhaps lang-mini can be adapted for compatability in a few places.
+
+Full lang-types could be quite complex.
+A simple lang-mini implementation would be nice.
+
+Worth doing a little work on a lang-types repo and package though.
+Would use lang-mini platform.
+Would be nice to have an answer / system for an overall type having different subtypes / ways of expressing it.
+  Dates being a common and somewhat complex example.
+    But often that complexity is ignored / has convenient coding conventions already.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+multimodel-multiview-viewmodel-control
+
+
+
 
 

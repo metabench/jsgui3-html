@@ -48,6 +48,11 @@ const {parse_mount, parse} = require('./parse-mount');
 const str_arr_mapify = jsgui.str_arr_mapify;
 const get_a_sig = jsgui.get_a_sig;
 const each = jsgui.each;
+
+
+// Already using enhanced controls here.
+//   Maybe could make those core and enhanced controls automatically use a default view.
+
 const Control = jsgui.Control = require('./control-enh');
 
 
@@ -133,6 +138,9 @@ var recursive_dom_iterate_depth = function (el, callback) {
 }
 // Want the document node to be linked with the context when activated (automatically)
 // We find the html element control. That is the one that gets set to be the context's ctrl_document.
+
+// Seems more like it activates the view?
+//   The context is part of the view?
 
 var activate = function (context) {
     // The context should already have the map of controls.
@@ -404,7 +412,7 @@ var activate = function (context) {
         }
     });
 
-    console.log('code complete: jsgui html-core activate');
+    //console.log('code complete: jsgui html-core activate');
 
 
 };
@@ -512,6 +520,16 @@ jsgui.controls = jsgui.controls || {
 // Then other sets?
 
 // Dealing with and using control-sets would be very helpful.
+
+// Seems like controls like these have no model.
+//   Could just have 'value'. That is the inner (text) content.
+
+// Or the model could have a text value property.
+//   That could be a way to have a span where its text can be changed / accessed more easily programatically.
+//   Simple text or string editor.
+//     But with extra restrictions... maybe could consider a number editor a base control?
+//       But makes more sense to base it on a text or string editor.
+
 
 
 jsgui.controls.span = jsgui.span = class span extends Control {
@@ -752,6 +770,9 @@ jsgui.controls.span = jsgui.span = class span extends Control {
 
 
 
+// 2022 - Not really used much.
+//   Can do this by having control.model only represent some type(s) of data
+//     Then there can be 1 or more views, which are representations of those type(s) of data.
 class String_Control extends Control {
     constructor(spec = {}) {
         spec.__type_name = 'string_control';
@@ -840,6 +861,10 @@ core_extension_no_closing_tag('link input meta');
 
 // Bringing obext will help with this.
 
+// Looks like these could be made as View classes, and those go within Control...?
+//   The control could be more powerful, allowing selection of different views.
+
+
 class HTML_Document extends jsgui.Control {
     // no tag to render...
     //  but has dtd.
@@ -855,6 +880,13 @@ class HTML_Document extends jsgui.Control {
     }
     */
 }
+
+// .view.content
+//   And the view gets activated too I suppose.
+//   Start by just making an inactive view, but activatable. Then activate it.
+
+// Can make control definitions more concise too.
+
 
 class Blank_HTML_Document extends HTML_Document {
     constructor(spec = {}) {
@@ -920,6 +952,8 @@ class Client_HTML_Document extends Blank_HTML_Document {
         //spec.context.ctrl_document = this;
         this.active();
     }
+
+    // Seems a bit like 'view features'.
 
     'include_js'(url) {
         /*

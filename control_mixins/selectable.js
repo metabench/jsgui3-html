@@ -27,6 +27,8 @@ const {
 // Click, press, pointer dowm, pointer up etc...
 //  Choice about what action triggers the selection.
 
+// UI validation mixins too?
+//  So it does not need to be re-written on too many components?
 
 
 
@@ -224,7 +226,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                     }
                 }
             }
-        })
+        });
     }
 
     const apply_active_selectable = ctrl => {
@@ -305,6 +307,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
         if (ctrl.selectable) apply_all(ctrl);
     })
 
+    // So the old selection sysem could be put back in place???
     if (old_selectable !== undefined) {
         ctrl.selectable = old_selectable;
     }

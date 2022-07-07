@@ -1,3 +1,8 @@
+// Will make this more clearly view position binding.
+//  May have other / better ways to do this...?
+//   Consider docking as well.
+
+
 const bind = (ctrl, location) => {
 
     // Sets position / size of ctrl relative to another / location.

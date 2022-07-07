@@ -15,6 +15,8 @@
 
     // 
 
+    Interaction with Display / display.mode as well?
+    Some display modes will be in a popup?
 
 */
 

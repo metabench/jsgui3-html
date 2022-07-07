@@ -11,12 +11,13 @@ var Button = require('./button');
 // Seems a good candidate to be a 'core' control.
 //  Possibly code will be promoted / sunk to the core.
 
-
 // Scroll_View
 //  Being a Control that has both scrollbars optionally
 //   Also left for RTL languages?
 //   Also possibility of scrollbar on top?
 //    Never used that way.
+
+// __direction being part of Display_Modes options properties?
 
 class Scrollbar extends Control {
 

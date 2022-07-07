@@ -3,6 +3,12 @@
 /*
 
 
+1. That it can be resized
+2. How it can be resized
+
+There may be a resizable type interface or set of expectations and functionality, but then different UIs to do the resizing.
+
+
 autosizing perhaps
 smart-size?
 size-options?
@@ -14,7 +20,7 @@ navigation modes too?
 need to separate the abstractions of the content itself and the structure its displayed in
   eg could show a tree as a tree component of through navigation of (virtual) pages.
 
-  
+
 
 
 

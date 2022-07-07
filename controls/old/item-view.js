@@ -9,6 +9,12 @@ var Vertical_Expander = require('../layout/vertical-expander');
 
 const {stringify, each, tof, def, Control} = jsgui;
 
+// Will kind of get much of this functionality 'for free' or almost 'for free' using various abstractions.
+//   A lot of it will have to do with typing, and also controls that are defined to deal with items of that type.
+
+
+
+
 /*
 var stringify = jsgui.stringify,
 	each = jsgui.each,

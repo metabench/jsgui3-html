@@ -1,6 +1,8 @@
 // Maybe just change to Field control
 // Then Field_Group control would avoid confusion with an HTML form.
 
+// This will be more about text or string editor in the future.
+
 const jsgui = require('./../../../../html-core/html-core');
 const Text_Input = require('./text-input');
 const Text_Item = require('./text-item');

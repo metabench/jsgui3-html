@@ -11,6 +11,10 @@
  function(jsgui, Menu_Node) {
 
  */
+
+// 2022 - Good candidate for deprecation - use Menu with display mode options.
+//   Can choose various things to do with appearance using .view
+
 var jsgui = require('../../../../html-core/html-core');
 var Menu_Node = require('./../../0-core/0-basic/menu-node');
 

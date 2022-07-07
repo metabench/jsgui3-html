@@ -5,12 +5,32 @@
 // Could have an option to use the native date picker.
 // The jsgui type of datepicker should look nicer though.
 
+
+// Could define that this is only using the data type of date.
+//   Maybe could pick time as well?
+//     Or define that it picks the date part of date.
+
+
+
+
+
 const jsgui = require('../../../../html-core/html-core');
 const stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 const Control = jsgui.Control;
 //var Calendar = require('./calendar');
-const Left_Right_Arrows_Selector = require('../2-misc/left-right-arrows-selector');
+const Left_Right_Arrows_Selector = require('../../1-standard/2-misc/left-right-arrows-selector');
 const Month_View = require('./month-view');
+
+// Be able to display as the standard HTML date picker control, bearing in mind its relatively recent.
+//  Should be available on all platforms this will be used on. ??
+//  Programming a fall-back could be of use too.
+
+// display_mode: 'native-when-available-otherwise-controls' perhaps?
+
+
+
+
+
 
 /*
 Being able to select dates (including times) in a nice user-friendly way is going to be worthwhile functionality for a variety of things.
@@ -23,10 +43,18 @@ Being able to select dates (including times) in a nice user-friendly way is goin
     Then we use Month View too
 */
 
+
+// This part within .model probably.
+
+
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
-const mx_date = require('./../../../../control_mixins/date');
+const mx_date = require('../../../../control_mixins/date');
+
+
+// May be somewhat like Calendar
+
 
 // Picker control...
 //  Always has a 'value'.
@@ -69,13 +97,8 @@ class Date_Picker extends Control {
         spec.__type_name = spec.__type_name || 'date_picker';
         super(spec);
         this.add_class('date-picker');
-
         mx_date(this, spec);
-
         // mx picker?
-        
-
-
 
         // Could start with a current date
         // Maybe this renders a calendar?

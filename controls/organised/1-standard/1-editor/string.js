@@ -6,11 +6,48 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(["../../../../jsgui-html-enh", "../../viewer/basic/string"], 
 	function(jsgui, String_Viewer) {
 		*/
+
+// Seems likely this will be remade as well using the new MVC system, allowing multiviews.
+//  MVs  MultiModelMultiView Controls.
+//    MultiModel - can model the data type in a different way, eg dates in different calendar systems.
+//    MultiView - Can view the same or similar models differently (model translation?)
+
+
+
+
 var jsgui = require('../../../../html-core/html-core');
 var String_Viewer = require('../../../viewer/string');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
+
+
+// Has readonable functionality here, but plan on making a much more core MVC version of String_Editor and String_Viewer.
+//   Maybe call it View_String? Not quite a Control either....
+//   Splitting View out of Control seems like quite a task in some ways.
+//     Could it be done with newer controls?
+
+// MVC_String Control for the moment?
+//   Has its value in the model.
+//     Would be made to sync with the value in the view.
+
+// MV_Control could extend enhanced control...?
+// Abandon enhanced control?
+//   Or make its enhancements standard through mixins.
+//     I think all controls made on the client are enhanced...? Not sure. I think many are.
+
+
+
+
+
+//  A new MVC_Control or MV_Control as standard?
+//   .controller could be about what types of models and views are used / allowed.
+
+
+
+
+
+
 
 class String_Editor extends String_Viewer {
 

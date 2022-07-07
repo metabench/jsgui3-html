@@ -4,6 +4,9 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined 
 var Control = jsgui.Control;
 
 
+// Maybe viewers and editors will not be so separated.
+//   
+
 class Number_Viewer extends Control {
 
     // Maybe should put this into a form, so that it does a form post.

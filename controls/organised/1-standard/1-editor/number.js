@@ -12,6 +12,21 @@ define(["../../../../jsgui-html-enh", "../../viewer/basic/number"],
 
 // The properties editor could modify a data_object's fields.
 
+// Likely to be superceded....
+//   Will have a Number_Editor that can take multiple views
+//   Also tied in with the Number data type, and the model's value is a number.
+//     Possibly Data_Value is of use, for enabling the on change event.
+
+// May have a directory full of different views for the same control?
+//   Or it would be better to have really concise composition (or view specification), with a bunch of views written within the same JS file.
+//   
+
+// Possibly .controller will contain the subcontrols?
+//   Though they are kind-of part of the view.
+
+
+
+
 
 
 var jsgui = require('../../lang/lang');

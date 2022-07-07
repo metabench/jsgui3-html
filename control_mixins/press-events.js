@@ -1,3 +1,7 @@
+// Specific implementations or fixes for specific Controls?
+//  Want things working smoothly on lower level where possible.
+
+
 /*
     Implements touch and mouse events together.
     Will also tell the differece between press, quick drag / swipe, longer hold
@@ -135,7 +139,7 @@ let press_events = (ctrl, options = {}) => {
         // moved over a different el?
         //console.log('tm e.touches[0]', e.touches[0]);
         // May need to use other lookup to get the specific element the mouse is over...?
-        
+
 
 
         return pm(e);

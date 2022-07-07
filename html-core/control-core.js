@@ -1,5 +1,8 @@
 /**
  * Created by James on 16/09/2016.
+ * 
+ * 2022 - Could even see about moving some of this functionality / code to mixins.
+ * 
  */
 
 const jsgui = require('lang-tools');
@@ -13,6 +16,7 @@ const Data_Object = jsgui.Data_Object;
 const Collection = jsgui.Collection;
 const tof = jsgui.tof;
 const stringify = jsgui.stringify;
+
 const Text_Node = require('./text-node');
 
 const {
@@ -122,6 +126,9 @@ class DOM_Attributes extends Evented_Class {
 	}
 }
 
+// This will definitely be part of the view.
+//   Not all views would have this property in the long run.
+
 class Control_DOM extends Evented_Class {
 	constructor() {
 
@@ -198,6 +205,72 @@ class Control_DOM extends Evented_Class {
 
 // Outside of dom attributes and style.
 //  Dom attributes / style need to get updated from these properties.
+
+// a core-properties mixin could do the job.
+
+
+// May retire Control_Background.
+//  Making new mixin and system Control_Display.
+//  More flexible, may be a way to address background, via display.
+//   More clearly above the CSS and HTML.
+
+
+// ctrl.display or ctrl.d.bg even.
+//  .display seems like the right higher level abstraction.
+
+// Also will be part of the View.
+//   Would View be a kind of control appearance model?
+
+// While model is very separate and for data, some kind of appearance-model could be of use.
+//   Carry properties about how a control (or possibly multiple controls) appears.
+
+// Data Model and Appearance Model could both be of use.
+// Things such as 'rounding' that may work best as an abstraction above / separate from HTML.
+//   Esp if the HTML properties are a bit messy or not as wanted to be expressed for that control?
+
+// .display does make sense as a kind of 'view model'.
+// .view.model??? Could be confusing??
+// .view.view_model??? More verbose but less confusing perhaps.
+
+// or if it programatically is really the same type of model then OK...
+
+// ctrl.data.model ???
+// ctrl.data.value ???
+// ctrl.data.model.value ???
+
+// ctrl.view.model.value ???
+// ctrl.view.model ???
+
+// MVM? Where there is the data model and the view model?
+
+// View model would (always?) be defined in the view?
+//   Maybe there would be correspondance too?
+//     The view model containing data (in the model) to be represented in the view?
+//       Or its the various (other) properties, such as how rounded the edges are or some 'shadow' property.
+
+// View Model definitely makes sense for when it comes to responding to changes in view properties.
+//   Keeping view properties, separate from the DOM and CSS.
+//     Standard or default view model?
+//       Could the view model change the view??? Probably not.
+//         But a change on the control itself could.
+//         Selecting which of the views is active. Maybe changing the model so a different view is needed? Changing the value???
+//           May work polymorphically.
+
+// Controls with multiple views...
+//   Certainly want more concise view definition.
+
+
+
+
+
+
+
+
+
+
+
+
+// would be part of view settings.
 class Control_Background extends Evented_Class {
 	constructor(spec = {}) {
 		super(spec);
@@ -229,6 +302,119 @@ class Control_Background extends Evented_Class {
 	}
 }
 
+
+// Data_Object has a .value I think
+//   Still need to extend Data_Object?
+//     Maybe changing to .view would be a more fundamental change.
+//     Would include .content within the view.
+//       Also want to include content in a more declarative way.
+
+// Perhaps could make an entirely new Control class?
+//   With most of the same API...?
+//   But would put it together in a (more) functionally compositional way.
+//     Big different would be that much of the functionality would be under .view.
+
+// Would help to be able to have current type controls take the .view object.
+//   An new version of control that can have multiple specified views may be much better.
+
+
+
+
+
+
+
+
+
+
+// Almost all of this could be considered to be a 'view' right now anyway. It is very similar in function.
+//  In the future, Control may be about selecting the most appropriate view.
+//  May even be about auto-generating a view to suit a model.
+
+// A View_Renderer as well too?
+
+// And each specific View would (be able to) work with a different model representation.
+//  Be able to add views to a Control instance....
+//   Don't really see why not.
+
+// ctrl.views.add(...)
+// ctrl.views.use('compact_1');
+//  Want multiple views and multiple view modes baked into the framework.
+//  Want a smooth transition to the next way of doing things.
+//   For the moment, could reference properties under .view.
+
+// Possibility of a seamless upgrade?
+//  Or substantial API change...
+//   Ctrl kind of has .value
+//     It's not being used much though.
+//     Could be more consistent with control.value, in that it would (always) refer to control.model.value
+
+// Making an almost API compatable new type of Control does make sense....
+//  As API compatable as possible.
+
+// Could be used in place of the existing / older type of Control.
+
+// Be able to hold multiple models?
+//  At least multiple different type representations.
+//  Multiple different models may make sense too, eg for a Calendar control.
+//    Allowing for models with the calendar data organised differently?
+//      A View would still need to be able to represent a Model. Just possibly a View could represent different model types.
+//        Maybe not very different though.
+
+// or just 1 'model'. That model can have multiple different representatative types.
+// Example of being able to deal with multiple models / multiple representative types:
+//   A Control could be used to select dates and times, but only do the date part if that is all that's in the model.
+//   Likely just 1 signatative or sifnifier type.
+//   Could get onto auto-generated views.
+
+// Could even move away from defining these as Controls?
+//   Could define the models and corresponding views.
+//     Controls would still probably exist though, but get created automatically / based on the selected model and view.
+//       eg new Control(context, model, view) perhaps.
+//   Still think Control is useful to have in the app, maybe will be made much more useful and flexible soon.
+
+
+
+
+
+
+// model.type as Complex_Type perhaps?
+//   Sig_Reps_Type perhaps
+//     One signifier, multiple representations
+//       Could have a 'standard' representation. Then could change between that and some other types when changing between non-standard types.
+
+
+
+// model.current_type?
+// model.signifier_type
+// model.representative_types collection / list / array.
+// model.representative_type being the current type.
+
+// 
+
+
+// 
+
+
+
+// model.value a value of an allowed type
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class Control_Core extends Data_Object {
 
 	constructor(spec = {}, fields) {
@@ -251,6 +437,15 @@ class Control_Core extends Data_Object {
 		//console.log('post super init');
 		var spec_content;
 		// TextNodes don't have attributes
+
+		// Have .dom as part of the view's model?
+		//   Probably not... the view's model is a higher abstraction that gets used for choosing various options.
+		//     .ctrl.view.model.background makes sense though.
+		//     would mean defining aspects of the control in terms of a model though.
+
+
+
+
 		let d = this.dom = new Control_DOM();
 
 		prop(this, 'background', new Control_Background(), (e_change) => {
@@ -264,6 +459,10 @@ class Control_Core extends Data_Object {
 			// or a change tuplet kvp.
 		});
 		prop(this, 'disabled', false);
+		// .view.model.value.disabled may be where this winds up - but could have the shortcut property of view.background.
+		// same with .size property.
+
+
 
 		// size property - but also need way to measure property or obtain it from the DOM.
 		//  ctrl-enh needs to be initialised with the correct size property if possible.
@@ -338,12 +537,15 @@ class Control_Core extends Data_Object {
 			}
 		}
 
+		// control.view.dom.el
 		if (spec.el) {
 			d.el = spec.el;
 			if (spec.el.tagName) d.tagName = spec.el.tagName.toLowerCase();
 		}
 
 		//var that = this;
+		// control.view.context
+		//   (context not being part of view.model)
 		var context = this.context || spec.context;
 		//console.log('context', context);
 		// 
@@ -407,6 +609,7 @@ class Control_Core extends Data_Object {
 	//  with some it would be text or font or foreground color.
 	//   generally divs because they fill space consider it background.
 	// Could be a shortcut for .background.color
+	//  Will be in / moved to view.model.value.color in the future.
 	get color() {
 		// Could use some internal property system that's more developed. Can use proxied objects rather than fields.
 		//return this._color;
@@ -590,6 +793,7 @@ class Control_Core extends Data_Object {
 	'renderBeginTagToHtml'() {
 		const tagName = this.dom.tagName;
 		var res;
+		// Possibly tagName will not be allowed to be false in the future.
 		if (tagName === false) {
 			res = '';
 		} else {
@@ -661,9 +865,7 @@ class Control_Core extends Data_Object {
 		});
 	}
 	'all_html_render'(callback) {
-
 		// observable result may be better.
-
 		//console.log('all render callback', tof(callback));
 		if (callback) {
 			//var that = this;
@@ -703,6 +905,11 @@ class Control_Core extends Data_Object {
 			}
 		}
 	}
+
+
+	// content to become view.content?
+	//  view.model.value.content?
+	//    content being a part of the model? Meaning the view model could determine what content is allowed internally?
 
 	'render_content'() {
 		var content = this.content;
@@ -811,6 +1018,8 @@ class Control_Core extends Data_Object {
 		return res.join('');
 	}
 	*/
+
+	// will become view.dom.style - maybe still available as .style through a property shortcut.
 	'style'() {
 		const a = arguments,
 			sig = get_a_sig(a, 1);;
@@ -877,6 +1086,8 @@ class Control_Core extends Data_Object {
 
 		this.on('click', handler);
 	}
+
+	// view.dom.add_class
 	'add_class'(class_name) {
 		// Should have already set these up on activation.
 		//console.log('Control add_class ' + class_name);
@@ -909,6 +1120,7 @@ class Control_Core extends Data_Object {
 		//throw 'stop';
 	}
 
+	// view.dom.has_class
 	'has_class'(class_name) {
 		let da = this.dom.attrs,
 			cls = da['class'];
@@ -974,6 +1186,7 @@ class Control_Core extends Data_Object {
 		}
 	}
 	'matches_selector'(selector) {
+		// functional selectors may be better / simpler to implement.
 		throw 'NYI'
 	}
 	'is_ancestor_of'(target) {
@@ -1050,6 +1263,11 @@ class Control_Core extends Data_Object {
 		}
 	}
 
+
+	// deep copy / clone would help.
+	//  copy as deep as reasonably possible at least.
+
+	// Likely to need substantial changes when .view and .model are in use.
 	'shallow_copy'() {
 		//console.log('Control shallow_copy');
 		var res = new Control({
@@ -1075,6 +1293,7 @@ class Control_Core extends Data_Object {
 		return res;
 	}
 
+	// A bit old-school... may remove...?
 	'$match'(selector) {
 		let parse_word = word => {
 			// begins with full stop: matches css class
@@ -1125,6 +1344,8 @@ class Control_Core extends Data_Object {
 		});
 		return res;
 	}
+
+	// About clearing the .view.content in the future.
 	'clear'() {
 		this.content.clear();
 	}

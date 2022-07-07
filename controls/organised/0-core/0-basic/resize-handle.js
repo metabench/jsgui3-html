@@ -11,6 +11,7 @@ var v_add = util.v_add;
 // Integrate with mixins...
 //  Or don't need separate control for it, or do need one but don't have it do much.
 
+// Maybe not core, but peripheral?
 
 // Tool controls.
 //  Always as a tool for another control.

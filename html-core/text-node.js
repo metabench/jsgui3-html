@@ -1,5 +1,5 @@
 //const Control = require('./control-core');
-const {tof, Evented_Class} = require('lang-mini');
+const {tof, Evented_Class} = require('lang-tools');
 
 // Using a field / prop may work better.
 //  Get closer to the more concise and reasonable functional way of coding this.
@@ -49,7 +49,8 @@ const escape_html = (str) => {
 // Can give its parent control or element in the spec?
 //  That means we could get access to the element very quickly.
 
-
+// Not actually an HTML element.
+//   Can't have attributes (such as its jsgui-id in the HTML).
 class textNode extends Evented_Class {
 //class textNode extends Control {
     constructor(spec) {
@@ -115,8 +116,8 @@ class textNode extends Evented_Class {
     activate() {
         if (!this.__active) {
 
-            console.log('activate textNode control');
-            console.log('this.sibling_index', this.sibling_index);
+            //console.log('activate textNode control');
+            //console.log('this.sibling_index', this.sibling_index);
 
             this.__active = true;
         }

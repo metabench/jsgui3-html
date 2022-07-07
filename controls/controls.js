@@ -29,7 +29,7 @@ const controls = {
     Horizontal_Slider: require('./organised/1-standard/5-ui/horizontal-slider'),
     //Data_Item: require('./data-item'),
     Data_Row: require('./organised/1-standard/4-data/data-row'),
-    Date_Picker: require('./organised/1-standard/5-ui/date-picker'),
+    Date_Picker: require('./organised/0-core/0-basic/date-picker'),
     Dropdown_List: require('./organised/0-core/0-basic/dropdown-list'),
 
     // Exclude the connected ones for the moment. Moment passed.
@@ -55,7 +55,7 @@ const controls = {
     Menu_Node: require('./organised/0-core/0-basic/menu-node'),
     Modal: require('./organised/1-standard/6-layout/modal'),
 
-    Month_View: require('./organised/1-standard/5-ui/month-view'),
+    Month_View: require('./organised/0-core/0-basic/month-view'),
     //Multi_Document_Interface: require('./multi-document-interface'),
     Multi_Layout_Mode: require('./organised/1-standard/6-layout/app/multi-layout-mode'),
     //Object_Editor: require('./editor/object'),
@@ -89,7 +89,7 @@ const controls = {
     Tile_Slider: require('./organised/1-standard/6-layout/tile-slide'),
 
     // May be moved to vector?
-    Timespan_Selector: require('./organised/1-standard/5-ui/timespan-selector'),
+    Timespan_Selector: require('./organised/0-core/0-basic/timespan-selector'),
     Title_Bar: require('./organised/1-standard/6-layout//title-bar'),
     Titled_Panel: require('./organised/1-standard/6-layout/titled-panel'),
     Toggle_Button: require('./organised/0-core/0-basic/toggle-button'),

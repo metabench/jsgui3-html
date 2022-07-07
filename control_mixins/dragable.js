@@ -6,7 +6,7 @@ const {
 const {
 	each,
 	tof
-} = require('lang-mini');
+} = require('lang-tools');
 
 
 // Want to make it simpler to create more specific behaviours like drag to grid position.

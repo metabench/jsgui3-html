@@ -3,6 +3,9 @@ var each = jsgui.each;
 var tof = jsgui.tof;
 const Control = require('./control');
 
+// Selection takes place within a view of a document.
+//   At least this code does not look too HTML specific.
+
 class Selection_Scope extends jsgui.Data_Object {
 	//var Selection_Scope = jsgui.Class.extend({
 	constructor(spec) {

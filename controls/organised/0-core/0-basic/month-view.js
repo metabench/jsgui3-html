@@ -4,6 +4,18 @@
 
     Could inherit from Grid.
     Just shows the month's days inside.
+
+    2022 - The work on control.display will be useful for writing this so it can display in the various modes.
+      Maybe could start that now.
+
+
+    In mini display modes, can't display much or enough info.
+    Then in larger display modes, could display content still in different formats, eg list of dates of the whole month, list of dates with events,
+      a view of the dates arranged within their weeks.
+    Want it so that a 'Month View' Control can be written so it can be used to display data about a month in reasonable ways, it won't be a very
+    complex control, but it needs to be able to display its info differently depending on what is required.
+    Make that available through the use of one option / parameter.
+
 */
 
 var jsgui = require('./../../../../html-core/html-core');

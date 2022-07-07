@@ -16,6 +16,67 @@ const {
     prop
 } = require('obext');
 
+
+// May be a bit easier to define in terms of more explicit MVC.
+//  defining what data type the color palette interacts with.
+//   though there could be flexibility in terms of how many get interacted with.
+
+// jsgui3-data-model may make sense?
+//  or jsgui3-model.
+
+// A model module could make sense...?
+//  Maybe as a mixin for Control.
+//   .model (evented class)
+//     so can listen for model events
+
+//    May as well make getters and setters observables. Many would immediately return anyway.
+//     .model.set(name, value)
+//     .model.get(name);
+//     .model.set(value);
+//     .model.get();
+//     .model.validate(value);
+//     .model.format = ...  getter and setter.
+
+// .model could get into more detailed specification of data types that can have views made for them.
+//   That seems like the most useful purpose for .model.
+
+// .model.data_type
+
+// Looks like jsgui3-html will get some awareness of low level data types.
+// Defining controls so that it's determined already what type / structure of data is interacted with.
+//   May have some low level efficiency improvements too, such for color palette rgb values.
+
+// Defining the data type for the color (model).
+
+// Want to define it so that a color (24 bit) is 3 8 bit values, uint8 x 3 for each of the components.
+//  Would prefer the framework to have 'understanding'.
+
+// .view will be for all settings to do with the view?
+
+// seems like control.model needs a lot more work to make it suitable.
+//  once we have model data types specified, we can make the controls that interact with them.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// This also could make good use of mx_display_modes
+
+
 // Looks like we will need to fix grid sizes & sizing.
 //  Perhaps a new mixin, autosizing / autosize-to-fill-space could work?
 

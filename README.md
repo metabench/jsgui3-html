@@ -14,3 +14,13 @@ Contruction
 Composition
 Activation (client-side only)
 Event responses (usually client-side only)
+
+Mixins are a flexible way to add functionality to controls. It allows for better code reuse between classes in some cases.
+
+Some more code to do with typed data could help.
+
+Data_Type but with multiple possible ways it can be encoded.
+
+Will make some simpler controls first...
+    At least simple as in interacts with simple data.
+    Number_Editor for a start.

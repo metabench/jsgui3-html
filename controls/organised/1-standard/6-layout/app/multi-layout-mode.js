@@ -1,7 +1,30 @@
 /**
  * Created by James on 03/08/2014.
  */
+
+
+
 /*
+    2022 - May change this to use mixins and other more composable ways of doing it.
+        Want to start with a Control and then add functionality to it, not changing it to a separate class / subclass where possible.
+
+    eg FlexiSize...?
+        Could use flexbox css as well.
+        Where inner content takes the size that is available internally (control can be set to a variety of sizes)
+        Where it can be displayed / edited at different sizes.
+        Would specify different layouts for different sizes available.
+            Can certainly use CSS for this as well - showing hiding and maybe even transforming.
+
+        MultiSizable...?
+            Eg a component with one piece of text and an icon. Click it to edit it and the popup takes a lot more space.
+            View_And_Edit_Mode possibly?
+
+        Different types of modes can apply to the same Control.
+
+
+
+
+
 
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 // Also want to make an MDI window system (Multiple Document Interface)

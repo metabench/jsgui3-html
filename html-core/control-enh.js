@@ -131,6 +131,10 @@ const mapDomEventNames = {
 	'waiting': true
 };
 
+// Maybe could have the view raise events (likely DOM events) for the controller.
+//   A differentiation between view and non-view events could help.
+
+
 class Control extends Control_Core {
 	//'fields': {
 	//	'selection_scope': Object,
@@ -148,6 +152,10 @@ class Control extends Control_Core {
 
 		super(spec, fields);
 
+		// Id as part of the view as well???
+		//   Probably not.
+
+
 		if (spec.id) {
 			this.__id = spec.id;
 		}
@@ -159,6 +167,8 @@ class Control extends Control_Core {
 		}
 		//mx_selectable(this);
 
+
+		// DOM events are part of the view.
 		this.map_raises_dom_events = {};
 
 		// Can we add functions to a post-construction queue?
@@ -182,6 +192,11 @@ class Control extends Control_Core {
 
 		//const do_after_construction = () => {
 			if (spec.el) {
+
+				// Control_HTML_Node_View ???
+
+				// Create the .view object as a Control_HTML_Element_View
+
 				var jgf = spec.el.getAttribute('data-jsgui-fields');
 	
 				if (jgf) {
@@ -252,6 +267,15 @@ class Control extends Control_Core {
 			}
 			*/
 
+			// view.context???
+			//   or the view shares the context?
+
+			// Probably the control will keep control.context.
+			//   Not sure....
+			//   Moving it to the view but keeping it as a property on control would make sense.
+
+			// Selection scope is part of the view as well.
+
 			if (def(this.selection_scope)) {
 				this.selection_scope = this.context.new_selection_scope(this);
 			}
@@ -264,6 +288,21 @@ class Control extends Control_Core {
 		}
 	}
 	'ctrls'(obj_ctrls) {
+
+		// Registered internal controls.
+		//   This is really about adding internal controls.
+		//     Internal controls being part of the view???
+		//       Practically everything seems part of the view.
+		//       May have some kinds of events or hooks which are clearly part of .controller.
+		//         The control itself seems like .controller.
+		//           Not sure what kinds of upgrades could take place on .controller.
+		//             Maybe it could make useful (short to call) functions available.
+		//               Functions with power over both the .model and .view.
+
+
+
+
+
 		// Another way of doing it.
 		// It's not a control, it's a different type of object.
 		// .is_control returning true for all controls.
@@ -276,6 +315,8 @@ class Control extends Control_Core {
 		//  and therefore can add .context itself
 		// other objects - [Control_Constructor, spec]
 
+
+		// ctrl_fields definitely seem like part of the view as they are for rendering there in HTML.
 		this._ctrl_fields = this._ctrl_fields || {};
 		let cf = this._ctrl_fields;
 		each(obj_ctrls, (ctrl, name) => {
@@ -287,6 +328,14 @@ class Control extends Control_Core {
 	}
 
 	'bcr'() {
+
+
+		// Clearly view or even DOM view.
+
+		// ctrl.dom.bcr perhaps.
+
+
+
 		//console.log('sig', sig);
 		var a = arguments;
 		a.l = a.length;
@@ -323,6 +372,11 @@ class Control extends Control_Core {
 	}
 
 	get size() {
+
+		// will be view.size
+		//   programatically defined size property. Not sure about mixin(s). They could provide further / enhanced sizing functionality.
+		//   want some basics as part of view.
+
 		if (this._size) {
 			return this._size;
 		} else {
@@ -335,6 +389,10 @@ class Control extends Control_Core {
 		}
 	}
 
+
+
+	// Clearly HTML DOM view.
+	//   Possibly want a model, containing a string, then a control that's for displaying (or editing) text.
 	'add_text'(value) {
 		
 		console.log('add_text', value);
@@ -346,6 +404,8 @@ class Control extends Control_Core {
 		this.add(tn);
 		return tn;
 	}
+
+	// Clealy view, dom
 	'computed_style'() {
 		var a = arguments;
 		a.l = a.length;
@@ -364,6 +424,11 @@ class Control extends Control_Core {
 	}
 	// Likely to be within the core.
 	//  Meaning it's not done with progressive enhancement.
+
+	// Again looks like CSS convenience function. Likely remove from control-enh.
+	//   view / display properties.   .view.padding may be better?
+	//     though can make .padding appear directly on the control, defined property access.
+
 	'padding'() {
 		var a = arguments; a.l = a.length;
 		var sig = get_a_sig(a, 1);
@@ -558,6 +623,9 @@ class Control extends Control_Core {
 
 
 	// Activation of dynamically added content
+
+	//   Again looks like it should be within .view and specific to HTML DOM Element controls.
+
 	'activate_recursive'() {
 		//console.log('activate_recursive');
 		var el = this.dom.el;
@@ -588,6 +656,11 @@ class Control extends Control_Core {
 
 	// Just does the DOM part.
 	//  Perhaps could be made into a Mixin?
+	//    Dom events mixin perhaps? For views.
+
+	// Consider view mixins rather than control mixins.
+	//   Or that the mixins will tarket the view(s).
+
 	'add_dom_event_listener'(event_name, fn_handler) {
 		if (has_window) {
 
@@ -757,6 +830,16 @@ class Control extends Control_Core {
 			}
 		}
 	}
+
+
+	// The multi-layer event listerner system could work well.
+	//   Control events.
+	//     Possibly raise on .controller object?
+
+
+
+
+
 	// Need to remove event listener from the DOM as well.
 
 	'remove_event_listener'() {
@@ -846,6 +929,11 @@ class Control extends Control_Core {
 	// Looks like reviewing / simplifying the activation code (again) will be necessary.
 
 	// maybe will use on activate instead.
+
+	// An activation mixin perhaps even?
+	//   And it actually looks like it activates the HTML views.
+
+
 	'once_active'(cb) {
 		// maintain a list of once active callbacks...
 		if (typeof document !== 'undefined') {
@@ -1128,6 +1216,7 @@ class Control extends Control_Core {
 	}
 	*/
 
+	// All looks HTML DOM specific.
 	'rec_desc_ensure_ctrl_el_refs'(el) {
 		el = el || this.dom.el;
 		var context = this.context;
@@ -1200,6 +1289,8 @@ class Control extends Control_Core {
 	//  Auto activation.
 	//  Making sure parse_mount works fine.
 
+	// Again looks HTML DOM specific.
+	//   May be best within an HTML DOM view class.
 	'activate_content_controls'() {
 
 		// Need to deal with text nodes as well.
@@ -1363,6 +1454,8 @@ class Control extends Control_Core {
 		}
 	}
 
+
+	// Some data relevant to the model? To knowing what class of Control this is?
 	'activate_dom_attributes'() {
 		// .el direct reference?
 		// ctrl.e
@@ -1483,7 +1576,7 @@ class Control extends Control_Core {
 	}
 
 	
-
+	// All added to the view.
 
 	'add'(new_content) {
 		const {context} = this;
@@ -1527,6 +1620,8 @@ class Control extends Control_Core {
 	//   This is browser-client specific functionality.
 
 
+	// Clears the view.
+	//   Remove the event handlers?
 	'clear'() {
 		// clear all the contents.
 		// ui should react to the change.
@@ -1567,6 +1662,131 @@ p.on = p.add_event_listener;
 p.off = p.remove_event_listener;
 
 module.exports = Control;
+
+
+// Models will (almost?) always have events. model.value.on('change', e => {}); ?????
+//   or not???
+//     would have value.value in some cases.
+
+// model.value should be the value itself.
+//   but model .value.on ???
+// may have model.value = 5
+//   seems like simple syntax that should be allowed.
+// model.on('change', e => {name, value})
+//   so the name would be 'value'.
+// model.ovc(v => {}) on value change???
+//   or just vc(model, ...)
+// can make / try other conventions.
+
+// Flexi_Type?
+//   Complex_Type?
+
+// Multi_Representations_Type?
+// PostModern??
+
+// A standard or default object model?
+//   Where it (.value) could be set as any JS object, no type restrictions.
+//     Then it's up the the Control to render it for user interaction as needed.
+//       Default system (or easily available through mixin) that enables a ctrl to render strings, numbers etc into a DIV as text...?
+//         Make the HTML view part (as it gets made) much more concerned with composing and rendering. Then making more types of rendering for data
+//           would be more focused on the UI rendering (and composition).
+
+
+
+
+
+
+
+// model.type
+//   seems enough really.
+//   could have object with {signifier: ..., representations: [...]}
+// model.value
+
+
+
+
+
+
+// Maybe it would be better to more gradually transfer functionality to a .view object and to mixins.
+//   With mixins working on a live .view object, that object could be upgraded. Could be slower than making from prototype???
+
+// Separation of .model and .view does seem important.
+//   Much of the work in this framework so far concerns the view.
+//   Making a control support multiple views would be nice.
+
+// Declaring what a view contains...
+//   May be using parse-mount system.
+//     May use functional composition that makes adding items quick, or at least on the same line of JS and compressable.
+//       A goal is to make the script relatively compact in JS when pretty. So not like JSON.
+//        So basically equivalent of a Control as it is right now defined on a single line, or short paragraph.
+//          But that would be a View.
+
+// Some views would have preset models? As in it is made as a view to a specific model, so that model type must be used.
+//   Will be able to have simple programmatic derivation of views from models.
+//     However, the initial controls for dealing with specific data types seem important, such as text editor, date editor.
+//       Make the framework and the standard.
+
+// Have kind of begin (implicitly) work on the 'view model' with some properties, but can and should be clearer about
+//   how those types of appearance / display properties are distinguished.
+
+// ctrl.value => ctrl.data.model.value (perhaps)
+//   ctrl.data.model could make it clearer still that there is a separate part concerning data for the control.
+//   ctrl.view.model.value or ctrl.view.value
+//     The view (model) properties would be great to separate into their own set (object).
+
+// Multiple models and multiple viewa
+// Each view must correspond to one or more models
+// Models can exist separately from views
+
+// May 2022 - Seems a lot like starting with 'model' and getting further into data representations will help this along.
+//   The model could include what could be taken as 'hints' for the view, or what would form part of a lower-level blueprint for the view,
+//   if some intelligence was used in assembling the view from the representation in the model.
+
+// The models have a lot to do with representation of multi-representational types.
+//   A type could have multiple signifiers? Maybe when it comes to subtypes. Eg color type could have specific signifiers.
+//   With the code for the model being separate, and the model types, it may also be possible to generate / autogenerate react componens.
+// Want it so that (to begin with in theory a least) a Control could have a View using React, or as a React Component.
+
+// A new Model module even?
+//   Not so sure on the npm package name. Could make it lang-model? jsgui3-model? jsgui3-lang-model perhaps?
+//     Could make a more obscure name before it's 'ready'
+//   Not so sure about incorporating it into lang-mini though. May be a sensible option, but right now not sure how mini it would turn out to be.
+
+// Seems a lot like a more advanced Data_Object and Data_Value now.
+
+// Sig_Reps_Type perhaps
+// Model class - 1 signifier type
+//               n representation types
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// add_div(view)???
+
+
+
+
+
+
+
+
+
 
 // Plugin mechansim...
 //  For things like span

@@ -37,6 +37,7 @@ const mx_popup = require('./../../../../control_mixins/popup');
 
 // May be like a list.
 
+// 2022 - May be unnecessary. Could make better use of mixins such as list and selectable.
 
 class Item_Selector extends Control {
     constructor(spec) {

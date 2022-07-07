@@ -24,6 +24,13 @@ const Control = jsgui.Control;
 // This will do more than just wrap the HTML control(s)
 //  Maybe work on the combo-box control.
 
+// Likely could be enhanced a lot, removed, or replaced.
+//  Does minimal wrapping of html options list (it seems).
+//  Could do with popup iplementation.
+
+
+// Maybe could make good use of the mx_display_modes.
+
 
 
 class Dropdown_List extends Control {

@@ -9,8 +9,6 @@
 */
 
 // tag name span
-
-
 // highlight on mouseover.
 // edit on click
 
@@ -28,7 +26,8 @@ const Button = require('../0-basic/button');
 const {field, prop} = require('obext');
 const press_events = require('./../../../../control_mixins/press-events');
 
-
+// Likely to better use layout / popup / display mixins.
+//   swap-to-edit? maybe not with this control anyway.
 
 // Should extend span control?
 
@@ -235,13 +234,6 @@ const suspended_frame = (ctrl, opts = {
         return bcr;
 
 
-
-
-
-
-
-
-
     }
 
     const clear = () => {
@@ -402,6 +394,13 @@ const suspended_frame = (ctrl, opts = {
 
 
 // Edit mode mixin?
+//   Yes, edit mode mixin would definitely make sense.
+//   Possibly for many controls. Will focus on editing and editable data for the moment - but not all data will be editable (or edited) at all times.
+//     Much of the time data would just be viewed. Not all data could be edited anyway.
+
+// Make cancel and OK buttons quicker and easier to make....
+
+
 
 
 const editable = (ctrl) => {
@@ -718,8 +717,15 @@ const editable = (ctrl) => {
 
 
 
+// Looks interesting as a string editor.
+//   Could be another view for string editor.
+//     
+
+
 
 // String_Editor_Span?
+
+
 class String_Span extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'string_span';
