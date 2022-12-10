@@ -681,31 +681,37 @@ class Control extends Control_Core {
 		const {
 			context
 		} = this;
-		const m = context.map_controls_being_added_in_frame = context.map_controls_being_added_in_frame || {};
-		const tnc = tof(new_content);
-		if (tnc === 'array') {
-			each(new_content, (v) => {
-				const candd = v.this_and_descendents;
-				if (candd) {
-					each(candd, ctrl => {
-						if (ctrl._id) {
-							m[ctrl._id()] = ctrl;
-						}
-					})
-				}
-			});
-		} else {
-			if (new_content) {
-				const candd = new_content.this_and_descendents;
-				if (candd) {
-					each(candd, ctrl => {
-						if (ctrl._id) {
-							m[ctrl._id()] = ctrl;
-						}
-					})
+
+		if (context) {
+
+			const m = context.map_controls_being_added_in_frame = context.map_controls_being_added_in_frame || {};
+			const tnc = tof(new_content);
+			if (tnc === 'array') {
+				each(new_content, (v) => {
+					const candd = v.this_and_descendents;
+					if (candd) {
+						each(candd, ctrl => {
+							if (ctrl._id) {
+								m[ctrl._id()] = ctrl;
+							}
+						})
+					}
+				});
+			} else {
+				if (new_content) {
+					const candd = new_content.this_and_descendents;
+					if (candd) {
+						each(candd, ctrl => {
+							if (ctrl._id) {
+								m[ctrl._id()] = ctrl;
+							}
+						})
+					}
 				}
 			}
+
 		}
+		
 		return super.add(new_content);
 	}
 	'clear' () {
