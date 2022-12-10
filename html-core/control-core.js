@@ -162,8 +162,7 @@ class Control_Background extends Evented_Class {
 			configurable: true
 		});
 	}
-	set(val) {
-	}
+	set(val) {}
 }
 class Control_Core extends Data_Object {
 	constructor(spec = {}, fields) {
@@ -295,8 +294,7 @@ class Control_Core extends Data_Object {
 	set internal_relative_div(value) {
 		var old_value = this._internal_relative_div;
 		this._internal_relative_div = value;
-		if (value === true) {
-		}
+		if (value === true) {}
 	}
 	get color() {
 		return this.background.color;
@@ -376,13 +374,13 @@ class Control_Core extends Data_Object {
 				arr.push(' data-jsgui-id="' + this._id() + '"');
 			}
 
-			
+
 			const exempt_types = {
 				html: true,
 				head: true,
 				body: true
 			}
-			if (this.__type_name) {
+			if (this.context && this.__type_name) {
 				if (!exempt_types[this.__type_name] && this.__type_name !== undefined) {
 					arr.push(' data-jsgui-type="' + this.__type_name + '"');
 				}
@@ -391,8 +389,7 @@ class Control_Core extends Data_Object {
 			var key, item;
 			for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
 				key = dom_attrs_keys[c];
-				if (key == '_bound_events') {
-				} else if (key === 'style') {
+				if (key == '_bound_events') {} else if (key === 'style') {
 					item = dom_attrs[key];
 					if (typeof item !== 'function') {
 						if (typeof item === 'object') {
@@ -477,9 +474,7 @@ class Control_Core extends Data_Object {
 		let tv;
 		content.each(v => {
 			tv = tof(v);
-			if (tv == 'string') {
-			} else if (tv == 'data_value') {
-			} else {
+			if (tv == 'string') {} else if (tv == 'data_value') {} else {
 				if (v && v.iterate_this_and_subcontrols) {
 					v.iterate_this_and_subcontrols(ctrl_callback);
 				}
@@ -549,8 +544,7 @@ class Control_Core extends Data_Object {
 		return this.render_content();
 	}
 	'pre_all_html_render'() {}
-	'compose'() {
-	}
+	'compose'() {}
 	'visible'(callback) {
 		this.style('display', 'block', callback);
 	}
@@ -633,8 +627,7 @@ class Control_Core extends Data_Object {
 					'name': 'style',
 					'value': da.style + ''
 				});
-			} else {
-			}
+			} else {}
 		}
 		if (sig == '[o]') {
 			each(a[0], (v, i) => {
@@ -642,8 +635,7 @@ class Control_Core extends Data_Object {
 			});
 		}
 	}
-	'active'() {
-	}
+	'active'() {}
 	'find_selection_scope'() {
 		var res = this.selection_scope;
 		if (res) return res;
@@ -749,8 +741,7 @@ class Control_Core extends Data_Object {
 				}
 			}
 		} else {
-			if (t_target === 'control') {
-			}
+			if (t_target === 'control') {}
 		}
 	}
 	'find_selected_ancestor_in_scope'() {
@@ -767,8 +758,7 @@ class Control_Core extends Data_Object {
 	}
 	'closest'(match) {
 		let tmatch = tof(match);
-		if (tmatch === 'string') {
-		}
+		if (tmatch === 'string') {}
 		if (tmatch === 'function') {
 			let search = (ctrl) => {
 				if (match(ctrl)) {
@@ -851,8 +841,7 @@ class Control_Core extends Data_Object {
 	'clear'() {
 		this.content.clear();
 	}
-	'activate'() {
-	}
+	'activate'() {}
 	get this_and_descendents() {
 		const res = [];
 		this.iterate_this_and_subcontrols(ctrl => res.push(ctrl));
@@ -879,29 +868,34 @@ if (require.main === module) {
 			super(spec);
 			this.dom.tagName = 'svg';
 		}
-	
+
 		circle(cx, cy, r) {
 			let circle = new Control({
 				tagName: 'circle',
 				attrs: {
-					cx, cy, r
+					cx,
+					cy,
+					r
 				}
 			});
 			this.content.add(circle);
 			return circle;
 		}
-	
+
 		rect(x, y, width, height) {
 			let rect = new Control({
 				tagName: 'rect',
 				attrs: {
-					x, y, width, height
+					x,
+					y,
+					width,
+					height
 				}
 			});
 			this.content.add(rect);
 			return rect;
 		}
-	
+
 		// Other SVG element creation methods could be added here...
 	}
 
@@ -914,6 +908,8 @@ if (require.main === module) {
 	const str = svg.all_html_render();
 	console.log('str', str);
 	*/
+
+	/*
 
 	const circle = new Control({
 		tagName: 'circle',
@@ -929,4 +925,78 @@ if (require.main === module) {
 
 	  const str = circle.all_html_render();
 	  console.log('str', str);
+
+	  */
+
+	function test_svg() {
+		const passed = [];
+		const failed = [];
+		let svg;
+		try {
+			// Create a new SVG control
+			svg = new Control({
+				tagName: 'svg'
+			});
+			passed.push('Create SVG control');
+		} catch (error) {
+			failed.push('Create SVG control');
+		}
+
+		try {
+			// Add a circle to the SVG control
+			const circle = new Control({
+				tagName: 'circle',
+				attrs: {
+					cx: 100,
+					cy: 100,
+					r: 50
+				}
+			});
+			svg.add(circle);
+			passed.push('Add circle to SVG control');
+		} catch (error) {
+			console.log('error', error);
+			failed.push('Add circle to SVG control');
+		}
+
+		try {
+			// Add a rectangle to the SVG control
+			const rect = new Control({
+				tagName: 'rect',
+				attrs: {
+					x: 150,
+					y: 150,
+					width: 100,
+					height: 100
+				}
+			});
+			svg.add(rect);
+			passed.push('Add rectangle to SVG control');
+		} catch (error) {
+			console.log('error', error);
+			failed.push('Add rectangle to SVG control');
+		}
+
+		try {
+			// Check the rendering of the SVG control
+			const expected = '<svg><circle cx="100" cy="100" r="50"></circle><rect x="150" y="150" width="100" height="100"></rect></svg>';
+			const actual = svg.all_html_render();
+			console.log('actual', actual);
+			if (expected === actual) {
+				passed.push('Check rendering of SVG control');
+			} else {
+				failed.push('Check rendering of SVG control');
+			}
+		} catch (error) {
+			console.log('error', error);
+			failed.push('Check rendering of SVG control');
+		}
+
+		return {
+			passed,
+			failed
+		};
+	}
+
+	console.log(test_svg()); // prints the results of the test
 }
