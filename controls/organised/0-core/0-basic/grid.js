@@ -334,28 +334,6 @@ class Grid extends Control {
             } else {
                 console.log('.size was not available');
             }
-
-            // could be given the cell size.
-            // cell sizes by row. 
-            // if cell_size is already defined...
-
-
-            // Maybe don't (yet) have own size? Not set or measured.
-            //  Should assume we have a this.size property (at all times??)
-            //   Sometimes would not be set?
-            //   Should have some way of autosetting it.
-            //   Bounding client rect on the client.
-            //    But should have some defaults in the CSS that get used?
-            
-            // Maybe have a sizing and layout model on the server.
-            //  For serving pages with different content sizes....
-            //  So the server could know that something gets sized 32x32 to fit in place on an iPhone for example.
-            //   iPhone in a specific view mode.
-            //  
-
-            //console.log('this.size', this.size);
-
-            
         }
     }
 

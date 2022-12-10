@@ -31,6 +31,7 @@
   },
   "description": "Jsgui HTML generation and processing module (isomorphic, runs on client and server, few npm requirements)",
   "author": "James Vickers <james@metabench.com>",
+  "assistant author": "ChatGPT from OpenAI",
   "repository": {
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
@@ -38,5 +39,5 @@
   "devDependencies": {
     "esbuild": "^0.15.8"
   },
-  "version": "0.0.105"
+  "version": "0.0.106"
 }

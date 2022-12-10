@@ -2,17 +2,6 @@
  * Created by James on 04/08/2014.
  */
 
-/*
-
- if (typeof define !== 'function') { var define = require('amdefine')(module) }
-
-
- // Also want to make an MDI window system (Multiple Document Interface)
-
- define(["../../jsgui-html", "./horizontal-menu"],
- function(jsgui, Horizontal_Menu) {
- */
-
 const jsgui = require('./../../../../html-core/html-core');
 //var Horizontal_Menu = require('./horizontal-menu');
 
@@ -20,29 +9,6 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined 
 var Control = jsgui.Control;
 
 var group = jsgui.group;
-
-// And the tab buttons act as radio buttons.
-//  Having a JSGUI radio button replacement would be nice.
-//   Could choose whether to render as a radio button and progressively enhance on the client...
-//    Client-side enhancement of semantic HTML.
-
-//   Or render as it appears on the client?
-//    Being able to handle both would be nicest.
-//    Possibly radio buttons could have good styling on modern clients anyway?
-//    May want them to look very different to normal radio buttons though, eg using them for tabs.
-
-
-// RadioButtonGroup could be a useful Control as well.
-//  May provide an easier interface that abstracts away from having to directly make some of the controls.
-
-
-
-
-
-
-
-
-
 
 
 var fields = {
@@ -53,46 +19,15 @@ var fields = {
 };
 
 class Checkbox extends Control {
-    // panel name?
-
-    // could have a title field.
-
-    // Items field could be an array.
-
-    // maybe add before make would be better. add will probably be used more.
     constructor(spec, add, make) {
 
 
         super(spec);
 
-        // Will have set up some fields.
-        //  However, will not be directly using a Field_Collection.
-        //   Though perhaps that would help with keeping the ordering of the fields.
-        //   Currently we are just treating ._ as holding all fields.
-        //    Though not everything in there need be considered a field or set up as one.
-
-
-
-
         this.__type_name = 'checkbox';
 
         this.add_class('checkbox');
         var context = this.context;
-        //var that = this;
-
-        // A different way of raising change events?
-        //  .on('change') often translates to the dom el's onchange.
-
-        // Want a way to refer to the event for the Control itself, not adding a DOM listener.
-        //  (..., false) seems OK.
-
-
-
-
-
-        //console.log('spec.el', spec.el);
-
-        // No, make this contain an input element and a label element
 
         if (!spec.abstract && !spec.el) {
 
@@ -118,41 +53,9 @@ class Checkbox extends Control {
 
             var text_value = this.get('text').value();
 
-            //console.log('spec.text', spec.text);
-
-            // Value should have been set during the initialization.
-
-
-            //console.log('text_value', text_value);
-            //console.log('tof text_value', tof(text_value));
-            //console.log('that._.text', that._.text);
-            //console.log('tof(that._.text)', tof(that._.text));
-            //console.log('tof(that._.text._)', tof(that._.text._));
-
-            // So it seems as though the text field has not been assigned.
-            //  It should have been, as its specified as a field.
-
-            // However, there is a Data_Value for the text field, but it has not been set.
-
-            // The field should have been set during initialization.
-
-
-
-            //throw 'stop';
-
             if (is_defined(text_value)) {
                 html_label.add(text_value);
             }
-
-            // The text is a field.
-            //  Should be automatically assigned from the spec.
-
-
-            // Needs to have a context for the text that gets added.
-            //  Text is not an element in of itself, so will not need a context.
-
-
-
             html_label.set('dom.attributes.for', html_check._id());
 
             this.add(html_check);
@@ -164,21 +67,6 @@ class Checkbox extends Control {
             this.set('dom.attributes.data-jsgui-fields', stringify({
                 'value': this.get('value')
             }).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
-
-            // Look at the items.
-
-
-
-
-            /*
-                var ctrl_fields = {
-                'ctrl_relative': div_relative._id(),
-                'title_bar': title_bar._id()
-                }
-
-
-                this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
-                */
 
 
         }
@@ -226,9 +114,3 @@ class Checkbox extends Control {
 };
 
 module.exports = Checkbox;
-/*
-    return Panel;
-    }
-    );
-    */
-    

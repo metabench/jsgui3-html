@@ -151,6 +151,7 @@ class Control_Background extends Evented_Class {
 			set(value) {
 				let old = _color;
 				_color = value;
+				
 				this.raise('change', {
 					'name': 'color',
 					'old': old,
@@ -179,15 +180,39 @@ class Control_Core extends Data_Object {
 		var spec_content;
 		let d = this.dom = new Control_DOM();
 		prop(this, 'background', new Control_Background(), (e_change) => {
+			//console.log('background change');
+			// The background object itself has been changed.
 			let {
 				value
 			} = e_change;
+
+
+			// When the background gets changed?
+			// When the change happens to the background...?
+
+
+			/*
 			value.on('change', evt => {
 				if (evt.name === 'color') {
 					d.attributes.style['background-color'] = evt.value;
 				}
 			});
+			*/
 		});
+
+		// Maybe background could operate with a better facade pattern over CSS.
+		// . A CSS Facade mixin may work well...
+		// . Main priority to get API working.
+
+
+
+		this.background.on('change', evt => {
+			if (evt.name === 'color') {
+				d.attributes.style['background-color'] = evt.value;
+			}
+		});
+
+
 		prop(this, 'disabled', false);
 		prop(this, 'size', spec.size, (e_change) => {
 			let {
@@ -997,6 +1022,73 @@ if (require.main === module) {
 			failed
 		};
 	}
-
 	console.log(test_svg()); // prints the results of the test
+
+
+
+	const test_background_color = () => {
+		const expectedColor = '#ff0000';
+		const passed = [];
+		const failed = [];
+		let div;
+
+		try {
+			// Create a new div control
+			div = new Control({
+				tagName: 'div',
+			});
+			passed.push('Create div control');
+		} catch (error) {
+			failed.push(['Create div control', error]);
+		}
+
+		try {
+			// Set the background color of the div control
+			div.background.color = expectedColor;
+			passed.push('Set background color of div control');
+		} catch (error) {
+			failed.push(['Set background color of div control', error]);
+		}
+
+		try {
+			// Validate the background color of the div control
+			const validationColor = div.background.color;
+			if (validationColor === expectedColor) {
+				passed.push('Validate background color of div control');
+			} else {
+				failed.push(['Validate background color of div control', 'Background color is not as expected']);
+			}
+		} catch (error) {
+			failed.push(['Validate background color of div control', error]);
+		}
+
+		try {
+			// Check the rendering of the div control
+			const expected = `<div style="background-color:${expectedColor}"></div>`;
+			const actual = div.all_html_render();
+			if (expected === actual) {
+				passed.push('Check rendering of div control');
+			} else {
+				failed.push(['Check rendering of div control', 'Rendering does not match expected output', {
+					expected,
+					actual
+				}]);
+			}
+		} catch (error) {
+			failed.push(['Check rendering of div control', error]);
+		}
+
+		return {
+			passed,
+			failed,
+		};
+	};
+
+	//console.log(JSON.stringify(test_background_color()), null, 2);
+	const rtest = test_background_color();
+	console.log(rtest);
+	console.log(rtest.failed);
+
+
+
 }

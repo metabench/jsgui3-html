@@ -27,32 +27,6 @@ class Plus_Minus_Toggle_Button extends Toggle_Button {
         super(spec);
         let state = this.state = spec.state;
 
-        // Set should return the object it sets it as. Possibly a Data_Object.
-
-        //console.log('state', state);
-        //if (spec_state) {
-        //if (spec_state == 'expanded' || spec_state == 'contracted') {
-        //state = this.set('state', spec_state);
-        //} else {
-        //	throw 'spec.state expects "expanded" or "contracted".';
-        //}
-        //} else {
-        //state = this.set('state', 'expanded');
-        //}
-
-        // Then render the text content itself.
-
-		/*
-		 var t_state = tof(state);
-		 //console.log('t_state', t_state);
-		 //throw 'stop';
-		 if (t_state == 'string') {
-		 //console.log('state', state);
-		 //throw 'stop';
-		 this.add(state);
-		 };
-		 */
-
     }
 };
 //return Plus_Minus_Toggle_Button;
