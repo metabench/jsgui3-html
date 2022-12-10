@@ -6,39 +6,6 @@ const jsgui = require('lang-tools');
 const Text_Node = require('./text-node');
 const obext = require('obext');
 
-// const load_type = (name, abbreviation, fn_detect_instance) => {
-
-
-
-
-//const {field, prop} = obext;
-// Want the documentation online!
-
-// prop(item, name, default_value)
-// then on change....
-
-// Need to have ctrls respond to these changes.
-
-// span.text being an important property.
-//  it was working, span code removed, now needs to be fixed.
-//  Don't want spans operating differently to other controls with some lower level things.
-
-
-
-/*
-
-
-jsgui.Page_Context = require('./page-context');
-jsgui.Selection_Scope = require('./selection-scope');
-jsgui.Intersection_Finder = Intersection_Finder;
-
-// And load in all or a bunch of the controls.
-// Can we require all of the controls at once, and then merge them?
-jsgui.parse_mount = require('./parse-mount');
-
-*/
-
-
 const Page_Context = require('./page-context');
 const Selection_Scope = require('./selection-scope');
 
@@ -124,12 +91,6 @@ var recursive_dom_iterate = function (el, callback) {
 }
 
 var recursive_dom_iterate_depth = function (el, callback) {
-    //console.log('recursive_dom_iterate');
-    //console.log('tof(el.childNodes) ' + tof(el.childNodes));
-    //each(el.childNodes, function(i, v) {
-    //  console.log('v ' + v);
-    //});
-    //console.log('el.childNodes.length ' + el.childNodes.length);
     var cns = el.childNodes;
     for (var c = 0, l = cns.length; c < l; c++) {
         recursive_dom_iterate_depth(cns[c], callback);
@@ -156,12 +117,6 @@ var activate = function (context) {
     // But making the calls uses client-side mechanisms.
 
     // Maybe do this in on activate on the client, in the client module.
-
-
-
-
-
-
 
     if (!context) {
         throw 'jsgui-html-enh activate(context) - need to supply context parameter.';
@@ -237,49 +192,12 @@ var activate = function (context) {
         });
     }
     map_els();
-
     context.set_max_ids(max_typed_ids);
-    //console.log('map_controls', map_controls);
-    //throw 'stop';
-
-    console.log('Object.keys(map_jsgui_els)', Object.keys(map_jsgui_els));
-
-    // Whenever they get added, they should be added to the context. This appears missing.
-    // Control construction and registration
-
     //console.log('map_jsgui_types', map_jsgui_types);
     each(map_jsgui_els, (el, jsgui_id) => {
-
-        //console.log('el', el);
-        //console.log('activate jsgui_id ' + jsgui_id);
-        //console.log('3) el.tagName ' + el.tagName);
-        // .tn?
-        // tn a global abbreviation for tag_name? not text_node
-        // tn function?
-        // txtn, tagn? tyn for type name?
         const l_tag_name = el.tagName.toLowerCase();
         if (jsgui_id) {
             var type = map_jsgui_types[jsgui_id];
-
-
-            //console.log('');
-            //console.log('core activate type ' + type);
-            //console.log('el', el);
-            //console.log('map_jsgui_types', map_jsgui_types);
-            //var cstr = jsgui.constructor_from_type(type);
-
-            //var cstr = jsgui.constructor_from_type(type);
-            //console.log('!!map_controls[jsgui_id]', !!map_controls[jsgui_id]);
-            //console.log('cstr ' + cstr);
-
-            // use the context's map_Controls
-
-            // Should it look to see if the control has already been constructed?
-            //  On the client side, we may want to check against an index of pre-existing controls.
-
-            //if (!)
-
-            //console.log('map_controls', map_controls);
 
             if (!map_controls[jsgui_id]) {
                 // Only construct it if it does not exist already.
@@ -289,17 +207,6 @@ var activate = function (context) {
                 //console.log('!!Cstr', !!Cstr);
 
                 if (Cstr) {
-                    //console.log('arr_controls.length', arr_controls.length);
-                    //console.log('!!map_controls[jsgui_id]', !!map_controls[jsgui_id]);
-                    //console.log('3) jsgui_id', jsgui_id);
-                    //console.log('creating constructor of type', type, 'jsgui_id', jsgui_id);
-
-                    // Would re-apply the constructors?
-                    //console.log('Cstr', Cstr);
-                    //console.log('jsgui_id', jsgui_id);
-                    // control not taking the id at the beginning.
-                    // And params for this ctrl?
-
                     var ctrl = new Cstr({
                         'context': context,
                         '__type_name': type,
@@ -381,21 +288,6 @@ var activate = function (context) {
                 //console.log('map_controls', map_controls);
 
                 const ctrl = map_controls[jsgui_id];
-                //console.log('!!ctrl', !!ctrl);
-                //ctrl.__activating = true;
-
-                //console.log('tof ctrl ' + tof(ctrl));
-                //console.log('ctrl.__type_name', ctrl.__type_name);
-                //console.log('ctrl', ctrl);
-                //console.log('pre ctrl activate', ctrl._id(), jsgui_id);
-                //console.log('ctrl.__type_name', ctrl.__type_name);
-
-                // Need to link the controls together in terms of parents (maybe contents?)
-
-                // to be sure
-                //ctrl.dom.el = el;
-                //console.log('2) ctrl.dom.el', ctrl.dom.el);
-                // Don't want this to reassign ids?
                 ctrl.activate(ctrl.dom.el);
 
                 if (child) {
@@ -641,130 +533,6 @@ jsgui.controls.span = jsgui.span = class span extends Control {
         
     }
     
-
-    // not using a text node as content.
-    //  though do use it within the browser.
-
-    // Being able to add text node(s) to a span makes sense.
-
-    // Can make a modified version where we listen for adding a text node.
-    //  Need to set the 
-
-    /*
-
-    get text() {
-        return this._text;
-    }
-    set text(value) {
-
-        this._text = value;
-
-        // change an internal text node?
-        //  not sure the rendering shortcut makes sense when considering different modes of operation.
-        //  assumption that we will create a text node and add it in some cases.
-
-        // A span can not contain two text nodes in sequence?
-
-        this.raise('change', {
-            'name': 'text',
-            'value': value
-        });
-        // Should not really need to respond to such events anyway.
-        //  principles of react etc.
-
-        console.log('span text changed to ' + value);
-        console.log('value.length', value.length);
-        console.trace();
-        //throw 'stop';
-    }
-    */
-
-
-    /*
-    add(content) {
-        super.add(content);
-
-        console.log('');
-        console.log('content', content);
-        console.log('content instanceof Text_Node', content instanceof Text_Node);
-
-        if (content instanceof Text_Node) {
-            // More situationally aware....
-            console.log('content.text', content.text);
-
-            this.text = content.text;
-        }
-
-    }
-    */
-
-
-    /*
-    all_html_render_internal_controls() {
-
-        return escapeHtml(this._text);
-    }
-
-
-    // Maybe move to client-side.
-    //  All activation code in the client-side?
-    */
-
-
-    /*
-    activate() {
-        // get the text node reference?
-
-        if (!this.__active) {
-            super.activate();
-            let dtn;
-            //console.log('activate span');
-            if (!this.dom.el) {
-                // Try to find the dom element amongst registered control elements.
-                //console.log('this.context', this.context);
-                //console.log('this.context.map_els', this.context.map_els);
-
-                let el = this.context.map_els[this._id()];
-                //console.log('el', el);
-                if (el) {
-                    this.dom.el = el;
-                }
-            }
-            //console.log('!!this.dom.el', !!this.dom.el);
-
-            if (this.dom.el) {
-                dtn = this.dom.el.childNodes[0];
-                if (!dtn) {
-                    dtn = document.createTextNode('');
-                    this.dom.el.appendChild(dtn);
-                }
-                // Add to array without raising event.
-
-                let tn = this.tn = this.Text_Node = this.text_node = new Text_Node({
-                    context: this.context,
-                    node: dtn
-                });
-                this.content._arr.push(tn);
-                //this.add(tn);
-
-                this.on('change', e => {
-
-                    // while not activated...
-
-                    //console.log('span text change', e);
-                    if (e.name === 'text') {
-                        dtn.nodeValue = e.value;
-                    }
-                });
-            } else {
-                //console.log('span expected dom.el');
-            }
-        }
-        //let 
-
-        // May need to work with the text node element?
-    }
-    */
 }
 
 

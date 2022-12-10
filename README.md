@@ -24,3 +24,18 @@ Data_Type but with multiple possible ways it can be encoded.
 Will make some simpler controls first...
     At least simple as in interacts with simple data.
     Number_Editor for a start.
+
+
+# Rendering SVG
+
+const circle = new Control({
+tagName: 'circle',
+attrs: {
+    cx: 50,
+    cy: 50,
+    r: 40,
+    stroke: 'green',
+    'stroke-width': 4,
+    fill: 'yellow'
+}
+});

@@ -32,7 +32,7 @@ var Control = jsgui.Control;
 
 const Grid = require('./../../0-core/0-basic/grid');
 
-const Tile_Slider = require('./../6-layout/tile-slide');
+const Tile_Slider = require('../../1-standard/6-layout/tile-slide');
 // Don't want very much logic or code related to tile sliding right here.
 //  
 

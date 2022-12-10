@@ -785,6 +785,8 @@ class Color_Palette extends Control {
         // At the top is a control that either shows the item selected, or search text.
 
         prop(this, 'palette', spec.palette || pal_crayola);
+        // A 'model' type property.
+
         prop(this, 'grid_size', spec.grid_size || [12, 12]);
 
         // [12, 12]
@@ -857,7 +859,9 @@ class Color_Palette extends Control {
 
                 // .set(..., silent);
 
-                cell._color = cell.dom.el.style['background-color'];
+                //cell._color = cell.dom.el.style['background-color'];
+
+
                 cell.selectable = true;
                 //cell.color = cell.dom.el.style['background-color'];
 
@@ -907,6 +911,7 @@ class Color_Palette extends Control {
     }
 
     compose_color_palette() {
+        console.log('compose_color_palette');
         // An internal relative frame could help.
         //  Help superimposing anything relative to that DIV, any popup, but not require the DIV itself to have relative positioning.
 
@@ -928,18 +933,30 @@ class Color_Palette extends Control {
 
         console.log('this.grid_size', this.grid_size);
 
-        this.grid = new Grid({
+        const grid = this.grid = new Grid({
             'context': this.context,
             'grid_size': this.grid_size,
             //'size': [size[0] - padding * 2, size[1] - padding * 2],
             'cell_selection': 'single'
+        });
+
+        // grid.cells possibly
+        //  Could be an iterator rather than an array.
+
+        console.log('pre each cell\n\n');
+
+        grid.each_cell((cell, [x, y]) => {
+            //console.log('cell', cell);
+
+            // Assign the colors here...?
+
         });
         /*
         this.grid.style({
             //'position': 'relative'
         })
         */
-        this.add(this.grid);
+        this.add(grid);
         if (this.__active) {
             console.log('pre activate grid');
             this.grid.activate();

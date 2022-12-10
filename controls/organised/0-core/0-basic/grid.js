@@ -367,7 +367,7 @@ class Grid extends Control {
         // want to return the cell position as an index
         // Activate has not put together the rows...
 
-        //console.log('this._arr_rows.length', this._arr_rows.length);
+        console.log('this._arr_rows.length', this._arr_rows.length);
         //console.trace();
 
         each(this._arr_rows, (row, i_row) => {
@@ -419,7 +419,7 @@ class Grid extends Control {
 
     'full_compose_as_divs'() {
 
-        console.log('full_compose_as_divs')
+        console.log('* full_compose_as_divs')
 
         let main = this.main = new Control({
             context: this.context,

@@ -4,35 +4,28 @@
  * 2022 - Could even see about moving some of this functionality / code to mixins.
  * 
  */
-
 const jsgui = require('lang-tools');
+const oext = require('obext');
 const get_a_sig = jsgui.get_a_sig;
-//var remove_sig_from_arr_shell = jsgui.remove_sig_from_arr_shell;
 const each = jsgui.each;
 const clone = jsgui.clone;
 const Evented_Class = jsgui.Evented_Class;
-//var Data_Value = jsgui.Data_Value;
 const Data_Object = jsgui.Data_Object;
 const Collection = jsgui.Collection;
 const tof = jsgui.tof;
 const stringify = jsgui.stringify;
-
 const Text_Node = require('./text-node');
-
 const {
 	prop,
 	field
 } = require('obext');
-
 var px_handler = (target, property, value, receiver) => {
 	let res;
 	var t_val = tof(value);
-
 	if (t_val === 'number') {
 		res = value + 'px';
 	} else if (t_val === 'string') {
 		var match = value.match(/(\d*\.?\d*)(.*)/);
-		//console.log('px_handler match', match);
 		if (match.length === 2) {
 			res = value + 'px';
 		} else {
@@ -41,25 +34,18 @@ var px_handler = (target, property, value, receiver) => {
 	}
 	return res;
 }
-
 var style_input_handlers = {
 	'width': px_handler,
 	'height': px_handler,
 	'left': px_handler,
 	'top': px_handler
 }
-
 var new_obj_style = () => {
-	//var style = new Evented_Class({});
-	//var style = {}
-
 	let style = new Evented_Class({});
 	style.__empty = true;
-
 	style.toString = () => {
 		var res = [];
 		var first = true;
-
 		each(style, (value, key) => {
 			const tval = typeof value;
 			if (tval !== 'function' && key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger' && key !== {}) {
@@ -73,7 +59,6 @@ var new_obj_style = () => {
 		});
 		return res.join('');
 	}
-
 	var res = new Proxy(style, {
 		set: (target, property, value, receiver) => {
 			let res;
@@ -84,7 +69,6 @@ var new_obj_style = () => {
 			} else {
 				res = target[property] = value;
 			}
-			//console.log('pre raise style change');
 			style.raise('change', {
 				'key': property,
 				'name': property,
@@ -92,7 +76,6 @@ var new_obj_style = () => {
 				'new': value,
 				'value': value
 			});
-			//console.log('style set res', res);
 			return res;
 		},
 		get: (target, property, receiver) => {
@@ -101,81 +84,46 @@ var new_obj_style = () => {
 	});
 	return res;
 }
-
-// Intercept the changing of the style attribute.
-
-// Could code for the style with https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-//  For the moment it works with proxy, it would probably be faster and more compatible to use property definition with getting and setting a style as a string.
-//   Would have clearer code too.
-
 class DOM_Attributes extends Evented_Class {
 	constructor(spec) {
 		super(spec);
 		this.style = new_obj_style();
 		this.style.on('change', e_change => {
-			//console.log('style e_change', e_change);
 			this.raise('change', {
 				'property': 'style',
 				'key': 'style',
 				'name': 'style',
-				//'key': e_change.key,
 				'value': this.style.toString()
 			});
 		})
-		//console.log('this.style', this.style);
 	}
 }
-
-// This will definitely be part of the view.
-//   Not all views would have this property in the long run.
-
 class Control_DOM extends Evented_Class {
 	constructor() {
-
-		// Proxy the attributes, so that it raises an event for changes.
 		super();
 		var dom_attributes = new DOM_Attributes();
 		var attrs = this.attrs = this.attributes = new Proxy(dom_attributes, {
 			'set': (target, property, value, receiver) => {
-
-				// proxy for setting the style with a string.
-				//console.log('property', property)
-
 				if (property === 'style') {
-					//console.log('');
-					//console.log('Control_DOM attrs set style')
-					//console.log('value', value);
-					//console.log('tof(value)', tof(value));
-
 					var t_value = tof(value);
-					//console.log('t_value', t_value);
 					if (t_value === 'string') {
-
 						var s_values = value.trim().split(';');
 						var kv;
 						each(s_values, (s_value) => {
 							kv = s_value.split(':');
-							//console.log('kv', kv);
 							if (kv.length === 2) {
 								kv[0] = kv[0].trim();
 								kv[1] = kv[1].trim();
 								target.style[kv[0]] = kv[1];
 							}
 						});
-						// raise style change event.
-						//  or dom attributes change
 						dom_attributes.raise('change', {
 							'property': property
 						});
-						// need to set the style items individually.
-						//  or create new style object now.
 					}
-					// if we are setting it with a string, we need to break up these parts
-					//console.trace();
 				} else {
 					var old_value = target[property];
 					target[property] = value;
-					//console.log('pre raise change');
 					dom_attributes.raise('change', {
 						'key': property,
 						'name': property,
@@ -187,90 +135,11 @@ class Control_DOM extends Evented_Class {
 				return true;
 			},
 			get: (target, property, receiver) => {
-				// I'd like to have access to any arguments when
-				// the property being accessed here is a function
-				// that is being called
 				return target[property];
 			}
 		});
 	}
 }
-
-
-// Time to make the Control extend Evented_Class so it raises events?
-//  A bit surprised I've not used or needed Control's events.
-
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty
-
-// Outside of dom attributes and style.
-//  Dom attributes / style need to get updated from these properties.
-
-// a core-properties mixin could do the job.
-
-
-// May retire Control_Background.
-//  Making new mixin and system Control_Display.
-//  More flexible, may be a way to address background, via display.
-//   More clearly above the CSS and HTML.
-
-
-// ctrl.display or ctrl.d.bg even.
-//  .display seems like the right higher level abstraction.
-
-// Also will be part of the View.
-//   Would View be a kind of control appearance model?
-
-// While model is very separate and for data, some kind of appearance-model could be of use.
-//   Carry properties about how a control (or possibly multiple controls) appears.
-
-// Data Model and Appearance Model could both be of use.
-// Things such as 'rounding' that may work best as an abstraction above / separate from HTML.
-//   Esp if the HTML properties are a bit messy or not as wanted to be expressed for that control?
-
-// .display does make sense as a kind of 'view model'.
-// .view.model??? Could be confusing??
-// .view.view_model??? More verbose but less confusing perhaps.
-
-// or if it programatically is really the same type of model then OK...
-
-// ctrl.data.model ???
-// ctrl.data.value ???
-// ctrl.data.model.value ???
-
-// ctrl.view.model.value ???
-// ctrl.view.model ???
-
-// MVM? Where there is the data model and the view model?
-
-// View model would (always?) be defined in the view?
-//   Maybe there would be correspondance too?
-//     The view model containing data (in the model) to be represented in the view?
-//       Or its the various (other) properties, such as how rounded the edges are or some 'shadow' property.
-
-// View Model definitely makes sense for when it comes to responding to changes in view properties.
-//   Keeping view properties, separate from the DOM and CSS.
-//     Standard or default view model?
-//       Could the view model change the view??? Probably not.
-//         But a change on the control itself could.
-//         Selecting which of the views is active. Maybe changing the model so a different view is needed? Changing the value???
-//           May work polymorphically.
-
-// Controls with multiple views...
-//   Certainly want more concise view definition.
-
-
-
-
-
-
-
-
-
-
-
-
-// would be part of view settings.
 class Control_Background extends Evented_Class {
 	constructor(spec = {}) {
 		super(spec);
@@ -294,132 +163,10 @@ class Control_Background extends Evented_Class {
 		});
 	}
 	set(val) {
-		// 
-		// Value could be a string.
-		//  Could be a color
-		//  Could be a URL
-		// Could be a programatic object that provides access to an image.
 	}
 }
-
-
-// Data_Object has a .value I think
-//   Still need to extend Data_Object?
-//     Maybe changing to .view would be a more fundamental change.
-//     Would include .content within the view.
-//       Also want to include content in a more declarative way.
-
-// Perhaps could make an entirely new Control class?
-//   With most of the same API...?
-//   But would put it together in a (more) functionally compositional way.
-//     Big different would be that much of the functionality would be under .view.
-
-// Would help to be able to have current type controls take the .view object.
-//   An new version of control that can have multiple specified views may be much better.
-
-
-
-
-
-
-
-
-
-
-// Almost all of this could be considered to be a 'view' right now anyway. It is very similar in function.
-//  In the future, Control may be about selecting the most appropriate view.
-//  May even be about auto-generating a view to suit a model.
-
-// A View_Renderer as well too?
-
-// And each specific View would (be able to) work with a different model representation.
-//  Be able to add views to a Control instance....
-//   Don't really see why not.
-
-// ctrl.views.add(...)
-// ctrl.views.use('compact_1');
-//  Want multiple views and multiple view modes baked into the framework.
-//  Want a smooth transition to the next way of doing things.
-//   For the moment, could reference properties under .view.
-
-// Possibility of a seamless upgrade?
-//  Or substantial API change...
-//   Ctrl kind of has .value
-//     It's not being used much though.
-//     Could be more consistent with control.value, in that it would (always) refer to control.model.value
-
-// Making an almost API compatable new type of Control does make sense....
-//  As API compatable as possible.
-
-// Could be used in place of the existing / older type of Control.
-
-// Be able to hold multiple models?
-//  At least multiple different type representations.
-//  Multiple different models may make sense too, eg for a Calendar control.
-//    Allowing for models with the calendar data organised differently?
-//      A View would still need to be able to represent a Model. Just possibly a View could represent different model types.
-//        Maybe not very different though.
-
-// or just 1 'model'. That model can have multiple different representatative types.
-// Example of being able to deal with multiple models / multiple representative types:
-//   A Control could be used to select dates and times, but only do the date part if that is all that's in the model.
-//   Likely just 1 signatative or sifnifier type.
-//   Could get onto auto-generated views.
-
-// Could even move away from defining these as Controls?
-//   Could define the models and corresponding views.
-//     Controls would still probably exist though, but get created automatically / based on the selected model and view.
-//       eg new Control(context, model, view) perhaps.
-//   Still think Control is useful to have in the app, maybe will be made much more useful and flexible soon.
-
-
-
-
-
-
-// model.type as Complex_Type perhaps?
-//   Sig_Reps_Type perhaps
-//     One signifier, multiple representations
-//       Could have a 'standard' representation. Then could change between that and some other types when changing between non-standard types.
-
-
-
-// model.current_type?
-// model.signifier_type
-// model.representative_types collection / list / array.
-// model.representative_type being the current type.
-
-// 
-
-
-// 
-
-
-
-// model.value a value of an allowed type
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 class Control_Core extends Data_Object {
-
 	constructor(spec = {}, fields) {
-		// but process / normalize the spec here?
-		//spec = spec || {};
 		spec.__type_name = spec.__type_name || 'control';
 		super(spec, fields);
 		if (spec.id) {
@@ -428,49 +175,26 @@ class Control_Core extends Data_Object {
 		if (spec.__id) {
 			this.__id = spec.__id;
 		}
-
-		//console.log('done Control_Core super');
-		//do_init_call(this, spec);
 		this.mapListeners = {};
 		this.__type = 'control';
-
-		//console.log('post super init');
 		var spec_content;
-		// TextNodes don't have attributes
-
-		// Have .dom as part of the view's model?
-		//   Probably not... the view's model is a higher abstraction that gets used for choosing various options.
-		//     .ctrl.view.model.background makes sense though.
-		//     would mean defining aspects of the control in terms of a model though.
-
-
-
-
 		let d = this.dom = new Control_DOM();
-
 		prop(this, 'background', new Control_Background(), (e_change) => {
-			let {value} = e_change;
+			let {
+				value
+			} = e_change;
 			value.on('change', evt => {
 				if (evt.name === 'color') {
-					// Except may be better after all to use a Color class that can output to HTML better.
 					d.attributes.style['background-color'] = evt.value;
 				}
 			});
-			// or a change tuplet kvp.
 		});
 		prop(this, 'disabled', false);
-		// .view.model.value.disabled may be where this winds up - but could have the shortcut property of view.background.
-		// same with .size property.
-
-
-
-		// size property - but also need way to measure property or obtain it from the DOM.
-		//  ctrl-enh needs to be initialised with the correct size property if possible.
 		prop(this, 'size', spec.size, (e_change) => {
-			//console.log('e_change', e_change);
-			let {value, old} = e_change;
-			//console.log('value', value);
-			//throw 'stop';
+			let {
+				value,
+				old
+			} = e_change;
 			let [width, height] = value;
 			const s = this.dom.attrs.style;
 			s.width = width;
@@ -480,9 +204,11 @@ class Control_Core extends Data_Object {
 			});
 		});
 		prop(this, 'pos', spec.pos, (e_change) => {
-			let {value, old} = e_change;
+			let {
+				value,
+				old
+			} = e_change;
 			if (value.length === 2) {
-				//console.log('old', old);
 				if (old && old.length === 3) {
 					value = [value[0], value[1], old[2]];
 					this.pos = value;
@@ -493,20 +219,12 @@ class Control_Core extends Data_Object {
 				'left': left,
 				'top': top
 			}
-
-			//if (value.length === 3) {
-			//	o_style['z-index'] = value[2];
-			//}
 			this.style(o_style);
-			// raise change size.
-			//console.log('pre raise resize');
 			this.raise('move', {
 				'value': value
 			});
 		});
-
 		this.on('change', e => {
-
 			if (e.name === 'disabled') {
 				if (e.value === true) {
 					this.add_class('disabled');
@@ -516,14 +234,8 @@ class Control_Core extends Data_Object {
 			}
 		});
 		let tagName = spec.tagName || spec.tag_name || 'div';
-		//this.set('dom.tagName', tagName);
 		d.tagName = tagName;
-		//this._icss = {};
-		//this._.dom = {'tagName': 'div'};
-		// Abstract controls won't have
 		var content = this.content = new Collection({});
-
-		// The DOM is a field that it should be getting from the control.
 		spec_content = spec.content;
 		if (spec_content) {
 			var tsc = tof(spec_content);
@@ -531,30 +243,18 @@ class Control_Core extends Data_Object {
 				each(spec.content, item => {
 					content.add(item);
 				})
-				//throw 'Content array not yet supported here.'
 			} else if (tsc === 'string' || tsc === 'control') {
 				content.add(spec_content);
 			}
 		}
-
-		// control.view.dom.el
 		if (spec.el) {
 			d.el = spec.el;
 			if (spec.el.tagName) d.tagName = spec.el.tagName.toLowerCase();
 		}
-
-		//var that = this;
-		// control.view.context
-		//   (context not being part of view.model)
 		var context = this.context || spec.context;
-		//console.log('context', context);
-		// 
-
-		// Context does not seem manditory right now.
 		if (context) {
 			if (context.register_control) context.register_control(this);
-		} else {
-		}
+		} else {}
 		if (spec['class']) {
 			this.add_class(spec['class']);
 		}
@@ -564,10 +264,11 @@ class Control_Core extends Data_Object {
 		if (spec.add) {
 			this.add(spec.add);
 		}
+		if (spec.attrs) {
+			this.dom.attributes = spec.attrs;
+		}
 	}
 	'hide'() {
-		//console.log('hide');
-		//this.add_class('hidden');
 		let e = {
 			cancelDefault: false
 		}
@@ -577,19 +278,15 @@ class Control_Core extends Data_Object {
 		}
 	}
 	'show'() {
-		//console.log('show');
 		let e = {
 			cancelDefault: false
 		}
-		//console.log('pre raise show')
 		this.raise('show', e);
 		if (!e.cancelDefault) {
 			this.remove_class('hidden');
 		}
 	}
-
 	get html() {
-		// The rendered control.
 		return this.all_html_render();
 	}
 	get internal_relative_div() {
@@ -598,48 +295,28 @@ class Control_Core extends Data_Object {
 	set internal_relative_div(value) {
 		var old_value = this._internal_relative_div;
 		this._internal_relative_div = value;
-
 		if (value === true) {
-			// maybe re-render, raise event?
 		}
 	}
-	// resizable...
-	//  more of an enhanced property.
-
-	//  with some it would be text or font or foreground color.
-	//   generally divs because they fill space consider it background.
-	// Could be a shortcut for .background.color
-	//  Will be in / moved to view.model.value.color in the future.
 	get color() {
-		// Could use some internal property system that's more developed. Can use proxied objects rather than fields.
-		//return this._color;
 		return this.background.color;
 	}
 	set color(value) {
 		this.background.color = value;
 	}
-
 	'post_init'(spec) {
-		//throw 'stop';
 		if (spec && spec.id === true) {
-			// get the id from the context.
-			//if (t)
-			//this.set('dom.attributes.id', this._id());
 			this.dom.attrs.id = this._id();
 		}
 	}
-
-	// 'ret' function - gets something if possible.
 	'has'(item_name) {
 		var arr = item_name.split('.');
-		//console.log('arr ' + arr);
 		var c = 0,
 			l = arr.length;
 		var i = this;
 		var s;
 		while (c < l) {
 			s = arr[c];
-			//console.log('s ' + s);
 			if (typeof i[s] == 'undefined') {
 				return false;
 			}
@@ -648,28 +325,17 @@ class Control_Core extends Data_Object {
 		};
 		return i;
 	}
-
-	// The Dom attributes could count as fields, and wind up rendering themselves using Get.
-	//  Dom attributes likely to be a collection as well, perhaps automatically sorted by name.
-	// Could use collection rendering.
 	'renderDomAttributes'() {
-		//console.log('renderDomAttributes');
-
-		// Pre-render dom attributes?
-		//  To set the dom attributes programmatically according to properties.
-
 		if (this.beforeRenderDomAttributes) {
 			this.beforeRenderDomAttributes();
 		}
 		var dom_attrs = this.dom.attributes;
-
 		if (!dom_attrs) {
 			throw 'expecting dom_attrs';
 		} else {
 			if (this._) {
 				var keys = Object.keys(this._);
 				var key;
-				//console.log('_ keys', keys);
 				for (var c = 0, l = keys.length; c < l; c++) {
 					key = keys[c];
 					if (key !== '_bound_events') {
@@ -682,11 +348,9 @@ class Control_Core extends Data_Object {
 					}
 				}
 			}
-
 			if (this._ctrl_fields) {
 				var obj_ctrl_fields = {};
 				var keys = Object.keys(this._ctrl_fields);
-
 				var key;
 				for (var c = 0, l = keys.length; c < l; c++) {
 					key = keys[c];
@@ -694,42 +358,32 @@ class Control_Core extends Data_Object {
 						obj_ctrl_fields[key] = this._ctrl_fields[key]._id();
 					}
 				}
-
 				let scf = stringify(obj_ctrl_fields).replace(/"/g, "'");
-				//console.log('scf', scf);
-
 				if (scf.length > 2) {
 					dom_attrs['data-jsgui-ctrl-fields'] = scf;
 				}
 			}
-
 			if (this._fields) {
-
 				let sf = stringify(this._fields).replace(/"/g, "'");
-				//console.log('sf', sf);
-
 				if (sf.length > 2) {
 					dom_attrs['data-jsgui-fields'] = sf;
 				}
-				//this.set('dom.attributes.data-jsgui-fields', stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
-				//dom_attrs['data-jsgui-fields'] = stringify(this._fields).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]");
-
 			}
 			var arr = [];
-			arr.push(' data-jsgui-id="' + this._id() + '"');
-			// only if its not an html / svg / browser tag.
 
-			// and div?
+			const id = this._id();
+			if (id !== undefined) {
+				arr.push(' data-jsgui-id="' + this._id() + '"');
+			}
+
+			
 			const exempt_types = {
 				html: true,
 				head: true,
 				body: true
 			}
 			if (this.__type_name) {
-
-				// Still seems as though the body is not being activated properly.
-				//  New controls not appearing in the body as they should right now.
-				if (!exempt_types[this.__type_name]) {
+				if (!exempt_types[this.__type_name] && this.__type_name !== undefined) {
 					arr.push(' data-jsgui-type="' + this.__type_name + '"');
 				}
 			}
@@ -737,24 +391,16 @@ class Control_Core extends Data_Object {
 			var key, item;
 			for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
 				key = dom_attrs_keys[c];
-				//console.log('key', key);
 				if (key == '_bound_events') {
-
 				} else if (key === 'style') {
 					item = dom_attrs[key];
 					if (typeof item !== 'function') {
-						// if its an object, need to build up the string.
-						//  and ignore functions in there, such as 'off'.
 						if (typeof item === 'object') {
-							// for style in particular..
-							//console.log('key', key);
 							if (key === 'style') {
-								// can join an array with ;.
 								const sprops = [];
 								each(item, (v, k) => {
 									const tval = typeof v;
 									if (tval !== 'function') {
-										// need to write out the inline css here.
 										if (k !== '__empty') {
 											const sprop = k + ':' + v;
 											sprops.push(sprop);
@@ -775,25 +421,17 @@ class Control_Core extends Data_Object {
 					}
 				} else {
 					item = dom_attrs[key];
-					//console.log('item', item);
 					if (item && item.toString) {
 						arr.push(' ', key, '="', item.toString(), '"');
 					}
 				}
 			}
-			//dom_attrs.each(function (i, v) {
-			//    arr.push(' ', i, '="', v, '"');
-			//});
 			return arr.join('');
 		}
-		// Maintaining a dict, or some data structure of the inline styles will help.
-		//res = arr.join('');
-		//return res;
 	}
 	'renderBeginTagToHtml'() {
 		const tagName = this.dom.tagName;
 		var res;
-		// Possibly tagName will not be allowed to be false in the future.
 		if (tagName === false) {
 			res = '';
 		} else {
@@ -815,31 +453,20 @@ class Control_Core extends Data_Object {
 	'renderHtmlAppendment'() {
 		return this.htmlAppendment || '';
 	}
-	// not rendering a jQuery object....
-	// content including the tags? Not for the moment. Tags being false means there are no tags, and this tagless control acts as a container for other
-	//  controls or content.
-	// That will be useful for having different insertion points in controls without having to have them enclosed by an HTML element.
 	'renderEmptyNodeJqo'() {
 		return [this.renderBeginTagToHtml(), this.renderEndTagToHtml(), this.renderHtmlAppendment()].join('');
 	}
-	// register this and subcontrols
 	'register_this_and_subcontrols'() {
 		const context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
-			//console.log('iterate ctrl', ctrl);
 			context.register_control(ctrl);
 		});
 	}
 	'iterate_subcontrols'(ctrl_callback) {
-		//ctrl_callback(this);
 		const content = this.content;
-		//let tv;
 		content.each(v => {
 			ctrl_callback(v);
-			//console.log('v', v);
-			//tv = tof(v);
 			if (v && v.iterate_subcontrols) {
-				//v.iterate_this_and_subcontrols.call(v, ctrl_callback);
 				v.iterate_subcontrols(ctrl_callback);
 			}
 		});
@@ -849,34 +476,22 @@ class Control_Core extends Data_Object {
 		const content = this.content;
 		let tv;
 		content.each(v => {
-			//console.log('v', v);
 			tv = tof(v);
 			if (tv == 'string') {
-
 			} else if (tv == 'data_value') {
-				//var output = jsgui.output_processors['string'](n.get());
-				//res.push(jsgui.output_processors['string'](n.get()));
 			} else {
 				if (v && v.iterate_this_and_subcontrols) {
-					//v.iterate_this_and_subcontrols.call(v, ctrl_callback);
 					v.iterate_this_and_subcontrols(ctrl_callback);
 				}
 			}
 		});
 	}
 	'all_html_render'(callback) {
-		// observable result may be better.
-		//console.log('all render callback', tof(callback));
 		if (callback) {
-			//var that = this;
-			// want to recursively iterate through controls and subconstrols.
 			var arr_waiting_controls = [];
-			// Worth setting up the listener on this loop?
 			this.iterate_this_and_subcontrols((control) => {
 				if (control.__status == 'waiting') arr_waiting_controls.push(control);
 			});
-			// then if we are waiting on any of them we listen for them to complete.
-			//console.log('arr_waiting_controls.length', arr_waiting_controls.length);
 			if (arr_waiting_controls.length == 0) {
 				callback(null, this.all_html_render());
 			} else {
@@ -905,12 +520,6 @@ class Control_Core extends Data_Object {
 			}
 		}
 	}
-
-
-	// content to become view.content?
-	//  view.model.value.content?
-	//    content being a part of the model? Meaning the view model could determine what content is allowed internally?
-
 	'render_content'() {
 		var content = this.content;
 		var contentLength = content.length();
@@ -932,29 +541,19 @@ class Control_Core extends Data_Object {
 				} else {
 					res.push(n.all_html_render());
 				}
-				//htm = n.all_html_render();
 			}
 		}
 		return res.join('');
 	}
-
 	'all_html_render_internal_controls'() {
-		//var controls = this.controls, res = [];
 		return this.render_content();
 	}
-	'pre_all_html_render'() {
-	}
+	'pre_all_html_render'() {}
 	'compose'() {
-		// I think having this avoids a recursion problem with _super calling itself.
 	}
 	'visible'(callback) {
-		//console.log('vis');
-		//return this.style('display', 'block', callback);
 		this.style('display', 'block', callback);
 	}
-	// These kind of functions, that set a property to a value, could be made in a more efficient way.
-
-	// have this in a function chain?
 	'transparent'(callback) {
 		this.style('opacity', 0, callback);
 	}
@@ -963,22 +562,20 @@ class Control_Core extends Data_Object {
 			'opacity': 1
 		}, callback);
 	}
-
 	'remove'() {
-		const {parent} = this;
+		const {
+			parent
+		} = this;
 		parent.content.remove(this);
 	}
-
 	'add'(new_content) {
 		const tnc = tof(new_content);
 		let res;
-		//console.log('control add content tnc', tnc);
 		if (tnc === 'array') {
 			let res = [];
 			each(new_content, (v) => {
 				res.push(this.add(v));
 			});
-			//res = new_content;
 		} else {
 			if (new_content) {
 				if (tnc === 'string') {
@@ -1006,20 +603,10 @@ class Control_Core extends Data_Object {
 	}
 	'insert_before'(target) {
 		const target_parent = target.parent;
-		//console.log('target_parent', target_parent);
 		const target_index = target._index;
 		const content = target_parent.content;
 		content.insert(this, target_index);
 	}
-	/*
-	'toJSON' () {
-		var res = [];
-		res.push('Control(' + stringify(this._) + ')');
-		return res.join('');
-	}
-	*/
-
-	// will become view.dom.style - maybe still available as .style through a property shortcut.
 	'style'() {
 		const a = arguments,
 			sig = get_a_sig(a, 1);;
@@ -1027,23 +614,16 @@ class Control_Core extends Data_Object {
 		const d = this.dom,
 			da = d.attrs;
 		var style_name, style_value, modify_dom = true;
-
 		if (sig == '[s]') {
 			style_name = a[0];
 			var res = getComputedStyle(d.el)[style_name];
 			return res;
 		}
-		//console.log('style sig ' + sig);
-
 		if (sig == '[s,s,b]') {
-			//styleName = a[0], styleValue = a[1];
-			// Modify dom by default if there is a DOM.
-			//modifyDom = a[2];
 			[style_name, style_value, modify_dom] = a;
 		};
 		if (sig == '[s,s]' || sig == '[s,n]') {
 			[style_name, style_value] = a;
-
 		};
 		if (style_name && typeof style_value !== 'undefined') {
 			if (da.style) {
@@ -1054,92 +634,65 @@ class Control_Core extends Data_Object {
 					'value': da.style + ''
 				});
 			} else {
-				//this.dom.attrs.style = styleName + ':' + ''
 			}
 		}
-		//var that = this;
 		if (sig == '[o]') {
 			each(a[0], (v, i) => {
-				//console.log('v', v);
-				//console.log('i', i);
-				//that.style(i, v, false);
 				this.style(i, v);
 			});
 		}
 	}
-
 	'active'() {
-		// do nothing for the moment.
-
-		//console.log('Deprecated active. Functionality now part of standard control rendering.');
 	}
-	// So I think the resource-pool will have a selection scope.
 	'find_selection_scope'() {
-		//console.log('find_selection_scope', this._id());
 		var res = this.selection_scope;
-		//console.log('find_selection_scope', this._id());
 		if (res) return res;
 		if (this.parent && this.parent.find_selection_scope) return this.parent.find_selection_scope();
 	}
 	'click'(handler) {
-		// Adding the click event listener... does that add it to the DOM?
-
 		this.on('click', handler);
 	}
-
-	// view.dom.add_class
 	'add_class'(class_name) {
-		// Should have already set these up on activation.
-		//console.log('Control add_class ' + class_name);
 		let da = this.dom.attrs,
 			cls = da['class'];
 		if (!cls) {
 			da['class'] = class_name;
 		} else {
 			const tCls = tof(cls);
-			//console.log('tCls ' + tCls);
 			if (tCls == 'object') {
-
 				throw 'removed';
 			} else if (tCls == 'string') {
-				let arr_classes = cls.split(' '),  already_has_class = false, l = arr_classes.length, c = 0;
-
+				let arr_classes = cls.split(' '),
+					already_has_class = false,
+					l = arr_classes.length,
+					c = 0;
 				while (c < l && !already_has_class) {
 					if (arr_classes[c] === class_name) {
 						already_has_class = true;
 					}
 					c++;
 				}
-				//console.log('already_has_class', already_has_class);
 				if (!already_has_class) {
 					arr_classes.push(class_name);
 				}
 				da['class'] = arr_classes.join(' ');
 			}
 		}
-		//throw 'stop';
 	}
-
-	// view.dom.has_class
 	'has_class'(class_name) {
 		let da = this.dom.attrs,
 			cls = da['class'];
 		if (cls) {
 			var tCls = tof(cls);
 			if (tCls == 'object') {
-				//el.
-
 				throw 'removed';
 			}
 			if (tCls == 'string') {
-				//console.log('cls', cls);
 				var arr_classes = cls.split(' ');
 				var arr_res = [];
 				var l = arr_classes.length,
 					c = 0;
-				//console.log('arr_classes', arr_classes);
 				while (c < l) {
-					//console.log('arr_classes[c]', arr_classes[c]);
 					if (arr_classes[c] === class_name) {
 						return true;
 					}
@@ -1148,50 +701,34 @@ class Control_Core extends Data_Object {
 			}
 		}
 	}
-
 	'remove_class'(class_name) {
-		//console.log('remove_class ' + class_name);
 		let da = this.dom.attrs,
 			cls = da['class'];
-		//console.log('cls', cls);
-		//var el = this.dom.el;
-		//console.log('el.className', el.className);
 		if (cls) {
 			var tCls = tof(cls);
-			//console.log('tCls', tCls);
-			//throw 'stop';
 			if (tCls == 'object') {
-				//el.
-
 				throw 'removed';
 			}
 			if (tCls == 'string') {
-				//console.log('cls', cls);
 				var arr_classes = cls.split(' ');
 				var arr_res = [];
 				var l = arr_classes.length,
 					c = 0;
-				//console.log('arr_classes', arr_classes);
 				while (c < l) {
-					//console.log('arr_classes[c]', arr_classes[c]);
 					if (arr_classes[c] != class_name) {
-						//already_has_class = true;
 						arr_res.push(arr_classes[c]);
 					}
 					c++;
 				}
 				da['class'] = arr_res.join(' ');
 			}
-
 		}
 	}
 	'matches_selector'(selector) {
-		// functional selectors may be better / simpler to implement.
 		throw 'NYI'
 	}
 	'is_ancestor_of'(target) {
 		var t_target = tof(target);
-		//console.log('t_target', t_target);
 		var el = this.dom.el;
 		var inner = (target2) => {
 			if (target2 == el) {
@@ -1213,45 +750,30 @@ class Control_Core extends Data_Object {
 			}
 		} else {
 			if (t_target === 'control') {
-
 			}
 		}
 	}
 	'find_selected_ancestor_in_scope'() {
-		// same selection scope
-		// is this one already selected?
-		// best not to check....
 		var s = this.selection_scope;
-		//console.log('parent ' + parent);
 		var ps = this.parent.selection_scope;
 		if (s === ps) {
-			// Probably would be much more convenient to get a data value just as its value,
-			//  or have a more convenient data value idiom.
 			var psel = this.parent.selected;
 			if (psel && psel.value && psel.value() == true) {
-				//throw 'stop';
 				return this.parent;
 			} else {
 				return this.parent.find_selected_ancestor_in_scope();
 			}
 		}
-		//throw 'stop';
 	}
-	// self and ancestor search
 	'closest'(match) {
 		let tmatch = tof(match);
 		if (tmatch === 'string') {
-
 		}
 		if (tmatch === 'function') {
-			// iterate self and ancestors
-
 			let search = (ctrl) => {
-				//console.log('match(ctrl)', match(ctrl));
 				if (match(ctrl)) {
 					return ctrl;
 				} else {
-					//console.log('ctrl.parent', ctrl.parent);
 					if (ctrl.parent) {
 						return search(ctrl.parent);
 					} else {
@@ -1262,21 +784,13 @@ class Control_Core extends Data_Object {
 			return search(this);
 		}
 	}
-
-
-	// deep copy / clone would help.
-	//  copy as deep as reasonably possible at least.
-
-	// Likely to need substantial changes when .view and .model are in use.
 	'shallow_copy'() {
-		//console.log('Control shallow_copy');
 		var res = new Control({
 			'context': this.context
 		});
 		var da = this.dom.attributes;
 		var cl = da.class;
 		var map_class_exclude = {
-			//'bg-light-yellow': true,
 			'selected': true
 		}
 		each(cl.split(' '), (v, i) => {
@@ -1292,19 +806,14 @@ class Control_Core extends Data_Object {
 		})
 		return res;
 	}
-
-	// A bit old-school... may remove...?
 	'$match'(selector) {
 		let parse_word = word => {
-			// begins with full stop: matches css class
-			// else matches __type_name
 			if (word[0] === '.') {
 				return () => this.has_class(word.substr(1));
 			} else {
 				return () => this.__type_name === word;
 			}
 		}
-
 		let parse_selector = selector => {
 			let words = selector.split(' ');
 			let res = words.map(x => parse_word(x));
@@ -1317,7 +826,6 @@ class Control_Core extends Data_Object {
 			console.trace();
 			throw 'NYI';
 		}
-		// Does this match the selector?
 		let res = false;
 		let tn = this.__type_name;
 		if (tn) {
@@ -1325,9 +833,6 @@ class Control_Core extends Data_Object {
 		}
 		return res;
 	}
-
-	// Want it to return an array of them.
-
 	'$'(selector, handler) {
 		let match = this.$match(selector);
 		let res = [];
@@ -1335,7 +840,6 @@ class Control_Core extends Data_Object {
 			if (handler) handler(this);
 			res.push(this)
 		}
-		//console.log('this.content.length()', this.content.length());
 		this.content.each(item => {
 			if (item.$) {
 				let nested_res = item.$(selector, handler);
@@ -1344,41 +848,85 @@ class Control_Core extends Data_Object {
 		});
 		return res;
 	}
-
-	// About clearing the .view.content in the future.
 	'clear'() {
 		this.content.clear();
 	}
-
 	'activate'() {
-		// Do nothing for basic control I think.
-		//  Possibly will be doing some things depending on discovered properties.
-
-		// Need to work more on heirachy in activation.
-		//  Want html documents (and pretty much everythin else) to use the enhanced activation.
-		//  Should be OK having that in the dependency chain on the server, much of the code won't be called though.
-
-		// Or, enhance the activations of the prototypes?
-		//  I'd prefer to have the enhancements become higher up the chain.
 	}
-
 	get this_and_descendents() {
 		const res = [];
-		// then iterate the descendents.
 		this.iterate_this_and_subcontrols(ctrl => res.push(ctrl));
 		return res;
 	}
 	get descendents() {
 		const res = [];
-		// then iterate the descendents.
 		this.iterate_subcontrols(ctrl => res.push(ctrl));
 		return res;
 	}
 };
-
 var p = Control_Core.prototype;
-//p.fields = Control_fields;
 p.connect_fields = true;
-// assign_fields(Control, control_fields);
-
 module.exports = Control_Core;
+
+if (require.main === module) {
+
+	// May be a better syntax to accept attributes like this?
+
+	const Control = Control_Core;
+
+	class SVG_Control extends Control {
+		constructor(spec) {
+			super(spec);
+			this.dom.tagName = 'svg';
+		}
+	
+		circle(cx, cy, r) {
+			let circle = new Control({
+				tagName: 'circle',
+				attrs: {
+					cx, cy, r
+				}
+			});
+			this.content.add(circle);
+			return circle;
+		}
+	
+		rect(x, y, width, height) {
+			let rect = new Control({
+				tagName: 'rect',
+				attrs: {
+					x, y, width, height
+				}
+			});
+			this.content.add(rect);
+			return rect;
+		}
+	
+		// Other SVG element creation methods could be added here...
+	}
+
+	/*
+
+	let svg = new SVG_Control();
+	svg.circle(100, 100, 50);
+	svg.rect(150, 150, 100, 100);
+
+	const str = svg.all_html_render();
+	console.log('str', str);
+	*/
+
+	const circle = new Control({
+		tagName: 'circle',
+		attrs: {
+		  cx: 50,
+		  cy: 50,
+		  r: 40,
+		  stroke: 'green',
+		  'stroke-width': 4,
+		  fill: 'yellow'
+		}
+	  });
+
+	  const str = circle.all_html_render();
+	  console.log('str', str);
+}
