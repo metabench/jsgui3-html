@@ -507,6 +507,7 @@ class Control_Core extends Data_Object {
 		});
 	}
 	'all_html_render'(callback) {
+		// Should consider promises here too.
 		if (callback) {
 			var arr_waiting_controls = [];
 			this.iterate_this_and_subcontrols((control) => {
@@ -567,6 +568,9 @@ class Control_Core extends Data_Object {
 	}
 	'all_html_render_internal_controls'() {
 		return this.render_content();
+	}
+	'render'() {
+		return this.all_html_render(); // No callback, sync render only. Await readiness some other way.
 	}
 	'pre_all_html_render'() {}
 	'compose'() {}
@@ -888,71 +892,6 @@ if (require.main === module) {
 
 	const Control = Control_Core;
 
-	class SVG_Control extends Control {
-		constructor(spec) {
-			super(spec);
-			this.dom.tagName = 'svg';
-		}
-
-		circle(cx, cy, r) {
-			let circle = new Control({
-				tagName: 'circle',
-				attrs: {
-					cx,
-					cy,
-					r
-				}
-			});
-			this.content.add(circle);
-			return circle;
-		}
-
-		rect(x, y, width, height) {
-			let rect = new Control({
-				tagName: 'rect',
-				attrs: {
-					x,
-					y,
-					width,
-					height
-				}
-			});
-			this.content.add(rect);
-			return rect;
-		}
-
-		// Other SVG element creation methods could be added here...
-	}
-
-	/*
-
-	let svg = new SVG_Control();
-	svg.circle(100, 100, 50);
-	svg.rect(150, 150, 100, 100);
-
-	const str = svg.all_html_render();
-	console.log('str', str);
-	*/
-
-	/*
-
-	const circle = new Control({
-		tagName: 'circle',
-		attrs: {
-		  cx: 50,
-		  cy: 50,
-		  r: 40,
-		  stroke: 'green',
-		  'stroke-width': 4,
-		  fill: 'yellow'
-		}
-	  });
-
-	  const str = circle.all_html_render();
-	  console.log('str', str);
-
-	  */
-
 	function test_svg() {
 		const passed = [];
 		const failed = [];
@@ -1023,8 +962,6 @@ if (require.main === module) {
 		};
 	}
 	console.log(test_svg()); // prints the results of the test
-
-
 
 	const test_background_color = () => {
 		const expectedColor = '#ff0000';

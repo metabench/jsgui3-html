@@ -132,6 +132,9 @@ class Control extends Control_Core {
 		});
 		return this;
 	}
+
+	// Maybe it's a DOM method, through .DOM?
+	// . While there is the 'DOM facade' it may be suitable as part of the Control itself.
 	'bcr' () {
 		var a = arguments;
 		a.l = a.length;
@@ -157,6 +160,7 @@ class Control extends Control_Core {
 			});
 		}
 	}
+	// Presuming pixels when?
 	get size() {
 		if (this._size) {
 			return this._size;
@@ -168,8 +172,8 @@ class Control extends Control_Core {
 		}
 	}
 	'add_text' (value) {
-		console.log('add_text', value);
-		console.trace();
+		//console.log('add_text', value);
+		//console.trace();
 		var tn = new Text_Node({
 			'context': this.context,
 			'text': value + ''
@@ -206,6 +210,9 @@ class Control extends Control_Core {
 				bottom = parseInt(s_c_padding[2], 10);
 				return [0, top, right, bottom];
 			}
+		} else {
+			console.trace();
+			throw 'Required argument: (array)'
 		}
 	}
 	'border' () {
@@ -217,6 +224,9 @@ class Control extends Control_Core {
 			var c_border = this.computed_style('border');
 			console.log('c_border', c_border);
 			throw 'stop';
+		} else {
+			console.trace();
+			throw 'Required argument: (array)'
 		}
 	}
 	'border_thickness' () {
@@ -328,6 +338,7 @@ class Control extends Control_Core {
 		}
 	}
 	'remove_event_listener' () {
+		// Part of the 'DOM facade / interop system?
 		const a = arguments;
 		const sig = get_a_sig(a, 1);
 		if (sig === '[s,f]') {
@@ -416,7 +427,7 @@ class Control extends Control_Core {
 		});
 	}
 	'activate_this_and_subcontrols' () {
-		let context = this.context;
+		//let context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
 			if (ctrl.dom.el) {
 				ctrl.activate();
@@ -476,16 +487,17 @@ class Control extends Control_Core {
 					el.appendChild(itemDomEl);
 					e_change.item.register_this_and_subcontrols();
 				}
-			}
-			if (type === 'clear') {
+			} else if (type === 'clear') {
 				if (el) {
 					el.innerHTML = '';
 				}
-			}
-			if (type === 'remove') {
+			} else if (type === 'remove') {
 				if (e_change.value.dom.el) {
 					e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
 				}
+			} else {
+				console.trace();
+				throw 'NYI - Unexpected change type. e_change: ' + e_change;
 			}
 		});
 	}
@@ -528,6 +540,7 @@ class Control extends Control_Core {
 		});
 	}
 	'activate_content_controls' () {
+		
 		if (!this.dom.el) {
 			let found_el = this.context.get_ctrl_el(this);
 			if (found_el) {
@@ -604,8 +617,8 @@ class Control extends Control_Core {
 				}
 			}
 		} else {
-			console.trace();
-			console.log('missing el');
+			//console.trace();
+			//console.log('missing el');
 		}
 	}
 	'activate_dom_attributes' () {
@@ -711,7 +724,6 @@ class Control extends Control_Core {
 			}
 
 		}
-		
 		return super.add(new_content);
 	}
 	'clear' () {

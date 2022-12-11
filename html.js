@@ -61,34 +61,40 @@ jsgui.Resource.load_compiler = (name, jsfn, options) => {
 //  need to be able to serve that CSS to the user.
 // if running on the server...
 
-if (typeof document === 'undefined') {
+const being_removed = () => {
+        if (typeof document === 'undefined') {
 
-    var fs = require('fs');
-    //let basic_css_path = libpath.resolve('./css/basic.css');
-    const libpath = require('path');
-
-    let basic_css_path = libpath.join(__dirname, 'css', 'basic.css');
-
-    //console.log('__dirname', __dirname);
-    //console.log('basic_css_path', basic_css_path);
-    var basic_css = fs.readFileSync(basic_css_path, 'utf8');
-
-    // Want the css strings.
-    // Want the css ASTs as well.
-
-    // Want to be able to get the CSS properties in order to have default sizes in some situations.
-
-    jsgui.css = {
-        'basic': basic_css
-    };
+        /*
+        var fs = require('fs');
+        //let basic_css_path = libpath.resolve('./css/basic.css');
+        const libpath = require('path');
+    
+        let basic_css_path = libpath.join(__dirname, 'css', 'basic.css');
+    
+        //console.log('__dirname', __dirname);
+        //console.log('basic_css_path', basic_css_path);
+        var basic_css = fs.readFileSync(basic_css_path, 'utf8');
+    
+        // Want the css strings.
+        // Want the css ASTs as well.
+    
+        // Want to be able to get the CSS properties in order to have default sizes in some situations.
+    
+        jsgui.css = {
+            'basic': basic_css
+        };
+        */
+    }
 }
+
+
 //var Controls = require('./controls/controls');
 
 jsgui.controls = jsgui.controls || {};
 Object.assign(jsgui.controls, require('./controls/controls'));
 //jsgui.controls = require('./controls/controls');
 
-// will get rid of this
+// will get rid of this (or not?)
 Object.assign(jsgui, jsgui.controls);
 jsgui.mixins = jsgui.mx = require('./control_mixins/mx');
 
