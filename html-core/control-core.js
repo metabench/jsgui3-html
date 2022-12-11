@@ -15,6 +15,9 @@ const Collection = jsgui.Collection;
 const tof = jsgui.tof;
 const stringify = jsgui.stringify;
 const Text_Node = require('./text-node');
+
+jsgui.custom_rendering = 'very-simple';
+
 const {
 	prop,
 	field
@@ -639,6 +642,8 @@ class Control_Core extends Data_Object {
 		var style_name, style_value, modify_dom = true;
 		if (sig == '[s]') {
 			style_name = a[0];
+			// Maybe don't have the element
+			// . Better to run some tests / checks
 			var res = getComputedStyle(d.el)[style_name];
 			return res;
 		}
@@ -745,9 +750,7 @@ class Control_Core extends Data_Object {
 			}
 		}
 	}
-	'matches_selector'(selector) {
-		throw 'NYI'
-	}
+	
 	'is_ancestor_of'(target) {
 		var t_target = tof(target);
 		var el = this.dom.el;
@@ -825,26 +828,66 @@ class Control_Core extends Data_Object {
 		})
 		return res;
 	}
-	'$match'(selector) {
-		let parse_word = word => {
-			if (word[0] === '.') {
-				return () => this.has_class(word.substr(1));
-			} else {
-				return () => this.__type_name === word;
+
+	// a function
+	'matches_selector'(selector) {
+		throw 'NYI'
+		// maybe the same as '$match'?
+
+		// or $find.
+
+	}
+
+	'find'(selector) { // or selector?
+		// Prob best to do rec desc here.
+		// . Assemble an array.
+
+		const res = [];
+
+		const desc = (node, callback) => {
+			if (node.$match(selector)) {
+				callback(node);
 			}
+			node.content.each(child => {
+				desc(child, callback);
+			})
 		}
-		let parse_selector = selector => {
-			let words = selector.split(' ');
-			let res = words.map(x => parse_word(x));
-			return res;
-		}
-		let parsed = parse_selector(selector);
-		if (parsed.length === 1) {
-			return parsed[0]();
+
+		desc(this, (node => res.push(node)));
+
+		return res;
+	}
+
+	// Only for matching classes right now.
+	// . I think accepting a function may work better, or be a decent alternative. Or an object (Control) type even.
+	'$match'(selector) {
+
+		if (typeof selector === 'function') {
+			return selector(this);
 		} else {
-			console.trace();
-			throw 'NYI';
+			let parse_word = word => {
+				if (word[0] === '.') {
+					return () => this.has_class(word.substr(1));
+				} else {
+					return () => this.__type_name === word;
+				}
+			}
+			let parse_selector = selector => {
+				let words = selector.split(' ');
+				let res = words.map(x => parse_word(x));
+				return res;
+			}
+			let parsed = parse_selector(selector);
+			if (parsed.length === 1) {
+				return parsed[0]();
+			} else {
+				console.trace();
+				throw 'NYI';
+			}
+			
 		}
+
+		
 		let res = false;
 		let tn = this.__type_name;
 		if (tn) {
@@ -884,6 +927,22 @@ class Control_Core extends Data_Object {
 };
 var p = Control_Core.prototype;
 p.connect_fields = true;
+const customInspectSymbol = Symbol.for('nodejs.util.inspect.custom');
+
+if (jsgui.custom_rendering === 'very-simple') {
+	p[customInspectSymbol] = function(depth, inspectOptions, inspect) {
+		// Convert the object to a string and add some formatting
+		//return JSON.stringify(this, null, 2);
+
+		
+
+		return '< ' + this.dom.tagName + ' ' + this.__type_name +  ' >'
+	};
+}
+
+
+
+
 module.exports = Control_Core;
 
 if (require.main === module) {
@@ -1020,6 +1079,11 @@ if (require.main === module) {
 			failed,
 		};
 	};
+
+	// Being able to recurse through a structure of controls would be interesting / useful.
+	//  Improving the 'match' function would help.
+	// . Worth having tests for its current functionality though.
+
 
 	//console.log(JSON.stringify(test_background_color()), null, 2);
 	const rtest = test_background_color();
