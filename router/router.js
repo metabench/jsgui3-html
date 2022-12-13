@@ -68,7 +68,9 @@ class Router {
         }
 
         if (parsed_url) {
+            //console.log('parsed_url', parsed_url);
             var splitPath = parsed_url.pathname.substr(1).split('/');
+            //console.log('splitPath', splitPath);
 
             //console.log('req.url', req.url);
 

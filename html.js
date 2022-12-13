@@ -44,48 +44,10 @@ jsgui.Resource.Compiler = require('./resource/compiler-resource');
 //  How to use compilers with programmatic streams?
 //  Maybe will need to run some of them on disk.
 jsgui.Resource.load_compiler = (name, jsfn, options) => {
-
+    throw 'NYI';
 
 }
 
-// jsgui.compile(input, options) gets observable or stream or something like that.
-
-
-
-// Need an easy way to config and load compiler resources.
-//  Standard and simple interface.
-
-
-
-// sync load of css.
-//  need to be able to serve that CSS to the user.
-// if running on the server...
-
-const being_removed = () => {
-        if (typeof document === 'undefined') {
-
-        /*
-        var fs = require('fs');
-        //let basic_css_path = libpath.resolve('./css/basic.css');
-        const libpath = require('path');
-    
-        let basic_css_path = libpath.join(__dirname, 'css', 'basic.css');
-    
-        //console.log('__dirname', __dirname);
-        //console.log('basic_css_path', basic_css_path);
-        var basic_css = fs.readFileSync(basic_css_path, 'utf8');
-    
-        // Want the css strings.
-        // Want the css ASTs as well.
-    
-        // Want to be able to get the CSS properties in order to have default sizes in some situations.
-    
-        jsgui.css = {
-            'basic': basic_css
-        };
-        */
-    }
-}
 
 
 //var Controls = require('./controls/controls');

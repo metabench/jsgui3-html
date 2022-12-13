@@ -16,7 +16,7 @@ const tof = jsgui.tof;
 const stringify = jsgui.stringify;
 const Text_Node = require('./text-node');
 
-jsgui.custom_rendering = 'very-simple';
+//jsgui.custom_rendering = 'very-simple';
 
 const {
 	prop,
@@ -500,14 +500,19 @@ class Control_Core extends Data_Object {
 		ctrl_callback(this);
 		const content = this.content;
 		let tv;
-		content.each(v => {
-			tv = tof(v);
-			if (tv == 'string') {} else if (tv == 'data_value') {} else {
-				if (v && v.iterate_this_and_subcontrols) {
-					v.iterate_this_and_subcontrols(ctrl_callback);
+
+		if (typeof content !== 'string') {
+			content.each(v => {
+				tv = tof(v);
+				if (tv == 'string') {} else if (tv == 'data_value') {} else {
+					if (v && v.iterate_this_and_subcontrols) {
+						v.iterate_this_and_subcontrols(ctrl_callback);
+					}
 				}
-			}
-		});
+			});
+		}
+
+		
 	}
 	'all_html_render'(callback) {
 		// Should consider promises here too.
@@ -546,28 +551,35 @@ class Control_Core extends Data_Object {
 	}
 	'render_content'() {
 		var content = this.content;
-		var contentLength = content.length();
-		var res = new Array(contentLength);
-		var tn, output;
-		var arr = content._arr;
-		var c, l = arr.length,
-			n;
-		for (c = 0; c < l; c++) {
-			n = arr[c];
-			tn = tof(n);
-			if (tn === 'string') {
-				res.push(jsgui.output_processors['string'](n));
-			} else if (tn === 'data_value') {
-				res.push(n._);
-			} else {
-				if (tn === 'data_object') {
-					throw 'stop';
+
+		if (tof(content) === 'string') {
+			return content;
+		} else {
+			var contentLength = content.length();
+			var res = new Array(contentLength);
+			var tn, output;
+			var arr = content._arr;
+			var c, l = arr.length,
+				n;
+			for (c = 0; c < l; c++) {
+				n = arr[c];
+				tn = tof(n);
+				if (tn === 'string') {
+					res.push(jsgui.output_processors['string'](n));
+				} else if (tn === 'data_value') {
+					res.push(n._);
 				} else {
-					res.push(n.all_html_render());
+					if (tn === 'data_object') {
+						throw 'stop';
+					} else {
+						res.push(n.all_html_render());
+					}
 				}
 			}
+			return res.join('');
 		}
-		return res.join('');
+
+		
 	}
 	'all_html_render_internal_controls'() {
 		return this.render_content();

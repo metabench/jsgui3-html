@@ -45,7 +45,23 @@ const {
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui.controls[tagName] = jsgui[tagName] = class extends Control {
         constructor(spec) {
-            spec.__type_name = tagName;
+            let str;
+            //console.log('typeof spec', typeof spec);
+            if (typeof spec === 'string') {
+                str = spec;
+                spec = {
+                    __type_name: tagName
+                } 
+            } else {
+
+                if (typeof spec === 'object') {
+                    spec.__type_name = tagName;
+                }
+
+                
+            }
+
+            
             super(spec);
             this.dom.tagName = tagName;
         }
