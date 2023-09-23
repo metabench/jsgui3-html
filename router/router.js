@@ -51,6 +51,13 @@ class Router {
     }
     'process'(req, res) {
 
+        // Want to be able to pass things got from the router such as wildcard_value
+
+        //console.log('jsgui3-html router processing request');
+        //console.log('');
+        //console.log('req.url', req.url);
+        //console.log('');
+
         // hmmm... maybe could have already extracted req.url.
         
 
@@ -75,10 +82,14 @@ class Router {
             //console.log('req.url', req.url);
 
             var route_res = rt.get(req.url);
+
+
             var processor_values_pair;
             var t_handler;
 
-            //console.log('route_res', route_res);
+            ///console.log('Object.keys(route_res)', Object.keys(route_res));
+
+            //console.log('(route_res)', (route_res));
 
             if (tof(route_res) === 'array') {
                 processor_values_pair = route_res;

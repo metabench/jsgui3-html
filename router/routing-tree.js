@@ -77,6 +77,9 @@ class Routing_Tree {
             if (strRoute.substr(strRoute.length - 1) == '/') strRoute = strRoute.substr(0, strRoute.length - 1);
             //console.log('strRoute ' + strRoute);
             var splitRoute = strRoute.split('/');
+
+            //console.log('splitRoute', splitRoute);
+
             var currentNode = this.root;
 
             // traverse through to find the place.
@@ -110,12 +113,17 @@ class Routing_Tree {
                         if (context) currentNode.wildcardChild.context = context;
                     } else {
                         var next_level_node = currentNode.mapNormalPathChildren[strLevel];
+                        //console.log('next_level_node', next_level_node);
                         if (!next_level_node) {
                             currentNode.mapNormalPathChildren[strLevel] = new Routing_Tree_Node();
                             next_level_node = currentNode.mapNormalPathChildren[strLevel];
+                            // 
+                            //console.log('should have made node');
                         }
 
-                        if (c == splitRoute.length - 1) {
+                        if (c === splitRoute.length - 1) {
+                            //console.log('c === splitRoute.length - 1');
+                            //console.log('currentNode', currentNode);
                             currentNode.mapNormalPathChildren[strLevel].handler = handler;
                             if (context) currentNode.mapNormalPathChildren[strLevel].context = context;
                         }
@@ -129,6 +137,8 @@ class Routing_Tree {
     }
     'get'(url) {
         // routes the URL through the tree
+
+        //console.log('router get url: ', url);
         var params;
         if (url == '/') {
             var root = this.root;
@@ -184,6 +194,12 @@ class Routing_Tree {
                                 var arr_the_rest = splitUrl.slice(c);
                                 //console.log('arr_the_rest', arr_the_rest);
                                 var str_wildcard_value = arr_the_rest.join('/');
+                                if (url.endsWith('/')) str_wildcard_value += '/';
+
+                                //console.log('url', url);
+                                //console.log(`url.endsWith('/')`, url.endsWith('/'));
+                                //console.log('a) str_wildcard_value', str_wildcard_value);
+
                                 if (currentNode.wildcardChild.context) {
                                     return [currentNode.wildcardChild.context, currentNode.wildcardChild.handler, {
                                         'wildcard_value': str_wildcard_value
