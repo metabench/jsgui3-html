@@ -15,7 +15,7 @@ class Context_Menu extends Control {
 		//this.add_class('context menu');
 		this.add_class('context menu');
 
-		console.log('Context_Menu init spec.el', spec.el);
+		//console.log('Context_Menu init spec.el', spec.el);
 		if (!spec.abstract) {
 
 			const obj = spec.value;

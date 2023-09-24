@@ -59,7 +59,7 @@ var Control = jsgui.Control;
 
 
 
-
+// Needs more work. Would be nice to make really simple implementation that does what is needed, while allowing extensions.
 
 class Combo_Box extends Control {
     constructor(spec) {

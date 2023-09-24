@@ -5,7 +5,7 @@
 //   Possibly will not be used. Will make .model and .view properties, likely through mixins.
 
 
-
+// Date properties.
 
 
 let lang = require('lang-mini');
