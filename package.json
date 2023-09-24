@@ -5,7 +5,7 @@
   "dependencies": {
     "fnl": "^0.0.25",
     "htmlparser": "^1.7.7",
-    "lang-tools": "^0.0.15",
+    "lang-tools": "^0.0.16",
     "obext": "^0.0.24",
     "url-parse": "^1.5.10"
   },
@@ -38,5 +38,5 @@
   "devDependencies": {
     "esbuild": "^0.19.3"
   },
-  "version": "0.0.112"
+  "version": "0.0.113"
 }
