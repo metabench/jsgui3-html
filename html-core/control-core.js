@@ -51,7 +51,7 @@ var new_obj_style = () => {
 		var first = true;
 		each(style, (value, key) => {
 			const tval = typeof value;
-			if (tval !== 'function' && key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger' && key !== {}) {
+			if (tval !== 'function' && key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger') {
 				if (first) {
 					first = false;
 				} else {

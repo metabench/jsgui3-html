@@ -3,10 +3,10 @@
   "main": "html.js",
   "license": "MIT",
   "dependencies": {
-    "fnl": "^0.0.27",
+    "fnl": "^0.0.29",
     "htmlparser": "^1.7.7",
-    "lang-tools": "^0.0.16",
-    "obext": "^0.0.25",
+    "lang-tools": "^0.0.17",
+    "obext": "^0.0.27",
     "url-parse": "^1.5.10"
   },
   "depNotes": {
@@ -38,5 +38,5 @@
   "devDependencies": {
     "esbuild": "^0.19.3"
   },
-  "version": "0.0.114"
+  "version": "0.0.115"
 }
