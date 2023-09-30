@@ -1,5 +1,7 @@
 // Tree_Router?
 
+// Somewhat substantial changes with it not removing the first '/'.
+
 var url = require('url-parse'),
     //jsgui = require('lang-tools'),
     jsgui = require('lang-mini'),
@@ -41,6 +43,9 @@ class Router {
     }
     'set_route'(str_route, context, fn_handler) {
         //var rt = this.get('routing_tree');
+
+        // Routing tree not properly setting routes beginning with '/'?
+        console.log('pre routing tree set route:', str_route);
         return this.routing_tree.set(str_route, context, fn_handler);
     }
     'meets_requirements'() {
@@ -79,9 +84,14 @@ class Router {
             var splitPath = parsed_url.pathname.substr(1).split('/');
             //console.log('splitPath', splitPath);
 
-            //console.log('req.url', req.url);
+            //console.log('pre rt.get(url) req.url', req.url);
 
             var route_res = rt.get(req.url);
+
+            //console.log('!!route_res', !!route_res);
+
+
+            //console.log('route_res', route_res);
 
 
             var processor_values_pair;
@@ -92,17 +102,39 @@ class Router {
             //console.log('(route_res)', (route_res));
 
             if (tof(route_res) === 'array') {
+
+
+
                 processor_values_pair = route_res;
                 var context, handler, params;
+
+                //console.log('route_res.length', route_res.length);
+
                 if (route_res.length === 2) {
+
+                    // Maybe is not a Data_Object....
+
                     var rr_sig = get_item_sig(route_res, 1);
+
+                    //console.log('rr_sig', rr_sig);
+
+                    // Maybe just need the context and handler.
+                    //   Though having the router able to extract params would help a lot.
+                    //   
+
+
                     if (rr_sig == '[D,f]') {
                         context = processor_values_pair[0];
                         handler = processor_values_pair[1];
-                    }
-                    if (rr_sig == '[f,o]') {
+                    } else if (rr_sig == '[f,o]') {
                         handler = processor_values_pair[0];
                         params = processor_values_pair[1];
+                    } else if (rr_sig == '[o,f]') {
+                        context = processor_values_pair[0];
+                        handler = processor_values_pair[1];
+
+                        //console.log('params', params);
+
                     }
                 }
                 if (route_res.length === 3) {
@@ -120,6 +152,8 @@ class Router {
                     handler.call(context, req, res);
                 } else {
                     t_handler = typeof handler;
+                    //  The handler type being wrong....?
+
                     if (typeof handler === 'function') {
                         handler(req, res);
                     } else {
@@ -133,6 +167,9 @@ class Router {
                                 // looks like a hack attempt
                             }
                             console.log('1) no defined route result ', their_ip.padEnd(16, ' '), splitPath);
+
+                            console.log('req.url', req.url);
+                            console.log('parsed_url', parsed_url);
 
                             // Some kind of 404 handler makes sense.
                             return false;
@@ -152,6 +189,9 @@ class Router {
                     route_res(req, res);
                 }
             } else if (tof(route_res) === 'undefined') {
+
+
+
                 console.log('2) no defined route result', splitPath);
                 return false;
             }

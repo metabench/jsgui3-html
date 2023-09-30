@@ -71,10 +71,18 @@ class Routing_Tree {
             if (context) this.root.context = context;
             this.root.handler = handler;
         } else {
-            if (strRoute.substr(0, 1) == '/') strRoute = strRoute.substr(1);
+
+
+            // Maybe make some options / classes to hold options / option sets for URL modification.
+
+
+            // 
+            // Maybe best not to remove this initial '/'???
+
+            //if (strRoute.substr(0, 1) == '/') strRoute = strRoute.substr(1);
             // remove any beginning or trailing '/' from the route
 
-            if (strRoute.substr(strRoute.length - 1) == '/') strRoute = strRoute.substr(0, strRoute.length - 1);
+            //if (strRoute.substr(strRoute.length - 1) == '/') strRoute = strRoute.substr(0, strRoute.length - 1);
             //console.log('strRoute ' + strRoute);
             var splitRoute = strRoute.split('/');
 
@@ -164,9 +172,12 @@ class Routing_Tree {
                 return res;
             }
         } else {
-            // remove any beginning or trailing '/' from the route
-            if (url.substr(url.length - 1) == '/') url = url.substr(0, url.length - 1);
-            if (url.substr(0, 1) == '/') url = url.substr(1);
+            // remove any beginning or trailing '/' from the route???
+
+
+            //if (url.substr(url.length - 1) == '/') url = url.substr(0, url.length - 1);
+
+            //if (url.substr(0, 1) == '/') url = url.substr(1);
             // process the url to remove the querystring.
             var posQM = url.indexOf('?');
             if (posQM > -1) {

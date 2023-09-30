@@ -699,6 +699,11 @@ class Blank_HTML_Document extends HTML_Document {
             //this.set('head', head);
             //this.set('title', title);
             //this.set('body', body);
+
+            // Should not have a function to retrieve them....?
+            
+
+
             this.head = head;
             this.title = title;
             this.body = body;
@@ -710,6 +715,9 @@ class Blank_HTML_Document extends HTML_Document {
         //console.log('');
         //console.log('end init Blank_HTML_Document this._ ' + stringify(this._));
     }
+
+    // But some other helper on the server???
+
     'body'() {
         //console.log('body sig', sig);
         var a = arguments;
