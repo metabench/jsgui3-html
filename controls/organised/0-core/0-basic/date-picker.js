@@ -50,7 +50,7 @@ Being able to select dates (including times) in a nice user-friendly way is goin
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
 
-const mx_date = require('../../../../control_mixins/date');
+const mx_date = require('../../../../control_mixins/typed_data/date');
 
 
 // May be somewhat like Calendar

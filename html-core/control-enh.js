@@ -148,8 +148,8 @@ class Control extends Control_Core {
 				[bcr.width, bcr.height]
 			];
 			return res;
-		}
-		if (sig === '[a]') {
+		} else if (sig === '[a]') {
+			// Set the bcr
 			let [pos, br_pos, size] = a[0];
 			this.style({
 				'position': 'absolute',
@@ -629,7 +629,7 @@ class Control extends Control_Core {
 			const attrs = el.attributes;
 			if (attrs) {
 				const l = attrs.length
-				console.log('attrs l', l);
+				//console.log('attrs l', l);
 				for (i = 0; i < l; i++) {
 					item = attrs.item(i);
 					name = item.name;

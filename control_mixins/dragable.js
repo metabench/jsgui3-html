@@ -40,6 +40,16 @@ const {
 //const console = {log: () => {}};
 
 
+// Maybe a class may work better...?
+// Could be easier to make variations and subclasses.
+
+
+// Seems like we need a 'handle_to' ctrl option.
+//   So dragging the hansdle drags the control it's the handle to.
+
+// So here can specify a ctrl to use as the handle.
+
+
 let dragable = (ctrl, opts = {}) => {
 
 	// And may use pointer press events instead?
@@ -141,6 +151,8 @@ let dragable = (ctrl, opts = {}) => {
 	let pos_md, pos_mm, pos_mu, pos_md_within_ctrl;
 
 	// pos_md_within_ctrl
+
+	console.log('ctrl.context.body', ctrl.context.body);
 
 	let ctrl_body = ctrl.context.body();
 	let dragging = false;
@@ -265,7 +277,13 @@ let dragable = (ctrl, opts = {}) => {
 
 			//console.log('2) ctrl.pos', ctrl.pos);
 			//let new_item_pos = 
-		} if (drag_mode === 'translate') {
+		} else if (drag_mode === 'translate') {
+
+			// May not need the initial translate.
+			//  ???
+			// Need to fix this for when dragging a ctrl(el) that is already absolutely positioned.
+
+
 			// Don't need to keep track of the original position.
 			// Need to know the original press pos.
 			//console.log('drag_mode: translate');
@@ -355,8 +373,11 @@ let dragable = (ctrl, opts = {}) => {
 			// will use movement_offset
 
 			//console.log('movement_offset', movement_offset);
+			//console.log('initial_ctrl_translate', initial_ctrl_translate);
 
 			// Yes, initial translation info matters.
+
+
 
 			ctrl.ta[6] = movement_offset[0] + initial_ctrl_translate[0];
 			ctrl.ta[7] = movement_offset[1] + initial_ctrl_translate[1];

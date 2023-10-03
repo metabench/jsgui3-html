@@ -1102,6 +1102,4 @@ if (require.main === module) {
 	console.log(rtest);
 	console.log(rtest.failed);
 
-
-
 }

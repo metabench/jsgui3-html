@@ -701,7 +701,7 @@ class Blank_HTML_Document extends HTML_Document {
             //this.set('body', body);
 
             // Should not have a function to retrieve them....?
-            
+
 
 
             this.head = head;
@@ -717,6 +717,9 @@ class Blank_HTML_Document extends HTML_Document {
     }
 
     // But some other helper on the server???
+
+    // get body() seems better.
+    //   may change later.
 
     'body'() {
         //console.log('body sig', sig);

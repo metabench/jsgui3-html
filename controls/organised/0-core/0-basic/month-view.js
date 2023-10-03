@@ -60,7 +60,7 @@ let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 let bgc_disabled = '#DDDDDD';
 let bgc_enabled = 'inherit';
 
-const mx_date = require(`./../../../../control_mixins/date`);
+const mx_date = require(`../../../../control_mixins/typed_data/date`);
 //const mx_selectable = require(`../control_mixins/selectable`);
 
 // Want this to keep the same day in the month if possible.
