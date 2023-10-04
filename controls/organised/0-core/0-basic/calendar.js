@@ -13,11 +13,21 @@ var Control = jsgui.Control;
 //   And in its rawest form, does not need a data model, just uses the calendar object.
 
 
+// Maybe make a bunch of specific controls to view / edit things in specific ways.
+//   Seems work making some specific / opinionated modes, see which features of them are more generalisable.
+
+// This maybe could reuse date picker functionality, though it needs to be able to have events added at specific dates, times.
+
+
 
 
 
 // This seems like a good candidate for multiple display modes.
 //  as a mixin.
+
+// This should make good and idiomatic use of mixins to have concise and clear code.
+
+
 
 // mx_display_modes
 //   seems more like core .view functionality now

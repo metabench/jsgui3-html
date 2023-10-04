@@ -25,6 +25,8 @@ const {
 //   Such as dragging on a grid?
 //   Or part of press-events?
 
+// Somewhat complex mixin, seems to work well with the transform-xy drag mode.
+//   Should make this a bit more general purpose, but where possible write idiomatic code.
 
 
 
@@ -50,6 +52,21 @@ const {
 // So here can specify a ctrl to use as the handle.
 
 
+// Also be able to specify controls which don't start the drag.
+//   Perhaps automatically make some kinds of controls, such as Buttons, not begin a drag or act as a drag handle.
+
+
+// Seems like there is still a problem identifying parent nodes upon activation.
+//   Looks like pre-activate needs to properly assign the parents.
+//     Maybe / probably needs to assign / add the children into the parents contents.
+//       maybe could shortcut that and assign .content._arr = [...]
+
+// Could make some of the more complex / unwieldy activation code clearer in purposes.
+
+
+
+
+
 let dragable = (ctrl, opts = {}) => {
 
 	// And may use pointer press events instead?
@@ -62,6 +79,11 @@ let dragable = (ctrl, opts = {}) => {
 	// select on mousedown?
 
 	//console.log('dragable');
+
+	// Be able to specify that the handle excludes some of its subcontrols?
+	//   All of its subcontrols?
+
+	// handle_exclude?
 
 
 	// bounds, handle
@@ -76,6 +98,14 @@ let dragable = (ctrl, opts = {}) => {
 
 	//control
 
+	// And maybe same / similar for the resize handle.
+	//   Maybe make the resize handle dragable???
+	//     Prob don't need to in most cases, use more specific programming for it.
+
+
+
+
+
 	start_action = start_action || ['touchstart', 'mousedown'];
 
 	//console.log('start_action', start_action);
@@ -84,6 +114,8 @@ let dragable = (ctrl, opts = {}) => {
 
 	//console.log('ctrl.parent', ctrl.parent);
 	//console.log('bounds', bounds);
+
+	// Maybe have Window bounded within its parent by default.
 
 	// boundary control
 	let bounds_pos;
@@ -152,7 +184,7 @@ let dragable = (ctrl, opts = {}) => {
 
 	// pos_md_within_ctrl
 
-	console.log('ctrl.context.body', ctrl.context.body);
+	//console.log('ctrl.context.body', ctrl.context.body);
 
 	let ctrl_body = ctrl.context.body();
 	let dragging = false;
@@ -576,6 +608,10 @@ let dragable = (ctrl, opts = {}) => {
 
 	//console.log('old_dragable', old_dragable);
 
+	// The 'dragable' field makes sense here.
+
+
+
 	if (!old_dragable) {
 		//field(ctrl, 'selected');
 		field(ctrl, 'dragable');
@@ -585,6 +621,11 @@ let dragable = (ctrl, opts = {}) => {
 			//console.log('e_change', e_change);
 			let n = e_change.name,
 				value = e_change.value;
+
+			// Maybe make an abstraction for switching mixins on and off (attaching and unattaching event handlers)
+
+
+
 			if (n === 'dragable') {
 				if (value === true) {
 					// ctrl.deselect();

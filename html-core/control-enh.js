@@ -12,6 +12,9 @@ const {
 const Text_Node = require('./text-node');
 var Control_Core = require('./control-core');
 const has_window = typeof window !== 'undefined';
+
+// Maybe this can / can be used to assign parents to the child controls.
+
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
 		var content = ctrl.get('content');
@@ -33,6 +36,8 @@ var desc = (ctrl, callback) => {
 		}
 	}
 }
+
+
 var dom_desc = (el, callback) => {
 	callback(el);
 	var cns = el.childNodes;
@@ -41,6 +46,8 @@ var dom_desc = (el, callback) => {
 		dom_desc(cns[c], callback);
 	}
 }
+
+
 const mapDomEventNames = {
 	'change': true,
 	'click': true,
@@ -397,6 +404,67 @@ class Control extends Control_Core {
 			}, cb);
 		}
 	}
+
+	// Some of this will be moved away from 'activate'.
+	//   Within 'pre_activate', and may have a different name, not sure what though.
+	//     coalesce? rebuild ctrl structures? setup ctrl tree? connect ctrls (within ctrl tree?)?
+
+	// Connect / reconnect?
+
+	// connect ctrl dom el
+
+	// activate listeners?
+
+	// The 'activate' function will often be its own custom functionality that defines what the Control does client-side.
+	//   Some more standard things to do with having it represent the dom.attributes internally don't quite seem to be part of
+	//     'activate'. 
+
+	// It's kind of a view-model that gets assigned.
+	// pre_activate can set up the standard things before activate so that activate has the references set up properly.
+
+	'pre_activate'() {
+		//  && !this.__active
+		if (typeof document !== 'undefined') {
+			//this.__active = true;
+			if (!this.dom.el) {
+				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id()] || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')[0];
+				if (found_el) {
+					this.dom.el = found_el;
+				}
+			}
+			if (!this.dom.el) {} else {
+
+				// This likely will be covered by pre_activate.
+				//   That means it will be called on all controls before activate gets called on any of them.
+				//   Activate will be more speicifically about app or programmer specified custom client-side control behaviour.
+
+				// .connect_dom_attributes();
+
+				// See how much of this can be done before the 'activate' function gets called.
+
+				// Maybe all of it.
+
+				this.load_dom_attributes_from_dom();
+
+				// Could use more explicit names for these. 'activate' is taking on a more specific meaning.
+				//   It's been decided that 'activate' will take place later in the process, with other things taking place first,
+				//   so 'activate' will be higher level and more specific functionality.
+
+				
+				//this.activate_content_controls();
+				this.add_content_change_event_listener();
+
+				// .setup_content_(change_?)listen ???
+
+				this.add_dom_attributes_changes_listener();
+
+
+				//this.raise('activate');
+			}
+		} else {}
+	}
+
+
 	'activate' (el) {
 		if (typeof document !== 'undefined' && !this.__active) {
 			this.__active = true;
@@ -407,15 +475,22 @@ class Control extends Control_Core {
 				}
 			}
 			if (!this.dom.el) {} else {
-				this.activate_dom_attributes();
+
+				// This likely will be covered by pre_activate.
+				//   That means it will be called on all controls before activate gets called on any of them.
+				//   Activate will be more speicifically about app or programmer specified custom client-side control behaviour.
+
+				//this.load_dom_attributes_from_dom();
 				this.activate_content_controls();
-				this.activate_content_listen();
-				this.activate_other_changes_listen();
+				//this.add_content_change_event_listener();
+				//this.add_dom_attributes_changes_listener();
+
+
 				this.raise('activate');
 			}
 		} else {}
 	}
-	'activate_other_changes_listen' () {
+	'add_dom_attributes_changes_listener' () {
 		var dom_attributes = this.dom.attributes;
 		var el = this.dom.el;
 		dom_attributes.on('change', (e_change) => {
@@ -430,11 +505,17 @@ class Control extends Control_Core {
 		//let context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
 			if (ctrl.dom.el) {
+
 				ctrl.activate();
 			}
 		});
 	}
-	'activate_content_listen' () {
+	'add_content_change_event_listener' () {
+
+		// Maybe not 'activate' exactly.
+
+		// add_content_change_event_listener
+
 		const {
 			context
 		} = this;
@@ -539,89 +620,113 @@ class Control extends Control_Core {
 			}
 		});
 	}
+
+	// Maybe they get activated anyway?
+	//   Or this activates / loads the fact that these are content controls? And activates them too?
 	'activate_content_controls' () {
-		
-		if (!this.dom.el) {
-			let found_el = this.context.get_ctrl_el(this);
-			if (found_el) {
-				this.dom.el = found_el;
+
+		// Not so sure about this, as maybe pre_activate would cover it.
+
+		const do_activation = () => {
+
+			if (!this.dom.el) {
+				let found_el = this.context.get_ctrl_el(this);
+				if (found_el) {
+					this.dom.el = found_el;
+				}
 			}
-		}
-		const el = this.dom.el;
-		if (el) {
-			const context = this.context;
-			let ctrl_fields = {},
-				c, l;
-			if (el.getAttribute) {
-				let str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
-				if (str_ctrl_fields) {
-					ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
-				}
-				let ctrl_fields_keys = Object.keys(ctrl_fields);
-				let l_ctrl_fields_keys = ctrl_fields_keys.length;
-				let key, value;
-				for (c = 0; c < l_ctrl_fields_keys; c++) {
-					key = ctrl_fields_keys[c];
-					value = ctrl_fields[key];
-					this[key] = context.map_controls[value];
-				}
-				let cns = el.childNodes;
-				let content = this.content;
-				for (c = 0, l = cns.length; c < l; c++) {
-					let cn = cns[c];
-					if (cn) {
-						let nt = cn.nodeType;
-						if (nt === 1) {
-							let cn_jsgui_id = cn.getAttribute('data-jsgui-id');
-							let cctrl = context.map_controls[cn_jsgui_id];
-							let found = false;
-							if (cctrl) {
-								let ctrl_id = cctrl.__id;
-								if (ctrl_id) {
-									content.each((v, i) => {
-										if (v.__id) {
-											if (v.__id == ctrl_id) found = true;
-										}
-									});
+			const el = this.dom.el;
+			if (el) {
+				const context = this.context;
+				let ctrl_fields = {},
+					c, l;
+				if (el.getAttribute) {
+					let str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
+					if (str_ctrl_fields) {
+						ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
+					}
+					let ctrl_fields_keys = Object.keys(ctrl_fields);
+					let l_ctrl_fields_keys = ctrl_fields_keys.length;
+					let key, value;
+					for (c = 0; c < l_ctrl_fields_keys; c++) {
+						key = ctrl_fields_keys[c];
+						value = ctrl_fields[key];
+						this[key] = context.map_controls[value];
+					}
+					let cns = el.childNodes;
+					let content = this.content;
+					for (c = 0, l = cns.length; c < l; c++) {
+						let cn = cns[c];
+						if (cn) {
+							let nt = cn.nodeType;
+							if (nt === 1) {
+								let cn_jsgui_id = cn.getAttribute('data-jsgui-id');
+								let cctrl = context.map_controls[cn_jsgui_id];
+								let found = false;
+								if (cctrl) {
+									let ctrl_id = cctrl.__id;
+									if (ctrl_id) {
+										content.each((v, i) => {
+											if (v.__id) {
+												if (v.__id == ctrl_id) found = true;
+											}
+										});
+									}
+									if (!found) {
+										content.add(cctrl);
+									}
+									cctrl.activate();
+									cctrl.parent = this;
 								}
-								if (!found) {
-									content.add(cctrl);
-								}
-								cctrl.activate();
-								cctrl.parent = this;
 							}
-						}
-						if (nt === 3) {
-							const i_sibling = c;
-							const corresponding_ctrl = content._arr[i_sibling];
-							if (corresponding_ctrl) {
-								if (corresponding_ctrl.text === cn.nodeValue) {
-									corresponding_ctrl.dom.el = cn;
+							if (nt === 3) {
+								const i_sibling = c;
+								const corresponding_ctrl = content._arr[i_sibling];
+								if (corresponding_ctrl) {
+									if (corresponding_ctrl.text === cn.nodeValue) {
+										corresponding_ctrl.dom.el = cn;
+									}
+								} else {
+									console.log('&&& no corresponding control');
 								}
-							} else {
-								console.log('&&& no corresponding control');
-							}
-							const do_add = () => {
-								let val = cn.nodeValue;
-								console.log('adding Text_Node control', val);
-								const tn = new Text_Node({
-									context: this.context,
-									text: val,
-									el: cn
-								})
-								console.log('content._arr.length', content._arr.length);
-								content.add(tn);
+								const do_add = () => {
+									let val = cn.nodeValue;
+									console.log('adding Text_Node control', val);
+									const tn = new Text_Node({
+										context: this.context,
+										text: val,
+										el: cn
+									})
+									console.log('content._arr.length', content._arr.length);
+									content.add(tn);
+								}
 							}
 						}
 					}
 				}
+			} else {
+				//console.trace();
+				//console.log('missing el');
 			}
-		} else {
-			//console.trace();
-			//console.log('missing el');
+
 		}
+
+		do_activation();
+
+		
 	}
-	'activate_dom_attributes' () {
+
+	// Assign (most) dom attributes from the html document to the control.
+
+	// load dom attributes (from dom) makes sense.
+	// load non-special-case dom attributes from dom.
+
+
+
+	'load_dom_attributes_from_dom' () {
+
+
+
 		const el = this.dom.el;
 		const dom_attributes = this.dom.attributes;
 		let item, name, value, i;
@@ -645,6 +750,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
+	/*
 	'attach_dom_events' () {
 		console.trace();
 		throw 'stop - look into this';
@@ -654,6 +760,7 @@ class Control extends Control_Core {
 			});
 		});
 	}
+	*/
 	'_search_descendents' (search) {
 		const recursive_iterate = (ctrl, item_callback) => {
 			const content = ctrl.content,

@@ -20,11 +20,6 @@ navigation modes too?
 need to separate the abstractions of the content itself and the structure its displayed in
   eg could show a tree as a tree component of through navigation of (virtual) pages.
 
-
-
-
-
-
 maybe should have size-binding?
 bind-size mixin.
 
@@ -46,8 +41,73 @@ ui-resizable? or assumed.
 // Seem like quite a lot of different potential ways to do UI for resize.
 //  This would be the place for them.
 
+// This will take some cues from dragable, which is fairly comprehensive, while also providing a really simple API
+//   to use it.
 
-let resizable = (ctrl) => {
+const Control = require('../html-core/control');
+
+const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
+
+  // resize_method?
+  // method?
+
+  // resize_mode?
+  //   br_handle may be one of the simplest to get working.
+  //   may be all we need for Window right now.
+
+
+  // borders-all-directions perhaps?
+  //   maybe better with thicker borders, or accept 1, 2 or 3 pixels more, inside the borders?
+
+  const {resize_mode} = options;
+
+
+  const start_action = ['touchstart', 'mousedown'];
+
+  
+
+
+  if (resize_mode === 'br_handle') {
+
+    if (ctrl.ctrl_relative) {
+
+      // Check if it's already installed???
+
+      if (ctrl.ctrl_br_resize_handle) {
+        console.log('ctrl.ctrl_br_resize_handle already detected');
+      } else {
+        const ctrl_br_resize_handle = new Control({
+          context: ctrl.context
+        })
+        ctrl_br_resize_handle.add_class('bottom-right');
+        ctrl_br_resize_handle.add_class('resize-handle');
+        ctrl_br_resize_handle.add('◢');
+
+        // But does it have one already???
+        ctrl.ctrl_relative.add(ctrl_br_resize_handle);
+        ctrl.ctrl_br_resize_handle = ctrl_br_resize_handle;
+      }
+
+
+      // Create a new resize handle control in there.
+
+      
+
+
+
+    } else {
+      console.trace();
+      throw 'NYI';
+    }
+
+  }
+
+
+
+
+
+
+
     // Respond to touch events.
 
     // generally want a 'press' event too.

@@ -8,7 +8,8 @@ var fields = {
 	'title': String
 };
 
-const {dragable} = require('../../../../control_mixins/mx');
+const {dragable, resizable} = require('../../../../control_mixins/mx');
+//const  = require('../../../../control_mixins/resizable');
 
 // Making the top bar a drag handle should not be so hard.
 
@@ -33,6 +34,20 @@ const {dragable} = require('../../../../control_mixins/mx');
 // .mid_size_state ??
 
 // And buttons can go on the left or the right.
+
+
+// And maybe a context menu with hardly anything on it.
+//   Or size settings? Maximize, Minimize, Close?
+//     Possibly disable Maximize when already maximized?
+
+// Though this is the very basic window, will be used in demos, but it itself is not a demo. Maybe no context menu by default.
+
+
+// The resize handle seems most important.
+//   Resizable would have a way of working within a relative internal ctrl.
+
+// .ctrl_relative
+
 
 
 
@@ -233,8 +248,135 @@ class Window extends Control {
 			this.manager.minimize(this);
 		} else {
 
-			this.remove_class('maximized');
-			this.add_class('minimized');
+			// May separate code into different minimization modes.
+			const my_bcr = this.bcr();
+
+			if (!this.has_class('minimized')) {
+				if (this.has_class('maximized')) {
+					this.pre_minimized_pos = this.pre_maximized_pos;
+					this.pre_minimized_size = this.pre_maximized_size;
+					this.remove_class('maximized');
+				} else {
+
+
+
+					this.pre_minimized_pos = my_bcr[0];
+					this.pre_minimized_size = my_bcr[2];
+				}
+
+				
+
+
+				this.add_class('minimized');
+
+				const minimized_height = 31;
+				this.size = [280, minimized_height];
+
+				
+
+
+
+				
+
+				// dock to the bottom of the window, and animate the move.
+
+				//  Maybe include the docking code here.
+				//    Need to make this work with / supporting the translate(3d) values on the element.
+
+				const parent_bcr = this.parent.bcr();
+				const parent_size = parent_bcr[2];
+				//console.log('parent_bcr', parent_bcr);
+
+
+				// maybe could get from the CSS or have value written to the CSS, or use more general means.
+
+				// What about other minimized items in the parent, possibly items positioned on that bottom row?
+				//   Could go through all minimized controls within the parent.
+
+				// use the .ta typed array properties....
+
+				const [tx, ty] = [this.ta[6], this.ta[7]];
+
+				//console.log('[tx, ty]', [tx, ty]);
+
+				//console.log('my_new_top', my_new_top);
+
+				const my_new_left = 0;
+				const my_new_top = parent_size[1] - minimized_height;
+
+				const x_diff = my_new_left - tx;
+				const y_diff = my_new_top - ty;
+				//console.log('y_diff', y_diff);
+
+
+				// Want to do it in something like 0.14s, 140ms, about 8 frames at 60fps.
+
+				// Requesting animation frames seems like this may be the way to do it.
+
+				const ms_total_animation_time = 140;
+
+				// but can we assume time has moved along since the 0th?
+
+				let animation_start;
+
+				const start_tx = this.ta[6];
+				const start_ty = this.ta[7];
+
+				const process_frame = () => {
+					
+					requestAnimationFrame(timestamp => {
+						if (!animation_start) {
+							animation_start = timestamp;
+							process_frame();
+						} else {
+							const time_since = timestamp - animation_start;
+
+							//console.log('time_since', time_since);
+
+							if (time_since < ms_total_animation_time) {
+								const proportion_through = time_since / ms_total_animation_time;
+								const proportional_x_diff = x_diff * proportion_through;
+								const proportional_y_diff = y_diff * proportion_through;
+								this.ta[6] = start_tx + proportional_x_diff;
+								this.ta[7] = start_ty + proportional_y_diff;
+								process_frame();
+							} else {
+								this.ta[6] = start_tx + x_diff;
+								this.ta[7] = start_ty + y_diff;
+							}
+						}
+					})
+				}
+
+				process_frame();
+
+			}
+
+			
+
+			
+
+
+
+			//this.ta[7] = this.ta[7] + y_diff;
+
+			//this.ta[7] = my_new_top
+
+
+
+			// Assign a t3d frame sequence. ????
+			//   (but does this assume and fps??)
+			//   Maybe best to calculate upon the timing of each frame...?
+
+
+
+
+
+
+
+
+
+			// this.dock(this.parent, 'bottom') ???
 
 			//console.trace();
 			//throw 'NYI';
@@ -246,9 +388,185 @@ class Window extends Control {
 			this.manager.maximize(this);
 		} else {
 
+			// Could check if it already is maximized.
 
-			this.remove_class('minimized');
-			this.add_class('maximized');
+
+			
+
+
+			if (this.has_class('maximized')) {
+
+				// Unmaximize
+
+				// Return to the size and position before it was maximized.
+
+				// this.pre_maximized_size ??
+
+				this.remove_class('maximized');
+				// But the bcr includes borders....
+				this.size = [this.pre_maximized_size[0] - 2, this.pre_maximized_size[1] - 2];
+
+				//console.log('this.pre_maximized_pos', this.pre_maximized_pos);
+
+				this.dragable = true;
+
+				// Then animate translate it into that position.
+
+				// And get the bcr of this to compute the difference(s)...?
+
+				const [tx, ty] = [this.ta[6], this.ta[7]];
+				const my_new_left = this.pre_maximized_pos[0];
+				const my_new_top = this.pre_maximized_pos[1];
+
+				const x_diff = my_new_left - tx;
+				const y_diff = my_new_top - ty;
+				//console.log('y_diff', y_diff);
+
+
+				// Want to do it in something like 0.14s, 140ms, about 8 frames at 60fps.
+
+				// Requesting animation frames seems like this may be the way to do it.
+
+				const ms_total_animation_time = 140;
+				// but can we assume time has moved along since the 0th?
+
+				let animation_start;
+
+				const start_tx = this.ta[6];
+				const start_ty = this.ta[7];
+
+				const process_frame = () => {
+					
+					requestAnimationFrame(timestamp => {
+						if (!animation_start) {
+							animation_start = timestamp;
+							process_frame();
+						} else {
+							const time_since = timestamp - animation_start;
+
+							//console.log('time_since', time_since);
+
+							if (time_since < ms_total_animation_time) {
+								const proportion_through = time_since / ms_total_animation_time;
+								const proportional_x_diff = x_diff * proportion_through;
+								const proportional_y_diff = y_diff * proportion_through;
+								this.ta[6] = start_tx + proportional_x_diff;
+								this.ta[7] = start_ty + proportional_y_diff;
+								process_frame();
+							} else {
+								this.ta[6] = start_tx + x_diff;
+								this.ta[7] = start_ty + y_diff;
+							}
+						}
+					})
+				}
+
+				process_frame();
+
+
+
+
+
+
+
+
+
+
+			} else {
+
+				const my_bcr = this.bcr();
+				//this.pre_maximized_pos = my_bcr[0];
+				//this.pre_maximized_size = my_bcr[2];
+
+
+				if (this.has_class('minimized')) {
+					this.remove_class('minimized');
+					this.pre_maximized_pos = this.pre_minimized_pos;
+					this.pre_maximized_size = this.pre_minimized_size;
+				} else {
+					this.pre_maximized_pos = my_bcr[0];
+					this.pre_maximized_size = my_bcr[2];
+				}
+
+				
+				this.add_class('maximized');
+
+
+
+				this.dragable = false;
+				const parent_bcr = this.parent.bcr();
+
+
+				const parent_size = parent_bcr[2];
+
+				// set own size...
+
+				// undet size even???
+
+				this.size = parent_size;
+				
+				// And to move it to 0,0 over a few frames...
+
+				const [tx, ty] = [this.ta[6], this.ta[7]];
+				const my_new_left = 0;
+				const my_new_top = 0;
+
+				const x_diff = my_new_left - tx;
+				const y_diff = my_new_top - ty;
+				//console.log('y_diff', y_diff);
+
+
+				// Want to do it in something like 0.14s, 140ms, about 8 frames at 60fps.
+
+				// Requesting animation frames seems like this may be the way to do it.
+
+				const ms_total_animation_time = 140;
+				// but can we assume time has moved along since the 0th?
+
+				let animation_start;
+
+				const start_tx = this.ta[6];
+				const start_ty = this.ta[7];
+
+				const process_frame = () => {
+					
+					requestAnimationFrame(timestamp => {
+						if (!animation_start) {
+							animation_start = timestamp;
+							process_frame();
+						} else {
+							const time_since = timestamp - animation_start;
+
+							//console.log('time_since', time_since);
+
+							if (time_since < ms_total_animation_time) {
+								const proportion_through = time_since / ms_total_animation_time;
+								const proportional_x_diff = x_diff * proportion_through;
+								const proportional_y_diff = y_diff * proportion_through;
+								this.ta[6] = start_tx + proportional_x_diff;
+								this.ta[7] = start_ty + proportional_y_diff;
+								process_frame();
+							} else {
+								this.ta[6] = start_tx + x_diff;
+								this.ta[7] = start_ty + y_diff;
+							}
+						}
+					})
+				}
+
+				process_frame();
+
+			}
+
+			
+
+
+
+			// set the size, it will transition to that size.
+
+			// Also will set the position....
+
+			// Needs to become the (inner) size of the parent.
 			
 
 			//console.trace();
@@ -306,39 +624,72 @@ class Window extends Control {
 			const {btn_minimize, btn_maximize, btn_close} = this;
 
 			btn_close.on('click', () => {
-				console.log('click close');
+				//console.log('click close');
 				this.close();
 			})
 			btn_close.on('press', () => {
-				console.log('press close');
+				//console.log('press close');
 				this.close();
 			})
 
 			btn_maximize.on('click', () => {
-				console.log('click maximize');
+				//console.log('click maximize');
 				this.maximize();
 			})
 			btn_maximize.on('press', () => {
-				console.log('press maximize');
+				//console.log('press maximize');
 				this.maximize();
 			})
 
 			btn_minimize.on('click', () => {
-				console.log('click minimize');
+				//console.log('click minimize');
 				this.minimize();
 			})
 			btn_minimize.on('press', () => {
-				console.log('press minimize');
+				//console.log('press minimize');
 				this.minimize();
 			})
 
+			// Client-side should assign parent controls when it activates.
+			//   Not so sure why it's not.
+
+			// Maybe a 'parent' getter could get it?
+			//   Seems like some more ctrl activation work
+
+
+			console.log('this.parent', this.parent);
+			console.log('this._parent', this._parent);
+
+			// Though maybe parents get assigned later?
+			//   Maybe all parents should get assigned before controls get activated, so they can access the reference.
+
+			// Parent does not seem to be available at this stage.
+			//   Maybe should improve activation / pre-activation code for this.
+			//   Pre-activate assign (known) ctrl parents may help a lot.
+			//     It would get that info out of the structure of the HTML.
+
+
+
+
 			dragable(this, {
                 drag_mode: 'translate',
-				handle: this.title_bar
+				handle: this.title_bar,
+				bounds: this.parent
             });
             
             //console.log('dragable mixin applied to square box');
             this.dragable = true;
+
+
+			resizable(this);
+			// and should set the property as well, that's how the mixins work.
+			//   the mixins give it the capability.
+
+			// Also use the 'resizable' mixin.
+			//   That may need to be quite flexible and have code paths for a variety of cases.
+
+
+
 
 
 			// And attach the onclick / on press events here.
@@ -371,6 +722,8 @@ class Window extends Control {
 			const old_broken_activation_code = () => {
 				top_bar.drag_handle_to(this);
 				// Need better get system, can either get as data_value or normal js value.
+
+
 				var resizable = this.get('resizable');
 				if (resizable && resizable.value) resizable = resizable.value();
 				//console.log('resizable', resizable);
@@ -438,6 +791,26 @@ class Window extends Control {
 
 Window.css = `
 
+.relative {
+	position: relative;
+}
+
+.resize-handle {
+	width: 18px;
+	height: 18px;
+	/* background-color: #FF0000; */
+	color: #CCCCCC;
+	opacity: 0.8;
+	position: absolute;
+	line-height: 18px;
+	font-size: 18px;
+	user-select: none;
+}
+.bottom-right.resize-handle {
+	right: 0;
+	bottom: 0;
+	cursor: nwse-resize;
+}
 
 .window {
     position: absolute;
@@ -446,10 +819,15 @@ Window.css = `
 	width: 360px;
 	height: 360px;
 	border-radius: 5px;
+	transition: width 0.14s linear, height 0.14s linear;
+}
+
+.window .relative {
+	height: inherit;
 }
 
 .window.minimized {
-	height: auto;
+	height: 31px;
 }
 
 .window .title.bar {

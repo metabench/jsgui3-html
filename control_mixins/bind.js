@@ -11,7 +11,7 @@ const bind = (ctrl, location) => {
 
     //  redim being a change in dimensions.
     //   if the amount of space available for a control changes, then we need to be able to
-
+    
 
 
     // Binds the ctrl into free space?

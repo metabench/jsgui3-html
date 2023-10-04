@@ -9,6 +9,7 @@ const mx = {
     display_modes: require('./display-modes'),
     fast_touch_click: require('./fast-touch-click'),
     popup: require('./popup'),
+    resizable: require('./resizable'),
     selectable: require('./selectable'),
     selected_deletable: require('./selected-deletable'),
     selected_resizable: require('./selected-resizable'),

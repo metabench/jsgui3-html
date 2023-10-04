@@ -16,6 +16,9 @@ const str_arr_mapify = jsgui.str_arr_mapify;
 const get_a_sig = jsgui.get_a_sig;
 const each = jsgui.each;
 
+// With ctrl.parent
+//   Maybe have actual parent, as well as a higher level conceptual parent.
+//     Eg when removing a node, always need to remove it (as a childnode of) its actual parent (control).
 
 // Already using enhanced controls here.
 //   Maybe could make those core and enhanced controls automatically use a default view.
@@ -35,12 +38,20 @@ const Evented_Class = jsgui.Evented_Class;
 //jsgui.util = require('../lang/util');
 //var Control = jsgui.Control = require('./control-enh');
 var tof = jsgui.tof;
+
 var map_Controls = jsgui.map_Controls = {};
+
+
 const def = jsgui.is_defined;
 
 const {
     prop
 } = require('obext');
+
+
+// Probably should set the control parents here.
+//   Possibly 'parent' in the spec would help.
+
 
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui.controls[tagName] = jsgui[tagName] = class extends Control {
@@ -119,28 +130,40 @@ var recursive_dom_iterate_depth = function (el, callback) {
 // Seems more like it activates the view?
 //   The context is part of the view?
 
-var activate = function (context) {
-    // The context should already have the map of controls.
 
-    console.log('jsgui html-core activate');
-    //console.trace();
-    // Not so sure we can have the client page context here - does it use resources?
+// Needs to assign the ctrl parents.
+// maybe could make a map of parent ids.
+//   assign them on the first scan through the dom.
 
-    //ensure_Context_Menu_loaded(function(_Context_Menu) {
-    //Context_Menu = _Context_Menu;
+// pre_activate(context) before activate(context)
 
-    console.log('jsgui.def_server_resources', jsgui.def_server_resources);
-    // But making the calls uses client-side mechanisms.
+// It would create the controls, connect them up.
 
-    // Maybe do this in on activate on the client, in the client module.
+// pre_activate will create the ctrls.
 
+
+
+// Run pre_activate on all the ctrls, it will assign parents and contents.
+
+// Seems worth overhauling this so that .parent references are available while ctrls are being activated.
+//   Important for some mixins.
+//   Don't want extra unnecessary hurdles in the activate code either.
+
+// Hopefully not too many more fixes will be needed on the jsgui3 internals.
+
+
+
+// Construct and Connect?
+
+//let map_controls;
+
+const pre_activate = (context) => {
+    console.log('jsgui html-core pre_activate');
     if (!context) {
-        throw 'jsgui-html-enh activate(context) - need to supply context parameter.';
+        throw 'jsgui-html-enh pre_activate(context) - need to supply context parameter.';
     }
-    //context = context || new Page_Context();
-    //console.log('jsgui-html-enh activate context', context);
 
-    var map_controls = context.map_controls;
+    const map_controls = context.map_controls || {};
 
     var map_jsgui_els = {};
     var map_jsgui_types = {};
@@ -153,7 +176,17 @@ var activate = function (context) {
     //  Would be useful here.
     // counting up the typed id numbers.
 
+    // Though maybe they are not directly like that???
+    //   Such as if a ctrl is inside content container inside another ctrl.
+    //     Like inside the standard inner area. Components of the (real) parent should not count as the parent.
+    //       Could have specific data-jsgui-parent-id attributes for special cases.
+
+    // Do want to have the nodes' parents available upon activation.
+
     var max_typed_ids = {};
+
+
+    const map_ctrl_parent_ids_by_ctrl_ids = {};
 
     var id_before__ = function (id) {
         var pos1 = id.lastIndexOf('_');
@@ -169,6 +202,9 @@ var activate = function (context) {
     }
     
     let map_els = () => {
+
+        // need to look up / find the parent jsgui ctrl ids....
+
         recursive_dom_iterate(document, el => {
 
             //console.log('recursive_dom_iterate el', el);
@@ -186,6 +222,23 @@ var activate = function (context) {
 
                 //console.log('jsgui_id ' + jsgui_id);
                 if (jsgui_id) {
+
+
+                    if (el.parentNode) {
+                        if (el.parentNode.nodeType === 1) {
+                            const parent_jsgui_id = el.parentNode.getAttribute('data-jsgui-id');
+
+                            // 
+
+                            if (parent_jsgui_id) {
+                                map_ctrl_parent_ids_by_ctrl_ids[jsgui_id] = parent_jsgui_id;
+                            }
+
+                            
+
+                        }
+                    }
+
                     const ib = id_before__(jsgui_id), num = num_after(jsgui_id);
                     //console.log('num', num);
                     if (!def(max_typed_ids[ib])) {
@@ -199,9 +252,12 @@ var activate = function (context) {
 
                     var jsgui_type = el.getAttribute('data-jsgui-type');
                     //console.log('jsgui_type ' + jsgui_type);
-
                     // only if we have a type!
                     if (jsgui_type) map_jsgui_types[jsgui_id] = jsgui_type;
+
+                    // map of types by id.
+                    //   need to check how that's useful.
+
                     //console.log('jsgui_type ' + jsgui_type);
                 }
             }
@@ -209,6 +265,15 @@ var activate = function (context) {
     }
     map_els();
     context.set_max_ids(max_typed_ids);
+
+
+
+    console.log('map_ctrl_parent_ids_by_ctrl_ids', map_ctrl_parent_ids_by_ctrl_ids);
+
+    // And assign them asap - before the ctrls get activated.
+    //   Want to make use of .parent refs within the activation code.
+
+
     //console.log('map_jsgui_types', map_jsgui_types);
     each(map_jsgui_els, (el, jsgui_id) => {
         const l_tag_name = el.tagName.toLowerCase();
@@ -223,13 +288,46 @@ var activate = function (context) {
                 //console.log('!!Cstr', !!Cstr);
 
                 if (Cstr) {
-                    var ctrl = new Cstr({
+
+                    // See if we can get the parent ctrl and set it in the constructor.
+                    const parent_jsgui_id = map_ctrl_parent_ids_by_ctrl_ids[jsgui_id];
+
+
+                    const ctrl_spec = {
                         'context': context,
                         '__type_name': type,
                         'id': jsgui_id,
                         'el': el
-                    });
+                    }
+
+                    if (parent_jsgui_id) {
+                        if (map_controls[parent_jsgui_id]) {
+
+                            //ctrl_spec.parent = map_controls[parent_jsgui_id];
+                        }
+                    }
+
+                    var ctrl = new Cstr(ctrl_spec);
+
+                    if (parent_jsgui_id) {
+                        if (map_controls[parent_jsgui_id]) {
+
+                            //ctrl.parent = map_controls[parent_jsgui_id];
+                        }
+                    }
+
+                    // Or fix specifying the parent in the constructor?
+                    //   See what it breaks when that is set...?
+
+                    // Add it to / register it within the parent???
+                    //   Or that's mostly covered within control-enh activation code?
+
+
+
+
                     //console.log('ctrl._id()', ctrl._id());
+
+                    // Can we access the parent ctrl here?
 
                     arr_controls.push(ctrl);
                     //console.log('el.tagName', el.tagName);
@@ -241,7 +339,7 @@ var activate = function (context) {
 
                         context.ctrl_document = ctrl;
                     }
-                    //console.log('1) jsgui_id', jsgui_id);
+                    console.log('1) jsgui_id', jsgui_id);
 
                     map_controls[jsgui_id] = ctrl;
 
@@ -288,7 +386,10 @@ var activate = function (context) {
         // get the constructor from the id?
     });
 
-    let child;
+    // Then also have connecting up their parents / children.
+    //   Currently under something like 'activate content controls', but have this as pre_activate
+    //     (recreate the structure from the DOM.)
+
     recursive_dom_iterate_depth(document, (el) => {
         //console.log('el ', el);
         var nt = el.nodeType;
@@ -304,18 +405,142 @@ var activate = function (context) {
                 //console.log('map_controls', map_controls);
 
                 const ctrl = map_controls[jsgui_id];
-                ctrl.activate(ctrl.dom.el);
 
+
+                /*
                 if (child) {
                     child.parent = ctrl;
                 }
+                */
+
+                // Maybe a pre-activate, that assigns parent?
+
+                // May need to look into how having or assigning a .parent control will
+                //   have side-effects.
+
+                // Need to look into and improve / fix the rebuilding of the controls on or pre-activation.
+
+                // A pre_activate function could be useful, gets everything ready (such as the refs between ctrls)
+                //   before calling the activate function on any control.
+
+
+
+
+
+                ctrl.pre_activate(ctrl.dom.el);
+
+                // This assigning of parents seems dodgy.
+
+                
 
                 // Type name being set in initialization?
 
 
                 //ctrl.__activating = false;
                 //console.log('jsgui_type ' + jsgui_type);
-                child = ctrl;
+                //child = ctrl;
+            }
+        }
+    });
+
+}
+
+
+const activate = function (context) {
+    // The context should already have the map of controls.
+    const map_controls = context.map_controls;
+    // Some of this looks like it should be pre_activate
+
+    console.log('jsgui html-core activate');
+    //console.trace();
+    // Not so sure we can have the client page context here - does it use resources?
+
+    //ensure_Context_Menu_loaded(function(_Context_Menu) {
+    //Context_Menu = _Context_Menu;
+
+    console.log('jsgui.def_server_resources', jsgui.def_server_resources);
+    // But making the calls uses client-side mechanisms.
+
+    // Maybe do this in on activate on the client, in the client module.
+
+    if (!context) {
+        throw 'jsgui-html-enh activate(context) - need to supply context parameter.';
+    }
+    //context = context || new Page_Context();
+    //console.log('jsgui-html-enh activate context', context);
+
+    
+
+
+    // Above this point should be in pre_activate.
+    //   Pre activate should also set up references.
+
+
+    
+    // A recursive pre-activate?
+
+    // Would be worth refactoring current code for clarity, then can better see where to fix it.
+
+    // Activate and pre_activate seem like useful divisions here.
+
+    // Assigning parent and child nodes belongs in pre_activate, not activate.
+    //   Want that to be done and ready for activate.
+
+
+
+    //const {map_controls} = context;
+
+
+    //let child;
+    recursive_dom_iterate_depth(document, (el) => {
+        //console.log('el ', el);
+        var nt = el.nodeType;
+        //console.log('nt ' + nt);
+
+        // And add text nodes?
+
+        if (nt === 1) {
+            var jsgui_id = el.getAttribute('data-jsgui-id');
+            console.log('* jsgui_id ' + jsgui_id);
+            if (jsgui_id) {
+
+                console.log('map_controls', map_controls);
+
+                const ctrl = map_controls[jsgui_id];
+
+
+                /*
+                if (child) {
+                    child.parent = ctrl;
+                }
+                */
+
+                // Maybe a pre-activate, that assigns parent?
+
+                // May need to look into how having or assigning a .parent control will
+                //   have side-effects.
+
+                // Need to look into and improve / fix the rebuilding of the controls on or pre-activation.
+
+                // A pre_activate function could be useful, gets everything ready (such as the refs between ctrls)
+                //   before calling the activate function on any control.
+
+
+
+
+
+                ctrl.activate(ctrl.dom.el);
+
+                // This assigning of parents seems dodgy.
+
+                
+
+                // Type name being set in initialization?
+
+
+                //ctrl.__activating = false;
+                //console.log('jsgui_type ' + jsgui_type);
+                //child = ctrl;
             }
         }
     });
@@ -607,6 +832,7 @@ class String_Control extends Control {
     }
 }
 
+jsgui.pre_activate = pre_activate;
 jsgui.activate = activate;
 //core_extension('html head title body div span h1 h2 h3 h4 h5 h6 label p a script button form img ul li audio video table tr td caption thead colgroup col');
 
@@ -873,7 +1099,10 @@ class Relative extends Control {
     }
 }
 
+
 jsgui.Relative = Relative;
+
+
 jsgui.String_Control = jsgui.controls.String_Control = String_Control;
 
 
