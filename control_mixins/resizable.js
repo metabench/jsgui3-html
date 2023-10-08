@@ -84,17 +84,28 @@ const Control = require('../html-core/control');
 
 const drag_like_events = require('./drag_like_events');
 
+const {tof} = require('lang-tools');
+
 
 // Will also allow resizing with a 'frame' surrounding it.
 
 const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
+
+  const extra_margin = options.extra_margin !== undefined ? options.extra_margin : 2;
   // And specify a minimum size here?
   //  Or size bounds? Could just specify lower size bounds.
 
   // Bounds as array? Bounds as a ctrl?
 
+
+  // Size bounds as well as extent bounds.
+
+
   const {bounds} = options;
+  const extent_bounds = options.extent_bounds || options.extent;
+
+  const t_extent_bounds = tof(extent_bounds);
 
   // Default lower bounds of window size will help.
 
@@ -107,7 +118,22 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
 
 
+  // And secondary bounds too...?
+  // Such as not resizing so that it would extend (down or right or wherever) outside the bounds of a ctrl.
+  //   Probably its container control
 
+  // That is more like 'extent bounds' rather than size bounds.
+
+  // Extend bounds being the a control.
+
+
+
+
+  // if (extent_bounds instanceOf Control)....
+
+  // ???
+
+  // tof would be more foolproof for typing.
   
 
   // resize_method?
@@ -126,7 +152,7 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
   const start_action = ['touchstart', 'mousedown'];
 
-  let initial_size;
+  let initial_size, initial_measured_pos_within_ctrl_bounds;
 
   // will disable css transitions for the duration of the drag_like_action
 
@@ -173,7 +199,53 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
           //console.log('1) css_transition', css_transition);
 
+          // Would be worth setting the size bounds here...?
+
+          //   Doubt it would be a significant perf hit to measure and calculate it on move...?
+          //     Though that could be an option.
+
+          //console.log('t_extent_bounds', t_extent_bounds);
           initial_size = ctrl.bcr()[2];
+
+          // initial_ctrl_bounds_size ???
+          // initial_measured_pos_within_ctrl_bounds perhaps....?
+
+
+
+
+          if (t_extent_bounds === 'control') {
+            // Determine what size the window is starting at....
+
+            const ctrl_bcr = ctrl.bcr();
+            const extent_bounds_ctrl_bcr = extent_bounds.bcr();
+
+            const pos_offset = [ctrl_bcr[0][0] - extent_bounds_ctrl_bcr[0][0], ctrl_bcr[0][1] - extent_bounds_ctrl_bcr[0][1]];
+            //console.log('pos_offset', pos_offset);
+
+            // Then will need to work out how much remaining size is available....?
+
+            //const ctrl_measured_size = ctrl_bcr[2];
+            const extent_bounds_ctrl_measured_size = extent_bounds_ctrl_bcr[2];
+
+            // work out amount of space remaining within the extent_bounds_ctrl
+
+            //console.log('ctrl_measured_size', ctrl_measured_size);
+            //console.log('extent_bounds_ctrl_measured_size', extent_bounds_ctrl_measured_size);
+
+            
+
+            const bounded_max_size = [extent_bounds_ctrl_measured_size[0] - pos_offset[0] - extra_margin, extent_bounds_ctrl_measured_size[1] - pos_offset[1] - extra_margin];
+
+            //console.log('bounded_max_size', bounded_max_size);
+
+            max_bound = bounded_max_size;
+
+
+          }
+
+
+
+          
           ctrl.add_class('no-transitions');
           //ctrl.dom.attributes.style.transition = 'none';
 
@@ -204,6 +276,20 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
             if (new_size[0] < min_bound[0]) new_size[0] = min_bound[0];
             if (new_size[1] < min_bound[1]) new_size[1] = min_bound[1];
           }
+          if (max_bound) {
+            if (new_size[0] > max_bound[0]) new_size[0] = max_bound[0];
+            if (new_size[1] > max_bound[1]) new_size[1] = max_bound[1];
+          }
+
+          //if (t_extent_bounds === 'control') {
+            // Check it's not extending past the extent_bounds bcr.
+            //   Need to take translation into account too???
+
+
+
+
+            
+          //}
 
           ctrl.size = new_size;
 

@@ -649,7 +649,7 @@ class Window extends Control {
 			// May need to register Flexiboard in some way on the client.
             super.activate();
 
-			const {btn_minimize, btn_maximize, btn_close} = this;
+			const {title_bar, btn_minimize, btn_maximize, btn_close} = this;
 
 			btn_close.on('click', () => {
 				//console.log('click close');
@@ -677,6 +677,14 @@ class Window extends Control {
 				//console.log('press minimize');
 				this.minimize();
 			})
+
+			title_bar.on('dblclick', () => {
+				//console.log('press minimize');
+
+				this.maximize();
+			})
+
+			// dblclick
 
 			// Client-side should assign parent controls when it activates.
 			//   Not so sure why it's not.
@@ -711,7 +719,8 @@ class Window extends Control {
 
 			resizable(this, {
 				resize_mode: 'br_handle',
-				bounds: [[120, 80], undefined]
+				bounds: [[120, 80], undefined],
+				extent_bounds: this.parent
 			});
 			// and should set the property as well, that's how the mixins work.
 			//   the mixins give it the capability.
@@ -841,12 +850,23 @@ Window.css = `
 	line-height: 18px;
 	font-size: 18px;
 	user-select: none;
+	transition: color 0.14s ease-in-out, opacity 0.14s ease-in-out;
+}
+
+.resize-handle:hover {
+	color: #FFDF00;
+	opacity: 1;
+
 }
 .bottom-right.resize-handle {
 	right: 0;
 	bottom: 0;
 	cursor: nwse-resize;
+
+
 }
+
+
 
 .window {
     position: absolute;
@@ -873,6 +893,14 @@ Window.css = `
 
 .window.minimized {
 	height: 31px;
+}
+
+.window.minimized .bottom-right.resize-handle {
+	display: none;
+}
+
+.window.maximized .bottom-right.resize-handle {
+	display: none;
 }
 
 .window .title.bar {

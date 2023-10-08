@@ -51,6 +51,7 @@ var dom_desc = (el, callback) => {
 const mapDomEventNames = {
 	'change': true,
 	'click': true,
+	'dblclick': true,
 	'mousedown': true,
 	'mouseup': true,
 	'mousemove': true,
