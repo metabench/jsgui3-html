@@ -64,9 +64,13 @@ class Window extends Control {
 		super(spec);
 		this.__type_name = 'window';
 		this.add_class('window');
+
+
 		if (!spec.abstract && !spec.el) {
 
 			const {context} = this;
+
+
 
 			// Looks like the (very) old way of making and using abstract controls is still here, failing when app tries to use it.
 
@@ -106,12 +110,20 @@ class Window extends Control {
 			title_bar.add_class('title');
 			title_bar.add_class('bar');
 
+			// And add a span inside it for the title text.
+
+
+
 			// Minimise and maximise buttons.
 
 			const title_h2 = new jsgui.controls.h2({
 				context
 			})
 			title_bar.add(title_h2);
+
+			if (typeof spec.title === 'string') {
+				title_h2.add(spec.title);
+			}
 			
 
 			// Then the buttons on the titlebar.
@@ -252,10 +264,21 @@ class Window extends Control {
 			const my_bcr = this.bcr();
 
 			if (!this.has_class('minimized')) {
+				//this.dom.el.style.transition = 'width 0.14s linear, height 0.14s linear;';
+
 				if (this.has_class('maximized')) {
+
+					
+
 					this.pre_minimized_pos = this.pre_maximized_pos;
 					this.pre_minimized_size = this.pre_maximized_size;
 					this.remove_class('maximized');
+
+					//setTimeout(() => {
+					//	this.dom.el.style.transition = '';
+					//}, 144);
+
+
 				} else {
 
 
@@ -343,6 +366,7 @@ class Window extends Control {
 							} else {
 								this.ta[6] = start_tx + x_diff;
 								this.ta[7] = start_ty + y_diff;
+								//this.dom.el.style.transition = '';
 							}
 						}
 					})
@@ -395,6 +419,11 @@ class Window extends Control {
 
 
 			if (this.has_class('maximized')) {
+
+				// transition: width 0.14s linear, height 0.14s linear; 
+
+				//this.dom.el.style.transition = 'width 0.14s linear, height 0.14s linear;';
+
 
 				// Unmaximize
 
@@ -456,6 +485,8 @@ class Window extends Control {
 							} else {
 								this.ta[6] = start_tx + x_diff;
 								this.ta[7] = start_ty + y_diff;
+
+								//this.dom.el.style.transition = '';
 							}
 						}
 					})
@@ -464,20 +495,12 @@ class Window extends Control {
 				process_frame();
 
 
-
-
-
-
-
-
-
-
 			} else {
 
 				const my_bcr = this.bcr();
 				//this.pre_maximized_pos = my_bcr[0];
 				//this.pre_maximized_size = my_bcr[2];
-
+				//this.dom.el.style.transition = 'width 0.14s linear, height 0.14s linear;';
 
 				if (this.has_class('minimized')) {
 					this.remove_class('minimized');
@@ -552,6 +575,8 @@ class Window extends Control {
 							} else {
 								this.ta[6] = start_tx + x_diff;
 								this.ta[7] = start_ty + y_diff;
+
+								//this.dom.el.style.transition = '';
 							}
 						}
 					})
@@ -684,7 +709,10 @@ class Window extends Control {
             this.dragable = true;
 
 
-			resizable(this);
+			resizable(this, {
+				resize_mode: 'br_handle',
+				bounds: [[120, 80], undefined]
+			});
 			// and should set the property as well, that's how the mixins work.
 			//   the mixins give it the capability.
 
@@ -796,6 +824,11 @@ Window.css = `
 
 .relative {
 	position: relative;
+	
+}
+
+.window.no-transitions {
+	transition: none !important; 
 }
 
 .resize-handle {
@@ -822,11 +855,20 @@ Window.css = `
 	width: 360px;
 	height: 360px;
 	border-radius: 5px;
-	transition: width 0.14s linear, height 0.14s linear;
+	transition: width 0.14s linear, height 0.14s linear; 
+
+	/* 
+	   this should be applied when needed and then removed, as it slows down window resizing with the resize handle.
+
+	   perhaps could do calculation alongside the window position calculation too, not using css transition.
+	*/
+
+	overflow: hidden;
 }
 
 .window .relative {
 	height: inherit;
+	overflow: hidden;
 }
 
 .window.minimized {
@@ -839,7 +881,7 @@ Window.css = `
     /* padding-left: 8px; */
 	background-color: #0D4F8B;
     color: #FFFFFF;
-    font-size: 13px;
+    font-size: 12px;
     line-height: 32px;
     text-indent: 4px;
     /* text-align: center; */
@@ -849,6 +891,13 @@ Window.css = `
     box-shadow: inset 0px -2px 2px -2px rgba(0, 0, 0, 0.75);
 	border-radius: 4px;
 	user-select: none;
+	overflow: hidden;
+}
+
+.window .title.bar h2 {
+	font-weight: 400;
+	margin-left: 42px;
+	float: left;
 }
 
 .window .title.bar span {
@@ -858,9 +907,13 @@ Window.css = `
 
 
 .window .title.bar .right {
-    float: right;
-	margin-right: 2px;
-	margin-top: 2px;
+    margin-right: 2px;
+    margin-top: 2px;
+    position: absolute;
+    right: 0;
+    top: 0;
+	background-color: #0D4F8B;
+	height: 29px;
 }
 
 .window .title.bar .button {

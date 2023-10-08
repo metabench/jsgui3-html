@@ -18,6 +18,14 @@ const Text_Node = require('./text-node');
 
 //jsgui.custom_rendering = 'very-simple';
 
+// May need some core improvements, possibly very style focused.
+//   Ability to access a transitions object.
+
+// Though could solve this with a 'no-size-transitions' class that's temporarily there.
+
+
+
+
 const {
 	prop,
 	field
@@ -43,6 +51,9 @@ var style_input_handlers = {
 	'left': px_handler,
 	'top': px_handler
 }
+
+// Not sure why it's not returning the property correctly....
+
 var new_obj_style = () => {
 	let style = new Evented_Class({});
 	style.__empty = true;
@@ -51,6 +62,9 @@ var new_obj_style = () => {
 		var first = true;
 		each(style, (value, key) => {
 			const tval = typeof value;
+
+			// Use hasownproperty instead.
+
 			if (tval !== 'function' && key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger') {
 				if (first) {
 					first = false;
@@ -82,7 +96,19 @@ var new_obj_style = () => {
 			return res;
 		},
 		get: (target, property, receiver) => {
-			return target[property];
+			//console.log('style proxy get property: ' + property);
+
+			if (property === 'toString') {
+				// return a function....
+
+				//console.log('target', target);
+
+				return () => target + '';
+			} else {
+				return target[property];
+			}
+
+			
 		}
 	});
 	return res;

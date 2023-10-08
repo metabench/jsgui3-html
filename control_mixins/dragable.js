@@ -133,6 +133,28 @@ const {
 
 let dragable = (ctrl, opts = {}) => {
 
+
+	// Check if it's using that mixin already???
+
+	// ctrl.__is_using_dragable_mixin = true???
+
+	// some mixins could only be used once on any control at one time.
+	//   some not....
+	//   or maybe would have better perf with just one of some of them.
+
+
+	// A mixin that gets a control raising drag (offset) events could help.
+	//   or drag_action_offset_events????
+
+	// drag_like_events may be the best for now.
+
+	// 
+
+
+
+	//  ctrl.mixins.all.contains ...???
+
+
 	// Should possibly have some internal classes or functions that implement draggable functionality?
 
 	//   It's nice to call the mixin as a function, mixins could use helper classes internally.
@@ -216,6 +238,8 @@ let dragable = (ctrl, opts = {}) => {
 	//console.log('ctrl.parent', ctrl.parent);
 	//console.log('bounds_is_parent', bounds_is_parent);
 	handle = handle || ctrl;
+
+
 	let old_dragable = ctrl.dragable;
 
 	// Also drag within bounds?
