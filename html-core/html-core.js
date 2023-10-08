@@ -268,7 +268,7 @@ const pre_activate = (context) => {
 
 
 
-    console.log('map_ctrl_parent_ids_by_ctrl_ids', map_ctrl_parent_ids_by_ctrl_ids);
+    //console.log('map_ctrl_parent_ids_by_ctrl_ids', map_ctrl_parent_ids_by_ctrl_ids);
 
     // And assign them asap - before the ctrls get activated.
     //   Want to make use of .parent refs within the activation code.
@@ -339,7 +339,7 @@ const pre_activate = (context) => {
 
                         context.ctrl_document = ctrl;
                     }
-                    console.log('1) jsgui_id', jsgui_id);
+                    //console.log('1) jsgui_id', jsgui_id);
 
                     map_controls[jsgui_id] = ctrl;
 
@@ -389,6 +389,8 @@ const pre_activate = (context) => {
     // Then also have connecting up their parents / children.
     //   Currently under something like 'activate content controls', but have this as pre_activate
     //     (recreate the structure from the DOM.)
+
+    // Or go through the array.
 
     recursive_dom_iterate_depth(document, (el) => {
         //console.log('el ', el);
@@ -501,10 +503,10 @@ const activate = function (context) {
 
         if (nt === 1) {
             var jsgui_id = el.getAttribute('data-jsgui-id');
-            console.log('* jsgui_id ' + jsgui_id);
+            //console.log('* jsgui_id ' + jsgui_id);
             if (jsgui_id) {
 
-                console.log('map_controls', map_controls);
+                //console.log('map_controls', map_controls);
 
                 const ctrl = map_controls[jsgui_id];
 

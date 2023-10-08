@@ -450,8 +450,11 @@ class Control extends Control_Core {
 				//   It's been decided that 'activate' will take place later in the process, with other things taking place first,
 				//   so 'activate' will be higher level and more specific functionality.
 
+
+				// Want to put these content controls in place in the relevant array / collection.
 				
 				//this.activate_content_controls();
+				this.pre_activate_content_controls();
 				this.add_content_change_event_listener();
 
 				// .setup_content_(change_?)listen ???
@@ -482,6 +485,8 @@ class Control extends Control_Core {
 
 				//this.load_dom_attributes_from_dom();
 				this.activate_content_controls();
+				//
+
 				//this.add_content_change_event_listener();
 				//this.add_dom_attributes_changes_listener();
 
@@ -641,6 +646,59 @@ class Control extends Control_Core {
 				let ctrl_fields = {},
 					c, l;
 				if (el.getAttribute) {
+					
+					let cns = el.childNodes;
+
+					// This should be pre-activate as well.
+
+					let content = this.content;
+					for (c = 0, l = cns.length; c < l; c++) {
+						let cn = cns[c];
+						if (cn) {
+							let nt = cn.nodeType;
+							if (nt === 1) {
+								let cn_jsgui_id = cn.getAttribute('data-jsgui-id');
+								let cctrl = context.map_controls[cn_jsgui_id];
+								let found = false;
+								if (cctrl) {
+									
+
+									// Maybe do the activate a bit later on...?
+									cctrl.activate();
+									
+								}
+							}
+							
+						}
+					}
+				}
+			} else {
+				//console.trace();
+				//console.log('missing el');
+			}
+		}
+		do_activation();
+		
+	}
+
+	'_old_activate_content_controls' () {
+
+		// Not so sure about this, as maybe pre_activate would cover it.
+
+		const do_activation = () => {
+
+			if (!this.dom.el) {
+				let found_el = this.context.get_ctrl_el(this);
+				if (found_el) {
+					this.dom.el = found_el;
+				}
+			}
+			const el = this.dom.el;
+			if (el) {
+				const context = this.context;
+				let ctrl_fields = {},
+					c, l;
+				if (el.getAttribute) {
 					let str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
 					if (str_ctrl_fields) {
 						ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
@@ -654,6 +712,9 @@ class Control extends Control_Core {
 						this[key] = context.map_controls[value];
 					}
 					let cns = el.childNodes;
+
+					// This should be pre-activate as well.
+
 					let content = this.content;
 					for (c = 0, l = cns.length; c < l; c++) {
 						let cn = cns[c];
@@ -666,17 +727,23 @@ class Control extends Control_Core {
 								if (cctrl) {
 									let ctrl_id = cctrl.__id;
 									if (ctrl_id) {
+
 										content.each((v, i) => {
 											if (v.__id) {
-												if (v.__id == ctrl_id) found = true;
+												if (v.__id === ctrl_id) found = true;
 											}
 										});
+
 									}
 									if (!found) {
-										content.add(cctrl);
+										//content.add(cctrl);
+										content._arr.push(cctrl);
 									}
-									cctrl.activate();
 									cctrl.parent = this;
+
+									// Maybe do the activate a bit later on...?
+									cctrl.activate();
+									
 								}
 							}
 							if (nt === 3) {
@@ -710,8 +777,107 @@ class Control extends Control_Core {
 			}
 
 		}
-
 		do_activation();
+	}
+
+	'pre_activate_content_controls' () {
+
+		// Not so sure about this, as maybe pre_activate would cover it.
+
+		const do_pre_activation = () => {
+
+			if (!this.dom.el) {
+				let found_el = this.context.get_ctrl_el(this);
+				if (found_el) {
+					this.dom.el = found_el;
+				}
+			}
+			const el = this.dom.el;
+			if (el) {
+				const context = this.context;
+				let ctrl_fields = {},
+					c, l;
+				if (el.getAttribute) {
+					let str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
+					if (str_ctrl_fields) {
+						ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
+					}
+					let ctrl_fields_keys = Object.keys(ctrl_fields);
+					let l_ctrl_fields_keys = ctrl_fields_keys.length;
+					let key, value;
+					for (c = 0; c < l_ctrl_fields_keys; c++) {
+						key = ctrl_fields_keys[c];
+						value = ctrl_fields[key];
+						this[key] = context.map_controls[value];
+					}
+					let cns = el.childNodes;
+
+					// This should be pre-activate as well.
+
+					let content = this.content;
+					for (c = 0, l = cns.length; c < l; c++) {
+						let cn = cns[c];
+						if (cn) {
+							let nt = cn.nodeType;
+							if (nt === 1) {
+								let cn_jsgui_id = cn.getAttribute('data-jsgui-id');
+								let cctrl = context.map_controls[cn_jsgui_id];
+								let found = false;
+								if (cctrl) {
+									let ctrl_id = cctrl.__id;
+									if (ctrl_id) {
+
+										content.each((v, i) => {
+											if (v.__id) {
+												if (v.__id === ctrl_id) found = true;
+											}
+										});
+
+									}
+									if (!found) {
+										//content.add(cctrl);
+										content._arr.push(cctrl);
+									}
+									cctrl.parent = this;
+
+									// Maybe do the activate a bit later on...?
+									//cctrl.activate();
+									
+								}
+							}
+							if (nt === 3) {
+								const i_sibling = c;
+								const corresponding_ctrl = content._arr[i_sibling];
+								if (corresponding_ctrl) {
+									if (corresponding_ctrl.text === cn.nodeValue) {
+										corresponding_ctrl.dom.el = cn;
+									}
+								} else {
+									console.log('&&& no corresponding control');
+								}
+								const do_add = () => {
+									let val = cn.nodeValue;
+									console.log('adding Text_Node control', val);
+									const tn = new Text_Node({
+										context: this.context,
+										text: val,
+										el: cn
+									})
+									//console.log('content._arr.length', content._arr.length);
+									content.add(tn);
+								}
+							}
+						}
+					}
+				}
+			} else {
+				//console.trace();
+				//console.log('missing el');
+			}
+
+		}
+
+		do_pre_activation();
 
 		
 	}

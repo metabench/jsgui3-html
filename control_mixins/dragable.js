@@ -8,6 +8,74 @@ const {
 	tof
 } = require('lang-tools');
 
+/*
+	Handling mouseup outside of the document.
+	Should have a mousemove handler (while dragging) to check to see if the button in question has been released.
+	Maybe only applies with the mouse drag?
+
+	On mousemove, no buttons down means def not dragging???
+
+	But getting clarity on which mouse buttons are down would help at the beginning.
+	A class that models the mouse may help.
+
+	Though let's focus on getting some specific and basic GUI things working.
+
+
+
+
+
+*/
+
+
+// control_helpers too perhaps.
+
+// A positioning helper.
+// A positioning info helper perhaps.
+
+// Positions will need to get dealt with in all sorts of different ways.
+//   To some extent it's worth modelling the CSS rules.
+
+// Want to specify what adjustments to make in some cases, though having them made automatically and well is the ideal.
+//   Automatically and out-of sync would be one of the worst behavioiurs.
+
+// Though may be worth doing a bit of specific code here for draggable behaviours --- though having code that specifically
+//   helps with all sorts of position calculations could work well here.
+
+// Maybe some more classes could help too, eg Position_Confiner
+//   And would apply to a Position object of some sort.
+
+// Position_Confiner perhaps even, if using it would make the code at the higher level very clear.
+
+// For the moment, see about handling variety of cases in the code here, see what is needed.
+
+// Things like calculating the expected clearance between the edges and the bounds before moving.
+
+// Ctrl_Pair_Positioning_Relationship_Info may be a useful class for some things.
+//   Could be a good API for dealing with a variety of positioning issues in different parts of the codebase.
+
+// May want to be specific about which positioning relationship info classes for for which overall setups.
+//   Eg only for an absolutely positioned control within a relative one.
+//     Would make sense for Ctrl_Pair_Positioning_Relationship_Info to have and use info on what CSS does.
+
+// However, want to get some simpler cases involving bounds working here.
+
+// A variety of very specific classes could help client-side, so long as the top level(s) of API are simple.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Want to make it simpler to create more specific behaviours like drag to grid position.
 //  Drop targets could be one way to do that.
@@ -63,11 +131,24 @@ const {
 
 // Could make some of the more complex / unwieldy activation code clearer in purposes.
 
-
-
-
-
 let dragable = (ctrl, opts = {}) => {
+
+	// Should possibly have some internal classes or functions that implement draggable functionality?
+
+	//   It's nice to call the mixin as a function, mixins could use helper classes internally.
+
+	//   The translate3d css transformation is possibly highest performance.
+	//     Don't want to only rely on that though.
+	//       For the moment though, focus on that mode for implementing drag movement.
+
+	// Fixing dragging within the confines of a drag bounds control will be good.
+
+
+
+
+
+
+
 
 	// And may use pointer press events instead?
 	//  Or that's to replace click...?
@@ -140,14 +221,22 @@ let dragable = (ctrl, opts = {}) => {
 	// Also drag within bounds?
 	//  Within bounds of parent?
 
+	// 
+
 	let drag_mode = opts.drag_mode || opts.mode || 'body';
 
 	//console.log('bounds_is_parent', bounds_is_parent);
 
 
 	if (bounds_is_parent) {
-		drag_mode = 'within-parent';
+		// Work the bounds restriction into the 'translate' drag mode.
+
+		//drag_mode = 'within-parent';
 		//bounds = 
+
+		// Code the movement restrictions within the specific drag modes.
+
+
 	}
 
 
@@ -198,6 +287,11 @@ let dragable = (ctrl, opts = {}) => {
 	let half_item_width, item_width;
 
 
+	let initial_bounds_bcr, initial_bcr;
+
+	let initial_bcr_offset_from_bounds;
+
+
 	// translate, set position, set absolute position...?
 
 	// different options for how the movement gets done.
@@ -227,6 +321,9 @@ let dragable = (ctrl, opts = {}) => {
 	//  and could make direct reference to this... original ctrl translation
 	let initial_ctrl_translation3d;
 	let initial_ctrl_translate;
+
+
+
 
 	// Does seem better to set some properties of translation 3d using this animation frame update system.
 	//  Include scaling and rotation in dims?
@@ -265,6 +362,58 @@ let dragable = (ctrl, opts = {}) => {
 	const begin_drag = (pos) => {
 		//console.log('begin_drag', pos);
 
+		// initial_bcr
+		// initial_bounds_bcr
+		initial_bcr = ctrl.bcr();
+		//console.log('initial_bcr', initial_bcr);
+
+		// These should help with the calculaton to keep it within the bounds, with different drag modes.
+
+		// initial ctrl bcr offset from initial bounds bcr.
+
+
+		if (bounds) {
+			if (typeof bounds.bcr === 'function') {
+				initial_bounds_bcr = bounds.bcr();
+				//console.log('initial_bounds_bcr', initial_bounds_bcr);
+
+				// and the initial client translate x and y that are applied?
+
+				// And will have an estimated / computed new bcr when dragging???
+
+
+				// easy way to do the subtraction???
+
+				// pos offset from bcr???
+
+				// Maybe not needed...
+
+				// But a detailed / advanced Control_Positioning module or class could help.
+				// Control_Positioning_Helper.
+
+				// Helper almost being a mixin? Helper must have all functionality called from that helper.
+
+
+
+
+				initial_bcr_offset_from_bounds = [
+					[initial_bcr[0][0] - initial_bounds_bcr[0][0], initial_bcr[0][1] - initial_bounds_bcr[0][1]],
+					[initial_bcr[1][0] - initial_bounds_bcr[1][0], initial_bcr[1][1] - initial_bounds_bcr[1][1]],
+					[initial_bcr[2][0] - initial_bounds_bcr[2][0], initial_bcr[2][1] - initial_bounds_bcr[2][1]]
+				]
+
+				//console.log('initial_bcr_offset_from_bounds', initial_bcr_offset_from_bounds);
+
+
+				//initial_bcr_offset_from_bounds = [[initial_bounds_bcr[]], [], []]
+
+			}
+		}
+
+
+
+
+
 		// drag mode transform xy?
 
 		// drag mode translate?
@@ -301,10 +450,13 @@ let dragable = (ctrl, opts = {}) => {
 
 			//throw 'stop';
 
+			const ctrl_pos_to_be = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
+
+			// then bound that pos to be within a bounds...?
 
 			//let new_pos = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
 			//ctrl.pos = new_pos;
-			ctrl.pos = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
+			ctrl.pos = ctrl_pos_to_be;
 
 
 			//console.log('2) ctrl.pos', ctrl.pos);
@@ -319,6 +471,12 @@ let dragable = (ctrl, opts = {}) => {
 			// Don't need to keep track of the original position.
 			// Need to know the original press pos.
 			//console.log('drag_mode: translate');
+
+			// initial bcr
+			// initial bounds bcr if there is one
+
+
+
 
 			initial_ctrl_translate = ctrl.ta.slice(6, 8);
 			//console.log('initial_ctrl_translate', initial_ctrl_translate);
@@ -363,6 +521,9 @@ let dragable = (ctrl, opts = {}) => {
 		} else {
 
 			// Horizontal restriction - do this elsewhere?
+
+			// May be a boolean restriction rather than a mode.
+			//   Mode will probably be more about underlying implementation.
 
 			if (drag_mode === 'x') {
 				dragging = true;
@@ -409,10 +570,135 @@ let dragable = (ctrl, opts = {}) => {
 
 			// Yes, initial translation info matters.
 
+			// Also restrict within any bounds, if there is one.
+
+			// But how to restrict the translated ctrl to within the specified bounds.
+
+			// Then apply a movement restriction.
+
+			//console.log('[tr_x, tr_y]', [tr_x, tr_y]);
 
 
-			ctrl.ta[6] = movement_offset[0] + initial_ctrl_translate[0];
-			ctrl.ta[7] = movement_offset[1] + initial_ctrl_translate[1];
+			// And if there is a bounds, calculate what the maximum allowed movement offsets are....
+
+
+
+			// Maybe could calculate available movement distances based on initial bounds position data.
+
+
+
+			
+
+			let tr_x = movement_offset[0] + initial_ctrl_translate[0];
+			let tr_y = movement_offset[1] + initial_ctrl_translate[1];
+
+			// Adjustments....?
+			//   Keeping within a bounds?
+
+			//   How much CSS etc is necessary to recalculate here?
+
+			//   Keeping within a specific bounds...?
+
+			//   Maybe could ask a bounds checker to potentially adjust the values before assigning them...?
+
+
+
+
+			
+
+			// May be better to re-measure all relevant sizes and positions on each frame.
+
+			// Possibly more comprehensive position bounds system is needed.
+			//   Something that's specialised in dealing with positions, specific rules for them, and positions of elements / nodes
+			//   relative to other nodes, with different types of CSS positioning.
+
+			// Then using that would make code that relies on position rules easier to write.
+			//   Want a simple API that expresses the rules easily enough here.
+
+			// Checking every frame for the bcr measured positions may be the way.
+
+
+
+
+			// Check if it's within the bounds...?
+			//   Making use of more specific helper classes and APIs would help here.
+
+			// And take into account the initial translation value....
+
+			// The bounds calculations involving translated positions is somewhat more complicated too.
+
+
+			// Maybe have / use a jsgui3 positions interface that can handle various complexities.
+			//   Such as position coming from a variety of things, such as [left, top] of something absolutely positioned,
+			//     things being positioned (internally?) through CSS and HTML layout, also translate 3d as well as 2d components
+			//     of the position.
+
+			// Getting the positions of things right in an easy way could be a critical feature of jsgui3.
+			//   Simple specifcation of things, could internally use some optimisations such as translate3d.
+
+
+
+
+			
+
+			if (bounds) {
+				// And check if the bounds is a control...?
+
+				// And subtract initial_ctrl_translate???
+				const min_x_movement_offset = -1 * (initial_bcr_offset_from_bounds[0][0] - initial_ctrl_translate[0]);
+				if (tr_x < min_x_movement_offset) tr_x = min_x_movement_offset;
+
+
+
+				const max_x_movement_offset = -1 * (initial_bcr_offset_from_bounds[1][0] - initial_ctrl_translate[0]);
+				if (tr_x > max_x_movement_offset) tr_x = max_x_movement_offset;
+
+
+				const min_y_movement_offset = -1 * (initial_bcr_offset_from_bounds[0][1] - initial_ctrl_translate[1]);
+				if (tr_y < min_y_movement_offset) tr_y = min_y_movement_offset;
+				const max_y_movement_offset = -1 * (initial_bcr_offset_from_bounds[1][1] - initial_ctrl_translate[1]);
+				if (tr_y > max_y_movement_offset) tr_y = max_y_movement_offset;
+
+
+				// Ensure potential position is within bounds....
+
+
+
+				//console.log('[tr_x, tr_y]', [tr_x, tr_y]);
+				//console.log('[min_x_movement_offset, max_x_movement_offset]', [min_x_movement_offset, max_x_movement_offset]);
+
+			}
+
+			
+
+			// Then keep x and y within the bounded range, making necessary compensations and adjustments.
+
+			// Will the new position be within the bcr of the bounds control?
+			//  Maybe measure that (single) bcr here.
+			//  In case that bounds control has moved.
+
+			// Initial bcr offset...
+			//   And the translation should make adjustments for it.
+
+			// Maybe need more advanced position measuring / calculation functionality.
+			//   May need a very explicit model of how the measurements are made and which adjustments are applied to what.
+
+			// And code in assumptions / tests such as the bounds not having moved since the start...?
+
+			
+
+
+
+
+
+
+
+
+
+			ctrl.ta[6] = tr_x;
+			ctrl.ta[7] = tr_y;
+
+
 
 		} else if (drag_mode === 'within-parent') {
 			//console.log('bounds', bounds);
@@ -462,7 +748,15 @@ let dragable = (ctrl, opts = {}) => {
 		let touch_count = 1;
 		if (e_mm.touches) touch_count = e_mm.touches.length;
 
-		pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+		// 
+
+		if (e_mm.touches) {
+			pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+		} else {
+			pos_mm = [e_mm.pageX, e_mm.pageY];
+		}
+
+		
 
 		// could store a variable that tracks the last event.
 
@@ -475,22 +769,35 @@ let dragable = (ctrl, opts = {}) => {
 		if (touch_count === 1) {
 
 			if (e_mm.pageX || e_mm.touches) {
-				let pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-				movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
-				if (!dragging) {
-					//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
-					let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
-					let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
 
-					//console.log('drag_offset_distance', drag_offset_distance);
+				let pos_mm;
 
-					//console.log('abs_offset_dist', abs_offset_dist);
-					if (abs_offset_dist >= drag_offset_distance) {
-						begin_drag(pos_mm);
-					}
+				if (e_mm.touches) {
+					pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 				} else {
-					move_drag(pos_mm);
+					pos_mm = [e_mm.pageX, e_mm.pageY];
 				}
+
+				if (pos_mm[0] !== undefined && pos_mm[1] !== undefined) {
+					movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
+					if (!dragging) {
+						//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
+						let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
+						let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
+
+						//console.log('drag_offset_distance', drag_offset_distance);
+
+						//console.log('abs_offset_dist', abs_offset_dist);
+						if (abs_offset_dist >= drag_offset_distance) {
+							begin_drag(pos_mm);
+						}
+					} else {
+						move_drag(pos_mm);
+					}
+				}
+
+				
+				
 			}
 
 

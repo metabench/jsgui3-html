@@ -501,9 +501,12 @@ class Window extends Control {
 
 				// set own size...
 
+				// Some adjustement for border...?
+
+
 				// undet size even???
 
-				this.size = parent_size;
+				this.size = [parent_size[0] - 4, parent_size[1] - 4];
 				
 				// And to move it to 0,0 over a few frames...
 
@@ -657,8 +660,8 @@ class Window extends Control {
 			//   Seems like some more ctrl activation work
 
 
-			console.log('this.parent', this.parent);
-			console.log('this._parent', this._parent);
+			//console.log('this.parent', this.parent);
+			//console.log('this._parent', this._parent);
 
 			// Though maybe parents get assigned later?
 			//   Maybe all parents should get assigned before controls get activated, so they can access the reference.
