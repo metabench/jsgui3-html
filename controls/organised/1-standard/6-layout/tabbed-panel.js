@@ -20,7 +20,20 @@ const mx_selectable = require('./../../../../control_mixins/selectable');
 const each = jsgui.each;
 
 const Panel = require('./panel');
+
+// An overall simpler way of doing things, and using mixins for functionality that's a bit complex and common between controls.
+
+
+// Tab_Group could extend Radio_Button_Group.
+
 const List = require('./../../0-core/0-basic/list');
+
+// Maybe redo this using lower level things in a more declarative and idiomatic way.
+//   Maybe creating controls (with a kind of shorthand) from the Page_Context would work well.
+
+
+
+
 
 class Tab extends Control {
     constructor(spec) {

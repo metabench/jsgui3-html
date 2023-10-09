@@ -90,8 +90,15 @@ const {
 
 // Could fix / improve this for press events?
 
+// A grid may be a type of 'arrangement', maybe don't rely (so much) on a Grid control.
+
+// Look into making and supporting different composition modes.
+
+
 
 class Grid_Cell extends Control {
+
+
     constructor(spec) {
         (spec = spec || {}).__type_name = 'grid_cell';
         super(spec);
@@ -292,7 +299,6 @@ class Grid extends Control {
                     this.full_compose_as_divs();
 
                 }
-
                 //this.clear();
                 //this.full_compose_as_divs();
             }
@@ -303,10 +309,11 @@ class Grid extends Control {
 
         // Don't necessarily refresh the cell size.
         console.log('grid.js refresh_size this.composition_mode', this.composition_mode);
+
+
+
         if (this.composition_mode === 'divs') {
-
             // resize or refresh_grid_size
-
 
             //var num_columns = this.grid_size[0];
             //var num_rows = this.grid_size[1];

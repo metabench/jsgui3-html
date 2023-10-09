@@ -20,6 +20,10 @@ var Radio_Button = require('./radio-button');
 
 // RadioButtonGroup could be a useful Control as well.
 //  May provide an easier interface that abstracts away from having to directly make some of the controls.
+
+// And have a selected and selected value API.
+//   Make the API common with other things, interoperable nicely.
+
 class Radio_Button_Group extends Control {
     // panel name?
 

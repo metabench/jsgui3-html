@@ -5,12 +5,12 @@
   "dependencies": {
     "fnl": "^0.0.29",
     "htmlparser": "^1.7.7",
-    "lang-tools": "^0.0.17",
+    "lang-tools": "^0.0.18",
     "obext": "^0.0.27",
     "url-parse": "^1.5.10"
   },
   "depNotes": {
-    "lang-tools": ["Will upgrade lang-tools so that it can have compilers loaded into it. ",
+    "lang-tools": ["Will upgrade lang-tools so that it can have compilers loaded into it.?????2023???? ",
                     "Compiler dependency would be within the server or app.",
                     "Have it very lightweight actually within lang-tools"
     ]
@@ -38,5 +38,5 @@
   "devDependencies": {
     "esbuild": "^0.19.4"
   },
-  "version": "0.0.121"
+  "version": "0.0.122"
 }

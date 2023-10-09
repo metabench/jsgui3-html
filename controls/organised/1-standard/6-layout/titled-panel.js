@@ -14,6 +14,17 @@ var fields = {
 
 // Titled could even be some kind of mixin.
 
+// Tabbed panel seems more useful.
+// Tab bar is a radio button group (in disguise)
+
+// Tabbed_Panel?
+//   Tabbed_Multi_Content_Container???
+
+// The tabbed control would be very helpful for demoing various controls in a single spa / control.
+// Could have a window containing a bunch of different demos of different controls.
+
+
+
 
 
 class Titled_Panel extends Panel {

@@ -48,6 +48,11 @@ const {dragable, resizable} = require('../../../../control_mixins/mx');
 
 // .ctrl_relative
 
+// Does seem like using a more formal state setting and tracking system would help.
+//.  not sure about .was_maximized_just_before_minimizing 
+//.    partly because it maybe would not compress so well with current settings
+//.With state setting and tracking this could be referenced idiomatically, set automatically.
+
 
 
 
@@ -169,7 +174,9 @@ class Window extends Control {
 				context
 			});
 
-			btn_close.add('❎')
+			// ⓧ⊗
+
+			btn_close.add('ⓧ')
 
 			// ❎
 			right_button_group.add(btn_close);
@@ -255,7 +262,87 @@ class Window extends Control {
 		}
 	}
 
-	minimize() {
+	// Clicking or pressing the window should bring it to the front.
+
+
+
+	bring_to_front_z() {
+		let max_z = 0;
+		each(this.parent.content, (ctrl) => {
+			if (ctrl !== this) {
+				const z = parseInt(ctrl.dom.attributes.style['z-index']);
+				//console.log('ctrl.dom.attributes.style[\'z-index\']', ctrl.dom.attributes.style['z-index']);
+				//console.log('z', z);
+				if (!isNaN(z) && z > max_z) max_z = z;
+				//console.log('1) max_z', max_z);
+			}
+		});
+		//console.log('2) max_z', max_z);
+		this.dom.attributes.style['z-index'] = parseInt(max_z) + 1;
+	}
+
+	// a lower level function here???
+
+	glide_to_pos(pos) {
+		return new Promise((s, j) => {
+
+			//const [tx, ty] = [this.ta[6], this.ta[7]];
+			const [my_new_left, my_new_top] = pos;
+
+			const x_diff = my_new_left - this.ta[6];
+			const y_diff = my_new_top - this.ta[7];
+			//console.log('y_diff', y_diff);
+
+
+			// Want to do it in something like 0.14s, 140ms, about 8 frames at 60fps.
+
+			// Requesting animation frames seems like this may be the way to do it.
+
+			const ms_total_animation_time = 140;
+
+			// but can we assume time has moved along since the 0th?
+
+			let animation_start;
+
+			const start_tx = this.ta[6];
+			const start_ty = this.ta[7];
+
+			const process_frame = () => {
+				
+				requestAnimationFrame(timestamp => {
+					if (!animation_start) {
+						animation_start = timestamp;
+						process_frame();
+					} else {
+						const time_since = timestamp - animation_start;
+
+						//console.log('time_since', time_since);
+
+						if (time_since < ms_total_animation_time) {
+							const proportion_through = time_since / ms_total_animation_time;
+							const proportional_x_diff = x_diff * proportion_through;
+							const proportional_y_diff = y_diff * proportion_through;
+							this.ta[6] = start_tx + proportional_x_diff;
+							this.ta[7] = start_ty + proportional_y_diff;
+							process_frame();
+						} else {
+							this.ta[6] = start_tx + x_diff;
+							this.ta[7] = start_ty + y_diff;
+							//this.dom.el.style.transition = '';
+							//callback();
+							s();
+							//
+						}
+					}
+				})
+			}
+			process_frame();
+
+		})
+	}
+
+	// Could make this async.
+	async minimize() {
 		if (this.manager) {
 			this.manager.minimize(this);
 		} else {
@@ -263,10 +350,17 @@ class Window extends Control {
 			// May separate code into different minimization modes.
 			const my_bcr = this.bcr();
 
+			
+
 			if (!this.has_class('minimized')) {
 				//this.dom.el.style.transition = 'width 0.14s linear, height 0.14s linear;';
 
+				const width_to_minimize_to = 280;
+				const minimized_height = 31;
+
 				if (this.has_class('maximized')) {
+
+					this.was_maximized_just_before_minimizing = true;
 
 					
 
@@ -280,26 +374,17 @@ class Window extends Control {
 
 
 				} else {
-
+					this.was_maximized_just_before_minimizing = false;
 
 
 					this.pre_minimized_pos = my_bcr[0];
 					this.pre_minimized_size = my_bcr[2];
 				}
 
-				
+				this.dragable = false;
+				// Width to minimize to = 280.
 
-
-				this.add_class('minimized');
-
-				const minimized_height = 31;
-				this.size = [280, minimized_height];
-
-				
-
-
-
-				
+				this.size = [width_to_minimize_to, minimized_height];
 
 				// dock to the bottom of the window, and animate the move.
 
@@ -318,61 +403,174 @@ class Window extends Control {
 
 				// use the .ta typed array properties....
 
-				const [tx, ty] = [this.ta[6], this.ta[7]];
+				
 
 				//console.log('[tx, ty]', [tx, ty]);
 
 				//console.log('my_new_top', my_new_top);
 
-				const my_new_left = 0;
-				const my_new_top = parent_size[1] - minimized_height;
+				// Need to determine the position to minimize to.
+				//. Position within its container (parent).
 
-				const x_diff = my_new_left - tx;
-				const y_diff = my_new_top - ty;
-				//console.log('y_diff', y_diff);
+				// So look at the sibling minimized windows.
 
+				// Consider squashing other minimized windows' widths to fit?
+				// Seems better to stack the minimized windows vertically.
+				//.  Then on maximize, would need to rearrange the minimized windows.
 
-				// Want to do it in something like 0.14s, 140ms, about 8 frames at 60fps.
+				// Want to keep the code simple and clear on this level where possible.
 
-				// Requesting animation frames seems like this may be the way to do it.
+				const determine_pos_to_minimize_to = () => {
+					// Go through the siblings....
 
-				const ms_total_animation_time = 140;
+					// And will see the first place where space is available....
 
-				// but can we assume time has moved along since the 0th?
+					// For the moment, put it to the right of any existing ones.
+					//   Though it does seem worth detecting if a row is full and to place it there.
 
-				let animation_start;
+					// Worth looking for space row by row.
+					//.  Though it seems more worth getting the right map / data of the positions and extents of all existing minimized windows
+					//.  Then sort them, and move through them looking for where there is a space.
 
-				const start_tx = this.ta[6];
-				const start_ty = this.ta[7];
+					let minimized_sibling_window_bcrs = [];
 
-				const process_frame = () => {
 					
-					requestAnimationFrame(timestamp => {
-						if (!animation_start) {
-							animation_start = timestamp;
-							process_frame();
-						} else {
-							const time_since = timestamp - animation_start;
 
-							//console.log('time_since', time_since);
+					each(this.parent.content, (ctrl) => {
+						if (ctrl !== this) {
 
-							if (time_since < ms_total_animation_time) {
-								const proportion_through = time_since / ms_total_animation_time;
-								const proportional_x_diff = x_diff * proportion_through;
-								const proportional_y_diff = y_diff * proportion_through;
-								this.ta[6] = start_tx + proportional_x_diff;
-								this.ta[7] = start_ty + proportional_y_diff;
-								process_frame();
-							} else {
-								this.ta[6] = start_tx + x_diff;
-								this.ta[7] = start_ty + y_diff;
-								//this.dom.el.style.transition = '';
+							// And is it a minimized window???
+
+							if (ctrl.has_class('window') && ctrl.has_class('minimized')) {
+
+								//console.log('ctrl.pos', ctrl.pos);
+
+								// .pos? .spos? .sp for size and position? .ps positon and size?
+
+								// .bcr property seems like it could be better as a getter.
+
+
+
+
+								const ctrl_bcr = ctrl.bcr();
+								//const [pos, brpos, size] = ctrl_bcr;
+
+								minimized_sibling_window_bcrs.push(ctrl_bcr);
+
+
+
+								//console.log('bcr_pos', bcr_pos);
+
 							}
+
+							//const z = parseInt(ctrl.dom.attributes.style['z-index']);
+							//console.log('ctrl.dom.attributes.style[\'z-index\']', ctrl.dom.attributes.style['z-index']);
+							//console.log('z', z);
+							//if (!isNaN(z) && z > max_z) max_z = z;
+							//console.log('1) max_z', max_z);
 						}
-					})
+					});
+
+					if (minimized_sibling_window_bcrs.length > 0) {
+
+						minimized_sibling_window_bcrs.sort((a, b) => {
+							if (a[0][1] === b[0][1]) {
+								return a[1][0] - b[1][0];
+							} else {
+								return b[0][1] - a[0][1];
+							}
+						});
+	
+						//console.log('minimized_sibling_window_bcrs', minimized_sibling_window_bcrs);
+						// And put it after the last....
+	
+						const last_bcr = minimized_sibling_window_bcrs.at(-1);
+	
+						// then determine if there is the space in the row for it.
+	
+						const last_r = last_bcr[1][0];
+	
+						// May be making assumption here, should be careful.
+						//. 	
+	
+						const extra_margin = 2;
+
+						//console.log('last_r + width_to_minimize_to + extra_margin', last_r + width_to_minimize_to + extra_margin);
+	
+						if (parent_size[0] >= last_r + width_to_minimize_to + extra_margin) {
+							return [last_bcr[1][0] + extra_margin, last_bcr[0][1]];
+						} else {
+							// a new row up, on the left
+							return [0, last_bcr[0][1] - extra_margin - minimized_height];
+						}
+
+					} else {
+						return [0, parent_size[1] - minimized_height];
+					}
+
+					
+
+					// sort the bcrs by [0][1] descending then [1][0] ascending.
 				}
 
-				process_frame();
+
+				const [my_new_left, my_new_top] = determine_pos_to_minimize_to();
+
+				/*
+				
+				glide_to_position([my_new_left, my_new_top], () => {
+					this.add_class('minimized');
+					
+
+				});
+				*/
+
+				await this.glide_to_pos([my_new_left, my_new_top]);
+				this.add_class('minimized');
+
+				//console.log('[my_new_left, my_new_top]', [my_new_left, my_new_top]);
+
+
+				//const my_new_left = 0;
+				//const my_new_top = parent_size[1] - minimized_height;
+
+
+
+				
+
+			} else {
+				// Unminimize
+
+				// Would put it back into the maximized state if it was maximized before.
+				//.  was_maximized_immediately_prior_to_minimization ????
+				//.    does seem like an important thing to know in this case.
+				// Pre-minimize state.
+
+				// Unmaximize will never minimize the window.
+
+				if (this.was_maximized_just_before_minimizing) {
+					await this.maximize();
+				} else {
+					// Glide it to the prior size (and pos)
+
+					//this.pre_minimized_pos = this.pre_maximized_pos;
+					//this.pre_minimized_size = this.pre_maximized_size;
+
+					this.size = this.pre_minimized_size;
+					await this.glide_to_pos(this.pre_minimized_pos);
+					this.remove_class('minimized');
+					this.dragable = true;
+
+				}
+
+
+
+
+
+
+
+
+
 
 			}
 
@@ -610,7 +808,7 @@ class Window extends Control {
 			// A bug - strange it's not being removed the first time.
 
 			this.remove();
-			this.remove();
+			//this.remove();
 
 			//console.trace();
 			//throw 'NYI';
@@ -704,6 +902,15 @@ class Window extends Control {
 			//   Pre-activate assign (known) ctrl parents may help a lot.
 			//     It would get that info out of the structure of the HTML.
 
+
+
+			this.on('mousedown', () => {
+				this.bring_to_front_z();
+
+				// May be more to do with focus?
+				//.  Seems worth better integrating this if it's anything complex
+
+			});
 
 
 

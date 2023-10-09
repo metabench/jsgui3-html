@@ -627,10 +627,12 @@ class Control_Core extends Data_Object {
 		}, callback);
 	}
 	'remove'() {
-		const {
-			parent
-		} = this;
-		parent.content.remove(this);
+
+		// Seems like collection is not working properly is remove is not working properly.
+
+		// .remove(this) should be an easy call. It would then need to note that it has been removed with the event(s).
+
+		return this.parent.content.remove(this);
 	}
 	'add'(new_content) {
 		const tnc = tof(new_content);

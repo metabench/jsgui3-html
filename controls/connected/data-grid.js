@@ -1,6 +1,12 @@
 // See https://docs.microsoft.com/en-us/dotnet/framework/winforms/controls/datagridview-control-windows-forms
 
 
+// Make a Control access a Resource for more advanced data capabilities.
+// Control_Resource_Connector perhaps? Control_To_Resource_Data_Connector ???
+
+
+
+
 // Will compose as div / divs rather than table.
 
 // Fast rendering of the data.

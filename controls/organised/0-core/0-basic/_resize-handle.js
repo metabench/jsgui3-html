@@ -1,7 +1,10 @@
-const jsgui = require('./../../../../html-core/html-core');
+// Probably will no longer use this.
+//   the 'resizable' mixin seems to handle this best.
+
+const jsgui = require('../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 //var Control = jsgui.Control;
-var Control =  require('./../../../../html-core/control-enh');
+var Control =  require('../../../../html-core/control-enh');
 
 let util = jsgui.util;
 

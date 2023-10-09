@@ -68,7 +68,7 @@ const controls = {
     Popup_Menu_Button: require('./organised/0-core/1-advanced/popup-menu-button'),
     Radio_Button: require('./organised/0-core/0-basic/radio-button'),
     Radio_Button_Group: require('./organised/0-core/0-basic/radio-button-group'),
-    Resize_Handle: require('./organised/0-core/0-basic/resize-handle'),
+    //Resize_Handle: require('./organised/0-core/0-basic/_resize-handle'),
     Scroll_View: require('./organised/0-core/0-basic/scroll-view'),
     Scrollbar: require('./organised/0-core/0-basic/scrollbar'),
 
