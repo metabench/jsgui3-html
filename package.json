@@ -38,5 +38,5 @@
   "devDependencies": {
     "esbuild": "^0.19.4"
   },
-  "version": "0.0.123"
+  "version": "0.0.124"
 }

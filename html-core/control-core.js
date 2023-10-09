@@ -259,6 +259,33 @@ class Control_Core extends Data_Object {
 
 		// OK, so this does have a 'pos' property, and should respect spec.pos.
 
+		// Possibly 'pos' should be more flexible and advanced.
+		//.  Have a simple interface to call, but take account of positions being set with translate3d properties of controls,
+		//.    and including such properties in typed arrays.
+		//   May want to be aware of different ways to position in CSS, but keep the 'pos' property simpler than all that
+		//.    where possible, and be able to deal with the different ways controls can be positioned on a lower level.
+
+
+
+		// Could model both left and top, as well as translate3d properties.
+		//.  Or could have other parts of the system that use t3d positions make use of left and top css, as well as translate3d
+
+		// Does seem worth it to bring more awareness of this functionality to a lower level, making it easy to avoid it being a problem
+		//.  but also easy to get and set the positions (and sizes) of controls.
+
+		// May be worth taking account of this in some Window code.
+		//. Like glide_to_pos perhaps.
+
+		// A more complex positioning API would help.
+		//. But maybe adjusting some translations by the left and top position could help.
+
+		// Maybe it could intelligently combine t3dpos and ltpos?
+
+
+		// Would be nice in some ways to keep this simple / backwards compatable.
+
+		// But maybe this is really ltpos, pos is somewhat more complex?
+
 		prop(this, 'pos', undefined, (e_change) => {
 			let {
 				value,
@@ -275,15 +302,22 @@ class Control_Core extends Data_Object {
 
 			}
 			let [left, top] = value;
+
+			// This could possibly set translate3d properties.
+
 			let o_style = {
 				'left': left,
 				'top': top
 			}
 			this.style(o_style);
+
+
 			this.raise('move', {
 				'value': value
 			});
 		});
+
+
 
 		if (spec.pos) this.pos = spec.pos;
 

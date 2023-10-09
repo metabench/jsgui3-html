@@ -282,7 +282,7 @@ class Window extends Control {
 	}
 
 	// a lower level function here???
-
+	// An adjusted glide function?
 	glide_to_pos(pos) {
 		return new Promise((s, j) => {
 
@@ -513,8 +513,11 @@ class Window extends Control {
 					// sort the bcrs by [0][1] descending then [1][0] ascending.
 				}
 
+				const ltpos = [this.dom.attributes.style.left || 0, this.dom.attributes.style.top || 0].map(x => parseInt(x));
 
-				const [my_new_left, my_new_top] = determine_pos_to_minimize_to();
+				const dest_pos = determine_pos_to_minimize_to();
+				dest_pos[0] -= ltpos[0];
+				dest_pos[1] -= ltpos[1];
 
 				/*
 				
@@ -525,7 +528,7 @@ class Window extends Control {
 				});
 				*/
 
-				await this.glide_to_pos([my_new_left, my_new_top]);
+				await this.glide_to_pos(dest_pos);
 				this.add_class('minimized');
 
 				//console.log('[my_new_left, my_new_top]', [my_new_left, my_new_top]);
@@ -557,7 +560,17 @@ class Window extends Control {
 					//this.pre_minimized_size = this.pre_maximized_size;
 
 					this.size = this.pre_minimized_size;
-					await this.glide_to_pos(this.pre_minimized_pos);
+
+					// pre maximised lt_pos as well????
+
+					const ltpos = [this.dom.attributes.style.left || 0, this.dom.attributes.style.top || 0].map(x => parseInt(x));
+
+					//console.log('ltpos', ltpos);
+
+					const dest_pos = [this.pre_minimized_pos[0] - ltpos[0], this.pre_minimized_pos[1] - ltpos[1]];
+
+
+					await this.glide_to_pos(dest_pos);
 					this.remove_class('minimized');
 					this.dragable = true;
 
@@ -605,7 +618,7 @@ class Window extends Control {
 		}
 	}
 
-	maximize() {
+	async maximize() {
 		if (this.manager) {
 			this.manager.maximize(this);
 		} else {
@@ -641,9 +654,31 @@ class Window extends Control {
 
 				// And get the bcr of this to compute the difference(s)...?
 
-				const [tx, ty] = [this.ta[6], this.ta[7]];
+				//const [tx, ty] = [this.ta[6], this.ta[7]];
+
+				// The glide_to_pos function would be better if it itself made that correction.
+				//.  Maybe best if it uses some kind of array subtraction functio too, its in lang.
+
+
+
+				const ltpos = [this.dom.attributes.style.left || 0, this.dom.attributes.style.top || 0].map(x => parseInt(x));
+
+				//console.log('ltpos', ltpos);
+
+				const dest_pos = [this.pre_maximized_pos[0] - ltpos[0], this.pre_maximized_pos[1] - ltpos[1]];
+
+				await this.glide_to_pos(dest_pos);
+
+				/*
+
 				const my_new_left = this.pre_maximized_pos[0];
 				const my_new_top = this.pre_maximized_pos[1];
+
+
+				// The glide_to_pos function would help.
+
+				// Control.ltpos could help - it's the pos that's specifically the css left and top values.
+
 
 				const x_diff = my_new_left - tx;
 				const y_diff = my_new_top - ty;
@@ -691,11 +726,22 @@ class Window extends Control {
 				}
 
 				process_frame();
+				*/
 
 
 			} else {
 
 				const my_bcr = this.bcr();
+
+				//console.log('my_bcr', my_bcr);
+
+				const ltpos = [this.dom.attributes.style.left, this.dom.attributes.style.top].map(x => parseInt(x));
+
+				//console.log('ltpos', ltpos);
+
+				// Then reduce the target t3d position by that...?
+
+
 				//this.pre_maximized_pos = my_bcr[0];
 				//this.pre_maximized_size = my_bcr[2];
 				//this.dom.el.style.transition = 'width 0.14s linear, height 0.14s linear;';
@@ -732,8 +778,20 @@ class Window extends Control {
 				// And to move it to 0,0 over a few frames...
 
 				const [tx, ty] = [this.ta[6], this.ta[7]];
-				const my_new_left = 0;
-				const my_new_top = 0;
+
+
+				//const ltpos = [this.dom.attributes.style.left || 0, this.dom.attributes.style.top || 0].map(x => parseInt(x));
+
+				//console.log('ltpos', ltpos);
+
+				const dest_pos = [0 - ltpos[0], 0 - ltpos[1]];
+
+				await this.glide_to_pos(dest_pos);
+
+				//const my_new_left = ;
+				//const my_new_top = -1 * ltpos[1];
+
+				/*
 
 				const x_diff = my_new_left - tx;
 				const y_diff = my_new_top - ty;
@@ -781,6 +839,7 @@ class Window extends Control {
 				}
 
 				process_frame();
+				*/
 
 			}
 
