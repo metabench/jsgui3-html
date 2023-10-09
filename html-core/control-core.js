@@ -256,16 +256,23 @@ class Control_Core extends Data_Object {
 				'value': value
 			});
 		});
-		prop(this, 'pos', spec.pos, (e_change) => {
+
+		// OK, so this does have a 'pos' property, and should respect spec.pos.
+
+		prop(this, 'pos', undefined, (e_change) => {
 			let {
 				value,
 				old
 			} = e_change;
 			if (value.length === 2) {
+
+				/*
 				if (old && old.length === 3) {
 					value = [value[0], value[1], old[2]];
 					this.pos = value;
 				}
+				*/
+
 			}
 			let [left, top] = value;
 			let o_style = {
@@ -277,6 +284,9 @@ class Control_Core extends Data_Object {
 				'value': value
 			});
 		});
+
+		if (spec.pos) this.pos = spec.pos;
+
 		this.on('change', e => {
 			if (e.name === 'disabled') {
 				if (e.value === true) {
