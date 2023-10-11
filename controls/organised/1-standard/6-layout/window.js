@@ -9,6 +9,64 @@ var fields = {
 };
 
 const {dragable, resizable} = require('../../../../control_mixins/mx');
+
+// Similar in some ways to selectable.
+
+// .become_the_active_window
+// .become_an_inactive_window
+
+// .siblings('become_an_inactive_window') perhaps????
+//.  or simple each syntax? each_sibling?
+
+// Maybe consider .each() query functions.
+
+//. .siblings.each(Window).become_an_inactive_window()
+
+//  .siblings.each(Window).set('the_active_window', false);
+
+//  .siblings.each(Window).set(Window.flag)('active', false);
+
+// .siblings.each(Window).remove_class('active');
+//.  .each returning a 'group query object'...
+//.    maybe proxies could get this working best?
+//.    so when calling a function on that, it would call the function on the whole group.
+//.    want to make it make functions available (easily)
+//.    though maybe it wouldn't hurt to list them as well.
+
+// .siblings.remove_class('active') even???
+//.  does seem like the right syntax for the coder.
+
+// Maybe it could make a collection of siblings whenever that is queried???
+
+// Maybe a Control_Collection would help? Would extend Collection, and also have some / many functions that call / pass through
+//. functions on the controls.
+
+// So addressing a group of controls, and doing remove_class or close
+
+// Definitely looks worth making more ways to make the UI coding easier.
+//.  And more concise on the top level.
+
+
+
+// focusable ???
+
+// window.has_focus = true;
+//. ????
+
+//   
+// active property mixin???
+// can_be_active mixin ???
+// apply the mixin, ?(set can_be_active = true?) or set can_be_active to true by default.
+
+// window.active = true;
+//.  would make the other windows inactive.
+
+// window.active = false; - can set this on the siblings when one is made active.
+
+
+
+
+
 //const  = require('../../../../control_mixins/resizable');
 
 // Making the top bar a drag handle should not be so hard.
@@ -56,6 +114,48 @@ const {dragable, resizable} = require('../../../../control_mixins/mx');
 
 
 
+// Self-adjusting positioning behaviour when in the minimized state forming a bar at the bottom, so that if there
+//.  is space to the left it moves into that space
+//.  is space in at the right in the row below moves into that space
+
+// Could try making a really simple implementation to start with.
+
+// Through a function to determine the distance to the control (element) to the left, (a sibling???), if there is such an element,
+//.  or to the boundary of the parent that it's inside.
+// May need to go through all the siblings.
+//. May need to measure a few bcrs?
+//. Would be best / fastest if it used the position data within jsgui.
+//.   Doing it idiomatically? Making use of and adjustments for both ltpos and t3d2dpos
+//.    
+
+// More generalised functionality for measuring distances to the nearest sibling to the left could help...?
+//.  Though some specific code, if it's not too long and uses good enough idioms, could be most effective.
+
+
+// And the control would have some kind of event loop where it does the checks and gets moving...
+//.  Maybe could do that 6 times a second? 5 times a second? 4 times a second?
+
+// A check every 250ms would not be that much of a delay.
+
+// But properties such as 'velocity', 'friction', 'mass', 'acceleration'???
+//.  A reasonable amount of physics modelling would be useful.
+//.  But for the moment a much simpler adjustment system would help.
+//.    It could maybe even just do a 4px move every time it checks if that adjustment can happen.
+//.  Also, could turn on and off this kind of adjustment checking depending on the situation, eg stop once complete.
+
+// Only when in the minimized state do it.
+//.  Setting up states, behaviours, state switches could help if it makes for a nicer programming API here.
+
+
+
+
+
+
+
+
+
+
+
 
 class Window extends Control {
 	// maybe add before make would be better. add will probably be used more.
@@ -86,22 +186,7 @@ class Window extends Control {
 			//  
 
 			
-			const old_and_now_broken = () => {
-				var div_relative = add(make(Control({'class': 'relative'})))
-				var title_bar = div_relative.add(make(Control({'class': 'title bar'})));
-
-
-				var dv_title = this.title;
-
-
-				var title_h2 = make(jsgui.h2());
-				title_bar.add(title_h2);
-
-				if (dv_title) {
-					var title = dv_title.value();
-					title_h2.add(title);
-				}
-			}
+			
 
 			const div_relative = new Control({
 				context
@@ -150,7 +235,17 @@ class Window extends Control {
 
 			// 🗕
 			//btn_minimize.add('🗕');
-			btn_minimize.add('▪');
+			// ⊖
+			//btn_minimize.add('▪');
+
+			const span = (text) => {
+				const res = new jsgui.controls.span({context});
+				res.add(text);
+				return res;
+			}
+
+
+			btn_minimize.add(span('⊖'));
 
 			right_button_group.add(btn_minimize);
 
@@ -166,7 +261,9 @@ class Window extends Control {
 
 
 			//btn_maximize.add('🗖')
-			btn_maximize.add('⬛')
+			// ⊕
+			btn_maximize.add(span('⊕'))
+			//btn_maximize.add('⬛')
 
 			right_button_group.add(btn_maximize);
 
@@ -174,9 +271,9 @@ class Window extends Control {
 				context
 			});
 
-			// ⓧ⊗
+			// ⓧ⊗. ⊗
 
-			btn_close.add('ⓧ')
+			btn_close.add(span('⊗'))
 
 			// ❎
 			right_button_group.add(btn_close);
@@ -307,34 +404,51 @@ class Window extends Control {
 			const start_tx = this.ta[6];
 			const start_ty = this.ta[7];
 
+			let i_frame = 0;
+
+			const skip_zeroth_frame = false;
+
+			// Delaying by one frame. May make this into an option.
 			const process_frame = () => {
-				
-				requestAnimationFrame(timestamp => {
-					if (!animation_start) {
-						animation_start = timestamp;
+
+				if (skip_zeroth_frame && i_frame === 0) {
+
+					requestAnimationFrame(timestamp => {
+						i_frame++;
 						process_frame();
-					} else {
-						const time_since = timestamp - animation_start;
+					});
 
-						//console.log('time_since', time_since);
-
-						if (time_since < ms_total_animation_time) {
-							const proportion_through = time_since / ms_total_animation_time;
-							const proportional_x_diff = x_diff * proportion_through;
-							const proportional_y_diff = y_diff * proportion_through;
-							this.ta[6] = start_tx + proportional_x_diff;
-							this.ta[7] = start_ty + proportional_y_diff;
+				} else {
+					requestAnimationFrame(timestamp => {
+						if (!animation_start) {
+							animation_start = timestamp;
 							process_frame();
 						} else {
-							this.ta[6] = start_tx + x_diff;
-							this.ta[7] = start_ty + y_diff;
-							//this.dom.el.style.transition = '';
-							//callback();
-							s();
-							//
+							const time_since = timestamp - animation_start;
+	
+							//console.log('time_since', time_since);
+	
+							if (time_since < ms_total_animation_time) {
+								const proportion_through = time_since / ms_total_animation_time;
+								const proportional_x_diff = x_diff * proportion_through;
+								const proportional_y_diff = y_diff * proportion_through;
+								this.ta[6] = start_tx + proportional_x_diff;
+								this.ta[7] = start_ty + proportional_y_diff;
+								i_frame++;
+								process_frame();
+							} else {
+								this.ta[6] = start_tx + x_diff;
+								this.ta[7] = start_ty + y_diff;
+								//this.dom.el.style.transition = '';
+								//callback();
+								s();
+								//
+							}
 						}
-					}
-				})
+					})
+				}
+				
+				
 			}
 			process_frame();
 
@@ -384,7 +498,7 @@ class Window extends Control {
 				this.dragable = false;
 				// Width to minimize to = 280.
 
-				this.size = [width_to_minimize_to, minimized_height];
+				
 
 				// dock to the bottom of the window, and animate the move.
 
@@ -419,6 +533,12 @@ class Window extends Control {
 				//.  Then on maximize, would need to rearrange the minimized windows.
 
 				// Want to keep the code simple and clear on this level where possible.
+
+				setTimeout(() => {
+					this.size = [width_to_minimize_to, minimized_height];
+				}, 17)
+
+				
 
 				const determine_pos_to_minimize_to = () => {
 					// Go through the siblings....
@@ -559,7 +679,11 @@ class Window extends Control {
 					//this.pre_minimized_pos = this.pre_maximized_pos;
 					//this.pre_minimized_size = this.pre_maximized_size;
 
-					this.size = this.pre_minimized_size;
+					setTimeout(() => {
+						this.size = this.pre_minimized_size;
+					}, 17)
+
+					//this.size = this.pre_minimized_size;
 
 					// pre maximised lt_pos as well????
 
@@ -644,8 +768,12 @@ class Window extends Control {
 
 				this.remove_class('maximized');
 				// But the bcr includes borders....
-				this.size = [this.pre_maximized_size[0] - 2, this.pre_maximized_size[1] - 2];
 
+				setTimeout(() => {
+					this.size = [this.pre_maximized_size[0] - 2, this.pre_maximized_size[1] - 2];
+
+				}, 17)
+				
 				//console.log('this.pre_maximized_pos', this.pre_maximized_pos);
 
 				this.dragable = true;
@@ -773,7 +901,12 @@ class Window extends Control {
 
 				// undet size even???
 
-				this.size = [parent_size[0] - 4, parent_size[1] - 4];
+				setTimeout(() => {
+					this.size = [parent_size[0] - 4, parent_size[1] - 4];
+
+				}, 17)
+
+				
 				
 				// And to move it to 0,0 over a few frames...
 
@@ -988,6 +1121,91 @@ class Window extends Control {
 				bounds: [[120, 80], undefined],
 				extent_bounds: this.parent
 			});
+
+			// Space checking could be a useful more general feature / mixin.
+
+			// sibling_positions???
+
+			// A better positioning and relationships API?
+			//.  Worth considering what it should do, what API it provides, and how it does it.
+			//.    A kind of position query system?
+			//.    Caching / optimized info access?
+			//.      Eg a large ta that contains lots of data for lots of controls
+			//.        Maybe quite a lot of numbers for very specific things.
+
+			// Seems like getting the 'very specific things' API right will help, and then using it to make a more general
+			//.  purpose API.
+
+
+			// Position relationships system...?
+			//.  System to query positions of things in flexible way???
+			//.    Does seem like very specific measurements and calculation on lower level, providing intuitive API
+			//.      on higher level.
+
+
+
+			
+
+			setInterval(() => {
+				// Is there a space on the same row???
+
+				//. 
+
+				if (this.has_class('minimized')) {
+					//console.log('this.top', this.top);
+
+					//this.top -= 4;
+
+					// A relatively quick and simple scan for how much space it has to the left...?
+					//. Only consider those that are in the same row?
+					//   Or detect any that overlap a box to the left.
+
+
+					// That works, don't want such jagged movement though.
+
+					// It could detect the space to the left every 250ms.
+					//.  Then it could smoothly move into place, possibly continuing to detect if the amount of space has increased.
+
+					// Accelerate type commands could help express this type of code concisely and clearly.
+					//.  Rapid sibling position checking and proximity detection would help.
+
+					// ctrl.siblings.proximity ????
+
+					// ctrl.sense_siblings_proximities?
+					// ctrl.sense_closest_sibling_proximities ????
+
+					// ctrl.adjacent_sibling_proximities ????
+					//.  even is collision detection.
+					//.    could see about using sectors or something like that when there are > 20 ??? siblings.
+					
+
+					// Deflinitely looks like a more in-depth way of reliably measuring these will help, and best to make it
+					//.  a mixin so it can be used in a variety of controls.
+
+
+
+
+
+
+
+
+
+					// Do want to make the higher level .pos, .left, .right code make use of both
+					//. style left, top, translate3d x, y
+					//. and possibly other types of positioning???
+					//.   but maybe not this particular property.
+					//.   have it represent both the left and top properties as well as translate3d.
+					//.     translate3d will be used on a lower level in some / many cases in order to improve performance.
+
+
+
+
+				}
+
+				// eg this.left -= 4 ...
+
+			}, 250);
+
 			// and should set the property as well, that's how the mixins work.
 			//   the mixins give it the capability.
 
@@ -1120,10 +1338,16 @@ Window.css = `
 }
 
 .resize-handle:hover {
+	color: #EFCF00;
+	opacity: 0.8;
+
+}
+.resize-handle.resizing {
 	color: #FFDF00;
 	opacity: 1;
 
 }
+
 .bottom-right.resize-handle {
 	right: 0;
 	bottom: 0;
@@ -1150,6 +1374,8 @@ Window.css = `
 	*/
 
 	overflow: hidden;
+	-webkit-user-select: none;
+	user-select: none;
 }
 
 .window .relative {
@@ -1184,8 +1410,10 @@ Window.css = `
     -moz-box-shadow: inset 0px -2px 2px -2px rgba(0, 0, 0, 0.75);
     box-shadow: inset 0px -2px 2px -2px rgba(0, 0, 0, 0.75);
 	border-radius: 4px;
+	-webkit-user-select: none;
 	user-select: none;
 	overflow: hidden;
+	cursor: default;
 }
 
 .window .title.bar h2 {
@@ -1194,9 +1422,16 @@ Window.css = `
 	float: left;
 }
 
-.window .title.bar span {
+.window .title.bar > span {
     vertical-align: middle;
     line-height: 31px;
+}
+
+.window .title.bar .button > span {
+	transform: scale(2);
+    display: inline-block;
+	line-height: 13px;
+    height: 14px;
 }
 
 

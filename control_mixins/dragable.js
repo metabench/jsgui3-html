@@ -741,6 +741,10 @@ let dragable = (ctrl, opts = {}) => {
 			//console.log('new_pos', new_pos);
 			ctrl.pos = new_pos;
 		} else if (drag_mode === 'x') {
+
+			// May be done with a restriction / restrictions option.
+
+
 			//bounds_size = bounds.bcr()[2];
 			bounds_size = [bounds.dom.el.offsetWidth, bounds.dom.el.offsetHeight];
 			//console.log('bounds.dom.el', bounds.dom.el);
@@ -769,7 +773,7 @@ let dragable = (ctrl, opts = {}) => {
 	}
 
 	const body_mm = e_mm => {
-		let touch_count = 1;
+		let touch_count = 0;
 		if (e_mm.touches) touch_count = e_mm.touches.length;
 
 		// 
@@ -790,39 +794,45 @@ let dragable = (ctrl, opts = {}) => {
 		//console.log('pos_mm', pos_mm);
 
 
-		if (touch_count === 1) {
+		if (touch_count === 0 || touch_count === 1) {
 
-			if (e_mm.pageX || e_mm.touches) {
+			if (e_mm.buttons === 0) {
+				body_mu();
+			} else {
+				if (e_mm.pageX || e_mm.touches) {
 
-				let pos_mm;
+					let pos_mm;
 
-				if (e_mm.touches) {
-					pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-				} else {
-					pos_mm = [e_mm.pageX, e_mm.pageY];
-				}
-
-				if (pos_mm[0] !== undefined && pos_mm[1] !== undefined) {
-					movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
-					if (!dragging) {
-						//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
-						let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
-						let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
-
-						//console.log('drag_offset_distance', drag_offset_distance);
-
-						//console.log('abs_offset_dist', abs_offset_dist);
-						if (abs_offset_dist >= drag_offset_distance) {
-							begin_drag(pos_mm);
-						}
+					if (e_mm.touches) {
+						pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
 					} else {
-						move_drag(pos_mm);
+						pos_mm = [e_mm.pageX, e_mm.pageY];
 					}
-				}
 
-				
-				
+					if (pos_mm[0] !== undefined && pos_mm[1] !== undefined) {
+						movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
+						if (!dragging) {
+							//movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
+							let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
+							let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
+
+							//console.log('drag_offset_distance', drag_offset_distance);
+
+							//console.log('abs_offset_dist', abs_offset_dist);
+							if (abs_offset_dist >= drag_offset_distance) {
+								begin_drag(pos_mm);
+							}
+						} else {
+							move_drag(pos_mm);
+						}
+					}
+
+					
+					
+				}
 			}
+
+			
 
 
 		}

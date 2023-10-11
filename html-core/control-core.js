@@ -320,6 +320,9 @@ class Control_Core extends Data_Object {
 
 
 		if (spec.pos) this.pos = spec.pos;
+		//. Also need to read the 'pos' from the (inline?) css on activation.
+
+
 
 		this.on('change', e => {
 			if (e.name === 'disabled') {
@@ -365,6 +368,64 @@ class Control_Core extends Data_Object {
 			this.dom.attributes = spec.attrs;
 		}
 	}
+	get left() {
+		
+
+		// Though making use of translate3d would be good too.
+		//.  Looks like this actually needs to make use of the .ta[6] .ta[7] properties as well.
+		//.  Include both of them in the calculation.
+
+
+
+		//return this.pos[0];
+
+		// Checking if we have that dom.attributes.style.left???
+
+
+		const sl = this.dom.attributes.style.left;
+		if (sl) {
+			return parseInt(sl) + this.ta[6];
+		}
+
+
+		
+	}
+	get top() {
+		//return this.pos[1];
+		const st = this.dom.attributes.style.top;
+		if (st) {
+			return parseInt(st) + this.ta[7];
+		}
+		
+	}
+
+	// and then setting the top...?
+	//.  should take account of the existing style property value, and make any adjustment using the t3d ta system.
+	//.    maybe not using translate3d by default? Not sure....
+	
+	set top(value) {
+		// Make the modification using t3d (as well?)
+
+		if (typeof value === 'number') {
+			const measured_current_top = this.top;
+			const diff = Math.round(value - measured_current_top);
+			// round to an int....
+			this.ta[7] += diff;
+
+
+		}
+
+	}
+
+
+
+	// And setters for them too....
+	//.  could even implement this with margin?
+	//.    .margin.top may be a good interface for this.
+
+
+
+
 	'hide'() {
 		let e = {
 			cancelDefault: false

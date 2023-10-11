@@ -189,6 +189,9 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
         let css_transition;
 
         ctrl_br_resize_handle.on('drag-like-action-start', () => {
+
+          
+
           //console.log('e_drag_like_action_move', e_drag_like_action_move);
           //initial_size = ctrl.size;
           //css_transition = ctrl.dom.attributes.style.transition;
@@ -247,6 +250,7 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
           
           ctrl.add_class('no-transitions');
+          ctrl_br_resize_handle.add_class('resizing');
           //ctrl.dom.attributes.style.transition = 'none';
 
           // Improving the size property would help.
@@ -300,7 +304,7 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
         ctrl_br_resize_handle.on('drag-like-action-end', e_drag_like_action_end => {
           //console.log('e_drag_like_action_move', e_drag_like_action_move);
           //ctrl.dom.attributes.style.transition = css_transition;
-
+          ctrl_br_resize_handle.remove_class('resizing');
           ctrl.remove_class('no-transitions');
 
           //console.log('2) css_transition', css_transition);

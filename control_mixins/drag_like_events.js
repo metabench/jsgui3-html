@@ -10,6 +10,10 @@ const {
 
 /*
 	Handling mouseup outside of the document.
+        Is quite important.
+        'Virtual' mouseup events? Have it on by default.
+        It's working, but making it an option may work better still.
+
 	Should have a mousemove handler (while dragging) to check to see if the button in question has been released.
 	Maybe only applies with the mouse drag?
 
@@ -19,6 +23,7 @@ const {
 	A class that models the mouse may help.
 
 	Though let's focus on getting some specific and basic GUI things working.
+
 
 
 
@@ -275,63 +280,87 @@ const drag_like_events = (ctrl, opts = {}) => {
         }
 
         const body_mm = e_mm => {
-            let touch_count = 1;
-            if (e_mm.touches) touch_count = e_mm.touches.length;
+            // So for mouse move....
+            //.  Detect if no button is down.
 
-            // 
+            let touch_count = 0;
 
-            if (e_mm.touches) {
-                pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-            } else {
-                pos_mm = [e_mm.pageX, e_mm.pageY];
-            }
+            // The number of buttons though?
+            //. No buttons, touch_count of 0?
+
+            //console.log('e_mm.button', e_mm.button);
+            //console.log('e_mm.buttons', e_mm.buttons);
+
 
             
 
-            // could store a variable that tracks the last event.
+            if (e_mm.touches) touch_count = e_mm.touches.length;
+            if (e_mm.buttons === 0 && touch_count === 0) {
 
-            //console.log('movement_offset', movement_offset);
-            //console.log('item_start_pos', item_start_pos);
-            //console.log('pos_md', pos_md);
-            //console.log('pos_mm', pos_mm);
+                // The virtual mouseup or touch end.
+                body_mu();
+
+            } else {
 
 
-            if (touch_count === 1) {
-
-                if (e_mm.pageX || e_mm.touches) {
-
-                    let pos_mm;
-
-                    if (e_mm.touches) {
-                        pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
-                    } else {
-                        pos_mm = [e_mm.pageX, e_mm.pageY];
-                    }
-
-                    if (pos_mm[0] !== undefined && pos_mm[1] !== undefined) {
-                        movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
-                        if (!dragging) {
-                            //movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
-                            let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
-                            let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
-
-                            //console.log('drag_offset_distance', drag_offset_distance);
-
-                            //console.log('abs_offset_dist', abs_offset_dist);
-                            if (abs_offset_dist >= drag_offset_distance) {
-                                begin_drag(pos_mm);
-                            }
-                        } else {
-                            move_drag(pos_mm);
-                        }
-                    }
-
-                    
-                    
+                if (e_mm.touches) {
+                    pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+                } else {
+                    pos_mm = [e_mm.pageX, e_mm.pageY];
                 }
 
+                
+
+                // could store a variable that tracks the last event.
+
+                //console.log('movement_offset', movement_offset);
+                //console.log('item_start_pos', item_start_pos);
+                //console.log('pos_md', pos_md);
+                //console.log('pos_mm', pos_mm);
+
+
+                if (touch_count === 0 || touch_count === 1) {
+
+                    if (e_mm.pageX || e_mm.touches) {
+
+                        let pos_mm;
+
+                        if (e_mm.touches) {
+                            pos_mm = [e_mm.pageX || e_mm.touches[0].pageX, e_mm.pageY || e_mm.touches[0].pageY];
+                        } else {
+                            pos_mm = [e_mm.pageX, e_mm.pageY];
+                        }
+
+                        if (pos_mm[0] !== undefined && pos_mm[1] !== undefined) {
+                            movement_offset = [pos_mm[0] - pos_md[0], pos_mm[1] - pos_md[1]];
+                            if (!dragging) {
+                                //movement_offset = [(offset_mm[0]), Math.abs(offset_mm[1])];
+                                let abs_offset = [Math.abs(movement_offset[0]), Math.abs(movement_offset[1])];
+                                let abs_offset_dist = Math.sqrt(Math.pow(abs_offset[0], 2) + Math.pow(abs_offset[1], 2));
+
+                                //console.log('drag_offset_distance', drag_offset_distance);
+
+                                //console.log('abs_offset_dist', abs_offset_dist);
+                                if (abs_offset_dist >= drag_offset_distance) {
+                                    begin_drag(pos_mm);
+                                }
+                            } else {
+                                move_drag(pos_mm);
+                            }
+                        }
+
+                        
+                        
+                    }
+
+
+                }
 
             }
+
+            // 
+
+            
             // Looks like they are passive now by default.
             //e_mm.preventDefault();
         }
