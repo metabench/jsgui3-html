@@ -179,6 +179,7 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
         // But does it have one already???
         ctrl.ctrl_relative.add(ctrl_br_resize_handle);
+        ctrl_br_resize_handle.pre_activate();
         ctrl_br_resize_handle.activate();
 
         ctrl.ctrl_br_resize_handle = ctrl_br_resize_handle;
@@ -250,6 +251,11 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
           
           ctrl.add_class('no-transitions');
+
+          // Strangely does not work.
+          //.  Possibly was not connected properly to the dom element.
+          //console.log('ctrl_br_resize_handle.dom.el', ctrl_br_resize_handle.dom.el);
+
           ctrl_br_resize_handle.add_class('resizing');
           //ctrl.dom.attributes.style.transition = 'none';
 

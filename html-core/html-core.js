@@ -981,6 +981,34 @@ class Blank_HTML_Document extends HTML_Document {
 //  .change event
 
 
+/*
+2023 - Want to APIs to be as easy to use and simple as possible in many cases.
+Should not need to provide a list of controls...???
+Or be able to tell it to find intersections amongst siblings.
+Also want it to be able to find intersections amongst coords given as params.
+
+Even having it as a dependency of jsgui3-html.
+Seems like integrating jsgui3-gfx-core may help.
+
+Want some kinds of intersections queries....?
+Or algorithms to process the raw bcr data and then determine the matches / overlaps?
+
+Seems better to go for sibling queries.
+For the moment, don't make a very comprehensive positioning abstraction, but focus on making the specific code efficient with
+convenient lower level functions.
+
+For example: ctrl.siblings.bcrs for example.
+// ctrl.sublings.each.bcr even
+// ctrl.each.sibling.each.bcr ???
+
+
+// would a box extending 82 pixels from the left of ctrl intersect any of that ctrl's siblings?
+
+
+
+
+*/
+
 class Intersection_Finder extends Evented_Class {
     constructor(spec) {
         // For all of the controls here.

@@ -1143,6 +1143,16 @@ class Window extends Control {
 			//.      on higher level.
 
 
+			/*
+			const ifinder = new jsgui.Intersection_Finder({
+				controls: 
+			});
+			*/
+
+			// Maybe remake Intersection_Finder to be somewhat different.
+			//.  Could make it more advanced overall.
+
+
 
 			
 
@@ -1153,6 +1163,66 @@ class Window extends Control {
 
 				if (this.has_class('minimized')) {
 					//console.log('this.top', this.top);
+
+
+					// ctrl.rect.extend('left', 80).intersections(ctrl.every.sibling.rect).max('width');
+					//. Some kind of syntax like this could get the value in one line of code, easy to understand.
+
+					// ctrl.every would provide a 'collective' object of the thing that follows.
+
+					// every.sibling getter returns Collective of control's siblings.
+
+					
+
+
+
+
+
+
+
+					// 
+
+					// this.siblings.bcr
+
+					// this.is.any.sibling.bcr.within.band.extending.left.pixels(8).of(this.bcr)
+
+					// Definitely want to improve the syntax for accessing this kind of information.
+					// Defining the band / strip space to the left of a ctrl.
+					//.  Then asking which controls are within that space.
+					//     some kind of overlaps_bcr function.
+
+					// More powerful access to position and size functions could help.
+					//. Such as defining a bounds / shape that extends to the left of a control.
+					//.  Then checking if any of that control's siblings are within that bounds.
+
+					// .radar perhaps?
+
+					// ctrl.virtual_surrounding_regions.left_band.detect(ctrl.siblings) perhaps???
+
+					// Does look like some means of doing this with an idiomatic API would help a lot.
+					// ctrl.detect(ctrl.siblings, 'within', 80, 'of', 'left-band') ???
+
+					//. Both idiomatic and specific would help.
+
+					// this.bcr().extend('left', 80).detect_intersections_with(this.siblings)
+					//. using a set of more graphical primitives would help.
+
+					// Does seem like it's worth connecting up to jsgui3-gfx-core.
+
+					
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 					//this.top -= 4;
 
@@ -1324,22 +1394,29 @@ Window.css = `
 	transition: none !important; 
 }
 
+
+
+:root {
+	--rhsqsize: 16px;
+}
+
+
 .resize-handle {
-	width: 18px;
-	height: 18px;
+	width: var(--rhsqsize);
+	height: var(--rhsqsize);
 	/* background-color: #FF0000; */
 	color: #CCCCCC;
-	opacity: 0.8;
+	opacity: 0.45;
 	position: absolute;
-	line-height: 18px;
-	font-size: 18px;
+	line-height: var(--rhsqsize);
+	font-size: var(--rhsqsize);
 	user-select: none;
 	transition: color 0.14s ease-in-out, opacity 0.14s ease-in-out;
 }
 
 .resize-handle:hover {
 	color: #EFCF00;
-	opacity: 0.8;
+	opacity: 0.5;
 
 }
 .resize-handle.resizing {
