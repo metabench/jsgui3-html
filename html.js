@@ -37,6 +37,40 @@ jsgui.Resource.Compilation = require('./resource/compilation-resource');
 jsgui.Resource.Compiler = require('./resource/compiler-resource');
 
 
+jsgui.gfx = require('jsgui3-gfx-core');
+
+
+// Or create the property / getter for the rect.
+//.  Maybe (even) the setter too.
+
+// Maybe have different possible positioning or layout modes / options.
+//.  Modes being sets of options? Or ways of operating?
+
+// jsgui.gfx.Rectange / .Rect
+
+// ctrl.rect perhaps?
+// ctrl.bounding.rect???
+
+// ctrl.bcr even....
+//.  and upgrade that bounding client rect function to return a Rectangle instance?
+
+// rect.expand('left', 80) for example.
+
+// could give the 'rect' getters for [0], [1], [2] so that it keeps the currently used interface of bcr() results.
+
+// ctrl.box perhaps?
+// ctrl.client.rect perhaps?
+// then could abbreviate it to ctrl.rect perhaps?
+// ctrl.box ? ctrl.bx ? 
+
+
+
+
+
+
+// Control.prototype.rect = ... ?
+
+
 // Should possibly have means to compile HTML and a few other things,
 //  Possibly having compilers loaded when needed with their own require / import statement.
 

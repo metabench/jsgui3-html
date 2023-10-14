@@ -13,6 +13,9 @@ const Text_Node = require('./text-node');
 var Control_Core = require('./control-core');
 const has_window = typeof window !== 'undefined';
 
+const gfx = require('jsgui3-gfx-core');
+const {Rect} = gfx;
+
 // Maybe this can / can be used to assign parents to the child controls.
 
 var desc = (ctrl, callback) => {
@@ -143,21 +146,50 @@ class Control extends Control_Core {
 
 	// Maybe it's a DOM method, through .DOM?
 	// . While there is the 'DOM facade' it may be suitable as part of the Control itself.
+
+
+	// change this to getter and setter.
+	//.  would be a breaking API change.
+	//.  also worth making it return a Rectangle object with a matching API.
+
 	'bcr' () {
+
+
+
 		var a = arguments;
 		a.l = a.length;
 		var sig = get_a_sig(a, 1);
+
 		if (sig === '[]') {
 			var el = this.dom.el;
 			var bcr = el.getBoundingClientRect();
+
+			/*
 			var res = [
 				[bcr.left, bcr.top],
 				[bcr.right, bcr.bottom],
 				[bcr.width, bcr.height]
 			];
-			return res;
+			*/
+
+			const res_rect = new Rect([bcr.width, bcr.height], [bcr.left, bcr.top]);
+
+			//console.log('res_rect', res_rect);
+			return res_rect;
 		} else if (sig === '[a]') {
+
+			// Likely to need a different and improved kind of bcr setting system.
+
+
+
 			// Set the bcr
+
+			// want more flexibility in terms of how it gets set?
+			//.  size will / may be before pos when defining rectangles.
+
+			// Though 2DPosition and 2DRectangleSize could help.
+
+
 			let [pos, br_pos, size] = a[0];
 			this.style({
 				'position': 'absolute',
@@ -168,7 +200,20 @@ class Control extends Control_Core {
 			});
 		}
 	}
+
+
 	// Presuming pixels when?
+	//.  Probably should change to a more advanced size system / algorithm.
+	//.    Size being integrated with some 'box' or 'rect' property perhaps. Or rect.box? .rect.size perhaps?
+	//.  with .size being a shortcut to .rect.size perhaps.
+	//     then would want the rect to have change events.
+
+	// a change_events function could help.
+	//. change_events(this) in the constructor.
+	//.  this.change(object) raises the change event, this.change(fn) adds a handler.
+
+
+
 	get size() {
 		if (this._size) {
 			return this._size;
@@ -179,6 +224,8 @@ class Control extends Control_Core {
 			}
 		}
 	}
+
+
 	'add_text' (value) {
 		//console.log('add_text', value);
 		//console.trace();
@@ -682,104 +729,9 @@ class Control extends Control_Core {
 		
 	}
 
-	'_old_activate_content_controls' () {
+	// Possibly this should have some of / reference to what is in jsgui3-client.
 
-		// Not so sure about this, as maybe pre_activate would cover it.
 
-		const do_activation = () => {
-
-			if (!this.dom.el) {
-				let found_el = this.context.get_ctrl_el(this);
-				if (found_el) {
-					this.dom.el = found_el;
-				}
-			}
-			const el = this.dom.el;
-			if (el) {
-				const context = this.context;
-				let ctrl_fields = {},
-					c, l;
-				if (el.getAttribute) {
-					let str_ctrl_fields = el.getAttribute('data-jsgui-ctrl-fields');
-					if (str_ctrl_fields) {
-						ctrl_fields = JSON.parse(str_ctrl_fields.replace(/'/g, '"'));
-					}
-					let ctrl_fields_keys = Object.keys(ctrl_fields);
-					let l_ctrl_fields_keys = ctrl_fields_keys.length;
-					let key, value;
-					for (c = 0; c < l_ctrl_fields_keys; c++) {
-						key = ctrl_fields_keys[c];
-						value = ctrl_fields[key];
-						this[key] = context.map_controls[value];
-					}
-					let cns = el.childNodes;
-
-					// This should be pre-activate as well.
-
-					let content = this.content;
-					for (c = 0, l = cns.length; c < l; c++) {
-						let cn = cns[c];
-						if (cn) {
-							let nt = cn.nodeType;
-							if (nt === 1) {
-								let cn_jsgui_id = cn.getAttribute('data-jsgui-id');
-								let cctrl = context.map_controls[cn_jsgui_id];
-								let found = false;
-								if (cctrl) {
-									let ctrl_id = cctrl.__id;
-									if (ctrl_id) {
-
-										content.each((v, i) => {
-											if (v.__id) {
-												if (v.__id === ctrl_id) found = true;
-											}
-										});
-
-									}
-									if (!found) {
-										//content.add(cctrl);
-										content._arr.push(cctrl);
-									}
-									cctrl.parent = this;
-
-									// Maybe do the activate a bit later on...?
-									cctrl.activate();
-									
-								}
-							}
-							if (nt === 3) {
-								const i_sibling = c;
-								const corresponding_ctrl = content._arr[i_sibling];
-								if (corresponding_ctrl) {
-									if (corresponding_ctrl.text === cn.nodeValue) {
-										corresponding_ctrl.dom.el = cn;
-									}
-								} else {
-									console.log('&&& no corresponding control');
-								}
-								const do_add = () => {
-									let val = cn.nodeValue;
-									console.log('adding Text_Node control', val);
-									const tn = new Text_Node({
-										context: this.context,
-										text: val,
-										el: cn
-									})
-									console.log('content._arr.length', content._arr.length);
-									content.add(tn);
-								}
-							}
-						}
-					}
-				}
-			} else {
-				//console.trace();
-				//console.log('missing el');
-			}
-
-		}
-		do_activation();
-	}
 
 	'pre_activate_content_controls' () {
 

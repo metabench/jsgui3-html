@@ -203,6 +203,8 @@ class Arrow_Button extends Button {
         // then rotation angle.
         //  could be given as a fraction of 2pi (full rotation radians).
 
+        // A 'rotation' mixin perhaps.
+
         line.dom.attributes.transform = 'rotate(' + this.rotation + ', 50, 50)';
         polygon.dom.attributes.transform = 'rotate(' + this.rotation + ', 50, 50)';
         

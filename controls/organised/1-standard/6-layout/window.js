@@ -1159,6 +1159,11 @@ class Window extends Control {
 			setInterval(() => {
 				// Is there a space on the same row???
 
+				// Still could make the code much more concise and idiomatic.
+				//.  The Rectangle class really helps so far. Nice that it has a mostly compatable API with the old bcr() return value.
+
+
+
 				//. 
 
 				if (this.has_class('minimized')) {
@@ -1172,7 +1177,141 @@ class Window extends Control {
 
 					// every.sibling getter returns Collective of control's siblings.
 
+					// this.siblings.length???
+					// this.siblings.filter(has_class) ???
+
+					// More rectangle goemetry object and function usage will help to keep code more concise.
+
+
+
+					const extended_bcr = this.bcr().extend('left', 80);
+					//my_bcr;
+
+					//console.log('extended_bcr[0]', extended_bcr[0]);
+					//console.log('extended_bcr[2]', extended_bcr[2]);
+
+					// then the bcrs of the minimized siblings....
+
+					// need a .siblings getter.
+					//.  seems like core Control functionality.
+
+					//console.log('this.siblings.length', this.siblings.length);
+
+					const minimized_siblings = this.siblings.filter(x => x.has_class('minimized'));
+
+					// then the intersections between extended_bcr and minimized siblings...
+
+					// Overlaps should be able to process / assess an array of controls.
+					//.  Would look at their bcrs....
+
+					const overlaps = extended_bcr.overlaps(minimized_siblings);
+
+					//console.log('minimized_siblings.length', minimized_siblings.length);
+					//console.log('overlaps', overlaps);
+
+					// And which overlap has the maximum width?
+					// What is the maximum width?
+
+					if (overlaps && overlaps.length > 0) {
+
+						// No overlaps...?
+						//console.log('overlaps', overlaps);
+
+						// Need to be more specific about where the overlap is....
+
+
+
+						const max_overlap_width = Math.max(...overlaps.map(x => x.w))
+
+						// May be failing to detect the overlap width properly.
+
+						//console.log('max_overlap_width', max_overlap_width);
+
+						// Then how far from the left edge of the container / parent is this control?
+
+
+						// would look at the parent.bcr
+
+						
+
+
+						if (max_overlap_width <= 78) {
+
+							const parent_bcr = this.parent.bcr();
+							const parent_left = parent_bcr[0][0];
+							const my_bcr = this.bcr();
+							const my_left = my_bcr[0][0];
+
+							const dist_from_parent_left = my_left - parent_left;
+							//console.log('dist_from_parent_left', dist_from_parent_left);
+							if (dist_from_parent_left > 2) {
+
+								/*
+
+								if (dist_from_parent_left > 8) {
+									this.ta[6] = this.ta[6] - 8;
+								} else {
+									this.ta[6] = this.ta[6] - 1;
+								}
+								*/
+
+								this.ta[6] = this.ta[6] - 1;
+
+							}
+
+						}
+
+						
+
+						
+						// this.compare('left').to(this.parent)
+						//.  producing some kind of property comparison object.
+
+
+
+
+						// Then if it's a low number there is plenty of space.
+
+
+						// Want to make really easy to read and write code, for example very idiomatic for how to move a control
+						//. to the left, could express it in a few ways.
+
+						// this.move('left', 2).
+
+						// this.x -= 2.
+
+
+
+
+
+
+					} else {
+
+						const parent_bcr = this.parent.bcr();
+						const parent_left = parent_bcr[0][0];
+						const my_bcr = this.bcr();
+						const my_left = my_bcr[0][0];
+
+						const dist_from_parent_left = my_left - parent_left;
+						//console.log('dist_from_parent_left', dist_from_parent_left);
+						if (dist_from_parent_left > 2) {
+
+							if (dist_from_parent_left > 8) {
+								this.ta[6] = this.ta[6] - 8;
+							} else {
+								this.ta[6] = this.ta[6] - dist_from_parent_left;
+							}
+
+						}
+
+					}
+
 					
+
+
+					// filter(this.siblings, x => x.has_class('minimized'))
+
+
 
 
 
@@ -1274,7 +1413,7 @@ class Window extends Control {
 
 				// eg this.left -= 4 ...
 
-			}, 250);
+			}, 18);
 
 			// and should set the property as well, that's how the mixins work.
 			//   the mixins give it the capability.

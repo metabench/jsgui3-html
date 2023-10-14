@@ -1069,6 +1069,18 @@ class Control_Core extends Data_Object {
 		this.iterate_subcontrols(ctrl => res.push(ctrl));
 		return res;
 	}
+
+	get siblings() {
+		const res = [];
+		if (this.parent) {
+			const _ = this.parent.content._arr;
+			_.forEach(x => {
+				if (x !== this) res.push(x);
+			})
+		}
+		return res;
+	}
+
 };
 var p = Control_Core.prototype;
 p.connect_fields = true;

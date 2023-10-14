@@ -133,6 +133,12 @@ class Arrow_Button extends Button {
         //  left, l, r, right, u, ur, ru
         //   possibly express with angles in degrees and radians.
 
+
+        // An upgraded Polygon Control would help.
+        //.  be able to render as an SVG polygon.
+
+
+
         // An arrow glyph with rotation would be cool.
         //  For the moment, I think SVG rendering would work the best.
 
@@ -145,6 +151,15 @@ class Arrow_Button extends Button {
         svg.dom.attributes.viewBox = "0 0 100 100";
 
         // include all in a group
+
+        // polygon.dom.attributes.points
+        // polygon.points = [[x, y], [x, y]] etc
+        //.  Or get more into what jsgui3-gfx-core has.
+
+        
+
+
+
 
 
 
@@ -167,6 +182,9 @@ class Arrow_Button extends Button {
         svgdefs.add(marker);
 
         */
+
+
+        // Polygon being made more virtual / abstract, and then being able to be used in or render as SVG.
 
 
         let polygon = this.polygon = new jsgui.polygon({
