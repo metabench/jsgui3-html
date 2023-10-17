@@ -88,7 +88,7 @@ class Radio_Button extends Control {
 
 
 
-
+        if (spec.group_name) this.group_name = spec.group_name;
 
         //console.log('spec.el', spec.el);
 
@@ -96,27 +96,44 @@ class Radio_Button extends Control {
 
         if (!spec.abstract && !spec.el) {
 
-            var name = this.name;
+            var name = this.group_name;
 
             // Will need to render its ID in the DOM.
 
             var html_radio = new Control({
-                'context': context
+                context
             });
+            {
+                const {dom} = html_radio;
+                dom.tagName = 'input';
+                const {attributes} = dom;
+                attributes.type = 'radio';
 
+                attributes.name = name;
+
+
+                attributes.id = html_radio._id();
+
+            }
+            /*
             html_radio.set('dom.tagName', 'input');
             html_radio.set('dom.attributes.type', 'radio');
             html_radio.set('dom.attributes.name', name);
             html_radio.set('dom.attributes.id', html_radio._id());
+            */
+
+
+
 
             var html_label = new Control({
                 'context': context
             });
 
-            html_label.set('dom.tagName', 'label');
+            //html_label.set('dom.tagName', 'label');
+            html_label.dom.tagName = 'label';
             //console.log('that._', that._);
 
-            var text_value = this.get('text').value();
+            var text_value = this.text + '';
 
             //console.log('spec.text', spec.text);
 
@@ -153,17 +170,23 @@ class Radio_Button extends Control {
 
 
 
-            html_label.set('dom.attributes.for', html_radio._id());
+            //html_label.set('dom.attributes.for', html_radio._id());
+            html_label.dom.attributes.for = html_radio._id();
 
             this.add(html_radio);
             this.add(html_label);
-            this.set('radio', html_radio);
-            this.set('label', html_label);
+            
+            //this.set('radio', html_radio);
+            //this.set('label', html_label);
             //html_radio.set('dom.attributes.type', 'radio');
 
+
+            /*
             this.set('dom.attributes.data-jsgui-fields', stringify({
                 'value': this.get('value')
             }).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
+
+            */
 
             // Look at the items.
 
@@ -194,7 +217,7 @@ class Radio_Button extends Control {
             super.activate();
 
             var radio = this.radio;
-            var el_radio = radio.dom.el;//???
+            //var el_radio = radio.dom.el;//???
             var label = this.label;
             //var that = this;
 
@@ -204,6 +227,8 @@ class Radio_Button extends Control {
             // No, refer specifically to the radio button element's control.
 
             // Changes upon becoming checked?
+
+            /*
             radio.on('change', e_change => {
                 //console.log('el_radio.checked', el_radio.checked);
 
@@ -214,6 +239,7 @@ class Radio_Button extends Control {
                     });
                 //}
             });
+            */
 
             // Need to listen for DOM change events. That will chage the value.
             //  The checked value true or false.

@@ -42,6 +42,12 @@ const mx_selectable = require('./../../../../control_mixins/selectable');
 // Want to be able to give it an array or observable, or object, it renders it.
 //  But needs to work with resources and objects that interact with server data.
 
+// May be worth being able to use this in a Radio_Button_Group....
+//   Different possible internal implementations of controls such as List.
+//   By default will use the HTML ul, could use ol
+
+
+
 
 class List extends Control {
 
@@ -164,7 +170,7 @@ class List extends Control {
                 item.selectable = true;
             })
             let ss = this.find_selection_scope();
-            if (ss.on) {
+            if (ss && ss.on) {
                 //console.log('ss', ss);
 
                 ss.on('change', e_change => {

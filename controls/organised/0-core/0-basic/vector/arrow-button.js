@@ -3,6 +3,8 @@ var Control = jsgui.Control;
 let def = jsgui.is_defined;
 const Button = require('../0-basic/button');
 
+// Work on getting the expression of concepts really DRY and idiomatic. 
+
 class Arrow_Button extends Button {
     constructor(spec, add, make) {
         // Wont fields have been set?
@@ -45,6 +47,8 @@ class Arrow_Button extends Button {
         //console.log('spec.direction', spec.direction);
 
         let rotation = 0;
+
+        // obext should do this.
         
         Object.defineProperty(this, 'rotation', {
             // Using shorthand method names (ES2015 feature).
@@ -156,7 +160,7 @@ class Arrow_Button extends Button {
         // polygon.points = [[x, y], [x, y]] etc
         //.  Or get more into what jsgui3-gfx-core has.
 
-        
+
 
 
 

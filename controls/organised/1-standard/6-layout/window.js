@@ -336,6 +336,7 @@ class Window extends Control {
 
 			*/
 			this.ctrl_inner = ctrl_inner;
+			this.inner = ctrl_inner;
 			this.title_bar = title_bar;
 			this.ctrl_relative = div_relative;
 
@@ -343,6 +344,7 @@ class Window extends Control {
 			this._ctrl_fields = this._ctrl_fields || {};
 
 			this._ctrl_fields.ctrl_inner = ctrl_inner;
+			this._ctrl_fields.inner = ctrl_inner;
 			this._ctrl_fields.title_bar = title_bar;
 			this._ctrl_fields.ctrl_relative = div_relative;
 
@@ -352,6 +354,8 @@ class Window extends Control {
 			this._ctrl_fields.btn_minimize = btn_minimize;
 			this._ctrl_fields.btn_maximize = btn_maximize;
 			this._ctrl_fields.btn_close = btn_close;
+
+			// ctrl_inner
 
 
 			// use different quotes...
