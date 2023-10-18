@@ -356,7 +356,7 @@ class Grid extends Control {
         // want to return the cell position as an index
         // Activate has not put together the rows...
 
-        console.log('this._arr_rows.length', this._arr_rows.length);
+        //console.log('this._arr_rows.length', this._arr_rows.length);
         //console.trace();
 
         each(this._arr_rows, (row, i_row) => {
@@ -368,6 +368,9 @@ class Grid extends Control {
         });
     }
     'get_cell'(x, y) {
+
+        console.trace();
+        throw 'NYI';
 
         //return this._arr_rows[y]
     }

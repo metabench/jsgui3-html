@@ -1,10 +1,8 @@
 /**
  * Created by james on 18/12/2016.
  */
-const jsgui = require('./../../../../html-core/html-core');
+const jsgui = require('../../../../html-core/html-core');
 var Grid = require('./grid');
-const Color_Grid = require('./color-grid');
-
 var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof,
@@ -142,25 +140,41 @@ const pal_crayola = require('../../../../html-core/arr_colors');
 // Full_Color_Palette here...?
 
 
-class Color_Palette extends Control {
+class Color_Grid extends Control {
     constructor(spec) {
         spec = spec || {};
-        spec.__type_name = spec.__type_name || 'Color_Palette';
+        spec.__type_name = spec.__type_name || 'Color_Grid';
         super(spec);
-        this.add_class('color-palette');
+        this.add_class('color-grid');
+
+        // Should be able to check for this when needed.
+
+        // Maybe a mixin could set up the internal relative div?
+        //   Or just do it normally, and see about more compact syntax.
+
+        // Could make this work a bit more according to the definition of what a color palette is.
 
         
-        
+
+
+        this.internal_relative_div = true;
+
+
+
+        // Has various items.
+        // At the top is a control that either shows the item selected, or search text.
 
         prop(this, 'palette', spec.palette || pal_crayola);
         // A 'model' type property.
 
         prop(this, 'grid_size', spec.grid_size || [12, 12]);
 
+        console.log('color_grid this.size', this.size);
+
         // [12, 12]
 
         //  
-        //  Could use Items_Container mixin.
+        //  Could use  mixin.
         //  Open_Closed mixin
 
         // Run-time mixins for the moment.
@@ -169,14 +183,11 @@ class Color_Palette extends Control {
         // Maybe contain a single main area and a drop-down box
 
         if (!spec.abstract && !spec.el) {
-            this.compose_color_grid();
+            this.compose_color_palette_grid();
         }
 
         this.on('resize', (e_resize) => {
             //console.log('color palette resize event');
-
-            /*
-
             if (this.grid) {
 
                 // or could have browser css do the layouts
@@ -187,8 +198,6 @@ class Color_Palette extends Control {
 
                 this.grid.size = new_grid_size;
             }
-
-            */
         });
     }
 
@@ -248,13 +257,9 @@ class Color_Palette extends Control {
         }
     }
 
-    /*
     each_cell(cb) {
         return this.grid.each_cell(cb);
     }
-    */
-
-    /*
 
     add_grid_cells() {
         let c = 0;
@@ -278,10 +283,7 @@ class Color_Palette extends Control {
         });
     }
 
-    */
-
     /*
-
     refresh() {
         //this.grid.clear();
 
@@ -291,16 +293,16 @@ class Color_Palette extends Control {
         // clear the cells, reapply the colors
         this.clear();
         //this.compose_color_palette();
-        this.compose_color_palette();
+        this.compose_color_grid();
         //this.grid.active();
 
         //this.add_grid_cells();
     }
-
     */
 
-    compose_color_grid() {
-        console.log('compose_color_grid');
+
+    compose_color_palette_grid() {
+        console.log('compose_color_palette_grid');
         // An internal relative frame could help.
         //  Help superimposing anything relative to that DIV, any popup, but not require the DIV itself to have relative positioning.
 
@@ -318,13 +320,11 @@ class Color_Palette extends Control {
 
         //throw 'stop';
 
-
-
         // internal_relative_div = true || false
 
-        //console.log('this.grid_size', this.grid_size);
+        console.log('this.grid_size', this.grid_size);
 
-        const color_grid = this.grid = new Color_Grid({
+        const grid = this.grid = new Grid({
             'context': this.context,
             'grid_size': this.grid_size,
             'size': this.size,
@@ -334,12 +334,37 @@ class Color_Palette extends Control {
         // grid.cells possibly
         //  Could be an iterator rather than an array.
 
-        this.add(color_grid);
+        //console.log('pre each cell\n\n');
+
+        grid.each_cell((cell, [x, y]) => {
+            //console.log('cell', cell);
+
+            // Assign the colors here...?
+
+        });
+        /*
+        this.grid.style({
+            //'position': 'relative'
+        })
+        */
+        this.add(grid);
+
+        /*
+        if (this.__active) {
+            //console.log('pre activate grid');
+            this.grid.activate();
+        }
+        */
+
+        this.add_grid_cells();
+
+        //this.dom.attributes['data-jsgui-ctrl-fields'] = stringify({
+        //    'grid': this.grid._id()
+        //}).replace(/"/g, "'");
 
         this._ctrl_fields = this._ctrl_fields || {};
 
-		this._ctrl_fields.color_grid = color_grid;
-        
+		this._ctrl_fields.grid = grid;
         // Then iterate the grid cells.
 
     }
@@ -355,4 +380,4 @@ if (require.main === module) {
 }
 // pal_crayola
 
-module.exports = Color_Palette;
+module.exports = Color_Grid;
