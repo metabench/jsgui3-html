@@ -1676,6 +1676,12 @@ Window.css = `
     margin-left: 3px;
 }
 
+.window .relative .inner {
+	width: 100%;
+	height: calc(100% - 31px);
+}
+
+
 
 `
 

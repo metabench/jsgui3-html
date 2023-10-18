@@ -114,7 +114,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
     let old_selectable = ctrl.selectable;
     let click_handler = (e) => {
         // or not a click
-        console.log('selectable click e', e);
+        //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
         //console.log('ctrl.selectable', ctrl.selectable);
 

@@ -105,6 +105,8 @@ class Grid_Cell extends Control {
         this.add_class('cell');
 
 
+
+
         // field o,o
         //  where we only need to call the field function once.
         field(this, 'x', spec.x);
@@ -163,7 +165,7 @@ class Grid_Cell extends Control {
 
             //console.log('pre make grid cell selectable');
             mx_selectable(this);
-            //this.selectable = true;
+            this.selectable = true;
 
             //console.log('');
 
@@ -234,6 +236,8 @@ class Grid extends Control {
             }
         });
 
+
+        // grid dimensions???
         if (spec.grid_size) _grid_size = spec.grid_size;
 
 
@@ -709,7 +713,7 @@ class Grid extends Control {
 
         if (!this.__active) {
             super.activate();
-            console.log('activate Grid');
+            //console.log('activate Grid');
             //var _arr_rows;
             this.selection_scope = this.context.new_selection_scope(this);
 
@@ -746,6 +750,89 @@ class Grid extends Control {
         }
     }
 }
+
+Grid.css = `
+
+table.grid {
+    background-color: #eceff1;
+    border: 1px solid #546e7a;
+    padding: 2px;
+    cursor: default;
+}
+
+table.grid tbody {
+    overflow: hidden;
+    display: block;
+}
+
+table.grid td {
+    padding: 1px;
+}
+
+.data-row .data-item {
+    display: inline;
+    margin-left: 2px;
+    padding: 2px;
+}
+
+.mid-width {
+    width: 450px;
+}
+
+div.grid {
+    user-select: none;
+    clear: both;
+}
+
+div.grid .header.row .cell {
+    text-align: center
+}
+
+div.grid .row {
+    clear: both;
+}
+
+div.grid .header.row .cell span {
+    position: relative;
+    top: 4px;
+    left: 0px;
+    font-size: 11pt;
+}
+
+div.grid .row .cell {
+    float: left;
+    box-sizing: border-box;
+    border-right: 1px solid #AAAAAA;
+    border-bottom: 1px solid #999999;
+}
+
+div.grid .row .cell.selected {
+    float: left;
+    box-sizing: border-box;
+    /*
+    border-right: 1px solid #AAAAAA;
+    border-bottom: 1px solid #999999;
+    */
+    border: 2px solid #2046df;
+    border-radius: 4px;
+}
+
+div.grid .row .cell.selected span {
+    position: relative;
+    /* top: 4px; */
+    left: 3px;
+    top: -1px;
+    font-size: 16pt;
+}
+
+div.grid .row .cell span {
+    position: relative;
+    /* top: 4px; */
+    left: 5px;
+    top: 1px;
+    font-size: 16pt;
+}
+`;
 
 Grid.Cell = Grid.Grid_Cell = Grid_Cell;
 

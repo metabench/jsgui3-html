@@ -111,3 +111,4 @@ class Calendar extends Control {
 
 }
 
+module.exports = Calendar;

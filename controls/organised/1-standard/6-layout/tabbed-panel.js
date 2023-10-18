@@ -392,6 +392,19 @@ class Tabbed_Panel extends Panel {
 
         })
 
+        const ctrl_break = new Control({
+            context
+        });
+        ctrl_break.add_class('break');
+        //tab_page.dom.attributes.order = '100';
+
+        // Then add the tab page content....?
+
+
+        this.add(ctrl_break);
+
+        // flex-wrap: wrap;
+
 
 
         // tab bar
@@ -486,10 +499,17 @@ class Tabbed_Panel extends Panel {
 Tabbed_Panel.css = `
 .tab-container {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: row; /* Change to 'row' for top or bottom tabs */
-    width: 300px; /* Adjust width as needed */
+    /* width: 300px; */ /* Adjust width as needed */
     position: relative;
   }
+
+  
+.break {
+	flex-basis: 100%;
+	height: 0;
+}
 
   .tab-page {
     
@@ -520,10 +540,10 @@ Tabbed_Panel.css = `
     display: none;
     order: 100;
     /* padding: 10px; */
-    position: absolute;
+    /* position: absolute; */
     left: 4px;
     right: 4px;
-    width: calc(100% - 8px);
+    /* width: calc(100% - 8px); */
     top: 32px;
     height: calc(100% - 32px);
   }
