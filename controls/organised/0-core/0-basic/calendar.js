@@ -45,6 +45,18 @@ var Control = jsgui.Control;
 // Keep this at core basic for the moment?
 //  Maybe move some other date related controls to core basic.
 
+// Maybe start with a Month_View, make example with that.
+//   Though perhaps a properties editor would help.
+
+// Maybe examples with SSE or a websocket connection to the server.
+//   Websocket seems like the better way to rapidly send (and recieve) updates.
+//     Though REST or a similar (maybe simpler) API could help a lot too.
+
+
+
+
+
+
 
 class Calendar extends Control {
     // Can have different views open.

@@ -104,14 +104,18 @@ class Grid_Cell extends Control {
         super(spec);
         this.add_class('cell');
 
-
-
-
         // field o,o
         //  where we only need to call the field function once.
         field(this, 'x', spec.x);
         field(this, 'y', spec.y);
         field(this, 'data', spec.data);
+
+        // A 'selectable' field that gets overridden by the mixin and used as a default?
+
+        // Seems like a few things to do to get these various controls working nicely and with very concise code.
+        
+
+
 
         // A cell size property here (maybe)?
         //  Maybe would be more efficient in the CSS?
@@ -155,6 +159,12 @@ class Grid_Cell extends Control {
 
         this.add(this.span = new jsgui.span(o));
 
+        this._ctrl_fields = this._ctrl_fields || {};
+
+        this._ctrl_fields.span = this.span;
+
+
+
     }
     activate() {
         if (!this.__active) {
@@ -165,7 +175,30 @@ class Grid_Cell extends Control {
 
             //console.log('pre make grid cell selectable');
             mx_selectable(this);
-            this.selectable = true;
+
+            // No, not necessarily.
+
+            // May want to carry over a 'selectable' property from the server...?
+            //  or add a 'not-selectable' class to indicate it can't be selected?
+            //    maybe don't want this on activation by default.
+
+            // Have the 'selectable' mixin check for a 'selectable' field (field that gets transferred with the rendering)
+            //  data-jsgui-fields I think.
+
+            // Will need to fine-tune some behaviours.
+            //   Want it to be as easy as possible to create and the various controls at the top level of coding.
+
+            // See about transferring the 'selectable' property from the composition.
+            //   May want more lower level functionality to support that with a convenient API?
+
+
+
+
+            //this.selectable = true;
+
+
+
+
 
             //console.log('');
 

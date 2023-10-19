@@ -141,6 +141,11 @@ const pal_crayola = require('../../../../html-core/arr_colors');
 
 // Full_Color_Palette here...?
 
+// And have a color pair for foreground and background.
+//   Could display the name as well.
+
+
+
 
 class Color_Palette extends Control {
     constructor(spec) {
@@ -149,12 +154,13 @@ class Color_Palette extends Control {
         super(spec);
         this.add_class('color-palette');
 
-        
+
         
 
         prop(this, 'palette', spec.palette || pal_crayola);
-        // A 'model' type property.
 
+
+        // A 'model' type property.
         prop(this, 'grid_size', spec.grid_size || [12, 12]);
 
         // [12, 12]
@@ -327,6 +333,7 @@ class Color_Palette extends Control {
         const color_grid = this.grid = new Color_Grid({
             'context': this.context,
             'grid_size': this.grid_size,
+            'palette': this.palette,
             'size': this.size,
             'cell_selection': 'single'
         });

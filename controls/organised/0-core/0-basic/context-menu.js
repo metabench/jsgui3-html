@@ -6,6 +6,8 @@ var Control = jsgui.Control;
 
 // More advanced, but still comes as standard, basic in that way.
 
+// May benefit from some kind of model overlay over the main part of the doc.
+
 class Context_Menu extends Control {
 	constructor(spec, add, make) {
 		super(spec);

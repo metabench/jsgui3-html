@@ -32,6 +32,10 @@ const Control = jsgui.Control;
 // Maybe could make good use of the mx_display_modes.
 
 
+// Could render as a select / options box by default.
+//   Though could use progressive enhancement to replace it.
+//     Could even do some CSS hack(s) to make open/closed state not require client-side JS.
+
 
 class Dropdown_List extends Control {
     constructor(spec) {

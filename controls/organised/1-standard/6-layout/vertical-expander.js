@@ -1,5 +1,8 @@
 // Vertical_Expander
 
+// Some of these controls won't be needed.
+//   It will definitely help to make simple and complex examples demonstrating them.
+
 
 //if (typeof define !== 'function') { var define = require('amdefine')(module) }
 var jsgui = require('./../../../../html-core/html-core');

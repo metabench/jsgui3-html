@@ -34,6 +34,8 @@ var Control = jsgui.Control;
 
 const {prop, field} = require('obext');
 
+// See about making this extendable / use progressive enhancement.
+
 class Text_Input extends Control {
     constructor(spec) {
         //this._super(spec, fields);

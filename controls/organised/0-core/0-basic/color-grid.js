@@ -116,7 +116,7 @@ const {
 // Want some lower level color choice functionality.
 //   Maybe more integrated with gfx.
 
-const pal_crayola = require('../../../../html-core/arr_colors');
+//const pal_crayola = require('../../../../html-core/arr_colors');
 
 // Maybe simplify this a lot?
 
@@ -164,7 +164,7 @@ class Color_Grid extends Control {
         // Has various items.
         // At the top is a control that either shows the item selected, or search text.
 
-        prop(this, 'palette', spec.palette || pal_crayola);
+        prop(this, 'palette', spec.palette);
         // A 'model' type property.
 
         prop(this, 'grid_size', spec.grid_size || [12, 12]);

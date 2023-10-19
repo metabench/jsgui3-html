@@ -47,6 +47,8 @@ const mx_selectable = require('./../../../../control_mixins/selectable');
 //   By default will use the HTML ul, could use ol
 
 
+// Likely to want different ways that lists can be rendered.
+
 
 
 class List extends Control {
@@ -145,6 +147,11 @@ class List extends Control {
     'compose_list' () {
         each(this.items, (item, index) => {
             //console.log('item', item);
+
+            // Make it a List_Item....?
+            
+
+
             var ctrl_item = new Item({
                 'context': this.context,
                 'value': item

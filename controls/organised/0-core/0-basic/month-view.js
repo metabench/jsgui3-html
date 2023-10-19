@@ -34,6 +34,10 @@ const Grid = require('./../../0-core/0-basic/grid');
 
 const Tile_Slider = require('../../1-standard/6-layout/tile-slide');
 // Don't want very much logic or code related to tile sliding right here.
+
+// It may be worth getting into more advanced lower level controls / mixins / features that enable this to be expressed in a much more
+//  concise way.
+
 //  
 
 // clone_to_previous
@@ -55,6 +59,8 @@ const Tile_Slider = require('../../1-standard/6-layout/tile-slide');
 //  'next': function to increase spec by 1 month
 // })
 
+// Maybe can get this from JS localisation
+
 let days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 let bgc_disabled = '#DDDDDD';
@@ -68,7 +74,7 @@ const mx_date = require(`../../../../control_mixins/typed_data/date`);
 
 // Maybe put this within Calendar / calendar and date related.
 
-
+// Maybe work on other Tile_Slider example(s).
 
 class Month_View extends Grid {
     constructor(spec) {
@@ -107,6 +113,7 @@ class Month_View extends Grid {
         //this.selection_scope();
         //this.selection_scope = this.context.new_selection_scope();
         this.context.new_selection_scope(this);
+
         // putting selection_scope true in the data-jsgui-fields would be nice.
         //this.selectable();
     }
@@ -350,8 +357,15 @@ class Month_View extends Grid {
             if (y > 0) {
                 if (y === 1) {
                     if (x < got_day) {
+
+                        // Needs to properly respond to setting its selectable to false.
+
                         cell.background.color = bgc_disabled;
+
+
                         cell.selectable = false;
+
+                        // May want to send the 'selectable' value over as a data-jsgui-field
 
                         // only on client?
                         if (cell.deselect) cell.deselect();
@@ -371,12 +385,22 @@ class Month_View extends Grid {
                         cell.background.color = bgc_enabled;
                         cell.selectable = true;
 
+                        //cell.span.text = d.getDate() + '';
+                        cell.span.add(d.getDate() + '');
+                        d.setDate(d.getDate() + 1);
+
+                        /*
                         cell.iterate_this_and_subcontrols(ctrl => {
                             //console.log('ctrl', ctrl);
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
                             if (ctrl.dom.tagName === 'span') {
                                 d_ctrl = d.getDate();
+
+                                console.log('1) d_ctrl', d_ctrl);
+
+
                                 cell.value = d_ctrl;
+
                                 ctrl.text = d_ctrl + '';
                                 d.setDate(d.getDate() + 1);
 
@@ -388,6 +412,7 @@ class Month_View extends Grid {
                                 }
                             }
                         });
+                        */
                     }
                 } else {
                     let dm = d.getMonth();
@@ -395,14 +420,31 @@ class Month_View extends Grid {
                     if (dm === m) {
                         cell.background.color = bgc_enabled;
                         cell.selectable = true;
+
+                        // Change cell 'value'?
+
+                        // or .span property would work better.
+                        //cell.span.text = d.getDate() + '';
+                        cell.span.add(d.getDate() + '');
+                        d.setDate(d.getDate() + 1);
+                        /*
+
                         cell.iterate_this_and_subcontrols(ctrl => {
                             //console.log('ctrl', ctrl);
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
                             if (ctrl.dom.tagName === 'span') {
                                 d_ctrl = d.getDate();
+
+                                console.log('2) d_ctrl', d_ctrl);
                                 //console.log('d_ctrl', d_ctrl);
+
+
                                 cell.value = d_ctrl;
+                                // Changing span.text????
+
                                 ctrl.text = d_ctrl + '';
+
+
                                 d.setDate(d.getDate() + 1);
 
                                 //console.log('d_ctrl', d_ctrl);
@@ -413,6 +455,9 @@ class Month_View extends Grid {
                                 }
                             }
                         });
+                        */
+
+
                     } else {
                         cell.background.color = bgc_disabled;
                         cell.selectable = false;
@@ -423,6 +468,7 @@ class Month_View extends Grid {
 
                         //console.log(cell.content._arr)
 
+                        /*
                         cell.iterate_this_and_subcontrols(ctrl => {
                             //console.log('ctrl', ctrl);
                             //console.log('ctrl.dom.tagName', ctrl.dom.tagName);
@@ -430,6 +476,7 @@ class Month_View extends Grid {
                                 ctrl.text = '';
                             }
                         });
+                        */
                     }
                 }
             }

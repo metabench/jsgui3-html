@@ -8,7 +8,18 @@ const {
     prop,
     field
 } = require('obext');
+
+// Nice to make this flexible - make use of resources, svg, jsgui3-gfx....
+//   Would be better to have this make use of other (lower level) functionality and to provide a nice API here.
+
+// Would be nice to have low and medium level image features available to various controls, will be easy to put icons where they need to be
+//   though this Icon control should make it easier in some ways.
+
+
 class Icon extends Control {
+
+
+
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'icon';
         let size = spec.size = spec.size || [64, 64];

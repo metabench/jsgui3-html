@@ -30,9 +30,19 @@ class Text_Field extends Control {
 
 	//  and can have other fields possibly.
 	constructor(spec) {
+
+		// Putting the fields in the constructor of Control....
+		//   Could be effective.
+		//   Or could put it into the spec instead.
+		//     Could have Data_Object handle fields, and have extensions where needed in Control.
+
+
+
+
 		super(spec, fields);
+
 		this.__type_name = 'text_field';
-		this.add_class('field');
+		this.add_class('text-field');
 
 		if (spec.type) this.type = spec.type;
 		if (spec.placeholder) this.placeholder = spec.placeholder;
@@ -53,8 +63,6 @@ class Text_Field extends Control {
 		// Parse-mount could take less space.
 
 		// Probably a significant improvement.
-
-
 
 		var left = new jsgui.div({
 			'context': this.context

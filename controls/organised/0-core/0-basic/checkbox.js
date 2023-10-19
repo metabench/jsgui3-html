@@ -18,55 +18,92 @@ var fields = {
     'checked': Boolean
 };
 
+// Want better way(s) to hook up fields like this in controls / data objects.
+
+// Data objects should probably be able to handle fields.
+//   Though rendering should also render these fields as their own specific attribute data-jsgui-fields
+
+
+
 class Checkbox extends Control {
     constructor(spec, add, make) {
 
-
         super(spec);
-
         this.__type_name = 'checkbox';
 
         this.add_class('checkbox');
-        var context = this.context;
+        const context = this.context;
 
         if (!spec.abstract && !spec.el) {
-
-            var name = this.name;
+            const name = this.name;
 
             // Will need to render its ID in the DOM.
 
-            var html_check = new Control({
+            const html_check = new Control({
                 'context': context
             });
 
-            html_check.set('dom.tagName', 'input');
-            html_check.set('dom.attributes.type', 'checkbox');
-            html_check.set('dom.attributes.name', name);
-            html_check.set('dom.attributes.id', html_radio._id());
+            html_check.dom.tagName = 'input';
+            html_check.dom.attributes.type = 'checkbox';
+            html_check.dom.attributes.name = name;
+            html_check.dom.attributes.id = html_check._id();
+
+            //html_check.set('dom.tagName', 'input');
+            //html_check.set('dom.attributes.type', 'checkbox');
+            //html_check.set('dom.attributes.name', name);
+            //html_check.set('dom.attributes.id', html_radio._id());
 
             var html_label = new Control({
-                'context': context
+                'context': context,
+                
             });
+            html_label.dom.tagName = 'label';
 
-            html_label.set('dom.tagName', 'label');
+            if (is_defined(spec.text)) {
+                html_label.add(spec.text);
+            } else {
+                if (is_defined(spec.label?.text)) html_label.add(spec.label.text);
+            }
+            
+
+            //html_label.set('dom.tagName', 'label');
             //console.log('that._', that._);
 
-            var text_value = this.get('text').value();
 
-            if (is_defined(text_value)) {
-                html_label.add(text_value);
-            }
-            html_label.set('dom.attributes.for', html_check._id());
+            //var text_value = this.get('text').value();
+
+            
+            html_label.dom.attributes.for = html_check._id();
+            //html_label.set('dom.attributes.for', html_check._id());
 
             this.add(html_check);
             this.add(html_label);
-            this.set('check', html_check);
-            this.set('label', html_label);
+
+
+
+            //this.set('check', html_check);
+            //this.set('label', html_label);
+
+
             //html_radio.set('dom.attributes.type', 'radio');
 
+            this._ctrl_fields = this._ctrl_fields || {};
+
+			this._ctrl_fields.check = html_check;
+            this._ctrl_fields.label = html_label;
+
+            // ._fields perhaps....
+            
+            /*
             this.set('dom.attributes.data-jsgui-fields', stringify({
-                'value': this.get('value')
+                'value': this.value
             }).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
+
+            */ 
+
+            this._fields = this._fields || {};
+
+			if (is_defined(this.value)) this._fields.value = this.value;
 
 
         }
@@ -90,8 +127,10 @@ class Checkbox extends Control {
             // No, refer specifically to the radio button element's control.
 
             // Changes upon becoming checked?
-            radio.on('change', e_change => {
+            html_check.on('change', e_change => {
                 //console.log('el_radio.checked', el_radio.checked);
+
+                // Track the old values here? Could help the 'change' event.
 
                 //if (el_radio.checked) {
                     this.raise('change', {
@@ -112,5 +151,11 @@ class Checkbox extends Control {
 
     }
 };
+
+Checkbox.css = `
+.checkbox input + label {
+    margin-left: 6px;
+}
+`
 
 module.exports = Checkbox;
