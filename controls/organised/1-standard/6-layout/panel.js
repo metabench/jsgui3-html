@@ -29,6 +29,12 @@ var Control = jsgui.Control;
 // Or just use a normal panel with a bunch of mixins?
 
 
+// Panel could have a text label as part of it (by default, easy to set, easy to move, easy to delete or not use)
+//   Though may want to get into making it really easy to add new controls in specific ways, such as binding it to the edge
+//     (and also probably reducing the size of the panel itself so that label (or div / span element) fits)
+
+
+
 
 class Panel extends Control {
     // panel name?

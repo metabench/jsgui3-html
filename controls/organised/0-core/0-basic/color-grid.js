@@ -262,25 +262,30 @@ class Color_Grid extends Control {
     }
 
     add_grid_cells() {
-        let c = 0;
-        this.grid.each_cell((cell) => {
-            var item = this.palette[c++];
-            //console.log('item', item);
-            if (item) {
-                if (item.hex) {
-                    cell.color = item.hex;
-                } else {
-                    if (typeof item === 'string') {
-                        cell.color = item;
-                    }
-                }
-                //var hex = item.hex;
-                //console.log('hex', hex);
-                //console.log('cell', cell);
 
-            }
-            //cell.selectable = true;
-        });
+        if (this.palette) {
+            let c = 0;
+            this.grid.each_cell((cell) => {
+                var item = this.palette[c++];
+                //console.log('item', item);
+                if (item) {
+                    if (item.hex) {
+                        cell.color = item.hex;
+                    } else {
+                        if (typeof item === 'string') {
+                            cell.color = item;
+                        }
+                    }
+                    //var hex = item.hex;
+                    //console.log('hex', hex);
+                    //console.log('cell', cell);
+
+                }
+                //cell.selectable = true;
+            });
+        }
+
+        
     }
 
     /*

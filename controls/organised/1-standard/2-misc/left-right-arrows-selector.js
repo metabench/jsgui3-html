@@ -2,7 +2,11 @@ const jsgui = require('../../../../html-core/html-core');
 const Control = jsgui.Control;
 const def = jsgui.is_defined;
 const Arrow_Button = require('../../0-core/1-advanced/vector/arrow-button');
+
+
 const Item_Selector = require('./../../0-core/0-basic/item-selector');
+// Maybe give Item_Selector a more specific name, or involk it in terms of more explicit behaviours?
+
 /*
 
     Encapsulates an array with a range of possible values.
@@ -79,6 +83,8 @@ const Item_Selector = require('./../../0-core/0-basic/item-selector');
 //  Abstract away the left and right arrows somehow?
 
 // Indexed_Item_Picker?
+
+
 
 class Left_Right_Arrows_Selector extends Control {
     constructor (spec) {

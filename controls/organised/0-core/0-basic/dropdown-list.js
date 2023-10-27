@@ -36,6 +36,10 @@ const Control = jsgui.Control;
 //   Though could use progressive enhancement to replace it.
 //     Could even do some CSS hack(s) to make open/closed state not require client-side JS.
 
+// Basically select option control.
+//   Maybe retire this for the moment.
+//     Or make it with a dropdown mixin and a list.
+
 
 class Dropdown_List extends Control {
     constructor(spec) {

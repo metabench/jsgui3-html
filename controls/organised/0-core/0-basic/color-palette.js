@@ -1,17 +1,18 @@
 /**
  * Created by james on 18/12/2016.
+ * 
+ * 2023 needs more work still, want to have it implemented effectively in an idiomatic way.
+ * 
+ * 
  */
 const jsgui = require('./../../../../html-core/html-core');
-var Grid = require('./grid');
 const Color_Grid = require('./color-grid');
 
-var stringify = jsgui.stringify,
-    each = jsgui.each,
-    tof = jsgui.tof,
-    is_defined = jsgui.is_defined;
+
+const {v_subtract} = jsgui;
+
 var Control = jsgui.Control;
 
-var v_subtract = jsgui.util.v_subtract;
 
 const {
     field,
@@ -249,8 +250,6 @@ class Color_Palette extends Control {
     
                 })
             }
-
-            
         }
     }
 
@@ -307,6 +306,17 @@ class Color_Palette extends Control {
 
     compose_color_grid() {
         console.log('compose_color_grid');
+
+        // Need different ways of rendering / arranging according to size.
+
+        // Maybe worth distinguishing controls that resize themselves to fit the space, and possibly to what extent, in what ways.
+        //   Eg a pixel grid could become very small indeed, while a title that needs to be legible will have a lower limit.
+
+        // Modes of display could change when the size changes, going into a more compact layout - much like pages do when on mobile.
+
+
+
+
         // An internal relative frame could help.
         //  Help superimposing anything relative to that DIV, any popup, but not require the DIV itself to have relative positioning.
 
@@ -330,11 +340,37 @@ class Color_Palette extends Control {
 
         //console.log('this.grid_size', this.grid_size);
 
+        // and a 2 color grid for foreground and background.
+
+        // Or a 'specific palette' type of bar.
+
+
+
+        const fg_bg_color_grid = new Color_Grid({
+
+            'context': this.context,
+            'grid_size': [2, 1],
+            'size': [80, 40]
+        });
+
+        this.add(fg_bg_color_grid);
+
+        const color_grid_pxsize = v_subtract(this.size, [0, 46]);
+
+        // .box.size would be clearer.
+        // .size could even be non-px, non-css too.
+
+        // .size = 'auto' could work.
+        // .size = autosizing_provider even, .size = auto
+
+        // autosizing indicator or autosizing provider perhaps.
+
+
         const color_grid = this.grid = new Color_Grid({
             'context': this.context,
             'grid_size': this.grid_size,
             'palette': this.palette,
-            'size': this.size,
+            'size': color_grid_pxsize,
             'cell_selection': 'single'
         });
 
@@ -346,6 +382,10 @@ class Color_Palette extends Control {
         this._ctrl_fields = this._ctrl_fields || {};
 
 		this._ctrl_fields.color_grid = color_grid;
+        this._ctrl_fields.fg_bg_color_grid = fg_bg_color_grid;
+
+
+        // fg_bg_color_grid
         
         // Then iterate the grid cells.
 

@@ -54,10 +54,11 @@ const c_left_right = (context, l_content, r_content) => {
 
 // display_mode property could be useful.
 
-
-
+// Item should just be a div for the moment.
+//   May be useful naming, more significant in terms of what it is application and logic wise, abstracts from HTML.
 
 class Item extends Control {
+
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'item';
         super(spec);
@@ -65,6 +66,9 @@ class Item extends Control {
 
         // item can be given in the spec.
         //  then look at that object.
+
+        /*
+
         const item = this.item = spec.item;
         const {context} = this;
         const compose = () => {
@@ -130,6 +134,7 @@ class Item extends Control {
         if (!spec.el) {
             compose();
         }
+        */
     }
 }
 
@@ -186,31 +191,14 @@ class Item extends Control {
 // Lets try this CSS file for the moment.
 //  Seems like an easy way to set up the css that applies to the classes specified in the controls.
 
+/*
 Item.css = `
 .item .icon {
     width: 64px;
     height: 64px;
 }
 `; // Semicolon seems necessary. `;
-
-
-
-const write_css_value = () => {
-    
-    Item.___css = `
-    .item .icon {
-        width: 64px;
-        height: 64px;
-    }
-    `;
-
-    Item.___css = {
-        item: {
-            width: '64px',
-            height: '64px'
-        }
-    }
-}
+*/
 
 
 module.exports = Item;

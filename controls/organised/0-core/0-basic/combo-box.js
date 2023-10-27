@@ -61,6 +61,44 @@ var Control = jsgui.Control;
 
 // Needs more work. Would be nice to make really simple implementation that does what is needed, while allowing extensions.
 
+// May need to see about server-side autocomplete.
+//   Maybe use a data resource or an autocomplete data (provider) resource on the client.
+//     Could implement such a data provider on the client with an array.
+
+// Websockets would probably be the fastest way to transfer the autocomplete suggestions data.
+//   Could even have that on a different server / in a different process.
+//     For the moment though, want to be able to easily hook up server-side data to client-side resources.
+
+// await get_suggestions(str)
+//   could access the server quite easily with things set up right on the client.
+//     Maybe want to assign the data source on the server, then the control on the client makes a request to the client-server resource
+//       access component, gets that to request the answer from the server, sends it to the client.
+
+// Though setting it up with a property could be nicer.
+//   It may automatically create the server-side resource that holds that data / responds to (authenticated and authorised?) client side
+//     requests with it.
+//   Generating a random 256 bit token to send to the client, then for the client to send back with every request could help.
+//     It would be a key that allows access to that resource.
+//       And the server-side resource publisher would need the key from the client to access the resource.
+
+// Do need to consider specific resources for specific clients.
+//   User-based.
+
+// Including user-based security into jsgui3 could be useful.
+
+
+
+// A countries selector could be a good example, both for server and client side implementations.
+
+
+
+
+
+
+
+
+
+
 class Combo_Box extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'combo_box';

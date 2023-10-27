@@ -10,9 +10,13 @@ const jsgui = require('./../../../../html-core/html-core');
 
 const Item = require('./item');
 
-var stringify = jsgui.stringify,
-    each = jsgui.each,
-    tof = jsgui.tof;
+
+// Maybe integrate obext into lang-tools? Or some of it into lang-mini (eventually).
+
+const {each} = jsgui;
+
+const {prop} = require('lang-tools');
+
 var Control = jsgui.Control;
 var Collection = jsgui.Collection;
 
@@ -34,6 +38,19 @@ const mx_selectable = require('./../../../../control_mixins/selectable');
 
 // Do more programming for UI components observing observables.
 
+// SSR will still produce nice looking lists even when not activated. Unlike Date_Picker when it comes to progressive enhancement?
+//   Or even with a full Date_Picker when there is no client-side JS, it could fully render the proper Date_Picker on the server,
+//     and then send it back to the client having processed a click.
+//   So it could run like old-fashioned websites did with no client-side JS, still have a fancy/specifically styled UI date picker.
+//     Could have some system where there are various attributes in the querystring or request body so that the server knows params from the client
+//       Like ASP.NET was, slightly.
+
+
+
+
+
+
+
 
 // This needs to be flexible.
 //  May be useful to have a .subscribe or .observe function to listen to an observable.
@@ -48,6 +65,12 @@ const mx_selectable = require('./../../../../control_mixins/selectable');
 
 
 // Likely to want different ways that lists can be rendered.
+
+// Needs to be able to respond to the list changing from outside of the Control.
+// Could be a list of controls. Possibly using the List class will help make some things clearer, like a list of items on a menu.
+
+// 
+
 
 
 
@@ -79,7 +102,26 @@ class List extends Control {
         //  That's all I'll have in the tree node for now.
         this.__type_name = 'list';
         //this.dom.attributes.class', 'list');
+
+        // 'ordered' property. Want it to have change events raised.
+        //   probably using 'prop'
+
+        prop(this, 'ordered', spec.ordered || false);
+
+
+        if (this.ordered) {
+            this.dom.tagName = 'ol';
+        } else {
+            this.dom.tagName = 'ul';
+        }
+
+        
         this.add_class('list');
+
+        // Should render as a ul.
+        //   Could have some code that puts a 'li' around anything added that is not a 'li' (dom.tagName === 'li').
+
+
         // a Collection of items.
         // Collection not needing a Context?
         //  Having all Data_Objects and Collections require a context seems too much.
@@ -90,6 +132,16 @@ class List extends Control {
         //this.set('items', coll_items);
         //console.log('spec.items', spec.items);
         //throw 'stop';
+
+        // Could have items property and listen for item change events.
+        //   Preferably that will work server-side too, adding and removing controls as necessary, and then on the client
+        //     side those updates will then be updated in the DOM.
+
+
+
+        prop(this, 'items', spec.items);
+        /*
+
         if (spec.items) {
             // is the type a Collection? An Array?
 
@@ -98,6 +150,7 @@ class List extends Control {
         } else {
             this.items = new Collection();
         }
+        */
 
         // The list spec could also take info about how to display the items.
 
@@ -137,7 +190,7 @@ class List extends Control {
         //  Could tag an object to send to the client, assign it an id, and then only need to send it once.
         // A system of objects-to-client
         if (!spec.el) {
-            let ss = this.context.new_selection_scope(this);
+            //let ss = this.context.new_selection_scope(this);
             //console.log('ss', ss);
             this.compose_list();
         }
@@ -145,17 +198,41 @@ class List extends Control {
     }
 
     'compose_list' () {
+
+
         each(this.items, (item, index) => {
             //console.log('item', item);
 
+
             // Make it a List_Item....?
+
+
+            // Make it a 'li'.
+            //  Maybe want more flexibility?
+            //    Or take existing item specs, and add the context.
+
+            // Being able to make controls without specifying the context will help.
+            //   Have the context get set as soon as they are added inside another control which has a context.
+            //     Can not rely on the IDs of the controls before they have a context.
+            //       Maybe could / would need to tighten up some other code so it does not assume or need a context at some points.
             
+
+
+            // Maybe a list-item control will be best.
+            //   And could be very basic HTML.
+            // May want a simple and quick to write way of specifying the inner controls.
+            //   Could make it work specifically on controls that only have one inner section.
+
+            
+
+
 
 
             var ctrl_item = new Item({
                 'context': this.context,
                 'value': item
             });
+
             ctrl_item._fields = ctrl_item._fields || {};
             ctrl_item._fields.index = index;
             

@@ -14,6 +14,10 @@ var jsgui = require('./../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
+// Look into more advanced data binding (to client-side objects).
+
+
+
 class Single_Line extends Control {
     // fields... text, value, type?
     //  type could specify some kind of validation, or also 'password'.

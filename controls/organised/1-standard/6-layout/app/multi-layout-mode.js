@@ -113,6 +113,12 @@ var fields = {
 // But want to use parse_mount on some HTML-like code.
 //  Getting parse_mount etc working fully would be a better focus right now.
 
+// Maybe make this into a mixin so that controls can have their own different layout modes.
+//   Or give this a more specific name within a layout library of some sort.
+
+
+
+
 class Multi_Layout_Mode extends Control {
 
     // could have a title field.
