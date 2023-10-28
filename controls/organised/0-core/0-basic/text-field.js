@@ -13,6 +13,8 @@ var stringify = jsgui.stringify,
 	*/
 const Control = jsgui.Control;
 
+const {prop, field} = require('obext');
+
 // fields could have default values too.
 
 // May well be worth improving and extending this.
@@ -25,7 +27,7 @@ const Control = jsgui.Control;
 const fields = [
 	['text', String],
 	['name', String],
-	['value', String],
+	//['value', String],
 	['type', String],
 	['editable', Boolean, true],
 	['show_text', Boolean, true]
@@ -40,6 +42,13 @@ const fields = [
 //   Or even not only when activated.
 
 
+// Proper dom / view / model referencing and clarity seems important.
+
+// ctrl.model.on(change)???
+
+
+// Could seem the most explicit MVC or CVM type pattern.
+// ctrl.view.model.on()
 
 
 class Text_Field extends Control {
@@ -66,6 +75,8 @@ class Text_Field extends Control {
 		if (spec.type) this.type = spec.type;
 		if (spec.placeholder) this.placeholder = spec.placeholder;
 
+		field(this, 'value', spec.value);
+
 		if (!spec.el) {
 			this.compose_text_field();
 		}
@@ -73,6 +84,14 @@ class Text_Field extends Control {
 		// obext this.editable property.
 		//  Will show different layouts / compositions depending on that property.
 
+		// Maybe a more explicit .view.model.value setter would help????
+
+
+		// .value setter seems to be malfunctioning....?
+
+
+
+		/*
 
 		this.on('change', e => {
 			const {name, value} = e;
@@ -81,11 +100,152 @@ class Text_Field extends Control {
 				this.text_input.value = value;
 			}
 		})
+		*/
 
 		//this.add_event_listener('change', function(e) {
 		//console.log('Text_Field change event e ' + stringify(e));
 		//});
 	}
+
+	/*
+	this.on('change', e => {
+
+                //console.log('e', e);
+                const {name, value} = e;
+
+                //if (e.old !== undefined) {
+                    if (e.value !== e.old) {
+
+                        if (name === 'value') {
+                            dom.el.value = value;
+                        }
+
+                    }
+                //}
+
+                
+            })
+	*/
+
+	get view() {
+
+		// And .model as well....
+		const {textInput} = this;
+
+		return {
+			get model() {
+				return {
+
+					get on() {
+						return (name, handler) => {
+
+							console.log('name', name);
+
+							if (name === 'change') {
+								// listen for the textInput change of value.
+
+								textInput.on('change', e => {
+									// Maybe need the textInput view model????
+
+									if (e.old !== e.value) {
+										if (e.name === 'value') {
+											handler({
+												name: 'change',
+												property_name: 'value',
+												value: e.value,
+												old: e.old
+	
+											});
+										}
+									}
+
+									
+								})
+
+
+							}
+
+						}
+					},
+
+					get value() {
+						return this.value;
+						//  for the moment....
+					}
+				}
+			}
+
+		}
+
+	}
+
+	activate() {
+        if (!this.__active) {
+            super.activate();
+            const {dom, textInput} = this;
+
+			console.log('activate Text_Field');
+
+			// The view model changing would be a different / more important thing to respond to.
+			//  .value will raise the .view.model change event.
+
+			// Maybe also enable / sometimes even require ??? a less ambiguous syntax for attaching DOM events?
+
+
+
+
+
+
+			
+			this.on('change', e => {
+
+                console.log('e', e);
+
+				// If
+                const {name, value} = e;
+
+                //if (e.old !== undefined) {
+                    if (e.value !== e.old) {
+
+                        if (name === 'value') {
+
+                            textInput.value = value;
+                        }
+
+                    }
+                //}
+
+                
+            })
+
+			textInput.on('change', e => {
+
+                //console.log('e', e);
+                const {name, value} = e;
+
+                //if (e.old !== undefined) {
+                    if (e.value !== e.old) {
+
+                        if (name === 'value') {
+
+							// Should create an event....
+                            this.value = value;
+                        }
+
+                    }
+                //}
+
+                
+            })
+
+
+
+
+		}
+	}
+
+
+
 	compose_text_field() {
 		// Parse-mount could take less space.
 

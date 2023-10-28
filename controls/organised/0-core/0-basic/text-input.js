@@ -45,7 +45,7 @@ class Text_Input extends Control {
         // fields were not working through this constructor system.
         //  maybe better as an array in the spec. Simpler API that way.
         super(spec);
-        field(this, 'value');
+        field(this, 'value', spec.value);
 
         if (spec.placeholder) this.placeholder = spec.placeholder;
 
