@@ -1572,7 +1572,7 @@ Window.css = `
 	right: 0;
 	bottom: 0;
 	cursor: nwse-resize;
-
+	z-index: 10000001;
 
 }
 

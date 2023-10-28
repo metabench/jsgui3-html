@@ -70,7 +70,42 @@ class Text_Input extends Control {
         if (!this.__active) {
             super.activate();
             const {dom} = this;
+
+            // And of course need to respond to value change events....
+
+            //  Silent updates?
+            //    Avoid infinite loops?
+            //    Or test the event source (better).
+
+            this.on('change', e => {
+
+                //console.log('e', e);
+                const {name, value} = e;
+
+                //if (e.old !== undefined) {
+                    if (e.value !== e.old) {
+
+                        if (name === 'value') {
+                            dom.el.value = value;
+                        }
+
+                    }
+                //}
+
+                
+            })
+
+
+
+
             this.on('keypress', e_keypress => {
+                setTimeout(() => {
+                    this.value = dom.el.value;
+                    // Should raise a change event?
+                }, 0);
+            });
+
+            this.on('keyup', e_keypress => {
                 setTimeout(() => {
                     this.value = dom.el.value;
                     // Should raise a change event?

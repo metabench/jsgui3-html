@@ -4,7 +4,7 @@
 //"use strict";
 const jsgui = require('lang-tools');
 const Text_Node = require('./text-node');
-const obext = require('obext');
+//const obext = require('obext');
 
 const Page_Context = require('./page-context');
 const Selection_Scope = require('./selection-scope');

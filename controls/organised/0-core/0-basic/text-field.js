@@ -15,6 +15,13 @@ const Control = jsgui.Control;
 
 // fields could have default values too.
 
+// May well be worth improving and extending this.
+//   Put code to set up specific features in their own functions.
+//     May later want to optimise (make more concise) the code here using more patterns.
+
+
+// 
+
 const fields = [
 	['text', String],
 	['name', String],
@@ -23,6 +30,17 @@ const fields = [
 	['editable', Boolean, true],
 	['show_text', Boolean, true]
 ];
+
+// Text_Field
+
+
+// Value has got to be dynamic!!!!
+
+// When activated, respond to the property changes...
+//   Or even not only when activated.
+
+
+
 
 class Text_Field extends Control {
 	// fields... text, value, type?
@@ -38,6 +56,7 @@ class Text_Field extends Control {
 
 
 
+		// The ctrl spec fields - does it use oext???
 
 		super(spec, fields);
 
@@ -55,6 +74,14 @@ class Text_Field extends Control {
 		//  Will show different layouts / compositions depending on that property.
 
 
+		this.on('change', e => {
+			const {name, value} = e;
+
+			if (name === 'value') {
+				this.text_input.value = value;
+			}
+		})
+
 		//this.add_event_listener('change', function(e) {
 		//console.log('Text_Field change event e ' + stringify(e));
 		//});
@@ -63,6 +90,24 @@ class Text_Field extends Control {
 		// Parse-mount could take less space.
 
 		// Probably a significant improvement.
+
+
+		// Different view modes.
+		//  or just .mode ????
+		//  maybe .view.mode in some cases to avoid ambiguity, but shortcuts to .mode
+
+		// .view.mode makes more sense.
+
+		// .view could be another abstraction layer that could be used for other things.
+		// .view = 'none' ????
+
+		// just make a getter for the view object for the moment?
+
+
+
+
+
+
 
 		var left = new jsgui.div({
 			'context': this.context
@@ -124,7 +169,7 @@ class Text_Field extends Control {
 			right.add(textInput);
 
 			_ctrl_fields.textInput = textInput;
-			this.text_input = _ctrl_fields.text_input = textInput;
+			this.text_input = textInput;
 		} else {
 			// Text_Item.
 			var text_item = new Text_Item({
