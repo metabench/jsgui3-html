@@ -22,6 +22,11 @@ const {prop, field} = require('obext');
 //     May later want to optimise (make more concise) the code here using more patterns.
 
 
+// Late 2023 - Currently works, but could do with extra options, finesse, and making the code more compact and idiomatic,
+//   making use of (new) lower level features to support it.
+
+
+
 // 
 
 const fields = [
@@ -49,6 +54,10 @@ const fields = [
 
 // Could seem the most explicit MVC or CVM type pattern.
 // ctrl.view.model.on()
+
+
+// .label.text perhaps....
+
 
 
 class Text_Field extends Control {
@@ -127,6 +136,27 @@ class Text_Field extends Control {
             })
 	*/
 
+
+	// Just call it .model perhaps????
+
+	// The Control is the abstraction for the View (always???)
+
+	// Not sure about MVVM here.
+	// Maybe just CM.
+	// The Control also representing the View?
+	
+	// Maybe just .model rather than .view.model.
+
+
+	// The view model could be a model that applies just to the view, maybe like a font, not the text itself.
+	//   If it were an option for how the text gets viewed in that session, rather than a setting to be saved with that text.
+
+
+
+
+
+	/*
+	
 	get view() {
 
 		// And .model as well....
@@ -139,7 +169,7 @@ class Text_Field extends Control {
 					get on() {
 						return (name, handler) => {
 
-							console.log('name', name);
+							//console.log('name', name);
 
 							if (name === 'change') {
 								// listen for the textInput change of value.
@@ -178,13 +208,56 @@ class Text_Field extends Control {
 		}
 
 	}
+	*/
+
+	get model() {
+		return {
+
+			get on() {
+				return (name, handler) => {
+
+					//console.log('name', name);
+
+					if (name === 'change') {
+						// listen for the textInput change of value.
+
+						textInput.on('change', e => {
+							// Maybe need the textInput view model????
+
+							if (e.old !== e.value) {
+								if (e.name === 'value') {
+									handler({
+										name: 'change',
+										property_name: 'value',
+										value: e.value,
+										old: e.old
+
+									});
+								}
+							}
+
+							
+						})
+
+
+					}
+
+				}
+			},
+
+			get value() {
+				return this.value;
+				//  for the moment....
+			}
+		}
+	}
 
 	activate() {
         if (!this.__active) {
             super.activate();
             const {dom, textInput} = this;
 
-			console.log('activate Text_Field');
+			//console.log('activate Text_Field');
 
 			// The view model changing would be a different / more important thing to respond to.
 			//  .value will raise the .view.model change event.
@@ -199,7 +272,7 @@ class Text_Field extends Control {
 			
 			this.on('change', e => {
 
-                console.log('e', e);
+                //console.log('e', e);
 
 				// If
                 const {name, value} = e;
