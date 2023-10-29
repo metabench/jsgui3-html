@@ -1615,11 +1615,23 @@ Window.css = `
 	display: none;
 }
 
+/*
+	May try title bar gradients, such as darker blue on the left, lighter blue on the right.
+	Maybe slightly thinner (less tall) title bars.
+	Also see about making them easy to change in specific apps and cases. Integrating SASS at a lower level may help.
+
+	background-image: linear-gradient(to right, red , yellow);
+
+
+	// 3fb0d9
+*/
+
 .window .title.bar {
     height: 31px;
     /* width: 100%; */
     /* padding-left: 8px; */
 	background-color: #0D4F8B;
+	background-image: linear-gradient(to right, #0D4F8B , #3fb0d9);
     color: #FFFFFF;
     font-size: 12px;
     line-height: 32px;
@@ -1661,7 +1673,8 @@ Window.css = `
     position: absolute;
     right: 0;
     top: 0;
-	background-color: #0D4F8B;
+	/* background-color: #0D4F8B; */
+	/* Need some other way to obscure the text if it reaches this part. Maybe use overflow elsewhere.  */
 	height: 29px;
 }
 

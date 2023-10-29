@@ -211,6 +211,7 @@ class Text_Field extends Control {
 	*/
 
 	get model() {
+		const that = this;
 		return {
 
 			get on() {
@@ -220,8 +221,8 @@ class Text_Field extends Control {
 
 					if (name === 'change') {
 						// listen for the textInput change of value.
-
-						textInput.on('change', e => {
+						
+						that.textInput.on('change', e => {
 							// Maybe need the textInput view model????
 
 							if (e.old !== e.value) {
