@@ -13,6 +13,8 @@ var stringify = jsgui.stringify,
 	*/
 const Control = jsgui.Control;
 
+const Data_Model_View_Model_Control = require('../../../../html-core/Data_Model_View_Model_Control');
+
 const {prop, field} = require('obext');
 
 // fields could have default values too.
@@ -60,7 +62,17 @@ const fields = [
 
 
 
-class Text_Field extends Control {
+// extends Data_Model_View_Model_Control perhaps.
+
+// Making effective ll functionality to support this would help a lot.
+
+// For the moment should focus on implementing the interface here???
+//   No, separate the concerns now, so that can be general purpose.
+
+
+
+
+class Text_Field extends Data_Model_View_Model_Control {
 	// fields... text, value, type?
 	//  type could specify some kind of validation, or also 'password'.
 
@@ -89,6 +101,66 @@ class Text_Field extends Control {
 		if (!spec.el) {
 			this.compose_text_field();
 		}
+
+		// Probably want .data.model here...?
+		//   Want it to respond to changes in that .data.model immediately by updating the .view.model.
+		//   Then the .view.model changes result in immediate update to the HTML DOM value.
+		//   
+
+		// Need model and model value(s) binding and syncing.
+
+		// Make it really easy to use in the top level API.
+		//   Maybe a bunch of simple ways to specify relationships between ctrl.view.model, ctrl.data.model, context.data.model, context.view.model
+		//     See how much can be done automatically. Automatic things will work where there are no more params / options
+		//     that need to be specified.
+
+		// Possibly / likely need to send more data to the client.
+		//   Possible data-jsgui-declare-model="json...."
+		//     data-jsgui-data-model="json?...."
+		//     data-jsgui-view-model="json?...."
+
+		// Then reference back to those data and view models.
+		//   The HTML document itself may have those data attributes.
+		//     Maybe would be easiest only that way?
+		//     But then could have matching data-jsgui-data-model declarations.
+		//       And the view-model could be automatic, maybe the app's view model could contain everything relating to views
+		//       of all controls.
+
+
+		// Easy model syncing will help with a variety of controls, such as 'adjuster' controls such as +1, -1 to adjust numbers.
+
+
+		// Does seem as though model references (and maybe model data???) would need to be sent to the client.
+		//   Could see about a more formalised procedure to read the model data from the HTML / DOM.
+		//     load_model_from_dom perhaps....
+		//     load_view_model_from_dom
+		//     sync_dom_to_view_model ???
+		//     sync_view_model_to_dom
+
+
+
+
+		//       still go with longer and more explicit function names.
+		//       Then work on shorthands / syntax sugar.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		// 
+
 
 		// obext this.editable property.
 		//  Will show different layouts / compositions depending on that property.
@@ -210,6 +282,75 @@ class Text_Field extends Control {
 	}
 	*/
 
+	// will be data.model and view.model
+
+	// May see about putting this tech in a mixin.
+
+	// model set value too???
+	//  no, as it's now a model object.
+
+
+
+
+	// Maybe don't use this for the moment?
+
+	//   May always be best, or at least for now, be explicit about a different data model and view model.
+	//     The data model may change less frequently, such as being the selected item(s) in a list, while the view model
+	//      would be the position in the list being displayed, the range of list items displayed, the size of these list items.
+
+
+	// Possibly making a clearer split between data and view models at the core of interactive controls that could or can
+	//   hold data.
+	// They could essentially hold a copy of the data, and only update the data in the main part of the app at certain times.
+	//   Maybe a debounce between view model changes and data model changes?
+	//   Or even an 'immediate' or 'current' view model.
+
+
+	// Maybe integrate .data and .data.model soon, while keeping this 'get model()'.
+	//   Want to find a good default way to keep the data flow tidy.
+
+
+
+
+	// No, think we need to change the .model property....
+	//  Though will have .data.model and .view.model for the moment.
+
+
+	// This may make it too complex, keeping this.
+	//   Probably best to get .data.model and .view.model working properly, then work on a .model, or remove it.
+
+	// It may help to always to be clear on data models and view models, and the differences / buffering between them.
+	//   Eg chaning the view model for a lat long bounding box does not change how the rest of the app treats the bounding box
+	//    without clicking 'OK' or 'Update' or 'Confirm', with 'Cancel' undoing that change to the View Model.
+
+	// Seems like it would be a reasonably large amount of underlying code.
+
+	// Maybe best to implement it in a few (2?) controls, and put it into a mixin.
+	//   Eg the 'view model' would contain the text for the label (as well?), maybe that would not be needed in or synced with the
+	//   data model.
+
+
+	// Separate view and data models seems like a good feature.
+
+	// Control_View class perhaps???
+	//   With the 'model' property only for the moment?
+
+	// Control_Data class too perhaps???
+	//   Would extend Data_Object.
+
+	// ctrl.data.model.on('change', e => {})
+
+	// ctrl.dmoc(e => {});
+
+	// Not every control would need this I expect.
+	//   
+
+
+
+
+
+
+
 	get model() {
 		const that = this;
 		return {
@@ -221,7 +362,7 @@ class Text_Field extends Control {
 
 					if (name === 'change') {
 						// listen for the textInput change of value.
-						
+
 						that.textInput.on('change', e => {
 							// Maybe need the textInput view model????
 
@@ -245,13 +386,14 @@ class Text_Field extends Control {
 
 				}
 			},
-
 			get value() {
 				return this.value;
 				//  for the moment....
 			}
 		}
 	}
+
+
 
 	activate() {
         if (!this.__active) {

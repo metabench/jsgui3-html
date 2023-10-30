@@ -18,6 +18,8 @@ const {Rect} = gfx;
 
 // Maybe this can / can be used to assign parents to the child controls.
 
+// Next make Data_Model_View_Model_Control extend this....
+
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
 		var content = ctrl.get('content');
