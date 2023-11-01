@@ -9,6 +9,9 @@ const Text_Node = require('./text-node');
 const Page_Context = require('./page-context');
 const Selection_Scope = require('./selection-scope');
 
+const Control_Data = require('./Control_Data');
+const Control_View = require('./Control_View');
+
 const {parse_mount, parse} = require('./parse-mount');
 
 
@@ -1129,6 +1132,8 @@ class Relative extends Control {
     }
 }
 
+jsgui.Control_Data = Control_Data;
+jsgui.Control_View = Control_View;
 
 jsgui.Relative = Relative;
 

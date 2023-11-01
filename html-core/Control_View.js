@@ -1,16 +1,16 @@
 
 
-//const {Data_Object} = require('lang-tools');
+const {Data_Object} = require('lang-tools');
 
 class Control_View {
-    constructor(spec) {
-        
+    constructor(spec = {}) {
+        if (spec.context) this.context = spec.context;
 
-        // Would have a 'model' property.
-
-        // May need to respond to it changing.
-
-        if (spec.model) this.model = spec.model;
+        if (spec.model) {
+            this.model = spec.model;
+        } else {
+            this.model = new Data_Object({context: this.context});
+        }
 
     }
 }

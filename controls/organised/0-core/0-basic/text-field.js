@@ -11,7 +11,7 @@ var stringify = jsgui.stringify,
 	each = jsgui.each,
 	tof = jsgui.tof;
 	*/
-const Control = jsgui.Control;
+const {Control, Control_Data, Control_View, Data_Object} = jsgui;
 
 const Data_Model_View_Model_Control = require('../../../../html-core/Data_Model_View_Model_Control');
 
@@ -94,13 +94,183 @@ class Text_Field extends Data_Model_View_Model_Control {
 		this.add_class('text-field');
 
 		if (spec.type) this.type = spec.type;
+		// could be 'password' for example...???
+
+
 		if (spec.placeholder) this.placeholder = spec.placeholder;
 
-		field(this, 'value', spec.value);
+		// Binding 'value' to the model data???
+
+
+		const {context} = this;
+
+        // Will (instead) be data.value - though that is short for data.model.value.
+        //   Maybe a Data_Value would be best after all?
+        //     Though .value.value does not look good.
+        //      Maybe would mean much more widespread support for and checking of Data_Value instances.
+
+        // Want to arrange it for good high level syntax - data_value has not offered that so far, data_object has extensively
+        //   through subclasses.
+
+
+
+        // The data model could / should (automatically) have a .value field.
+
+        // Then the data model - would just have a single .value ????
+
+        this.data = new Control_Data({context});
+
+		// even see about putting that data_model in the spec when reconstructing the controls?
+		//   does seem like a better (but increasing complexity) answer for it on a lower level.
+
+
+        if (spec.data && spec.data.model) {
+            this.data.model = spec.data.model;
+        } else {
+            // The Control_Data will have its own model object.
+
+            this.data.model = new Data_Object({context});
+            field(this.data.model, 'value');
+        }
+
+        this.view = new Control_View({context})
+        if (spec.view && spec.view.model) {
+            // set the view model????
+            this.view.model = spec.view.model;
+        } else {
+            this.view.model = new Data_Object({context});
+            field(this.view.model, 'value');
+        }
+
+
+        // Then on data value change - see about changing it in the data model....
+
+
+		// Better to make a new setup_models_change_handlers ???
+		//
+
+
+		//this.setup_models_change_handlers();
+
+		// Or this is fine in the constructor because it does not have to do with internal controls???
+		//   Or at least does not need to listen to their DOM events???
+		//     Will be worth trying patterns that get this to work easily, as well as provide a nice / simple API
+		//       when used.
+
+		// Does seem OK here....
+
+		this.assign_data_model_value_change_handler();
+
+		
+
+        
+
+        // And the view model changing --- would be nice to know if the change has been initiated by the DOM???
+        //   Or the comparison will prevent feedback, and be simpler??
+
+
+        this.view.model.on('change', e => {
+            const {name, value, old} = e;
+
+            //console.log('text_field view model change', e);
+
+            if (name === 'value') {
+                if (value !== old) {
+                    // change it in the view model...
+
+                    // Though check if the data model can change to that?
+                    //   can_change_data_model
+                    this.data.model.value = value;
+
+                    // Kind of activated???
+                    //   Does seem fine within the constructor though.
+                    //     May try this kind of code more.
+
+					this.text_input.data.model.value = value;
+                    //if (this.dom.el) {
+                        //this.dom.el.value = value;
+                    //}
+
+                }
+            }
+
+            // And possibly? update it in the DOM (.value property of the html element) here.
+
+
+
+            //
+        });
+
+		// So do the updates (correctly?) both ways.
+		//   Don't have this re-update with the same value (of course).
+		//     That should help in some cases.
+		//     Though in more complex cases, may be best to serialise each and hash / get a hash of each value
+		//       and compare hashes to check it's not about to repeat the same update.
+		//   Could be quite a simple and clever system to prevent infinite / inefficient update feedback loops.
+
+
+		// Could see about making the Data_Model_View_Model_Control deal with the model.value by default.
+
+
+
+
+
+		// This 'value' field has become a bit more complex....
+		//   May need to stop using obext field, and make it more specific for the moment.
+		//    Or use the onchange etc?
+
+		// .value would refer to the .data.model.value.
+		//   may be best having it (always) reflect that.
+
+		// The data model value is the value represented to the system outside of this control.
+		//   The view.model.value would represent the value while it's in the process of being edited - and a better UI
+		//     means not updating some other things whenever that value being edited / selected changes.
+		//       Though may want it to update automatically in many situations, such as moving the mouse away, touching elsewhere???
+
+
+
+
+
+
+
+		//field(this, 'value', spec.value);
+
+		// Maybe build the data.model.value and view.model.value around this.
+
+		// The value field would just be the data model value???
+
+		// But need to keep compatibility for when there is no such view.model and data.model.
+
+		//  So could set the 'value' field when the view.model changes.
+		//    And when the 'value' field is changed, it will change the data.model???
+		//      Or just don't want that 'value' field programatically settable like that? Or it's an OK way to set it in the data.model???
+		//        Yes, want to allow the programmer to use the data.model and view.model without needing to specify it if it would make
+		//        for a simpler and still unambiguous API.
+
+		// Could presume that the .value field gets updated when the .data.model.value gets updated, and it would also
+		//   update the data.model.value when the .value field gets updated.
+
+		// .value field seems like a still useful higher-level API.
+
+
+
+
+
+
+
+
+
+
 
 		if (!spec.el) {
 			this.compose_text_field();
+			this.setup_child_controls_listeners();
+			// And better to call an 
+
 		}
+
+
+
 
 		// Probably want .data.model here...?
 		//   Want it to respond to changes in that .data.model immediately by updating the .view.model.
@@ -188,6 +358,22 @@ class Text_Field extends Data_Model_View_Model_Control {
 		//});
 	}
 
+	assign_data_model_value_change_handler() {
+		this.data.model.on('change', e => {
+			const {name, value, old} = e;
+			//console.log('text_field data model change', e);
+			if (name === 'value') {
+				if (value !== old) {
+					// change it in the view model...
+
+					this.view.model.value = value;
+
+
+				}
+			}
+		});
+	}
+
 	/*
 	this.on('change', e => {
 
@@ -232,7 +418,7 @@ class Text_Field extends Data_Model_View_Model_Control {
 	get view() {
 
 		// And .model as well....
-		const {textInput} = this;
+		const {text_input} = this;
 
 		return {
 			get model() {
@@ -244,10 +430,10 @@ class Text_Field extends Data_Model_View_Model_Control {
 							//console.log('name', name);
 
 							if (name === 'change') {
-								// listen for the textInput change of value.
+								// listen for the text_input change of value.
 
-								textInput.on('change', e => {
-									// Maybe need the textInput view model????
+								text_input.on('change', e => {
+									// Maybe need the text_input view model????
 
 									if (e.old !== e.value) {
 										if (e.name === 'value') {
@@ -350,6 +536,7 @@ class Text_Field extends Data_Model_View_Model_Control {
 
 
 
+	/*
 
 	get model() {
 		const that = this;
@@ -361,10 +548,10 @@ class Text_Field extends Data_Model_View_Model_Control {
 					//console.log('name', name);
 
 					if (name === 'change') {
-						// listen for the textInput change of value.
+						// listen for the text_input change of value.
 
-						that.textInput.on('change', e => {
-							// Maybe need the textInput view model????
+						that.text_input.on('change', e => {
+							// Maybe need the text_input view model????
 
 							if (e.old !== e.value) {
 								if (e.name === 'value') {
@@ -393,12 +580,35 @@ class Text_Field extends Data_Model_View_Model_Control {
 		}
 	}
 
+	*/
 
+
+	setup_child_controls_listeners() {
+		const {text_input} = this;
+
+		text_input.data.model.on('change', e=> {
+			//console.log('text_input.data.model change e', e);
+
+			const {name, value, old} = e;
+
+			// The data model of the subcontrol is the view model of this.
+
+			if (name === 'value') {
+				if (value !== old) {
+					this.view.model.value = value;
+				}
+
+			}
+
+		})
+	}
 
 	activate() {
         if (!this.__active) {
             super.activate();
-            const {dom, textInput} = this;
+            const {dom, text_input} = this;
+
+			this.setup_child_controls_listeners();
 
 			//console.log('activate Text_Field');
 
@@ -411,11 +621,13 @@ class Text_Field extends Data_Model_View_Model_Control {
 
 
 
+			// add_dom_event_listener
 
+			/*
 			
-			this.on('change', e => {
+			this.add_dom_event_listener('change', e => {
 
-                //console.log('e', e);
+                console.log('text-field dom event change e:', e);
 
 				// If
                 const {name, value} = e;
@@ -425,7 +637,10 @@ class Text_Field extends Data_Model_View_Model_Control {
 
                         if (name === 'value') {
 
-                            textInput.value = value;
+                            //text_input.value = value;
+
+							this.view.model.value = value;
+
                         }
 
                     }
@@ -433,8 +648,15 @@ class Text_Field extends Data_Model_View_Model_Control {
 
                 
             })
+			*/
 
-			textInput.on('change', e => {
+
+			// text input data model change.
+			//   Could be in constructor though :).
+
+			/*
+
+			text_input.on('change', e => {
 
                 //console.log('e', e);
                 const {name, value} = e;
@@ -453,6 +675,8 @@ class Text_Field extends Data_Model_View_Model_Control {
 
                 
             })
+
+			*/
 
 
 
@@ -478,10 +702,6 @@ class Text_Field extends Data_Model_View_Model_Control {
 		// .view = 'none' ????
 
 		// just make a getter for the view object for the moment?
-
-
-
-
 
 
 
@@ -529,23 +749,23 @@ class Text_Field extends Data_Model_View_Model_Control {
 
 			if (this.placeholder) o_spec.placeholder = this.placeholder;
 
-			var textInput = new Text_Input(o_spec);
-			var tiid = textInput._id();
+			var text_input = new Text_Input(o_spec);
+			var tiid = text_input._id();
 
 			// da(ctrl, str attr name, attr value)
 			// da([arr of ctrl dom attr changes])
 
-			textInput.dom.attributes.id = tiid;
-			textInput.dom.attributes.name = this.name;
+			text_input.dom.attributes.id = tiid;
+			text_input.dom.attributes.name = this.name;
 			label.dom.attributes.for = tiid;
 
 			// and the type... it could be a password.
 			//  that's a DOM attribute.
-			textInput.dom.attributes.type = this.type;
-			right.add(textInput);
+			text_input.dom.attributes.type = this.type;
+			right.add(text_input);
 
-			_ctrl_fields.textInput = textInput;
-			this.text_input = textInput;
+			_ctrl_fields.text_input = text_input;
+			this.text_input = this.text_input = text_input;
 		} else {
 			// Text_Item.
 			var text_item = new Text_Item({
@@ -553,8 +773,11 @@ class Text_Field extends Data_Model_View_Model_Control {
 				'value': this.value
 			});
 			right.add(text_item);
+
+			_ctrl_fields.text_item = text_item;
+			this.text_item = text_item;
 		}
-		// textInput
+		// text_input
 	}
 
 	/*
