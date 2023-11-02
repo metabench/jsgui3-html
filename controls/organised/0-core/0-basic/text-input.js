@@ -140,72 +140,90 @@ class Text_Input extends Control {
 
         // Then the data model - would just have a single .value ????
 
-        this.data = new Control_Data({context})
-        if (spec.data && spec.data.model) {
-            this.data.model = spec.data.model;
-        } else {
-            // The Control_Data will have its own model object.
 
-            this.data.model = new Data_Object({context});
-            field(this.data.model, 'value');
-        }
+        const construct_synchronised_data_and_view_models = () => {
+            this.data = new Control_Data({context})
+            if (spec.data && spec.data.model) {
+                this.data.model = spec.data.model;
+            } else {
+                // The Control_Data will have its own model object.
 
-        this.view = new Control_View({context})
-        if (spec.view && spec.view.model) {
-            // set the view model????
-            this.view.model = spec.view.model;
-        } else {
-            this.view.model = new Data_Object({context});
-            field(this.view.model, 'value');
-        }
-
-
-        // Then on data value change - see about changing it in the data model....
-
-        this.data.model.on('change', e => {
-            const {name, value, old} = e;
-            if (name === 'value') {
-                if (value !== old) {
-                    // change it in the view model...
-
-                    this.view.model.value = value;
-                }
+                this.data.model = new Data_Object({context});
+                field(this.data.model, 'value');
             }
-        });
 
-        // And the view model changing --- would be nice to know if the change has been initiated by the DOM???
-        //   Or the comparison will prevent feedback, and be simpler??
+            this.view = new Control_View({context})
+            if (spec.view && spec.view.model) {
+                // set the view model????
+                this.view.model = spec.view.model;
+            } else {
+                this.view.model = new Data_Object({context});
+                field(this.view.model, 'value');
+            }
 
 
-        this.view.model.on('change', e => {
-            const {name, value, old} = e;
+            // Then on data value change - see about changing it in the data model....
 
-            //console.log('view model change', e);
+            this.data.model.on('change', e => {
+                const {name, value, old} = e;
+                if (name === 'value') {
+                    if (value !== old) {
+                        // change it in the view model...
 
-            if (name === 'value') {
-                if (value !== old) {
-                    // change it in the view model...
-
-                    // Though check if the data model can change to that?
-                    //   can_change_data_model
-                    this.data.model.value = value;
-
-                    // Kind of activated???
-                    //   Does seem fine within the constructor though.
-                    //     May try this kind of code more.
-                    if (this.dom.el) {
-                        this.dom.el.value = value;
+                        this.view.model.value = value;
                     }
-
                 }
-            }
+            });
 
-            // And possibly? update it in the DOM (.value property of the html element) here.
+            // And the view model changing --- would be nice to know if the change has been initiated by the DOM???
+            //   Or the comparison will prevent feedback, and be simpler??
+
+
+            this.view.model.on('change', e => {
+                const {name, value, old} = e;
+
+                //console.log('view model change', e);
+
+                if (name === 'value') {
+                    if (value !== old) {
+                        // change it in the view model...
+
+                        // Though check if the data model can change to that?
+                        //   can_change_data_model
+                        this.data.model.value = value;
+
+                        // Kind of activated???
+                        //   Does seem fine within the constructor though.
+                        //     May try this kind of code more.
+
+                        // Not sure about this.dom.properties.value ????
+
+                        // Think the more direct way here is best for now.
+
+                        if (this.dom.el) {
+                            this.dom.el.value = value;
+                        }
+                        //this.dom.attributes.value = value;
+                        //this.dom.el.value = value;
 
 
 
-            //
-        });
+                    }
+                }
+
+                // And possibly? update it in the DOM (.value property of the html element) here.
+
+
+
+                //
+            });
+        }
+        construct_synchronised_data_and_view_models();
+
+
+        
+
+
 
 
         // And responding to the data model changes too.
@@ -312,6 +330,8 @@ class Text_Input extends Control {
     }
 
     compose_text_input() {
+
+
         this.dom.tagName = 'input';
         this.dom.attributes.type = 'input';
         this.dom.attributes.value = this.value;
@@ -384,31 +404,73 @@ class Text_Input extends Control {
             // .model ???
 
 
+            // Code to synchronise the view model to the dom.
+
+            // Activate dom el to view model sync????
+
+            const activate_view_model_to_dom_model_sync = () => {
+                //if (this.view && this.view.model) {
+
+                    this.add_dom_event_listener('change', e => {
+                        //console.log('dom specific event (change) e', e);
+
+                        // dom.attributes.value perhaps???
+
+                        this.view.model.value = dom.el.value;
+                        /*
+                        setTimeout(() => {
+                            this.value = dom.el.value;
+                            // Should raise a change event?
+                        }, 0);
+                        */
+                    });
 
 
-            this.add_dom_event_listener('keypress', e_keypress => {
-                //console.log('dom specific event e_keypress', e_keypress);
+                    this.add_dom_event_listener('keypress', e_keypress => {
+                        //console.log('dom specific event e_keypress', e_keypress);
 
-                this.view.model.value = dom.el.value;
-                /*
-                setTimeout(() => {
-                    this.value = dom.el.value;
-                    // Should raise a change event?
-                }, 0);
-                */
-            });
+                        this.view.model.value = dom.el.value;
+                        /*
+                        setTimeout(() => {
+                            this.value = dom.el.value;
+                            // Should raise a change event?
+                        }, 0);
+                        */
+                    });
 
-            this.add_dom_event_listener('keyup', e_keyup => {
-                //console.log('dom specific event e_keyup', e_keyup);
+                    this.add_dom_event_listener('keyup', e_keyup => {
+                        //console.log('dom specific event e_keyup', e_keyup);
 
-                this.view.model.value = dom.el.value;
-                /*
-                setTimeout(() => {
-                    this.value = dom.el.value;
-                    // Should raise a change event?
-                }, 0);
-                */
-            });
+                        this.view.model.value = dom.el.value;
+                        /*
+                        setTimeout(() => {
+                            this.value = dom.el.value;
+                            // Should raise a change event?
+                        }, 0);
+                        */
+                    });
+
+                    this.add_dom_event_listener('keydown', e_keydown => {
+                        //console.log('dom specific event e_keyup', e_keyup);
+
+                        this.view.model.value = dom.el.value;
+                        /*
+                        setTimeout(() => {
+                            this.value = dom.el.value;
+                            // Should raise a change event?
+                        }, 0);
+                        */
+                    });
+
+                //}
+            }
+
+            activate_view_model_to_dom_model_sync();
+
+
+            
+
+            
         }
     }
 }

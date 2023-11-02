@@ -358,6 +358,12 @@ class Text_Field extends Data_Model_View_Model_Control {
 		//});
 	}
 
+	// Maybe / definitely move this lower level once it's working and needed within more controls.
+	//   Or have the problems that require it to be used solved so that it's not needed.
+	//    Or put it into a mixin.
+
+	// Really to do with syncing the view model from (changes to) the data model.
+
 	assign_data_model_value_change_handler() {
 		this.data.model.on('change', e => {
 			const {name, value, old} = e;

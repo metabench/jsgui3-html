@@ -1,34 +1,9 @@
-/**
- * Created by james on 17/12/2016.
- */
-
-// Could have an option to use the native date picker.
-// The jsgui type of datepicker should look nicer though.
-
-
-// Could define that this is only using the data type of date.
-//   Maybe could pick time as well?
-//     Or define that it picks the date part of date.
-
-
-
-
-
 const jsgui = require('../../../../html-core/html-core');
-const stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
-const Control = jsgui.Control;
-//var Calendar = require('./calendar');
+//const stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
+const {Control, Control_Data, Control_View, Data_Object} = jsgui;
+const {field} = require('obext');
 
-// Let's have a really simple HTML date picker that gets / can be progressively enhanced.
-
-/*
-
-<label for="start">Start date:</label>
-
-<input type="date" id="start" name="trip-start" value="2018-07-22" min="2018-01-01" max="2018-12-31" />
-
-
-*/
+// 2023 - Initial support for the data.model and view.model system. Compact code, but want to make it more compact and idiomatic.
 
 class Date_Picker extends Control {
     constructor(spec) {
@@ -37,70 +12,82 @@ class Date_Picker extends Control {
         this.add_class('date-picker');
         this.dom.tagName = 'input';
         this.dom.attributes.type = 'date';
-
-        // value, min, max in YYYY-MM-DD
-
-        // default to today???
-
-
-        //mx_date(this, spec);
-
-        // mx picker?
-
-        // Could start with a current date
-        // Maybe this renders a calendar?
-        //  mini calendar?
-        // will have month view
-        //  that's the main view
-        // Display all of the days of the month in a grid.
-        //  Could use a grid control and render the days into them.
-        // a month_view component
-        // month_view could be used in calendars too.
-        // year: left right arrows selector
-        // month: left right arrows selector
-        // day: month view
-        // Join them all up together
-        //  Raise external events when the date changes.
-
+        const {context} = this;
         if (!spec.el) {
             this.compose_date_picker();
-            //this.finish_date_picker();
+        }
+        const construct_synchronised_data_and_view_models = () => {
+            this.data = new Control_Data({context})
+            if (spec.data && spec.data.model) {
+                this.data.model = spec.data.model;
+            } else {
+                this.data.model = new Data_Object({context});
+                field(this.data.model, 'value');
+            }
+            this.view = new Control_View({context})
+            if (spec.view && spec.view.model) {
+                this.view.model = spec.view.model;
+            } else {
+                this.view.model = new Data_Object({context});
+                field(this.view.model, 'value');
+            }
+            this.data.model.on('change', e => {
+                const {name, value, old} = e;
+                if (name === 'value') {
+                    if (value !== old) {
+                        this.view.model.value = value;
+                    }
+                }
+            });
+            this.view.model.on('change', e => {
+                const {name, value, old} = e;
+                if (name === 'value') {
+                    if (value !== old) {
+                        this.data.model.value = value;
+                        if (this.dom.el) {
+                            this.dom.el.value = value;
+                        }
+                    }
+                }
+            });
+        }
+        construct_synchronised_data_and_view_models();
+        this.assign_data_model_value_change_handler();
+    }
+    assign_data_model_value_change_handler() {
+        if (this.data && this.data.model) {
+            this.data.model.on('change', e => {
+                const {name, value, old} = e;
+                if (name === 'value') {
+                    if (value !== old) {
+                        this.view.model.value = value;
+                    }
+                }
+            });
+        }
+	}
+    compose_date_picker() {
+    }
+    activate() {
+        if (!this.__active) {
+            super.activate();
+            const {dom} = this;
+            const activate_view_model_to_dom_model_sync = () => {
+                    this.add_dom_event_listener('change', e => {
+                        this.view.model.value = dom.el.value;
+                    });
+                    this.add_dom_event_listener('keypress', e_keypress => {
+                        this.view.model.value = dom.el.value;
+                    });
+                    this.add_dom_event_listener('keyup', e_keyup => {
+                        this.view.model.value = dom.el.value;
+                    });
+                    this.add_dom_event_listener('keydown', e_keydown => {
+                        this.view.model.value = dom.el.value;
+                    });
+            }
+            activate_view_model_to_dom_model_sync();
         }
     }
-    compose_date_picker() {
-
-        // Some kind of progressive enhancement to turn it into a more advanced / jsgui specific date picker control.
-
-        
-
-
-        // Not sure this is best.
-        //  Maybe just assign these when on the server. Just don't need them client-side once they have been loaded.
-
-        // Month view - want to be able to select a day.
-        //  each day should be selectable.
-        //  A .selectable property would be nice.
-        //  could use defineProperty for this, rather than a .selectable() function.
-
-        /*
-
-        this._ctrl_fields = this._ctrl_fields || {};
-        Object.assign(this._ctrl_fields, {
-            year_picker: this.year_picker = new Year_Picker({
-                context: this.context
-            }),
-            month_picker: this.month_picker = new Month_Picker({
-                context: this.context
-            }),
-            month_view: this.month_view = new Month_View({
-                context: this.context
-            })
-        })
-        this.add(this.year_picker);
-        this.add(this.month_picker);
-        this.add(this.month_view);
-        */
-    }
 }
-
 module.exports = Date_Picker;
