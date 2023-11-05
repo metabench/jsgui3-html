@@ -13,9 +13,10 @@ var stringify = jsgui.stringify,
 	*/
 const {Control, Control_Data, Control_View, Data_Object} = jsgui;
 
+const {field} = require('lang-tools');
+
 const Data_Model_View_Model_Control = require('../../../../html-core/Data_Model_View_Model_Control');
 
-const {prop, field} = require('obext');
 
 // fields could have default values too.
 
@@ -134,12 +135,12 @@ class Text_Field extends Data_Model_View_Model_Control {
         }
 
         this.view = new Control_View({context})
-        if (spec.view && spec.view.model) {
+        if (spec.view && spec.view.data.model) {
             // set the view model????
-            this.view.model = spec.view.model;
+            this.view.data.model = spec.view.data.model;
         } else {
-            this.view.model = new Data_Object({context});
-            field(this.view.model, 'value');
+            this.view.data.model = new Data_Object({context});
+            field(this.view.data.model, 'value');
         }
 
 
@@ -169,7 +170,7 @@ class Text_Field extends Data_Model_View_Model_Control {
         //   Or the comparison will prevent feedback, and be simpler??
 
 
-        this.view.model.on('change', e => {
+        this.view.data.model.on('change', e => {
             const {name, value, old} = e;
 
             //console.log('text_field view model change', e);
@@ -364,6 +365,13 @@ class Text_Field extends Data_Model_View_Model_Control {
 
 	// Really to do with syncing the view model from (changes to) the data model.
 
+	// A mixin to handle model synchronisation could help.
+	//   Get the patterns right, move them to mixin(s) where appropriate.
+
+	// Maybe just make 'helper' functions?
+	//   Maybe more concise / idiomatic mixin definitions, with lower level supporting code for that.
+
+	
 	assign_data_model_value_change_handler() {
 		this.data.model.on('change', e => {
 			const {name, value, old} = e;
@@ -371,9 +379,7 @@ class Text_Field extends Data_Model_View_Model_Control {
 			if (name === 'value') {
 				if (value !== old) {
 					// change it in the view model...
-
-					this.view.model.value = value;
-
+					this.view.data.model.value = value;
 
 				}
 			}
@@ -415,12 +421,7 @@ class Text_Field extends Data_Model_View_Model_Control {
 	// The view model could be a model that applies just to the view, maybe like a font, not the text itself.
 	//   If it were an option for how the text gets viewed in that session, rather than a setting to be saved with that text.
 
-
-
-
-
 	/*
-	
 	get view() {
 
 		// And .model as well....
@@ -542,53 +543,6 @@ class Text_Field extends Data_Model_View_Model_Control {
 
 
 
-	/*
-
-	get model() {
-		const that = this;
-		return {
-
-			get on() {
-				return (name, handler) => {
-
-					//console.log('name', name);
-
-					if (name === 'change') {
-						// listen for the text_input change of value.
-
-						that.text_input.on('change', e => {
-							// Maybe need the text_input view model????
-
-							if (e.old !== e.value) {
-								if (e.name === 'value') {
-									handler({
-										name: 'change',
-										property_name: 'value',
-										value: e.value,
-										old: e.old
-
-									});
-								}
-							}
-
-							
-						})
-
-
-					}
-
-				}
-			},
-			get value() {
-				return this.value;
-				//  for the moment....
-			}
-		}
-	}
-
-	*/
-
-
 	setup_child_controls_listeners() {
 		const {text_input} = this;
 
@@ -601,7 +555,7 @@ class Text_Field extends Data_Model_View_Model_Control {
 
 			if (name === 'value') {
 				if (value !== old) {
-					this.view.model.value = value;
+					this.view.data.model.value = value;
 				}
 
 			}
@@ -615,75 +569,6 @@ class Text_Field extends Data_Model_View_Model_Control {
             const {dom, text_input} = this;
 
 			this.setup_child_controls_listeners();
-
-			//console.log('activate Text_Field');
-
-			// The view model changing would be a different / more important thing to respond to.
-			//  .value will raise the .view.model change event.
-
-			// Maybe also enable / sometimes even require ??? a less ambiguous syntax for attaching DOM events?
-
-
-
-
-
-			// add_dom_event_listener
-
-			/*
-			
-			this.add_dom_event_listener('change', e => {
-
-                console.log('text-field dom event change e:', e);
-
-				// If
-                const {name, value} = e;
-
-                //if (e.old !== undefined) {
-                    if (e.value !== e.old) {
-
-                        if (name === 'value') {
-
-                            //text_input.value = value;
-
-							this.view.model.value = value;
-
-                        }
-
-                    }
-                //}
-
-                
-            })
-			*/
-
-
-			// text input data model change.
-			//   Could be in constructor though :).
-
-			/*
-
-			text_input.on('change', e => {
-
-                //console.log('e', e);
-                const {name, value} = e;
-
-                //if (e.old !== undefined) {
-                    if (e.value !== e.old) {
-
-                        if (name === 'value') {
-
-							// Should create an event....
-                            this.value = value;
-                        }
-
-                    }
-                //}
-
-                
-            })
-
-			*/
-
 
 
 

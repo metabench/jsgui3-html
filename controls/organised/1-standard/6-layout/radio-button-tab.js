@@ -52,7 +52,58 @@
         'checked': Boolean
     };
     
-    class Radio_Button extends Control {
+
+    // Make it extend Radio_Button?
+
+    // 
+
+    // Would be nice to integrate this within the .data.model and .view.data.model, .view.ui.data.model.
+    //   
+
+    //   view.ui.data.model about how it's presented.
+
+
+    //   view.data.model about the data that's represented (not necessarily all the data that's presented) ???
+
+
+    // view.data.model should hold / represent all the data that's being presented?
+    //  eg in a list of options, including all the options being presented???
+    // and .data.model also including all the options being presented?
+
+    // data.model.options.values = ....
+    // data.model.value ???
+    // .selected.value ???
+    // .selected.data.model.value ???
+    // .view.ui.selected.data.model.value ???
+    // .view.ui.selected.value???
+    // .view.ui.data.model.selected.value ????
+
+    // And the value selected in the UI will represent the .data.model.value in some / many cases.
+    //   So when something gets selected, the data.model.value needs to be changed to the ctrl.view.ui.selected.data.model.value.
+
+    // Could make this fit in with most of the existing higher level API.
+    //   Would also provide more / better places for different abstractions to have clearly defined rules that both
+    //   react to changes to other abstractions (data models for the moment) and also will change values in those other
+    //   abstractions when values change.
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    class Radio_Button_Tab extends Control {
         // panel name?
     
         // could have a title field.

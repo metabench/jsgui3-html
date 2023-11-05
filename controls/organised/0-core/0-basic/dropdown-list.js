@@ -4,6 +4,16 @@
 
 */
 
+// A Select_Options control could help more first....
+//   And could progressively enhance that too.
+//   So falling back on the non-enhanced control by default will help, it brings the app further towards
+//     not requiring client-side JS.
+
+
+
+
+
+
 const jsgui = require('./../../../../html-core/html-core');
 const each = jsgui.each;
 const tof = jsgui.tof;
@@ -41,6 +51,33 @@ const Control = jsgui.Control;
 //     Or make it with a dropdown mixin and a list.
 
 
+// Worth making the control that encapsulates the bare HTML input option select.
+//   The 'select' and 'option' elements system.
+
+// Just make jsgui.select perhaps????
+//   Some enhancement around that?
+
+// Select_Options ?????
+
+// Select_Options_Dropdown_List perhaps???
+
+// Then an Options_List could do more progressive enhancement.
+//   See about making better idioms for 'progressively enhanced' versions.
+//     So have the basic control there, have code for it, that code would support client-side things, but it gets swapped for
+//       a more advanced control???
+
+// Want to be able to easily express both the basic HTML, as well as the enchanced versions.
+
+
+// Grid does seem like it needs more work when it comes to separating the data and the presentation.
+//   Want it to be powerful and flexible in this regard.
+
+
+
+
+
+
+
 class Dropdown_List extends Control {
     constructor(spec) {
         super(spec);
@@ -55,6 +92,13 @@ class Dropdown_List extends Control {
     }
     compose() {
         let context = this.context;
+
+        // Make this more versitile, while also supporting a very intuitive high-level API.
+        //   Such as being able to provide it options from a model or part of one to select from.
+        
+
+
+
         each(this.spec.options, option => {
             // Option could just be a string, a number or [number, string]
 

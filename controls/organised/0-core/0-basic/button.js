@@ -1,5 +1,40 @@
 const jsgui = require('./../../../../html-core/html-core');
+
+// This may be a simple one to include .view.model but no .data.model (perhaps???)
+
+// It does not really deal with / interact with data in a model itself, though it itself could do with a .view.ui.data.model.
+
+// no view.data.model though....
+
+// view.ui.data.model would be a decent place to hold an abstraction about what kind of presentation options the control has.
+
+// view.ui.data.model.size for example.
+//    could even be a string like 'x-small', 'micro', 'normal', 'compact', 'large', 'fully-expanded'???, 'very-large'.
+//      or an enumeration of strings / values like that.
+// That would be a level further abstracted from the DOM.
+//   Would want to listen to that property change to sync with other parts of the (inner control) system.
+
+// .view.ui.data.model.icon ????
+//    By putting things behind these various objects, can be as clear as possible about them, if it's found there is too much typing,
+//      could even make a higher level interface on top of this, could simplify access to it.
+
+// Eg setting ctrl.size automatically sets ctrl.view.ui.data.model.size.
+
+
+
+
+
+
+//  
+
+
+
+
+
+
 var Control = jsgui.Control;
+
+
 class Button extends Control {
     constructor(spec = {}, add, make) {
         spec.__type_name = spec.__type_name || 'button';

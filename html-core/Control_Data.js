@@ -1,19 +1,50 @@
 // And maybe should have the context too?
 //   Not unless necessary.
 
-const {Data_Object} = require('lang-tools');
+const {Data_Object, Evented_Class} = require('lang-tools');
+
+const {field} = require('obext');
 
 // The model needs to share context....
 
-class Control_Data {
+// Or extend Data_Object here even???
+
+// The model could possibly be a single value (Data_Value).
+
+
+
+
+class Control_Data extends Evented_Class {
     constructor(spec = {}) {
+        super();
         if (spec.context) this.context = spec.context;
+
+        // set up the .model field....
+        //  would help when responding to it being changed.
+
+        //this.model = {};
+
+        field(this, 'model');
+
+        // .model is a Data_Value???
+        // .model.inner_value ????
+
+
+        // .model.value may be OK???
+        // as in value.value would be OK in that situation.
+
+        
+
 
         if (spec.model) {
             this.model = spec.model;
         } else {
             this.model = new Data_Object({context: this.context});
         }
+
+        
+
+
     }
 }
 

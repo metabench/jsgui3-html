@@ -15,6 +15,15 @@ var fields = [
 
 // Maybe not much need for this?
 
+// A div containing a text node.
+//   Possibly enable better control over inner text / html of both spans and divs.
+
+// Being able to use .view.data.model.value to hold the text, as well as .data.model.value.
+//   and then also just .value shortcutting to .data.model.value.
+
+
+
+
 
 class Text_Item extends Control {
     // is an Input element.

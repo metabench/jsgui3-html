@@ -1,10 +1,10 @@
-const {
-    prop,
-    field
-} = require('obext');
+//const {
+//    prop,
+//    field
+//} = require('obext');
 
 var jsgui = require('../html-core/html-core');
-const { Control } = jsgui;
+const { prop, field, Control } = jsgui;
 
 // Want to make modal windows with this.
 

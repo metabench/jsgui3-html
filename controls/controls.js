@@ -73,6 +73,8 @@ const controls = {
     Scrollbar: require('./organised/0-core/0-basic/scrollbar'),
 
     Search_Bar: require('./organised/1-standard/5-ui/search-bar'),
+    Select_Options: require('./organised/0-core/0-basic/Select_Options'),
+
 
     Single_Line: require('./organised/1-standard/6-layout/single-line'),
 
