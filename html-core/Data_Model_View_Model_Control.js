@@ -26,6 +26,15 @@ const Control_View = require('./Control_View');
 
 // Possibly not so much to do here right now???
 
+// Maybe will use this to make some other controls more concise.
+
+// Maybe make both Data_Model_View_Model_Control_Single_Value
+//   and Data_Model_View_Model_Control_Multi_Value_Data_Object
+//         so it would have properties available with string keys.
+//   maybe also make some kind(s) of Collection or Array holding data models.
+
+
+
 
 
 

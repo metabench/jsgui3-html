@@ -1,9 +1,8 @@
 // And maybe should have the context too?
 //   Not unless necessary.
 
-const {Data_Object, Evented_Class} = require('lang-tools');
+const {field, Data_Object, Evented_Class} = require('lang-tools');
 
-const {field} = require('obext');
 
 // The model needs to share context....
 
@@ -12,7 +11,20 @@ const {field} = require('obext');
 // The model could possibly be a single value (Data_Value).
 
 
+// data.model ????
+// data.value ????
+// data.model.value ????
 
+
+
+// Could maybe make non-server examples / tests that just render it to HTML and list info on what events are attached to the
+//   dom and control.
+
+// Having further ways to develop and test controls not on the server could help a little.
+//   Could help a lot with unit / regression tests.
+//   Eg what HTML do they render?
+
+// Is the data coordinated with the data model(s)?
 
 class Control_Data extends Evented_Class {
     constructor(spec = {}) {
@@ -33,12 +45,14 @@ class Control_Data extends Evented_Class {
         // .model.value may be OK???
         // as in value.value would be OK in that situation.
 
-        
+
 
 
         if (spec.model) {
             this.model = spec.model;
         } else {
+            // Could maybe use just a Data_Value???
+
             this.model = new Data_Object({context: this.context});
         }
 

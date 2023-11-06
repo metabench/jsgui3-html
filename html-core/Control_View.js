@@ -1,7 +1,6 @@
 
 
-const {Data_Object, Evented_Class} = require('lang-tools');
-const {field} = require('obext');
+const {field, Data_Object, Evented_Class} = require('lang-tools');
 
 class Control_View extends Evented_Class {
 

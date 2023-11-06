@@ -14,10 +14,13 @@ const Control_View = require('./Control_View');
 
 const {parse_mount, parse} = require('./parse-mount');
 
+const {str_arr_mapify, get_a_sig, each, prop} = jsgui;
 
-const str_arr_mapify = jsgui.str_arr_mapify;
-const get_a_sig = jsgui.get_a_sig;
-const each = jsgui.each;
+// Late 2023 - Worth making some code here more concise and idiomatic.
+//   However, worth getting into some benchmarks too, avoid introducing too much lower level complexity that it becomes too slow.
+
+
+
 
 // With ctrl.parent
 //   Maybe have actual parent, as well as a higher level conceptual parent.
@@ -46,11 +49,11 @@ var map_Controls = jsgui.map_Controls = {};
 
 
 const def = jsgui.is_defined;
-
+/*
 const {
     prop
 } = require('obext');
-
+*/
 
 // Probably should set the control parents here.
 //   Possibly 'parent' in the spec would help.
