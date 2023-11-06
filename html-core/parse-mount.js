@@ -14,7 +14,7 @@
 //  they could then be put into a DOM.
 
 var htmlparser = require("htmlparser");
-const {tof, each} = require('lang-mini');
+const {tof, each} = require('lang-tools');
 
 const map_jsgui_attr_names = {
     'name': true,

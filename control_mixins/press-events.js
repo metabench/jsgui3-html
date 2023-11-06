@@ -63,7 +63,7 @@
 // Using press-outside on a popup would help it to close.
 //  Want it to be very easy and quick to use within the control itself.
 
-const {get_truth_map_from_arr, each} = require('lang-mini');
+const {get_truth_map_from_arr, each} = require('lang-tools');
 
 let press_events = (ctrl, options = {}) => {
 

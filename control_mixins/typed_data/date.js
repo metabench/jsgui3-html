@@ -8,7 +8,7 @@
 // Date properties.
 
 
-let lang = require('lang-mini');
+let lang = require('lang-tools');
 let is_defined = lang.is_defined;
 
 // obext instead.

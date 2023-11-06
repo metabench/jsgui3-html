@@ -4,7 +4,7 @@
 
 var url = require('url-parse'),
     //jsgui = require('lang-tools'),
-    jsgui = require('lang-mini'),
+    jsgui = require('lang-tools'),
     //os = require('os'),
     //http = require('http');
     //stringify = jsgui.stringify,
