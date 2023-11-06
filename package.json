@@ -3,11 +3,11 @@
   "main": "html.js",
   "license": "MIT",
   "dependencies": {
-    "fnl": "^0.0.33",
+    "fnl": "^0.0.34",
     "htmlparser": "^1.7.7",
-    "lang-tools": "^0.0.28",
-    "jsgui3-gfx-core": "^0.0.8",
-    "obext": "^0.0.29",
+    "lang-tools": "^0.0.29",
+    "jsgui3-gfx-core": "^0.0.9",
+    "obext": "^0.0.30",
     "url-parse": "^1.5.10"
   },
   "depNotes": {
@@ -39,5 +39,5 @@
   "devDependencies": {
     "esbuild": "^0.19.5"
   },
-  "version": "0.0.146"
+  "version": "0.0.147"
 }
