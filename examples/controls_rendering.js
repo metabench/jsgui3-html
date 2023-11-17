@@ -1,51 +1,102 @@
+const jsgui = require('../html');
+
+const {Blank_HTML_Document, controls, Control} = jsgui;
 
 
-// Could have this render something relatively simple to start with???
+const test_doc_html_generation = () => {
 
-// Though investigating how it works with data types and data models will be helpful.
+    class Demo_UI extends Blank_HTML_Document {
+        constructor(spec = {}) {
+            spec.__type_name = spec.__type_name || 'demo_ui';
+            super(spec);
+            const {context} = this;
 
-// Having it able to parse / load data from strings into data values / data objects will help, as they may
-//   be there within (possibly hidden when using JS?) text inputs, or other basic html elements.
+            if (typeof this.body.add_class === 'function') {
+                this.body.add_class('demo-ui');
+            }
 
-// Maybe it's worth testing the rendering of a whole page here....?
+            const compose = () => {
+                const num_windows = 5;
 
-//  Then looking into specific things on it....
+                let [x, y] = [0, 0];
+                for (let c = 1; c <= num_windows; c++) {
+                    const window = new controls.Window({
+                        context: context,
+                        title: c + ') jsgui3-html Window Control',
+                        pos: [x, y]
+                    })
+                    this.body.add(window);
 
-//  Also could test some kind of fake? activation on it?
-//    Maybe too much code complexity needed for that in the short term.
+                    x += 32; y += 64;
+                }
 
-// Data types are very important too....
-//   Want to make sure various things to do with modelling and syncing data correctly, according to the type / schema, works
-//     correctly, and also very simply on the higher level API.
+            }
+            if (!spec.el) {
+                compose();
+            }
+        }
+    }
+
+    let l = 0;
+    let c = 0;
+
+    // And even render it 10 times in a loop?
+
+    const single_run = () => {
+        const doc = new Demo_UI();
+        const html = doc.render();
+        l = l + html.length;
+        c++;
+    }
+
+    //const num_iterations = 1024 * 16;
+
+    // 256 seems like an OK amount here.
+
+    const num_iterations = 256;
+
+    let t1, t2, tdiff;
+    t1 = Date.now();
+    for (let i = 0; i < num_iterations; i++) {
+        single_run();
+    }
+    t2 = Date.now();
+    tdiff = t2 - t1;
+    console.log('tdiff', tdiff);
+    console.log('tdiff / 1000', tdiff / 1000);
+
+    console.log('l', l);
+
+    // 128 operations in tdiff / 1000 seconds...
+
+    const rate_per_second = (num_iterations / (tdiff / 1000)).toFixed(2);
+    console.log('rate_per_second', rate_per_second);
+    // Maybe rate per second should be sped up, but it may be most useful to detect if changes ruin the speed somehow.
+    //   Want to see where some lower level changes can make some mid and high level code faster and more concise to read, write
+    //   and compress too.
 
 
-// Need to get into testing what would be the server-side generation of HTML.
-//   Or at least most of the HTML, possibly not the references to js and css???
-
-// Benchmarking things here would help, trying to get perf numbers in terms of operations / reads / updates per second.
-//   That way when developing more and using more complex low and mid-level, can see the speed impact.
-
-// So let's create a HTML page document control, with a window and with a text field or two in that window.
-
-//   Could test for server-side and isomorphic handling of field value changes.
-//     And test how long it takes to do 10K / how many get done in 0.25 or 0.1s.
-
-// How many get done in 17ms? 1ms? Number of operations per 1ms could help too - or maybe per 10ms?
-//   That's most of the time buffer for a frame at 60fps.
-
-// This may be a good way / place for testing for the speed of setting values with specific and validated types.
-
-// These typed features would / could help a lot with color palette.
-//   Should be easy to define, set, create and use these data types.
 
 
 
 
+    // Provides some basic perf info here.
 
 
 
 
+    
 
+    //console.log('html', html);
+
+
+    
+
+}
+
+if (require.main === module) {
+    test_doc_html_generation();
+}
 
 
 

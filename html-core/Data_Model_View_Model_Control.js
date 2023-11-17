@@ -35,6 +35,28 @@ const Control_View = require('./Control_View');
 
 
 
+// Not totally sure what interface / conventions this should be using and expressing for the moment.
+//   Would like to make it really easy to base controls that have both a data model and view model on this.
+
+// May also be important sending or properly recreating the data / view model on the client-side.
+//   Having them made in the constructor from lang-tools classes could be effective.
+//     Then would be recreated automatically and identically on the client-side.
+
+// Likely do want a Data_Value subclass that represents the application's Data_Model.
+//   And this Data_Value subclass for the moment could just set up the functional data type as a validator.
+
+// new Data_Value(value_to_wrap, data_type);
+
+
+
+
+
+
+// Both want to get this Data base type control working, as well as get the pattern well finessed to implement
+//   directly into a control.
+// Then will be able to use either.
+//   May then work on improved abstractions.
+
 
 
 
@@ -85,11 +107,6 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
         // This can likely be very effective....
 
-        
-
-
-
-
 
         if (spec.data) {
             this.data = new Control_Data();
@@ -97,7 +114,11 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                 this.data.model = spec.data.model;
 
                 this.data.model.on('change', e => {
-                    console.log('this.data.model change e:', e);
+                    console.log('Data_Model_View_Model_Control this.data.model change e:', e);
+
+                    // Set the view model here???
+
+
                 })
 
                 this.dom.attributes['data-jsgui-data-model'] = this.data.model._id();
@@ -138,7 +159,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
             if (this.view.data.model) {
 
                 this.view.data.model.on('change', e => {
-                    console.log('this.view.data.model change e:', e);
+                    console.log('Data_Model_View_Model_Control this.view.data.model change e:', e);
                 })
 
                 this.dom.attributes['data-jsgui-view-data-model'] = this.view.data.model._id();
@@ -151,14 +172,10 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
             // view.data.model????
             if (spec.view.model) {
-
-
                 this.view.model = spec.view.model;
-
                 this.view.model.on('change', e => {
-                    console.log('this.view.model change e:', e);
-                })
-
+                    console.log('Data_Model_View_Model_Control this.view.model change e:', e);
+                });
                 this.dom.attributes['data-jsgui-view-model'] = this.view.model._id();
             }
 
@@ -167,22 +184,16 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
             
 
         }
-        // otherwise constuct view by default?
-        //   not now, want this to work first with the patterns being used / tried currently.
 
-        
-
-
-        //console.log('!!spec.el', !!spec.el);
-        console.log('!!this.dom.el', !!this.dom.el);
+        console.log('Data_Model_View_Model_Control !!this.dom.el', !!this.dom.el);
 
         if (this.dom.el) {
 
             const context_keys = Array.from(Object.keys(this.context));
-            console.log('context_keys', context_keys);
+            //console.log('context_keys', context_keys);
 
             const context_map_controls_keys = Array.from(Object.keys(this.context.map_controls));
-            console.log('context_map_controls_keys', context_map_controls_keys);
+            //console.log('context_map_controls_keys', context_map_controls_keys);
 
             if (this.dom.el.hasAttribute('data-jsgui-data-model')) {
                 const data_model_jsgui_id = this.dom.el.getAttribute('data-jsgui-data-model');
@@ -191,8 +202,18 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
                 const data_model = this.context.map_controls[data_model_jsgui_id];
 
-                this.data = this.data || {};
-                this.data.model = data_model;
+                console.log('Data_Model_View_Model_Control !!data_model', !!data_model);
+
+                if (data_model) {
+                    this.data = this.data || new Control_Data({context});
+
+                    console.log('Data_Model_View_Model_Control pre assign this.data.model');
+                    console.log('data_model', data_model);
+                    this.data.model = data_model;
+                    console.log('post assign this.data.model\n');
+                }
+
+                
 
 
                 // Then set up the syncing here????
@@ -201,7 +222,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
                 data_model.on('change', e => {
-                    console.log('data_model change', e);
+                    console.log('Data_Model_View_Model_Control data_model change', e);
                 })
             }
 
@@ -212,7 +233,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
             if (this.dom.el.hasAttribute('data-jsgui-view-model')) {
-                this.view = this.view || {};
+                this.view = this.view || new Control_View({context});
                 const view_model_jsgui_id = this.dom.el.getAttribute('data-jsgui-view-model');
 
                 console.log('Data_Model_View_Model_Control view_model_jsgui_id:', view_model_jsgui_id);
@@ -221,12 +242,18 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
                 const view_model = this.context.map_controls[view_model_jsgui_id];
 
-                
-                this.view.model = view_model;
+                if (!!view_model) {
+                    this.view.model = view_model;
 
-                view_model.on('change', e => {
-                    console.log('view_model change', e);
-                });
+                    view_model.on('change', e => {
+                        console.log('Data_Model_View_Model_Control view_model change', e);
+                    });
+                } else {
+                    console.log('Data_Model_View_Model_Control missing view_model (not found at this.context.map_controls[view_model_jsgui_id])');
+                }
+
+                
+                
 
                 // Load the view model at the very beginning???
 
@@ -248,70 +275,10 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                     context
                 });
 
-                // and register it in the context as a control???
-                //   best not to in this case when it's only currently supposed to be internal to that control.
-
-                // See about making the Text_Input itself read values on start....
-
-                
-
 
 
             }
         }
-
-
-
-
-        // Also assign data-jsgui dom attributes.
-        //   That's fine to do before compose, not reliant on internal composition.
-
-        // A really simple to use (though not overly so) system for data syncing will help.
-        //   Make setting up the differences between 3? models simple / work by default.
-        //   Maybe 4 models.
-
-        // App / Page_Context data.model and view.model
-        // Control data.model and view.model
-
-        // Possibly other interactions between control's view models.
-        //   The disambiguation here should allow components to update in predictable and well described ways.
-
-        // Overall should not be too complicated.
-        //   Allow (many) controls to work (easily) in a MVVM (type) pattern.
-
-        // Eg when the data model updates, and causes the control's view model to update, when it's updated the DOM,
-        //   it should know to ignore that DOM update event.
-        // Possibly there will / should be a property (boolean) like ._syncing_view_model_update_to_dom
-        //   and while that is true, dom (change) events will not raise change events.
-        //    Maybe not key up or down either??? Likely should not matter.
-
-
-
-
-
-
-
-
-
-
-
-
-        // maybe if there is an element in the spec, read the data-jsgui-view-model property?
-
-        // And then see if we can get that back from the context???
-        //   Possibly the context will be more likely to be available on pre-activate.
-        //     That may be a more sensible later time to do it on the client.
-
-
-
-        
-
-
-
-
-
-
-
     }
     pre_activate() {
         super.pre_activate();
@@ -327,7 +294,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
 
-        console.log('Data_Model_View_Model_Control pre_activate');
+        console.log('Data_Model_View_Model_Control pre_activate complete');
 
         // should be able to access own data_model???
 

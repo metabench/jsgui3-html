@@ -2,12 +2,9 @@ const jsgui = require('./../../../../html-core/html-core');
 const {
     Control,
     parse_mount,
-    parse
-} = jsgui;
-const {
-    prop,
+    parse,
     field
-} = require('obext');
+} = jsgui;
 
 // Nice to make this flexible - make use of resources, svg, jsgui3-gfx....
 //   Would be better to have this make use of other (lower level) functionality and to provide a nice API here.

@@ -11,11 +11,14 @@ var stringify = jsgui.stringify,
 	each = jsgui.each,
 	tof = jsgui.tof;
 	*/
-const {Control, Control_Data, Control_View, Data_Object} = jsgui;
+const {Control, Control_Data, Control_View, Data_Object, Data_Value} = jsgui;
 
 const {field} = require('lang-tools');
 
 const Data_Model_View_Model_Control = require('../../../../html-core/Data_Model_View_Model_Control');
+
+
+const Validation_Status_Indicator = require('./Validation_Status_Indicator');
 
 
 // fields could have default values too.
@@ -32,6 +35,11 @@ const Data_Model_View_Model_Control = require('../../../../html-core/Data_Model_
 
 // 
 
+// Will set the fields up (slightly?) differently in the future?
+//   Or passing it along as 2nd param could be OK???
+
+
+
 const fields = [
 	['text', String],
 	['name', String],
@@ -40,6 +48,25 @@ const fields = [
 	['editable', Boolean, true],
 	['show_text', Boolean, true]
 ];
+
+// Could use validation status and validation status indicator.
+
+// Could see if updates to the Data_Model (from the View_Model) validate correctly.
+//   See if the View_Model (.data.model) validates properly.
+//     Assigning validation rules to the view.data.model too....
+
+
+
+
+// Could maybe use a status indicator mixin???
+
+// Or the status indicator only has a view.model ???
+
+
+
+//  status_indicator.data.model = ....
+
+
 
 // Text_Field
 
@@ -71,6 +98,33 @@ const fields = [
 //   No, separate the concerns now, so that can be general purpose.
 
 
+// Maybe should use a Data_Value by default.
+
+// Perhaps Data_Value could have a .name property as well.
+//   The name of the value. Synonymous with .key I suppose.
+
+// Could display the data_value name (perhaps???)
+
+// Maybe bound to the name and the value?
+
+// Data_Model.clone() could help.
+//   So set the view.data.model = data.model.clone()
+
+// See about some work on the .view.ui.model here.
+
+//   Being able to specify it nicely will help.
+
+//   More view.ui.options or similar....
+//     .ui.options makes sense....
+//     
+
+
+
+
+
+// Could also make Text_Input extend Data_Model_View_Model_Control.
+
+
 
 
 class Text_Field extends Data_Model_View_Model_Control {
@@ -89,7 +143,11 @@ class Text_Field extends Data_Model_View_Model_Control {
 
 		// The ctrl spec fields - does it use oext???
 
+		// Probably move away from setting up fields like that.
+		//   Or use the newer field() function to set them up.
+
 		super(spec, fields);
+		//super(spec);
 
 		this.__type_name = 'text_field';
 		this.add_class('text-field');
@@ -124,14 +182,24 @@ class Text_Field extends Data_Model_View_Model_Control {
 		// even see about putting that data_model in the spec when reconstructing the controls?
 		//   does seem like a better (but increasing complexity) answer for it on a lower level.
 
+		// This could be within Data_Model_View_Model_Control.
+		//   Probably should be.
+		//     See about some lower level improvements to assigning / specifying fields.
+		//       Will be using the field function that's new to lang-mini - though the function had been used in 
+		//       obext for quite a while. The field function is proving useful and versitile, moreso for the moment
+		//       than the slightly similar in purpose prop function also in obext.
+		//     
+
+
+
 
         if (spec.data && spec.data.model) {
             this.data.model = spec.data.model;
         } else {
             // The Control_Data will have its own model object.
 
-            this.data.model = new Data_Object({context});
-            field(this.data.model, 'value');
+            this.data.model = new Data_Value({context});
+            //field(this.data.model, 'value');
         }
 
         this.view = new Control_View({context})
@@ -139,8 +207,10 @@ class Text_Field extends Data_Model_View_Model_Control {
             // set the view model????
             this.view.data.model = spec.view.data.model;
         } else {
-            this.view.data.model = new Data_Object({context});
-            field(this.view.data.model, 'value');
+
+
+            this.view.data.model = new Data_Value({context});
+            //field(this.view.data.model, 'value');
         }
 
 
@@ -176,6 +246,9 @@ class Text_Field extends Data_Model_View_Model_Control {
             //console.log('text_field view model change', e);
 
             if (name === 'value') {
+
+				// Maybe want a more versitile equals function. Or even relying on tostring coersion with ==?
+
                 if (value !== old) {
                     // change it in the view model...
 

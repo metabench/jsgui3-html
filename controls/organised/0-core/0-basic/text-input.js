@@ -8,6 +8,9 @@ const {prop, field} = require('obext');
 //     Separate to for example view.data.ui.options.model
 //   Be really explicit with what it's about, but allow for shortened syntax when it's clear(er) what it's doing.
 
+// May see about making this a Data_Model_View_Model_Control (later), but this is quite concise right now without the comments and
+//   empty lines.
+
 
 class Text_Input extends Control {
     constructor(spec) {

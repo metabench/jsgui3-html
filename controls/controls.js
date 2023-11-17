@@ -99,9 +99,33 @@ const controls = {
     Tree: require('./organised/1-standard/5-ui/tree'),
     Tree_Node: require('./organised/1-standard/5-ui/tree-node'),
     Vertical_Expander: require('./organised/1-standard/6-layout/vertical-expander'),
-    Window: require('./organised/1-standard/6-layout/window')//,
+    Window: require('./organised/1-standard/6-layout/window'),//,
     //mx: require('../control_mixins/mx')
+
+
+    Indicator: require('./organised/0-core/0-basic/Indicator'),
+    Status_Indicator: require('./organised/0-core/0-basic/Status_Indicator'),
+    Validation_Status_Indicator: require('./organised/0-core/0-basic/Validation_Status_Indicator')
+
 }
+
+// a show_validation_status mixin perhaps???
+// though having a place in the control where it can display the validation status would be nice too.
+//   The validation status of the view.model
+//     view.model.validate perhaps ....?
+
+// Though having the view model copy the data model, including data type and validation function.
+
+//   Maybe do more applying validation status to Text_Input too?
+//   Maybe make a control that contains both the DMVM Control as well as a validation status indicator.
+
+// Being able to get a validation status indicator there for a control with as little top level code as possible will help.
+
+
+
+
+
+
 
 // Could definitely do with improved html / xhtml like control parsing and composition.
 //  Done the basics of it, may need to improve it to cover more cases.
