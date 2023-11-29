@@ -5,7 +5,7 @@
  function(jsgui, Text_Field) {
  */
 
-var jsgui = require('./../../../../html-core/html-core'), Text_Field = require('../0-basic/text-field');
+var jsgui = require('./../../../../html-core/html-core'), Text_Field = require('../0-basic/Text_Field');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;

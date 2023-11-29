@@ -8,6 +8,7 @@ const mx = {
     display: require('./display'),
     display_modes: require('./display-modes'),
     fast_touch_click: require('./fast-touch-click'),
+    model_data_view_compositional_representation: require('./model_data_view_compositional_representation'),
     popup: require('./popup'),
     resizable: require('./resizable'),
     selectable: require('./selectable'),

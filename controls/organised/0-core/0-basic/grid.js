@@ -39,6 +39,71 @@
 //   Want easy to use and idiomatic syntax, higher level than HTML.
 
 
+// Late 2023 - decision to move to a composition.model system, though keeping things backwards-compatable.
+//  .content may point to something else internally.
+
+// composition model being different to composition itself.
+//   That would make a lot of sense in terms of the distinction.
+
+// Or even there is a composition content model, as well as composition model.
+//   The composition content model would include all the content of the control, just like before.
+
+// May want a higher level composition content model (too)
+//   Ie for a window, we don't treat it as having the direct child controls that it has.
+//     compositional content is what we already have. We may want a new type of content (model), being some other kind
+//     of (composition) content that's more relevant to the usage of the control.
+//   So may want a .inner in many cases.
+//   Maybe want a .left.inner and .right.inner in some. top.inner bottom.inner
+//     and something for both hotizontal and vertical. Things like a 3 inner parts composition.
+//   An interface where inner parts can be numbered and named would help.
+//     Would definitely be a useful and intuitive interface.
+//     Want to be able to recognise different inner / internal parts of a control, where other controls can be placed.
+
+//   As in inner.controls???
+//     That may be a good readable API for referring to inner controls.
+//       Those controls being containers for other controls?
+
+// .inner.areas? .zones .places .containers .parts? .controls? or all 6 are synonyms.
+//   .inner.control when there is a single one or a primary one.
+//   .inner.primary.control?
+//   .inner.controls.primary ???
+
+// view.ui.composition.inner.controls.top;
+
+// It may make some sense to move some things explicitly within this view.ui.composition system.
+//   It does provide a place where some settings that already exist can be further categorised, and also used in a way so things
+//   will be more extendable and clearer.
+
+// Then can work on supporting some shorthands....
+//   Possibly with functions.
+
+
+
+
+
+
+// so a left/right movable bar could have 2 inner zones / areas / places / parts / containers.
+//   Making a really flexible API could be helpful.
+
+// And the Window control has a single inner area / control
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -58,6 +123,47 @@ const {
 // though maybe .value, and .data.model.value should correspond with the day of the month.
 //   or .value is the full date????
 
+// This is a somewhat complex control, but may want to make sure it has a simple and consistent highest level API.
+// Having different composition modes / models could be useful.
+//   Possibly enabling all controls to take varying composition models would help.
+//     The composition model could be generated accoding to the number of cells, or it could be an abstraction that
+//     can handle things like num rows and num columns.
+
+
+
+
+// class Composition_Model perhaps....
+//   Would have the parts of the control itself.
+//   Then there would be the 'contents' type parts.
+
+// Compositional_Model.compose(ctrl) perhaps....
+//   Would set the content of that control / add the content.
+
+// and control.compose() would involk that compositional model.
+// compositional.model
+// compositional.content (that's everything, like normal .content ????) or the compositional content is different???
+//  makes sense to move .content collection to .view.ui.compositional.content
+// compositional.inner.content in some cases (like window)
+
+
+// Would be best to make multiple compositional models work within the curent system
+
+// Grid looks like a place where a slightly different compositional model could be used, as well as a Data_Model / Data_Value
+//   that represents a 2D grid of data.
+
+// 
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -69,6 +175,18 @@ const {
     prop,
     field
 } = require('obext');
+
+
+// Move to the data model system as well as the view data model system.
+
+// .view.ui.data.model
+// .view.data.model
+// view.ui does seem like an important distinction.
+
+
+
+
+
 class Grid_Cell extends Control {
     constructor(spec) {
         (spec = spec || {}).__type_name = 'grid_cell';
@@ -97,6 +215,42 @@ class Grid_Cell extends Control {
         }
     }
 }
+
+// And also want to integrate with data sources.
+// Possibly a Data_Grid subclass of Data_Model could help most with this.
+//   Especially with the data updating, and representing that on a grid.
+
+// Also, the Grid control was the control that was proving most difficult when it came to the .size property.
+//  Ambiguity over if it's the dimensions of the data, or the size in pixels in the UI.
+
+// .view.size may be a useful way to express it clearly.
+// .data.size or .data.model.value.size even....
+
+// Do want the unambiguous short(er) ways of expressing it.
+
+// .view.ui.data.model.size even???
+
+// a ui model or ui data model???
+// .view.ui.data.copy()
+// view.ui.data.toUInt8Array() ???
+
+// having .data be more general, then data.model being the data_model instance makes sense in terms of a flexible API.
+//   Writing this should be fairly concise because some high level code can use the very specific mid level code to do things that would
+//   otherwise take a few lines or be more complex than it otherwise would without the very specific mid level code.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class Grid extends Control {
     constructor(spec, add, make) {
         spec = spec || {};
@@ -107,6 +261,8 @@ class Grid extends Control {
         }
         this.add_class('grid');
         var spec_data = spec.data;
+        //  Could give it a data_model here.
+
         this._arr_rows = [];
         field(this, 'composition_mode');
         if (spec.composition_mode) {
@@ -135,6 +291,13 @@ class Grid extends Control {
             }
         });
         if (spec.grid_size) _grid_size = spec.grid_size;
+
+        // The view.ui.model or view.ui.data.model perhaps?
+        //   Including fields within that data model could help.
+        //     
+
+
+
         field(this, 'cell_size');
         if (spec.cell_size) this.cell_size = spec.cell_size;
         field(this, 'column_headers', false);
@@ -181,7 +344,23 @@ class Grid extends Control {
         });
     }
     'refresh_size'() {
-        console.log('grid.js refresh_size this.composition_mode', this.composition_mode);
+        //console.log('grid.js refresh_size this.composition_mode', this.composition_mode);
+
+        // .view.ui.compositional.mode
+        // .view.ui.composition.mode(l)
+
+        // Composition model does seem very useful as a concept for how the controls will be put together.
+
+
+
+        // .view.ui.composition.model.compose(this);
+        //   And a compositional model could contain a list of controls.
+        //     Maybe even as an array of pairs of [Ctrl, spec]
+        // .view.ui.composition.content perhaps???
+
+        // this.view.ui.composition.model.name === 'divs' perhaps in the future?
+
+
         if (this.composition_mode === 'divs') {
             let [num_columns, num_rows] = this.grid_size;
             var cell_border_thickness = 1;
@@ -229,8 +408,9 @@ class Grid extends Control {
         this.main.add(cell);
         return cell;
     }
+    // Different composition models could help here.
     'full_compose_as_divs'() {
-        console.log('* full_compose_as_divs')
+        //console.log('* full_compose_as_divs')
         let main = this.main = new Control({
             context: this.context,
             class: 'main'

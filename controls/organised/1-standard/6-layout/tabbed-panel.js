@@ -140,14 +140,13 @@ class Tab extends Control {
     construct_tab() {
         const {context} = this;
 
-
-
-
         const radio_button = new Radio_Button({
             context,
             group_name: this.group_name,
             text: this.name
         })
+
+        // But then the content inside these tabs????
 
         this.add(radio_button);
 
@@ -194,28 +193,23 @@ class Tab_Group extends List {
         this.add_class('tab-group');
 
 
+        // Have the tabs in some kind of compositional model???
+        //   Def looks like getting properties to do with compositions and data models right is very important.
+
+        // And providing a flexible high-level API
 
         //this.selection_scope = this.context.new_selection_scope(this);
 
 
         this.tab_names = spec.tab_names || spec.tabs;
+
+
+
         if (!spec.el) {
-            this.construct_tab_group();
+            this.compose_tab_group();
         }
-
-        //console.log('this.selection_scope', this.selection_scope);
-
-
-        //this.selection_scope.on('change', e_change => {
-        //    console.log('Tab_Group selection_scope e_change', e_change);
-        //});
-
-        // selection scope change, then we raise a change here.
-
-
-        
     }
-    construct_tab_group() {
+    compose_tab_group() {
         each(this.tab_names, tab_name => {
 
 
@@ -267,55 +261,29 @@ class Tabbed_Panel extends Panel {
             this.compose_tabbed_panel(spec.tabs);
         }
     }
+
+    // Maybe a compositional mode would help with this.
+    //   Incl being able to reconstruct everything on the client.
+
+    // Perhaps there should be a 'reconstruct' stage on the client, before activation.
+    //   
+
+
+    // This way overall is a bit of a CSS hack, it works fine rendered without JS.
+    //   Need to be clearer about how the tab pages get referenced.
+
+
+    // this.tab_pages[i];
+    //   would definitely make sense.
+
+
+
+
     compose_tabbed_panel(tabs_def) {
 
-
         const {context} = this;
-        // probably / possibly should have a 'relative' div inside, then other divs inside that?
-        //   could help with positioning the tab bar and tab page display in various places flexibly.
 
-
-        /*
-        const ctrl_relative = new Control({
-            context
-        });
-        ctrl_relative.add_class('relative');
-        this.add(ctrl_relative);
-
-        // the ctrl tab bar, which will contain a Radio_Button_Group
-
-        const ctrl_tabs = new Tab_Group({
-            context,
-            tabs: tabs_def
-        })
-
-        ctrl_relative.add(ctrl_tabs);
-
-        */
-
-        // Then this for each of them:
-
-        // Need to be able to specify the contents within various places.
-        //   Making them accessible through the API.
-        //   Maybe 
-
-
-
-        /*
-        <input type="radio" name="tabs" id="tab1" class="tab-input">
-        <label for="tab1" class="tab-label">Tab 1</label>
-        <div class="tab-content">Content for Tab 1</div>
-        */
-
-        // And then controls internal to the tab page.
-
-        // Include an empty tab page for each of them....
-
-        // Will want ways to access the specific tabs - by name, or by index.
-        //   Including once it has been activated.
-
-
-
+        this.tab_pages = [];
 
         const add_tab = (name, group_name) => {
 
@@ -324,7 +292,6 @@ class Tabbed_Panel extends Panel {
                 context
             });
             {
-
                 // Or enclose the whole thing in a label???
                 // Not sure how that would work with the tabs css though....
 
@@ -333,17 +300,6 @@ class Tabbed_Panel extends Panel {
                 const {attributes} = dom;
                 attributes.type = 'radio';
                 attributes.name = group_name;
-                
-
-
-                //html_radio.add(name);
-
-                //attributes.name = name;
-
-
-                //attributes.id = html_radio._id();
-
-
 
             }
             html_radio.add_class('tab-input');
@@ -359,11 +315,16 @@ class Tabbed_Panel extends Panel {
             this.add(label);
 
             // Then add a tab-page
+            //   The tab-page should be considered 'inner' for this.
 
             const tab_page = new Control({
                 context
             });
             tab_page.add_class('tab-page');
+            this.tab_pages.push(tab_page);
+
+
+
             //tab_page.dom.attributes.order = '100';
 
             // Then add the tab page content....?
@@ -386,11 +347,15 @@ class Tabbed_Panel extends Panel {
             if (t === 'string') {
                 const tab_page = add_tab(tab, group_name);
 
-                tab_page.add(i_tab + '');
+                //tab_page.add(i_tab + '');
+
+
                 i_tab++;
             }
 
         })
+
+        // 
 
         const ctrl_break = new Control({
             context
@@ -399,7 +364,6 @@ class Tabbed_Panel extends Panel {
         //tab_page.dom.attributes.order = '100';
 
         // Then add the tab page content....?
-
 
         this.add(ctrl_break);
 
@@ -484,6 +448,11 @@ class Tabbed_Panel extends Panel {
         }
 
         this._ctrl_fields = this._ctrl_fields || {};
+
+
+        // so can access the tab pages at this composition stage.
+
+
         
         //this._ctrl_fields.ctrl_relative = ctrl_relative;
 
@@ -493,6 +462,34 @@ class Tabbed_Panel extends Panel {
 
         // tab group
         
+    }
+
+    activate() {
+        // Need to reconstruct the this.tab_pages.
+
+        // a query to get them simply???
+
+        if (!this.__active) {
+            this.__active = true;
+            const tab_pages = [];
+
+            each(this.content._arr, ctrl => {
+                if (ctrl.has_class('tab-page')) {
+                    tab_pages.push(ctrl);
+                }
+            })
+
+            this.tab_pages = tab_pages;
+
+            console.log('tab_pages.length', tab_pages.length);
+        }
+
+        
+
+
+
+
+
     }
 }
 

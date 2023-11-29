@@ -13,8 +13,47 @@ const Text_Node = require('./text-node');
 var Control_Core = require('./control-core');
 const has_window = typeof window !== 'undefined';
 
+
+// Maybe worth moving some core shapes somewhere else, lower level, and not require gfx-core.
+
+// Also seems like a bit of testing here to do with making a control with the Data_Model system, rendering it,
+//   changing a value in the Data_Model, re-rendering.
+// Can't really test client-side things so well here.
+//   But can test many of the things that are depended on on the client-side.
+
+// Making a (simulated) Data_Model stack that's similar to controls could help here.
+//   For the moment, worth focusing a lot on the Text_Input Control and it's various data models and values.
+//   Make it easy to make it so it can represent a number or integer.
+//     (parsed types)
+//   Representing (hex or css) colors.
+//     Data types that can be represented as (some) strings seems like a very important thing to get right.
+
+// data type translations when syncing between data models of different data_type???
+
+
+// Let's get this all working for representing integers as strings within a Text_Input.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const gfx = require('jsgui3-gfx-core');
 const {Rect} = gfx;
+
+const model_data_view_compositional_representation = require('../control_mixins/model_data_view_compositional_representation');
 
 // Maybe this can / can be used to assign parents to the child controls.
 
@@ -98,10 +137,34 @@ const mapDomEventNames = {
 	'volumechange': true,
 	'waiting': true
 };
+
+// Basically everything extends this control.
+//   Late 2023 this works, don't want to break it, but it should be functionally refined somewhat.
+//   Some parts moved deeper into the namespace such as view.ui.commands perhaps.
+//     Then there could be shortcuts to get to them.
+//     May be able to further simplify the core code of controls themselves, moving other code into mixins.
+
+
+
+
+
+
+
+
 class Control extends Control_Core {
 	constructor(spec, fields) {
+
+		//console.log('construct ctrl-enh');
+
 		spec = spec || {};
 		super(spec, fields);
+
+		// Slows it down maybe 20 to 30 percent here.
+		//   But the flexibility could be worth it!
+		const o_repr = {};
+		if (spec.data) o_repr.data = spec.data;
+		model_data_view_compositional_representation(this, o_repr);
+
 		if (spec.id) {
 			this.__id = spec.id;
 		}
@@ -134,7 +197,240 @@ class Control extends Control_Core {
 			if (tn) this.__type_name = tn;
 			var id = spec.el.getAttribute('data-jsgui-id');
 			if (id) this.__id = id;
+
+			
 		}
+
+		if (!spec.el) {
+			this.compose_using_compositional_model();
+
+			// And when this model gets changed it should recompose using it.
+			
+			// this.view.ui.compositional.model.on('change'....?)
+			//  and when its value changes....
+
+			// or this.view.ui.compositional.on('change' model) perhaps....
+
+			// Need to work on making the compositional model change work best.
+
+			// model.on change 'self' even???
+			//   as in it changes to a new model even, not just changing the value?
+
+
+
+
+
+		}
+
+		// and maybe a 'has_composed'???
+
+		this.view.ui.compositional.on('change', e => {
+			//console.log('e', e);
+			const {name} = e;
+			if (name === 'model') {
+				console.log('ctrl-enh constructor handle view.ui.compositional change model');
+
+				this.recompose_using_compositional_model();
+
+			}
+
+		});
+
+
+		if (spec.size) {
+			this.size = spec.size;
+		}
+		if (spec.background) {
+			if (spec.background.color) {
+				this.background.color = spec.background.color;
+			}
+		}
+
+		// view.ui.compositional.model
+
+		const set_view_ui_composition_model_from_spec = () => {
+			if (spec.comp) {
+				this.view.ui.compositional.model = spec.comp;
+			} else if (spec.composition) {
+				this.view.ui.compositional.model = spec.composition;
+			} else if (spec.view) {
+				if (spec.view.ui) {
+					if (spec.view.ui.compositional) {
+						if (spec.view.ui.compositional.model) {
+							this.view.ui.compositional.model = spec.view.ui.compositional.model;
+						}
+					}
+				}
+			}
+		}
+		set_view_ui_composition_model_from_spec();
+
+
+
+	}
+
+	recompose_using_compositional_model() {
+		//console.log('recompose_using_compositional_model');
+		this.content.clear();
+		this.compose_using_compositional_model();
+	}
+
+	// In the fairly near term this should help make controls such as Text_Field more concise in the definition,
+	//   as well as make data and view model interactions clearer.
+	
+	
+
+
+
+	compose_using_compositional_model() {
+		//console.log('ctrl-enh compose_using_compositional_model');
+
+		let cm;
+
+		const {context} = this;
+
+		// view.ui.compositional.model
+
+		if (this.view.ui.compositional.model) {
+			cm = this.view.ui.compositional.model;
+		}
+
+		/*
+
+		if (this.view.ui.active.compositional.data.model) {
+			cdm = this.view.ui.active.compositional.data.model;
+		} else if (this.view.ui.compositional.data.model) {
+			cdm = this.view.ui.compositional.data.model;
+		}
+		*/
+
+		const tcm = tof(cm);
+		//console.log('tcm', tcm);
+
+		const compose_from_compositional_model_array = (arr_cm) => {
+			const l = arr_cm.length;
+			if (l > 0) {
+				for (let c = 0; c < l; c++) {
+					const composition_item = arr_cm[c];
+
+					const tci = tof(composition_item);
+					//console.log('tci', tci);
+
+					if (tci === 'function' || tci === 'control') {
+						//control
+
+						// just create that control, no spec given here.
+
+						const ctrl = new composition_item({context});
+						this.add(ctrl);
+
+					} else if (tci === 'array') { // otherwise an array [Control_Class, spec]
+						
+						if (composition_item.length === 2) {
+
+							const [t0, t1] = [tof(composition_item[0]), tof(composition_item[1])];
+
+							if ((t0 === 'function' || t0 === 'control') && t1 === 'object') {
+								composition_item[1].context = context;
+								const ctrl = new composition_item[0](composition_item[1]);
+								this.add(ctrl);
+
+							} else if (t0 === 'string' && (t1 === 'function' || t1 === 'control')) {
+								//composition_item[1].context = context;
+								const ctrl = new composition_item[1]({context});
+								this.add(ctrl);
+
+								this._ctrl_fields = this._ctrl_fields || {};
+								this._ctrl_fields[composition_item[0]] = ctrl;
+
+								//console.log('composition_item[0]', composition_item[0]);
+							} else {
+
+								console.log('[t0, t1]', [t0, t1]);
+
+								console.trace();
+								throw 'stop / nyi';
+
+							}
+
+
+
+						} else if (composition_item.length === 3) {
+							// then what are the types...???
+							const [t0, t1, t2] = [tof(composition_item[0]), tof(composition_item[1]), tof(composition_item[2])];
+							
+
+
+							if ((t0 === 'string') && (t1 === 'function' || t1 === 'control') && t2 === 'object') {
+								composition_item[2].context = context;
+
+
+
+								const ctrl = new composition_item[1](composition_item[2]);
+								this.add(ctrl);
+
+								this._ctrl_fields = this._ctrl_fields || {};
+								this._ctrl_fields[composition_item[0]] = ctrl;
+
+								//console.log('composition_item[0]', composition_item[0]);
+
+							} else {
+
+								console.log('[t0, t1, t2]', [t0, t1, t2]);
+								console.trace();
+								throw 'stop / nyi';
+
+							}
+
+
+							//console.trace();
+							//throw 'stop / nyi';
+
+						} else {
+							console.trace();
+							throw 'stop / nyi';
+						}
+
+
+
+					}
+
+
+
+
+
+				}
+
+			}
+
+
+		}
+
+		if (tcm === 'array') {
+			// Simple enough for the moment....
+			compose_from_compositional_model_array(cm);
+		}
+
+		/*
+
+		if (cm !== undefined) {
+
+			console.log('cm', cm);
+
+
+			if (cm.value !== undefined) {
+				console.log('ctrl-enh compose_using_compositional_model found compositional model cm:', cm);
+
+				// Then compose accordingly....
+
+				console.trace();
+				throw 'stop';
+			}	
+
+			
+		}
+		*/
+
 	}
 	'ctrls' (obj_ctrls) {
 		this._ctrl_fields = this._ctrl_fields || {};
@@ -736,6 +1032,8 @@ class Control extends Control_Core {
 
 
 	'pre_activate_content_controls' () {
+
+		// Reconstruction perhaps....
 
 		// Not so sure about this, as maybe pre_activate would cover it.
 

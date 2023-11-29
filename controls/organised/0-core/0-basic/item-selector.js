@@ -39,6 +39,11 @@ const mx_popup = require('./../../../../control_mixins/popup');
 
 // 2022 - May be unnecessary. Could make better use of mixins such as list and selectable.
 
+// Does seem worth making some relatively simple examples - though may need jsgui server?
+//   Or do more about client-side activation more like jQuery is done...?
+
+
+
 class Item_Selector extends Control {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'item_selector';

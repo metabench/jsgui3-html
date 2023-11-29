@@ -3,12 +3,26 @@
  * 
  * 2022 - Could even see about moving some of this functionality / code to mixins.
  * 
+ * Late 2023 - Want to make more subtle changes to the control system, keeping the current API working where possible.
+ *   Though it seems likely to involve making a more deeply nested type of data structure inside the control.
+ * 	 May be best to focus on things on a higher level for the moment, such as mixins, and then see what can be integrated here?
+ * 
+ * Maybe not though - the view.ui.data.model, view.data.model, data.model system seems like it may be useful.
+ * As in making it standard that there are different things within each of the controls, with clearly defined roles,
+ *  and where they overlap there are clear rules for syncing
+ * 
+ * composition.model makes a lot of sense
+ * composition.models makes sense to (when defining them)
+ * composition.model = 'divs' could make sense here when choosing between different ways something could be composed.
+ * 
+ * 
+ * model_data_view_compositional_representation
+ * 
  */
 const jsgui = require('lang-tools');
 const oext = require('obext');
 const get_a_sig = jsgui.get_a_sig;
 const each = jsgui.each;
-const clone = jsgui.clone;
 const Evented_Class = jsgui.Evented_Class;
 const Data_Object = jsgui.Data_Object;
 const Collection = jsgui.Collection;
@@ -24,7 +38,73 @@ const Text_Node = require('./text-node');
 // May need some core improvements, possibly very style focused.
 //   Ability to access a transitions object.
 
+// view.ui.data.model.options???
+
+// or a model that's not a Data_Model (explicitly in the . namespaces)
+
+// view.data.model???
+//  is that even necessary???
+// .view is a data_model itself???
+
+// .ui.data.model could work in fact.
+//  just may want the shortcut ui.model
+
+// DO WANT ctrl.view.ui.data.model
+//   that would represent things like the label text.
+//    possibly other options to do with the presentation of that text, and not necessarily following the same API as CSS.
+//    This is intended to be a higher level than CSS.
+
+// Putting things into ui.data.model would help when syncing or recording what happens within the UI.
+//   Things that would be useful for screen sharing, but not for application undo and redo.
+
+// ctrl.view.ui.data.model
+//   would have things such as position.
+
+// Maybe have a more explicit sync system between the ui data model and the ui dom.
+//   Probably should be done with onchange handlers.
+//     Focus mostly on syncing to the dom attributes and css.
+//  .ui.node ???
+//  ctrl.dom.node for example...???
+//  .node as well as .el.
+//  dom.node.type being either the HTML node type, or some kind of HTML_Node_Type instance, or a data type that expresses it.
+//   want to be able to get and set it as an integer or string.
+//  .node.type.toString() even???
+//  .node.type.name perhaps too.
+
+
+
+// May try making a new API-compatable control.
+//   And then could introduce more parts of the API / change it further.
+
+
+
+
+
+
+
+
+
+
+
+
+
 // Though could solve this with a 'no-size-transitions' class that's temporarily there.
+
+
+// Keeping things within .data.model and .view.ui.data.model could be effective.
+
+// Though at what level of the controls it's worth integrating it's hard to know right now.
+//   Not so sure about using .data.model (with its types???) to model the dom attributes and style...
+//    Though the types could be effective for converting to valid CSS.
+//    Eg a CSS string type.
+// The main point will be to allow simpler / simplest higher / highest level syntax.
+
+
+
+
+
+
+
 
 
 
@@ -48,6 +128,47 @@ var px_handler = (target, property, value, receiver) => {
 	}
 	return res;
 }
+
+// This could be moved to / recreated within a view.ui.html.dom.style
+//   view.ui.html.model??? .dom.attributes.style????
+
+// Does seem like it's worth nesting some functionality / settings further within sub-objects.
+//   It would make for a more concise top level of the control (without the shortcuts)
+//   
+
+// Seems like this is possibly worth reimplementing using the new Data_Value system???
+//   Though maybe first improve Data_Value so it could then work as Data_Object and power the Control class?
+
+// Not so sure it's best to add this new functionality right into Control right now....?
+//   Maybe best to split up some functionality from here, like the Control_Dom...?
+
+// Maybe always put that into a Control_View class?
+//  Making Control_View standard could help.
+//   .view.data.model ??? there would not always be data in the view.
+//   .view.ui.data.model ??? such as the title of a window?
+
+// May be best putting propertyies behind .data.model for the moment and making it very standard.
+
+// Eg when 'data' is in a spec, it would be loaded into the .data.model.
+//  .data.load(x) could load it into the model (perhaps)
+
+
+
+
+
+
+
+
+
+
+
+// Even need something that models CSS styles.
+//   Seems like a job for Data_Model at the end of the day.
+
+
+
+
+
 var style_input_handlers = {
 	'width': px_handler,
 	'height': px_handler,
@@ -79,7 +200,7 @@ var new_obj_style = () => {
 		});
 		return res.join('');
 	}
-	var res = new Proxy(style, {
+	const res = new Proxy(style, {
 		set: (target, property, value, receiver) => {
 			let res;
 			target['__empty'] = false;
@@ -110,8 +231,6 @@ var new_obj_style = () => {
 			} else {
 				return target[property];
 			}
-
-			
 		}
 	});
 	return res;
@@ -130,6 +249,9 @@ class DOM_Attributes extends Evented_Class {
 		})
 	}
 }
+
+// Could extend Data_Model or Data_Value???
+
 class Control_DOM extends Evented_Class {
 	constructor() {
 		super();
@@ -172,6 +294,26 @@ class Control_DOM extends Evented_Class {
 		});
 	}
 }
+
+
+// Part of the .view.ui I suppose.
+// view.data and view.ui may be all that's needed in .view directly.
+
+// ctrl.view.ui.background = ...
+
+
+// ctrl.background = ... and it sets it within the ctrl.view.ui.background
+//  or even ctrl.view.ui.data.model.background ???
+//    could make it very wordy at that level but allow shortcuts.
+//    eg setting the ctrl.background or ctrl.view.ui.background sets the above property.
+
+// Does seem somewhat important as the controls could be representing data in different kinds of ways and at different kinds of levels.
+
+
+
+
+// Looks like it would fit in with Data_Model.
+
 class Control_Background extends Evented_Class {
 	constructor(spec = {}) {
 		super(spec);
@@ -181,7 +323,7 @@ class Control_Background extends Evented_Class {
 				return _color;
 			},
 			set(value) {
-				let old = _color;
+				const old = _color;
 				_color = value;
 				
 				this.raise('change', {
@@ -197,6 +339,23 @@ class Control_Background extends Evented_Class {
 	}
 	set(val) {}
 }
+
+// Control_Background - maybe make it part of the Data_Model and Data_Type system.
+
+// There is a very large amount built on top of the current Data_Object.
+//   It would prove somewhat tricky making a new Data_Object based on Data_Value or similar.
+//   Possibly Data_Value while in 'object' mode. It's still a value of some sorts, and may be best
+//     to do away with the distinction but keep them compatable.
+
+// May be worth keeping different implementations of Control available for comparison.
+
+// Could make and try different implementations of Control_Core.
+//   Could carefully first make some changes to this current verson....
+//   And run the benchmark too.
+
+
+
+
 class Control_Core extends Data_Object {
 	constructor(spec = {}, fields) {
 		spec.__type_name = spec.__type_name || 'control';
@@ -211,6 +370,35 @@ class Control_Core extends Data_Object {
 		this.__type = 'control';
 		var spec_content;
 		let d = this.dom = new Control_DOM();
+
+		// OK, so prop actually is used effectively somewhere???
+
+		// .view.ui.background or .view.ui.data.model.background.
+		//   
+
+		// data model to dom syncing...?
+
+		// The various .view.ui.data.model properties.
+		//  Though there will likely be more.
+
+		// Putting them within .view.ui.data.model could make sense for now.
+		//  Later on could do some kind of view.ui.data.stream_to(something) for example.
+
+
+		// Maybe have a UI_View_Control???
+		// Data_View_UI_Control???
+
+		// Do need things like the .view.ui.compositional.data.model
+		//   Though want to avoid having to write them out too many times.
+
+		
+
+
+
+
+
+
+
 		prop(this, 'background', new Control_Background(), (e_change) => {
 			//console.log('background change');
 			// The background object itself has been changed.
@@ -243,7 +431,6 @@ class Control_Core extends Data_Object {
 				d.attributes.style['background-color'] = evt.value;
 			}
 		});
-
 
 		prop(this, 'disabled', false);
 		prop(this, 'size', spec.size, (e_change) => {
@@ -288,6 +475,45 @@ class Control_Core extends Data_Object {
 		// Would be nice in some ways to keep this simple / backwards compatable.
 
 		// But maybe this is really ltpos, pos is somewhat more complex?
+
+
+		// yes, this should most likely go in the .view
+		//  or even .view.ui.data.model.pos
+
+		// It's not the .view.data.model here....
+
+
+		// But the UI data model.
+		//   May make sense to consider it 'UI data'.
+
+		// or ui.data.model even.
+		// though can refer to it as ctrl.ui.pos, and also ctrl.pos, though the coding will make it clear that it's not part of
+		//  the data.model or view.data.model, so when accessing the ctrl.data.model we know exactly what we are getting.
+
+
+		// So putting some properties deeper into the system would help.
+		//   A data model could possibly have a .pos property, so want to allow for that.
+
+
+		// The .view.ui.data.model seems a bit more of a difficult abstraction to make....
+
+		// .model would help to keep the data model itself enclosed.
+
+		// .data.sync(data) could be another thing within .data.
+		//   keeping properties like .sync available for other uses within the .model.
+
+
+
+
+		// .data.model may be a useful standard here for the moment.
+
+
+
+
+
+
+
+
 
 		prop(this, 'pos', undefined, (e_change) => {
 			let {
@@ -336,6 +562,11 @@ class Control_Core extends Data_Object {
 				}
 			}
 		});
+
+
+
+
+		
 		let tagName = spec.tagName || spec.tag_name || 'div';
 		d.tagName = tagName;
 		var content = this.content = new Collection({});
@@ -783,22 +1014,19 @@ class Control_Core extends Data_Object {
 	}
 	'style'() {
 		const a = arguments,
-			sig = get_a_sig(a, 1);;
-		a.l = a.length;
-		const d = this.dom,
+			sig = get_a_sig(a, 1), d = this.dom,
 			da = d.attrs;
-		var style_name, style_value, modify_dom = true;
+		a.l = a.length;
+		let style_name, style_value, modify_dom = true;
 		if (sig == '[s]') {
 			style_name = a[0];
 			// Maybe don't have the element
 			// . Better to run some tests / checks
-			var res = getComputedStyle(d.el)[style_name];
+			const res = getComputedStyle(d.el)[style_name];
 			return res;
-		}
-		if (sig == '[s,s,b]') {
+		} else if (sig == '[s,s,b]') {
 			[style_name, style_value, modify_dom] = a;
-		};
-		if (sig == '[s,s]' || sig == '[s,n]') {
+		} else if (sig == '[s,s]' || sig == '[s,n]') {
 			[style_name, style_value] = a;
 		};
 		if (style_name && typeof style_value !== 'undefined') {
@@ -1093,8 +1321,6 @@ if (jsgui.custom_rendering === 'very-simple') {
 	p[customInspectSymbol] = function(depth, inspectOptions, inspect) {
 		// Convert the object to a string and add some formatting
 		//return JSON.stringify(this, null, 2);
-
-		
 
 		return '< ' + this.dom.tagName + ' ' + this.__type_name +  ' >'
 	};

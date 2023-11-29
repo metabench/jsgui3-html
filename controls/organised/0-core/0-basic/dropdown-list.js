@@ -72,7 +72,7 @@ const Control = jsgui.Control;
 // Grid does seem like it needs more work when it comes to separating the data and the presentation.
 //   Want it to be powerful and flexible in this regard.
 
-
+// Perhaps this could use a select options and replace it upon activation using JS?
 
 
 

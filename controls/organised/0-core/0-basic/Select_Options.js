@@ -249,13 +249,6 @@ const {field} = require('obext');
 // the .options.data.model could be useful.
 //  and view.options.data.model perhaps....
 
-
-
-
-
-
-
-
 // having a separate data model for the options.
 //   or perhaps it could refer to part of a larger separate data model, not the .data.model.value ???
 

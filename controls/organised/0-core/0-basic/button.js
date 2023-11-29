@@ -22,18 +22,7 @@ const jsgui = require('./../../../../html-core/html-core');
 
 
 
-
-
-
-//  
-
-
-
-
-
-
 var Control = jsgui.Control;
-
 
 class Button extends Control {
     constructor(spec = {}, add, make) {

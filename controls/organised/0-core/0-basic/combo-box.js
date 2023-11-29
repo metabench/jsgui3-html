@@ -91,10 +91,28 @@ var Control = jsgui.Control;
 // A countries selector could be a good example, both for server and client side implementations.
 
 
+// Maybe is worth focusing more of text fields?
+// Number Fields?
+// Integer Fields?
+// Typed Text Fields? eg integer?
+// Have TextBox Text_Box elsewhere?
+
+// Also want popup menus.
+//   They would help the UIs of some demos too.
+//   Menu bars (for the top generally?) 
+//     see https://learn.microsoft.com/en-us/dotnet/api/system.windows.forms.toolstripitem.mergeaction?view=windowsdesktop-8.0
+
+// A Menu_Bar could help.
+//   Maybe assume horizontal?
 
 
 
 
+
+
+
+
+// Autocomplete???
 
 
 

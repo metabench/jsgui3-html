@@ -3,8 +3,8 @@
 
 // This will be more about text or string editor in the future.
 
-const jsgui = require('./../../../../html-core/html-core');
-const Text_Input = require('./text-input');
+const jsgui = require('../../../../html-core/html-core');
+const Text_Input = require('./__recent_but_old_text-input');
 const Text_Item = require('./text-item');
 /*
 var stringify = jsgui.stringify,
@@ -19,6 +19,7 @@ const Data_Model_View_Model_Control = require('../../../../html-core/Data_Model_
 
 
 const Validation_Status_Indicator = require('./Validation_Status_Indicator');
+const { model_data_view_compositional_representation } = require('../../../../control_mixins/mx');
 
 
 // fields could have default values too.
@@ -123,6 +124,29 @@ const fields = [
 
 
 // Could also make Text_Input extend Data_Model_View_Model_Control.
+
+
+// No, should be made from a normal control but which has the model_data_view_compositional_representation mixin in use.
+
+// 
+
+
+
+// Seems worth making a new version which uses the new (high-level? mid-level?) API that sets up and makes use of data and view models etc.
+//   Need some sort of DOM data binding too.
+
+// defining how a view.data.model syncs with the dom.el.value or something.
+
+// Mid-level code to get all of it working concisely on a high level.
+
+// view.ui.inner.compositional.model for example.
+//   maybe most controls won't support it???
+//   the Window Control should support it, some others too....
+
+
+
+
+
 
 
 

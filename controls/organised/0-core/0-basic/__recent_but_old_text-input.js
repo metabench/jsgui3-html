@@ -1,4 +1,4 @@
-const jsgui = require('./../../../../html-core/html-core');
+const jsgui = require('../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 const {Control, Control_Data, Control_View, Data_Object} = jsgui;
 const {prop, field} = require('obext');
@@ -11,11 +11,46 @@ const {prop, field} = require('obext');
 // May see about making this a Data_Model_View_Model_Control (later), but this is quite concise right now without the comments and
 //   empty lines.
 
+// Will also make a new version of Text_Input.
+//   Want some kind of specification of what data it models / represents.
+//   Maybe just say String somewhere.
+// ctrl.data.type = String perhaps.
+//  data_type: String possibly.
+
+
+// Then some means to sync this data with the value in the DOM.
+
+// view.ll.model???
+
+
+//   Maybe just make it the view model for the moment???
+//   Does seem worth being able to have (at least) 2 levels of view.data.model
+
+
+
+
+// And Text_Item too...
+//   Seems a bit like Text_Input but possibly more flexible.
+
+
+
+
+
+
+
+
+
+
+
 
 class Text_Input extends Control {
     constructor(spec) {
+
+
         spec.__type_name = spec.__type_name || 'text_input';
         spec.class = 'text-input';
+
+
         super(spec);
         const {context} = this;
         const construct_synchronised_data_and_view_models = () => {

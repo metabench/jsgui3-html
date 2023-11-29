@@ -8,7 +8,7 @@ function(jsgui, Text_Field) {
 */
 
 const jsgui = require('./../../../../html-core/html-core');
-var Text_Field = require('./text-field');
+var Text_Field = require('./Text_Field');
 var Button = require('./button');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;

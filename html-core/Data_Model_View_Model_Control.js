@@ -58,6 +58,28 @@ const Control_View = require('./Control_View');
 //   May then work on improved abstractions.
 
 
+// Will make some kind of multi-model mixin.
+
+// Data, View Data, Composition, Data Representation
+
+// Maybe there are 5 different models there.
+
+
+
+// Likely will deprecate this, and use the more complicated mixin, which currently is called in the ctrl-enh constructor.
+//   Will try making it available and useful at a low level, but may later restrict when it gets used / set up for perf reasons.
+//   However, the more complex system of multiple models may help controls to be specified and used much more easily.
+//     Lower and mid levels will handle complexity, high level code can be really clear and concise about the data and its
+//       representation using controls in the GUI.
+
+
+
+// Likely want to retire this soon...?
+// Possibly redo the Text_Field control or whichever controls use this for the moment.
+//   Though making use of the compositional model makes a lot more sense for the moment.
+
+
+
 
 
 class Data_Model_View_Model_Control extends Ctrl_Enh {

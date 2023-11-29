@@ -6,7 +6,7 @@ var Control = jsgui.Control;
 // The basic controls should not do too much on top of normal HTML, but make it easier to do a few things
 //  there.
 
-
+const textNode = require('../../../../html-core/text-node');
 // more work on fields? or use obext fields for now?
 var fields = [
     ['value', String, '']
@@ -38,7 +38,7 @@ class Text_Item extends Control {
 
         // composition function instead...
 
-        this.add(new jsgui.textNode({
+        this.add(new textNode({
             text: this.value,
             context: this.context
         }))

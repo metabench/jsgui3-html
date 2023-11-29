@@ -85,9 +85,9 @@ const controls = {
     String_Span: require('./organised/0-core/1-advanced/string-span'),
 
     Tabbed_Panel: require('./organised/1-standard/6-layout/tabbed-panel'),
-    Text_Field: require('./organised/0-core/0-basic/text-field'),
+    Text_Field: require('./organised/0-core/0-basic/Text_Field'),
     Text_Item: require('./organised/0-core/0-basic/text-item'),
-    Text_Input: require('./organised/0-core/0-basic/text-input'),
+    Text_Input: require('./organised/0-core/0-basic/Text_Input'),
     Tile_Slider: require('./organised/1-standard/6-layout/tile-slide'),
 
     // May be moved to vector?
