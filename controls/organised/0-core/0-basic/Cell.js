@@ -3,7 +3,11 @@
 // Also see about more low / mid level support for compositional models modes.
 //   Supporting a wordy API (explicit but not rediculous), but with shortcuts, will be helpful.
 
+const jsgui = require('./../../../../html-core/html-core');
+//var Horizontal_Menu = require('./horizontal-menu');
 
+var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
+var Control = jsgui.Control;
 
 
 class Cell extends Control {
