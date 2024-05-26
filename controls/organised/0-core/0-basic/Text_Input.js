@@ -69,12 +69,18 @@ class Text_Input extends Control {
             //this.compose_text_input();
         }
 
+
+        // Likely to need improved client-side data coherence.
+        //   Worth approaching it step-by-step.
+
+
+
         // But actually want to set up syncing between the view model and the dom element value.
 
-        console.log('this.view.data', this.view.data);
+        //console.log('this.view.data', this.view.data);
 
 
-        console.log('this.view.data.model', this.view.data.model);
+        //console.log('this.view.data.model', this.view.data.model);
 
 
         // not so sure about .ui.ll.data.model.
@@ -102,12 +108,25 @@ class Text_Input extends Control {
         const view_data_model_change_handler = e => {
             const {name, value, old} = e;
 
-            console.log('Text_Input view data model change e:', e);
+            //console.log('Text_Input view data model change e:', e);
 
             //console.log('Text_Input view_data_model_change_handler [old, value]', [old, value]);
 
             if (name === 'value') {
-                this.dom.attributes.value = value;
+                //console.log('Text_Input pre set dom attributes value to:', value);
+                //console.log('tof(value)', tof(value));
+
+
+                //this.dom.attributes.value = value;
+
+                //console.log('!!this.dom.el', this.dom.el);
+
+                if (this.dom.el) {
+                    //this.dom.el.setAttribute('value', value + '');
+                    this.dom.el.value = value + '';
+                }
+
+
                 //this.view.ll.data.model.value = value;
 
                 this.data.model.value = value;
@@ -118,7 +137,7 @@ class Text_Input extends Control {
 
         };
 
-        console.log('this.view.data', this.view.data);
+        //console.log('this.view.data', this.view.data);
         this.view.data.model.on('change', view_data_model_change_handler);
 
         this.view.data.on('change', e => {
@@ -250,7 +269,7 @@ class Text_Input extends Control {
 
         const data_model_change_handler = e => {
             const {name, value, old} = e;
-            console.log('Text_Input data_model_change_handler e:', e);
+            //console.log('Text_Input data_model_change_handler e:', e);
             if (name === 'value') {
                 //this.dom.attributes.value = value;
                 this.view.data.model.value = value;
@@ -265,17 +284,30 @@ class Text_Input extends Control {
         const setup_handle_data_model_itself_changing = () => {
             this.data.on('change', e => {
                 const {name, value, old} = e;
-                console.log('Text_Input .data change e:', e);
+                //console.log('Text_Input .data change e:', e);
                 if (name === 'model') {
+
+
+
                     if (old instanceof Data_Model) {
                         old.off('change', data_model_change_handler);
                     }
-                    value.on('change', data_model_change_handler);
+
+                    if (value instanceof Data_Model) {
+                        value.on('change', data_model_change_handler);
+                    }
+
+                    
                 }
             })
         }
         setup_handle_data_model_itself_changing();
-        
+
+        //console.log('Text_Input constructor this.data.model.value', this.data.model.value);
+
+        if (this.data.model.value !== undefined) {
+            this.view.data.model.value = this.data.model.value;
+        }
 
         if (spec.value) {
             // Sets the .data.model.value, which in turn sets the .view.data.model.value, which in turn sets the dom.attributes,
@@ -302,31 +334,10 @@ class Text_Input extends Control {
         //this.dom.attributes.value = this.value;
 
         //console.log('Text_Input end of constructor this.view.ui.ll.data.model:', this.view.ui.ll.data.model);
-        console.log('Text_Input end of constructor this.view.data.model:', this.view.data.model);
+        //console.log('Text_Input end of constructor this.view.data.model:', this.view.data.model);
         //console.log('this.view.ll.data.model.value', this.view.ll.data.model.value);
 
     }
-
-
-
-    // With a single .value field in the data model.
-    //   However, probably want a view.data.model by default.
-    //   maybe view.ll.data.model even.
-
-    // view.ll.data.model.value
-
-    // Can be longwinded and explicit here.
-    
-    // A Text_Field could connect with the low level data model of the Text_Input.
-    //   It would not need a low level view data model of its own.
-
-
-
-
-
-
-
-
 
 
     get value() {
@@ -395,14 +406,14 @@ class Text_Input extends Control {
 
             // Later will have some lower level code to set these things up better.
 
-            console.log('dom.el.value', dom.el.value);
+            //console.log('dom.el.value', dom.el.value);
 
-            console.log('this.view.data.model', this.view.data.model);
-            console.log('this.view.data.model.value', this.view.data.model.value);
+            //console.log('this.view.data.model', this.view.data.model);
+            //console.log('this.view.data.model.value', this.view.data.model.value);
 
             this.view.data.model.value = dom.el.value;
 
-            console.log('this.view.data.model.value', this.view.data.model.value);
+            //console.log('this.view.data.model.value', this.view.data.model.value);
 
 
             const activate_sync_dom_to_view_ui_ll_data_model = () => {
@@ -425,9 +436,9 @@ class Text_Input extends Control {
 
             const handle_change_event = e => {
 
-                console.log('Text_Input DOM handle_change_event');
+                //console.log('Text_Input DOM handle_change_event');
 
-                console.log('dom.el.value', dom.el.value);
+                //console.log('dom.el.value', dom.el.value);
                 this.view.data.model.value = dom.el.value;
             }
 

@@ -1,5 +1,5 @@
 const jsgui = require('lang-tools');
-const {each, tof, is_defined, get_a_sig, Evented_Class} = jsgui;
+const {each, tof, is_defined, get_a_sig, Evented_Class, Data_Model} = jsgui;
 
 /*
 var stringify = jsgui.stringify,
@@ -20,6 +20,17 @@ var get_window_size = jsgui.get_window_size;
 //  With some apps, selecting won't matter.
 
 const Selection_Scope = require('./selection-scope');
+
+// How can / should the app data.model be set before any controls are even created?
+//   Have a means to get the data.model into the page_context (first on the server) before any controls at all are rendered?
+//     Way want a more surefire way to render / persist data models?
+
+
+
+
+
+
+
 
 class Page_Context extends Evented_Class {
     constructor(spec) {
@@ -88,6 +99,9 @@ class Page_Context extends Evented_Class {
         //  they are constructors
         var map_controls = this.map_controls = {};
 
+        this.map_data_models = this.map_data_models || {};
+        this.map_data_model_iids = this.map_data_model_iids || {};
+
         // map_control_iids
         //  mapping from the jgsui name to the int ids.
         //  iid  = int id.
@@ -153,6 +167,7 @@ class Page_Context extends Evented_Class {
             this.map_Controls[name] = Constructor;
         }
     }
+    
     'register_control' (control) {
         // Put it into the map of IDs
         //console.log('register_control');
@@ -168,6 +183,28 @@ class Page_Context extends Evented_Class {
         this.map_controls[id] = control;
         control.iid = this.next_iid;
         this.map_control_iids[id] = this.next_iid++;
+    }
+
+    register_data_model(data_model) {
+        //data_model.context = this;
+
+        if (data_model instanceof Data_Model) {
+            const id = data_model._id();
+            //this.map_data_models = this.map_data_models || {};
+            this.map_data_models[id] = data_model;
+            //this.map_data_model_iids = this.map_data_model_iids || {};
+            data_model.iid = this.next_iid;
+            this.map_data_model_iids[id] = this.next_iid++;
+
+
+        } else {
+            console.trace();
+            throw 'Expected Data_Model instance';
+
+        }
+
+
+        
 
     }
     

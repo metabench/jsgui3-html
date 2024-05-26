@@ -284,9 +284,35 @@ const {field} = require('obext');
 
 
 
+// Perfect place for the enhanced compositional model.
+
+// .view.compositonal.model.enhance????
 
 
 
+// ctrl.data.binding would be a decent syntax too.
+
+// ctrl.data.bind(other_data);
+// ctrl.data.model.bind(other_data_model);
+//   the bound data model has a lower status I suppose.
+//     it would be bound by validation rules.
+
+
+//   slightly different syntax to Data_Value.sync.
+
+
+
+
+
+
+
+// eg bind the data.model to another data.model
+//   syncing basically.
+
+
+
+
+// and data.binding too ???
 
 
 
@@ -379,9 +405,6 @@ class Select_Options extends Control {
 
                         // and .options could get the data.model.options.
                         //   a convenient shorter property.
-                        
-
-
 
                         this.data.model.options = value;
 
@@ -409,6 +432,13 @@ class Select_Options extends Control {
         if (spec.options) {
             this.data.model.options = spec.options;
         }
+
+        //setup_compositional_models(this, ...)
+
+        // 
+        // setup_progressive_enhancement({unenhanced: ..., enhanced: ...})
+        //   (using multiple compositional models)
+        //   syncing between the controls would be really helpful for this.
 
 
 

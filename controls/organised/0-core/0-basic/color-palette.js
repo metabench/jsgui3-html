@@ -205,6 +205,17 @@ class Color_Palette extends Control {
 
             // listen for selection change events.
 
+            const attach_on_change_named_property_handler = (obj, property_name, fn_handler) => {
+                obj.on('change', e => {
+                    
+                    if (property_name === e.name) {
+                        fn_handler(e);
+                    }
+                })
+            }
+
+
+            /*
             this.grid.selection_scope.on('change', e => {
                 //console.log('color palette ss change', e);
                 //console.trace();
@@ -223,6 +234,34 @@ class Color_Palette extends Control {
                     }
                 }
             });
+            */
+
+            // Should do with data model(s).
+
+            // Maybe see again about 3 level data models for controls.
+
+
+            attach_on_change_named_property_handler(this, 'selected', e => {
+                const selected_ctrl = e.value;
+                if (selected_ctrl) {
+                    let color = selected_ctrl._color;
+
+                    this.raise('choose-color', {
+                        value: color
+                    });
+                }
+            })
+
+            // this.grid.on.change name:seleced
+
+            //  on_named_change onc
+            //  .on.ch['selected'].
+            //  A more concise syntax using a function???
+
+
+
+
+
 
             // go through the cells, getting their color values from the DOM
             //console.log('pre grid each cell');
@@ -230,24 +269,6 @@ class Color_Palette extends Control {
             const old_make_grid_cells_selectable = () => {
                 // Selectable by default now.
                 this.grid.each_cell(cell => {
-
-                    //console.log('cell', cell);
-                    //console.log('cell.dom.el', cell.dom.el);
-                    //console.log('cell.dom.el.style.background-color', cell.dom.el.style['background-color']);
-                    //console.log('cell.dom.attributes.style.background-color', cell.dom.attributes.style['background-color']);
-    
-                    //console.log('cell.color', cell.color);
-    
-                    // set color, but silently...
-    
-                    // .set(..., silent);
-    
-                    //cell._color = cell.dom.el.style['background-color'];
-    
-    
-                    //cell.selectable = true;
-                    //cell.color = cell.dom.el.style['background-color'];
-    
                 })
             }
         }
@@ -306,45 +327,7 @@ class Color_Palette extends Control {
 
     compose_color_grid() {
         console.log('compose_color_grid');
-
-        // Need different ways of rendering / arranging according to size.
-
-        // Maybe worth distinguishing controls that resize themselves to fit the space, and possibly to what extent, in what ways.
-        //   Eg a pixel grid could become very small indeed, while a title that needs to be legible will have a lower limit.
-
-        // Modes of display could change when the size changes, going into a more compact layout - much like pages do when on mobile.
-
-
-
-
-        // An internal relative frame could help.
-        //  Help superimposing anything relative to that DIV, any popup, but not require the DIV itself to have relative positioning.
-
-
-        // Be able to switch on and off those options.
-        //  An internal relative div in the kind of internal implementation property which could be done as a rendering property.
-
-        //var size = this.size || [200, 200];
-        //console.log('size', size);
-
         var padding = 6;
-
-        // Make it so that resizing the grid resizes the internal controls.
-        //  A resize event listener.
-
-        //throw 'stop';
-
-
-
-        // internal_relative_div = true || false
-
-        //console.log('this.grid_size', this.grid_size);
-
-        // and a 2 color grid for foreground and background.
-
-        // Or a 'specific palette' type of bar.
-
-
 
         const fg_bg_color_grid = new Color_Grid({
 
@@ -356,16 +339,7 @@ class Color_Palette extends Control {
         this.add(fg_bg_color_grid);
 
         const color_grid_pxsize = v_subtract(this.size, [0, 46]);
-
-        // .box.size would be clearer.
-        // .size could even be non-px, non-css too.
-
-        // .size = 'auto' could work.
-        // .size = autosizing_provider even, .size = auto
-
-        // autosizing indicator or autosizing provider perhaps.
-
-
+        
         const color_grid = this.grid = new Color_Grid({
             'context': this.context,
             'grid_size': this.grid_size,
@@ -383,12 +357,6 @@ class Color_Palette extends Control {
 
 		this._ctrl_fields.color_grid = color_grid;
         this._ctrl_fields.fg_bg_color_grid = fg_bg_color_grid;
-
-
-        // fg_bg_color_grid
-        
-        // Then iterate the grid cells.
-
     }
 
 }

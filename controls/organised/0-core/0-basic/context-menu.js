@@ -8,18 +8,21 @@ var Control = jsgui.Control;
 
 // May benefit from some kind of model overlay over the main part of the doc.
 
+// ctrl.context_menu?
+// ctrl.context.menu(ctrl) ???
+//   later, work on easy specification of the context menu.
+
+
 class Context_Menu extends Control {
 	constructor(spec, add, make) {
 		super(spec);
 
 		this.__type_name = 'context_menu';
-
 		//this.add_class('context menu');
 		this.add_class('context menu');
 
 		//console.log('Context_Menu init spec.el', spec.el);
 		if (!spec.abstract) {
-
 			const obj = spec.value;
 
 			//console.log('menu obj', obj);
@@ -46,10 +49,8 @@ class Context_Menu extends Control {
 
 			if (tobj === 'array') {
 				each(obj, (v, index) => {
-
 					//const tv = tof(v);
 					//console.log('tv', tv);
-
 					// then if it's string and function...
 
 					var vsig = jsgui.get_item_sig(v, 1);

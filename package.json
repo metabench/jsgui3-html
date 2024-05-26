@@ -3,9 +3,9 @@
   "main": "html.js",
   "license": "MIT",
   "dependencies": {
-    "fnl": "^0.0.35",
+    "fnl": "^0.0.36",
     "htmlparser": "^1.7.7",
-    "lang-tools": "^0.0.33",
+    "lang-tools": "^0.0.35",
     "jsgui3-gfx-core": "^0.0.10",
     "obext": "^0.0.31",
     "url-parse": "^1.5.10"
@@ -39,5 +39,5 @@
   "devDependencies": {
     "esbuild": "^0.19.5"
   },
-  "version": "0.0.149"
+  "version": "0.0.150"
 }

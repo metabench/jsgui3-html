@@ -21,13 +21,9 @@
  */
 const jsgui = require('lang-tools');
 const oext = require('obext');
-const get_a_sig = jsgui.get_a_sig;
-const each = jsgui.each;
-const Evented_Class = jsgui.Evented_Class;
-const Data_Object = jsgui.Data_Object;
-const Collection = jsgui.Collection;
-const tof = jsgui.tof;
-const stringify = jsgui.stringify;
+
+
+const {Data_Model, Data_Object, Collection, tof, stringify, get_a_sig, each, Evented_Class } = jsgui;
 
 
 
@@ -766,6 +762,20 @@ class Control_Core extends Data_Object {
 			if (id !== undefined) {
 				arr.push(' data-jsgui-id="' + this._id() + '"');
 			}
+
+			if (this.data && this.data._model instanceof Data_Model) {
+				const dmid = this.data._model.__id;
+				//console.log('dmid', dmid);
+
+				if (dmid) {
+					arr.push(' data-jsgui-data-model-id="' + dmid + '"');
+				}
+
+				
+			}
+
+
+			// 
 
 
 			const exempt_types = {

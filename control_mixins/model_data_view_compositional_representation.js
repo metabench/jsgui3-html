@@ -28,9 +28,27 @@ const {
 
 const Control_Data = require('../html-core/Control_Data');
 const Control_View = require('../html-core/Control_View');
+const Control_Validation = require('../html-core/Control_Validation');
+
+
+// Control_Validation???
+//   Does seem like a good approach when there is both the Data and the View.
+
+
+
 
 // This definitely will slow down the current system of controls.
 //   However, will allow more flexibility and power in high level syntax.
+
+// Maybe include validation in another function....
+//   Like setting it up so it can respond to validation status changes.
+
+
+// validate_view_data_by_data
+// validation_of_view_data_by_data
+// setup_validation_of_view_data_by_data ????
+
+
 
 const model_data_view_compositional_representation = (ctrl, options = {}) => {
 
@@ -48,6 +66,7 @@ const model_data_view_compositional_representation = (ctrl, options = {}) => {
     const verify_ctrl_conditions = (ctrl) => {
         if (ctrl.data !== undefined) return false;
         if (ctrl.view !== undefined) return false;
+        if (ctrl.validation !== undefined) return false;
         
         return true;
     }
@@ -70,7 +89,14 @@ const model_data_view_compositional_representation = (ctrl, options = {}) => {
             }
         }
 
+        // No, better to make it only get that data object when needed?
+        //   And could do has_own_data at some stages...?
+
         ctrl.data = new Control_Data(o_cd);
+
+        ctrl.validation = new Control_Validation();
+
+        // .data._model
 
         
         // .data.model
@@ -82,6 +108,8 @@ const model_data_view_compositional_representation = (ctrl, options = {}) => {
         ctrl.view = new Control_View({
             context
         });
+
+
 
 
         // Automatically make it move own event listeners for the data.model if that data.model changes???

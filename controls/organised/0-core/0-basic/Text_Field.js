@@ -44,7 +44,7 @@ const { model_data_view_compositional_representation } = require('../../../../co
 //   Or have that integrated with the various view and model systems.
 //     so if there is an 'editable' ui property, its value will have some kind of synced mapping to other parts of the system.
 
-
+// Simplify things from a lower level too.
 
 
 
@@ -150,6 +150,26 @@ const fields = [
 //   maybe most controls won't support it???
 //   the Window Control should support it, some others too....
 
+
+// This does seem essential when representing some data.
+//   Let's also have a validation indicator in an example.
+
+
+// Need very clear and idiomatic data model / value sync and validation code and APIs.
+//   A view.data.model.validation.state
+//
+
+// 
+
+// this.validation.status change etc....
+// The validation between the view and the data model.
+
+
+
+
+
+
+
 class Text_Field extends Control {
 	// fields... text, value, type?
 	//  type could specify some kind of validation, or also 'password'.
@@ -176,12 +196,13 @@ class Text_Field extends Control {
 		const {context} = this;
 
 		const data_model_change_handler = e => {
-            //console.log('Text_Field data_model_change_handler e', e);
+            console.log('Text_Field data_model_change_handler e', e);
 
 			// Should change it in the view model....???
 
 			const {name, old, value} = e;
 			if (name === 'value') {
+
 				this.view.data.model.value = value;
 			}
 
@@ -191,7 +212,7 @@ class Text_Field extends Control {
 
         this.data.on('change', e => {
             const {name, value, old} = e;
-			//console.log('Text_Field data change e:', e);
+			console.log('Text_Field data change e:', e);
             if (name === 'model') {
                 if (old instanceof Data_Model) {
                     old.off('change', data_model_change_handler);
@@ -210,6 +231,16 @@ class Text_Field extends Control {
 			const {name, old, value} = e;
 			if (name === 'value') {
 				this.data.model.value = value;
+
+				// Needs to update the UI!!!!
+
+				// The equivalent being the data model of the internal text_input
+
+				//console.log('!!this.text_input', !!this.text_input);
+
+				if (this.text_input) {
+					this.text_input.data.model.value = value;
+				}
 			}
 
         };
@@ -225,28 +256,6 @@ class Text_Field extends Control {
                 value.on('change', view_data_model_change_handler);
             }
         });
-
-
-
-		// Can not reference inner controls here.
-
-		// But assigning the this.view.data.model = this.ti.data.model or this.ti.view.data.model.
-
-
-
-        // Will (instead) be data.value - though that is short for data.model.value.
-        //   Maybe a Data_Value would be best after all?
-        //     Though .value.value does not look good.
-        //      Maybe would mean much more widespread support for and checking of Data_Value instances.
-
-        // Want to arrange it for good high level syntax - data_value has not offered that so far, data_object has extensively
-        //   through subclasses.
-
-
-
-        // The data model could / should (automatically) have a .value field.
-
-        // Then the data model - would just have a single .value ????
 
 		const old_setup_data_and_view = () => {
 
@@ -365,49 +374,8 @@ class Text_Field extends Control {
 			this.data.model.value = value;
 		}
 
-		//this.setup_inner_control_events();
-
 		
 	}
-	
-	/*
-	
-	assign_data_model_value_change_handler() {
-		this.data.model.on('change', e => {
-			const {name, value, old} = e;
-			//console.log('text_field data model change', e);
-			if (name === 'value') {
-				if (value !== old) {
-					// change it in the view model...
-					this.view.data.model.value = value;
-
-				}
-			}
-		});
-	}
-		*/
-
-	/*
-	setup_child_controls_listeners() {
-		const {text_input} = this;
-
-		text_input.data.model.on('change', e=> {
-			//console.log('text_input.data.model change e', e);
-
-			const {name, value, old} = e;
-
-			// The data model of the subcontrol is the view model of this.
-
-			if (name === 'value') {
-				if (value !== old) {
-					this.view.data.model.value = value;
-				}
-
-			}
-
-		})
-	}
-	*/
 
 	setup_inner_control_events() {
 		const {text_input} = this;
@@ -416,6 +384,8 @@ class Text_Field extends Control {
 		//this.view.data.model = this.text_input.data.model;
 
 		//this.text_input.data.model = this.view.data.model;
+
+		// And validation states???
 
 		this.view.data.model.on('change', e => {
 			const {name, old, value} = e;
@@ -430,30 +400,6 @@ class Text_Field extends Control {
 				this.view.data.model.value = value;
 			}
 		})
-
-
-		// Reassigning the data.model should automatically set up the events for it???
-		//   
-
-		
-
-		/*
-
-		text_input.data.model = this.data.model;
-
-		this.data.model.on('change', e => {
-			console.log('Text_Field setup_inner_control_events e', e);
-
-			// Should change it in the view model....???
-
-			const {name, old, value} = e;
-			if (name === 'value') {
-				this.view.data.model.value = value;
-			}
-
-
-		})
-		*/
 
 	}
 
@@ -563,7 +509,7 @@ class Text_Field extends Control {
 
 		const using_compositional_model = () => {
 
-			console.log('using_compositional_model');
+			//console.log('using_compositional_model');
 
 			this.view.ui.compositional.model = [
 
@@ -576,6 +522,8 @@ class Text_Field extends Control {
 			];
 
 			// But then need to localise the inner named items too.
+
+			// see about (auto) extracting names and references from the composition once it's been made according to that model.
 
 			const label = this._ctrl_fields.left_part.content._arr[0];
 			const text_input = this._ctrl_fields.right_part.content._arr[0];
@@ -591,7 +539,6 @@ class Text_Field extends Control {
 				//label.text = this.text;
 				label.add(this.text);
 			}
-
 
 			this._ctrl_fields = this._ctrl_fields || {};
 			this._ctrl_fields.label = label;

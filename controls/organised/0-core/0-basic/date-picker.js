@@ -17,6 +17,8 @@ const {field} = require('obext');
 //     Meaning data such as it's position, height, width.
 //       Could then use similar mechanisms for persisting and sharing that data, when needed.
 
+// A more complex underlying system for representing data representations would help.
+
 
 
 
@@ -49,11 +51,6 @@ class Date_Picker extends Control {
 
         // And could make (common / general purpose) shortcuts to them.
         //   Could make it clearer about how to write code (functions) to deal with the changes and syncronisation.
-
-        
-
-
-
 
 
 

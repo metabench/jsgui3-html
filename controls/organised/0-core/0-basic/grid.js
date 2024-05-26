@@ -89,7 +89,7 @@
 
 
 
-
+// This could benefit from lower level compositional logic.
 
 
 
@@ -185,69 +185,16 @@ const {
 
 
 
+const Cell = require('./Cell');
+const Grid_Cell = Cell;
 
 
-class Grid_Cell extends Control {
-    constructor(spec) {
-        (spec = spec || {}).__type_name = 'grid_cell';
-        super(spec);
-        this.add_class('cell');
-        field(this, 'x', spec.x);
-        field(this, 'y', spec.y);
-        field(this, 'data', spec.data);
-        if (!spec.el) {
-            this.compose_grid_cell();
-        }
-    }
-    compose_grid_cell() {
-        let o = {
-            context: this.context
-        };
-        if (this.data) o.text = this.data;
-        this.add(this.span = new jsgui.span(o));
-        this._ctrl_fields = this._ctrl_fields || {};
-        this._ctrl_fields.span = this.span;
-    }
-    activate() {
-        if (!this.__active) {
-            super.activate();
-            mx_selectable(this);
-        }
-    }
-}
-
-// And also want to integrate with data sources.
-// Possibly a Data_Grid subclass of Data_Model could help most with this.
-//   Especially with the data updating, and representing that on a grid.
-
-// Also, the Grid control was the control that was proving most difficult when it came to the .size property.
-//  Ambiguity over if it's the dimensions of the data, or the size in pixels in the UI.
-
-// .view.size may be a useful way to express it clearly.
-// .data.size or .data.model.value.size even....
-
-// Do want the unambiguous short(er) ways of expressing it.
-
-// .view.ui.data.model.size even???
-
-// a ui model or ui data model???
-// .view.ui.data.copy()
-// view.ui.data.toUInt8Array() ???
-
-// having .data be more general, then data.model being the data_model instance makes sense in terms of a flexible API.
-//   Writing this should be fairly concise because some high level code can use the very specific mid level code to do things that would
-//   otherwise take a few lines or be more complex than it otherwise would without the very specific mid level code.
+// Should make some lower / mid level compositional routines / models / systems.
+//   Functions for expressing / processing those compositional models, such as Repeat(item, n);
 
 
-
-
-
-
-
-
-
-
-
+// Would be better to use different compositional models here.
+//   With underlying support for that.
 
 
 
@@ -264,7 +211,19 @@ class Grid extends Control {
         //  Could give it a data_model here.
 
         this._arr_rows = [];
+
+        // instead use .view.ui.compositional.model(s) alternatives. 
+        //   .compositional.models.active/current perhaps?
+        //     eg composition made up of divs with float, or divs with flex grid, or others.
+
+        //   .and the representational model of some data being something corresponding with / compatable with this grid.
+
+
+        // .data.model.grid.size somewhere.
+
         field(this, 'composition_mode');
+
+
         if (spec.composition_mode) {
             this.composition_mode = spec.composition_mode
         } else {
@@ -300,11 +259,26 @@ class Grid extends Control {
 
         field(this, 'cell_size');
         if (spec.cell_size) this.cell_size = spec.cell_size;
+
+
+        // .data column names
+        // .data row names
+        // .data.row.names = [1, 2, 3, 4, 5, 6, 7, 8] for example. Allowing numbers as names?
+        //   or map to strings.
+
         field(this, 'column_headers', false);
         field(this, 'row_headers', false);
+
+        // No will be the control.data system. That will become standard.
         prop(this, 'data', false);
+
+
         this.map_cells = {};
         this.arr_cells = {};
+
+        // Integrate within internal Data_Model...
+
+
         if (spec.data) {
             let t_data = tof(spec.data);
             if (t_data === 'array') {

@@ -1,7 +1,8 @@
 // Also want to make an MDI window system (Multiple Document Interface)
 var jsgui = require('./../../../../html-core/html-core');
 var Horizontal_Menu = require('./../../../organised/1-standard/5-ui/horizontal-menu');
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
+
+const {def, each} = jsgui;
 var Control = jsgui.Control;
 
 var fields = {
@@ -155,6 +156,27 @@ const {dragable, resizable} = require('../../../../control_mixins/mx');
 
 
 
+// Whether or not there are buttons could depend on the composition model.
+// A composition model where if something is shown or not depends on a property.
+
+// This is the kind of moderately complex control where improving low and mid level code could help to simplify it on this level.
+
+// Does seem best where possible to simplify Data_Value, unify it with other parts of the codebase.
+
+// Could see about making some simplest and lowest performance implementations.
+//   Want things to be flexible without needing a lot of code.
+//   However, a 'covering all bases' approach could work with Data_Value.
+
+// Data_Value working like either an object or an array, or like both at the same time.
+
+
+
+
+
+
+
+
+
 
 
 class Window extends Control {
@@ -166,10 +188,16 @@ class Window extends Control {
 
 
 	constructor(spec, add, make) {
+
+		
+
 		super(spec);
 		this.__type_name = 'window';
 		this.add_class('window');
 
+		const show_buttons = def(spec.show_buttons) ? spec.show_buttons : true;
+
+		//console.log('spec.show_buttons', spec.show_buttons);
 
 		if (!spec.abstract && !spec.el) {
 
@@ -202,8 +230,6 @@ class Window extends Control {
 
 			// And add a span inside it for the title text.
 
-
-
 			// Minimise and maximise buttons.
 
 			const title_h2 = new jsgui.controls.h2({
@@ -214,76 +240,91 @@ class Window extends Control {
 			if (typeof spec.title === 'string') {
 				title_h2.add(spec.title);
 			}
-			
+
+			div_relative.add(title_bar);
 
 			// Then the buttons on the titlebar.
 			// Maybe will try some abstractions but not so sure....
 
-			const right_button_group = new Control({
-				context
-			});
-			right_button_group.add_class('button-group');
-			right_button_group.add_class('right');
+			// A separate background control could help in some cases.
 
-			// Then add the 3 buttons.
-			//   Maybe integrated system for icons will help.
-			//   Easily integrate SVGs and PNGs.
+			// buttons
+			// max_min_close_buttons = false
+			// no_buttons?
+			// buttonless?
+			// buttons = none / false / 0
 
-			const btn_minimize = new jsgui.controls.Button({
-				context
-			});
+			// buttons: 0 would be nice.
+			let btn_minimize, btn_maximize, btn_close;
+			
 
-			// 🗕
-			//btn_minimize.add('🗕');
-			// ⊖
-			//btn_minimize.add('▪');
+			if (show_buttons) {
+				const right_button_group = new Control({
+					context
+				});
+				right_button_group.add_class('button-group');
+				right_button_group.add_class('right');
 
-			const span = (text) => {
-				const res = new jsgui.controls.span({context});
-				res.add(text);
-				return res;
+					// Then add the 3 buttons.
+				//   Maybe integrated system for icons will help.
+				//   Easily integrate SVGs and PNGs.
+
+				btn_minimize = new jsgui.controls.Button({
+					context
+				});
+
+				// 🗕
+				//btn_minimize.add('🗕');
+				// ⊖
+				//btn_minimize.add('▪');
+
+				const span = (text) => {
+					const res = new jsgui.controls.span({context});
+					res.add(text);
+					return res;
+				}
+
+				btn_minimize.add(span('⊖'));
+				right_button_group.add(btn_minimize);
+
+				btn_maximize = new jsgui.controls.Button({
+					context
+				});
+
+
+				// Seems like it gets escaped when we add it like this.
+				// Maybe we don't want to process or escape HTML?
+				//   Though checking it will in fact render as a text node may be important.
+				//   Maybe could unescape & only (after the escaping).
+
+
+				//btn_maximize.add('🗖')
+				// ⊕
+				btn_maximize.add(span('⊕'))
+				//btn_maximize.add('⬛')
+
+				right_button_group.add(btn_maximize);
+
+				btn_close = new jsgui.controls.Button({
+					context
+				});
+
+				// ⓧ⊗. ⊗
+
+				btn_close.add(span('⊗'))
+
+				// ❎
+				right_button_group.add(btn_close);
+
+
+
+				//title_bar.add(title_h2);
+
+				title_bar.add(right_button_group);
+				
 			}
 
-
-			btn_minimize.add(span('⊖'));
-
-			right_button_group.add(btn_minimize);
-
-			const btn_maximize = new jsgui.controls.Button({
-				context
-			});
-
-
-			// Seems like it gets escaped when we add it like this.
-			// Maybe we don't want to process or escape HTML?
-			//   Though checking it will in fact render as a text node may be important.
-			//   Maybe could unescape & only (after the escaping).
-
-
-			//btn_maximize.add('🗖')
-			// ⊕
-			btn_maximize.add(span('⊕'))
-			//btn_maximize.add('⬛')
-
-			right_button_group.add(btn_maximize);
-
-			const btn_close = new jsgui.controls.Button({
-				context
-			});
-
-			// ⓧ⊗. ⊗
-
-			btn_close.add(span('⊗'))
-
-			// ❎
-			right_button_group.add(btn_close);
-
-
-
-			//title_bar.add(title_h2);
-
-			title_bar.add(right_button_group);
-			div_relative.add(title_bar);
+			
 
 
 
@@ -294,47 +335,7 @@ class Window extends Control {
 			div_relative.add(ctrl_inner);
 
 			this.add(div_relative);
-			//this.add(title_bar);
-
 			
-
-
-
-
-			
-
-
-
-			// So it having relative positioning would help that inner area to scroll.
-			//  May have a listener for the inner control being set.
-			// May also need to size the inner control so that the scrollbars also fit.
-			//  Then inside that inner control, there is a larger logical area.
-			//   A div that does not have any size or overflow set.
-			//   That div can get moved around.
-			// Not so sure about setting an inner size.
-			//  Seems appropriate though.
-			//  Could have a large control inside the inner control if necessary.
-			// The scrollbar system should be baked into enhanced controls.
-			// enhanced_control.scrollbars();
-			// should be that easy to switch on the jsgui scrollbars.
-			// It should not make use of the standard inner_control... or if it does, inner_control functionality needs to be written around scrollbar functionality.
-			// So to start with, we need to make sure that a control makes use of an inner control area.
-			//  Difficulty comes from a control that does not take scrollbars into account and has its own inner_control.
-			// Possibly the Window control is not the best example to start with.
-			// Or work on the Window control as well as some more generic examples.
-
-
-
-			//var inner_control = div_relative.add(make(Control({'class': 'inner'})));
-			//console.log('this._id() ' + this._id());
-			//console.log('inner_control._id() ' + inner_control._id());
-
-
-			/*
-
-			
-
-			*/
 			this.ctrl_inner = ctrl_inner;
 			this.inner = ctrl_inner;
 			this.title_bar = title_bar;
@@ -349,11 +350,19 @@ class Window extends Control {
 			this._ctrl_fields.ctrl_relative = div_relative;
 
 
-			// And need to have it remember the buttons, so their press events can be handled.
+			//console.log('show_buttons', show_buttons);
 
-			this._ctrl_fields.btn_minimize = btn_minimize;
-			this._ctrl_fields.btn_maximize = btn_maximize;
-			this._ctrl_fields.btn_close = btn_close;
+			if (show_buttons) {
+
+				
+				// And need to have it remember the buttons, so their press events can be handled.
+
+
+				this._ctrl_fields.btn_minimize = btn_minimize;
+				this._ctrl_fields.btn_maximize = btn_maximize;
+				this._ctrl_fields.btn_close = btn_close;
+
+			}
 
 			// ctrl_inner
 
@@ -1045,32 +1054,45 @@ class Window extends Control {
 
 			const {title_bar, btn_minimize, btn_maximize, btn_close} = this;
 
-			btn_close.on('click', () => {
-				//console.log('click close');
-				this.close();
-			})
-			btn_close.on('press', () => {
-				//console.log('press close');
-				this.close();
-			})
+			if (btn_close) {
+				btn_close.on('click', () => {
+					//console.log('click close');
+					this.close();
+				})
+				btn_close.on('press', () => {
+					//console.log('press close');
+					this.close();
+				})
+			}
 
-			btn_maximize.on('click', () => {
-				//console.log('click maximize');
-				this.maximize();
-			})
-			btn_maximize.on('press', () => {
-				//console.log('press maximize');
-				this.maximize();
-			})
+			
 
-			btn_minimize.on('click', () => {
-				//console.log('click minimize');
-				this.minimize();
-			})
-			btn_minimize.on('press', () => {
-				//console.log('press minimize');
-				this.minimize();
-			})
+			if (btn_maximize) {
+				btn_maximize.on('click', () => {
+					//console.log('click maximize');
+					this.maximize();
+				})
+				btn_maximize.on('press', () => {
+					//console.log('press maximize');
+					this.maximize();
+				})
+			}
+
+			if (btn_minimize) {
+				btn_minimize.on('click', () => {
+					//console.log('click minimize');
+					this.minimize();
+				})
+				btn_minimize.on('press', () => {
+					//console.log('press minimize');
+					this.minimize();
+				})
+			}
+
+			
+			
+
+			
 
 			title_bar.on('dblclick', () => {
 				//console.log('press minimize');

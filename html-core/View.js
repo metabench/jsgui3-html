@@ -5,12 +5,12 @@ const {field, Data_Object, Evented_Class} = require('lang-tools');
 // And the View Data as well...
 
 const Data = require('./Data');
-const Control_View_UI = require('./Control_View_UI');
-const Control_View_Data = require('./Control_View_Data');
+//const Control_View_UI = require('./Control_View_UI');
+//const Control_View_Data = require('./Control_View_Data');
 const Control_View_Low_Level = require('./Control_View_Low_Level');
 
 
-class Control_View extends Evented_Class {
+class View extends Evented_Class {
     // .data.model
     // .ui.data.model
 
@@ -20,10 +20,6 @@ class Control_View extends Evented_Class {
         const {context} = this;
 
         // view.data.model
-
-        // Allow specifying different inner constructors...???
-        //   Dependency injection basically.
-
 
         // .data being a Data_Object?
         //   Could make sense when responding to models being changed or updated.
@@ -41,6 +37,8 @@ class Control_View extends Evented_Class {
             }
         }
 
+        
+
         this.data = new Control_View_Data(o_data);
         //field(this.data, 'model');
 
@@ -57,6 +55,8 @@ class Control_View extends Evented_Class {
             o_ui.data = spec.ui.data;
         }
 
+
+        // Just View_UI at a lower level....
         this.ui = new Control_View_UI(o_ui);
 
 
@@ -159,4 +159,4 @@ class Control_View extends Evented_Class {
     }
 }
 
-module.exports = Control_View;
+module.exports = View;

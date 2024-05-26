@@ -35,19 +35,7 @@ const has_window = typeof window !== 'undefined';
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Some of this should be moved to jsgui3-client if poss and appropriate.
 
 
 const gfx = require('jsgui3-gfx-core');
@@ -228,9 +216,11 @@ class Control extends Control_Core {
 			//console.log('e', e);
 			const {name} = e;
 			if (name === 'model') {
-				console.log('ctrl-enh constructor handle view.ui.compositional change model');
+				//console.log('ctrl-enh constructor handle view.ui.compositional change model');
 
 				this.recompose_using_compositional_model();
+
+				
 
 			}
 
@@ -394,13 +384,7 @@ class Control extends Control_Core {
 
 
 					}
-
-
-
-
-
 				}
-
 			}
 
 
@@ -441,6 +425,9 @@ class Control extends Control_Core {
 		});
 		return this;
 	}
+
+
+	// and maybe a data_models too???
 
 	// Maybe it's a DOM method, through .DOM?
 	// . While there is the 'DOM facade' it may be suitable as part of the Control itself.
@@ -604,8 +591,12 @@ class Control extends Control_Core {
 			const nt = el2.nodeType;
 			if (nt == 1) {
 				var jsgui_id = el2.getAttribute('data-jsgui-id');
+				//    but when were all the controls first contstructed??? client-side.
+
 				if (jsgui_id) {
 					var ctrl = map_controls[jsgui_id];
+
+
 					if (!ctrl.__active) ctrl.activate(el2);
 				}
 			}
@@ -790,7 +781,31 @@ class Control extends Control_Core {
 
 				// Maybe all of it.
 
+				//console.log('ctrl-enh activate, has dom.el');
+
 				this.load_dom_attributes_from_dom();
+				//  That would include the data-jsgui-data-model-id
+
+				
+
+				if (this.dom.attributes["data-jsgui-data-model-id"] !== undefined) {
+					//console.log('this.dom.attributes["data-jsgui-data-model-id"]', this.dom.attributes["data-jsgui-data-model-id"]);
+
+					// can we get that data_model from the context???
+
+					//console.log('this.context.map_data_models', this.context.map_data_models);
+
+					const context_referenced_data_model = this.context.map_data_models[this.dom.attributes["data-jsgui-data-model-id"]];
+
+					if (context_referenced_data_model) {
+						this.data.model = context_referenced_data_model;
+
+						console.log('have used data.model referenced from context: ' + context_referenced_data_model.__id);
+					}
+
+
+				}
+
 
 				// Could use more explicit names for these. 'activate' is taking on a more specific meaning.
 				//   It's been decided that 'activate' will take place later in the process, with other things taking place first,
@@ -806,6 +821,8 @@ class Control extends Control_Core {
 				// .setup_content_(change_?)listen ???
 
 				this.add_dom_attributes_changes_listener();
+
+				//console.log('post ctrl-enh activate, has dom.el');
 
 
 				//this.raise('activate');

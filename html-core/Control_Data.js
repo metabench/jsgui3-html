@@ -60,26 +60,7 @@ class Control_Data extends Data {
         Object.defineProperty(this, 'model', {get: () => model});
         */
 
-        const old = () => {
-            if (spec.model) {
-                this.model = spec.model;
-            } else {
-    
-                //console.log('spec.model', spec.model);
-    
-                //console.trace();
-                //throw 'NYI';
-                // 
-    
-                // Could maybe use just a Data_Value???
-    
-                // Maybe better for the moment....
-    
-                // Possibly only want lazy loading of this.model.
-    
-                //this.model = new Data_Value({context: this.context});
-            }
-        }
+        
 
         
 

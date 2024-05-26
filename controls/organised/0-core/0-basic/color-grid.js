@@ -139,6 +139,9 @@ const {
 
 // Full_Color_Palette here...?
 
+// Should get into lower level control view models and their values and properties.
+
+
 
 class Color_Grid extends Control {
     constructor(spec) {
@@ -169,7 +172,7 @@ class Color_Grid extends Control {
 
         prop(this, 'grid_size', spec.grid_size || [12, 12]);
 
-        console.log('color_grid this.size', this.size);
+        //console.log('color_grid this.size', this.size);
 
         // [12, 12]
 
@@ -307,7 +310,7 @@ class Color_Grid extends Control {
 
 
     compose_color_palette_grid() {
-        console.log('compose_color_palette_grid');
+        //console.log('compose_color_palette_grid');
         // An internal relative frame could help.
         //  Help superimposing anything relative to that DIV, any popup, but not require the DIV itself to have relative positioning.
 
@@ -327,7 +330,11 @@ class Color_Grid extends Control {
 
         // internal_relative_div = true || false
 
-        console.log('this.grid_size', this.grid_size);
+        //console.log('this.grid_size', this.grid_size);
+
+        // But using data model as well as view.io.presentation or data.representation possibly.
+        //   
+
 
         const grid = this.grid = new Grid({
             'context': this.context,
