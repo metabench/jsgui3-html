@@ -6,7 +6,7 @@
     "fnl": "^0.0.36",
     "htmlparser": "^1.7.7",
     "lang-tools": "^0.0.35",
-    "jsgui3-gfx-core": "^0.0.10",
+    "jsgui3-gfx-core": "^0.0.19",
     "obext": "^0.0.31",
     "url-parse": "^1.5.10"
   },
@@ -37,7 +37,7 @@
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
   "devDependencies": {
-    "esbuild": "^0.19.5"
+    "esbuild": "^0.25.0"
   },
-  "version": "0.0.151"
+  "version": "0.0.152"
 }

@@ -95,8 +95,8 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         //                                        .dom.attributes['data-jsgui-data-model']
 
         // 
-        console.log('');
-        console.log('construct Data_Model_View_Model_Control');
+        //console.log('');
+        //console.log('construct Data_Model_View_Model_Control');
 
 
         const {context} = this;

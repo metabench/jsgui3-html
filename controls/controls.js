@@ -6,6 +6,7 @@ const controls = {
     //Audio_Player: require('./audio-player'),
     Audio_Volume: require('./organised/1-standard/5-ui/audio-volume'),
     Button: require('./organised/0-core/0-basic/button'),
+    Cell: require('./organised/0-core/0-basic/Cell'),
 
     // Maybe more advanced?
     Context_Menu: require('./organised/0-core/0-basic/context-menu'),
