@@ -10,9 +10,7 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined 
 
 
 const mx_selectable = require('../../../../../control_mixins/selectable');
-
 const {field} = require('obext');
-
 var Control = jsgui.Control;
 
 

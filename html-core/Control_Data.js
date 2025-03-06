@@ -44,7 +44,6 @@ class Control_Data extends Data {
         // .model is a Data_Value???
         // .model.inner_value ????
 
-
         // .model.value may be OK???
         // as in value.value would be OK in that situation.
 

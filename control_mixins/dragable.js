@@ -263,36 +263,6 @@ let dragable = (ctrl, opts = {}) => {
 
 	}
 
-
-	//console.log('1) drag_mode', drag_mode);
-
-	//console.log('dragable drag_mode', drag_mode);
-
-	// Changing position within another control - not putting it into the document root.
-	// 
-	/*
-	let click_handler = (e) => {
-	    //console.log('selectable click e', e);
-	    //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
-	    //console.log('ctrl.selectable', ctrl.selectable);
-	    if (ctrl.dragable && !ctrl.selection_scope) {
-	        var ctrl_key = e.ctrlKey;
-	        var meta_key = e.metaKey;
-	        if ((ctrl_key || meta_key)) {
-	                ctrl.action_select_toggle();
-	        } else {
-	            //console.log('pre select only');
-	            //console.log('ctrl.action_select_only', ctrl.action_select_only);
-	            ctrl.action_select_only();
-	        }
-	    }
-	}
-	*/
-
-	// calculate a drag mode.
-	//  'within-parent'
-	//  'body'
-
 	let pos_md, pos_mm, pos_mu, pos_md_within_ctrl;
 
 	// pos_md_within_ctrl

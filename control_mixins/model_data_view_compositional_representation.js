@@ -109,6 +109,21 @@ const model_data_view_compositional_representation = (ctrl, options = {}) => {
             context
         });
 
+        // ctrl.view.data.model.is_selected;
+        //   possibly.
+
+        // Does seem like we need those complex and nested layers to make it clear and easy to use - clear where
+        //   the info goes.
+
+        // Have this automatically now in the general purpose (enhanced) control.
+        //   Will be able to make a lot of controls that are more powerful and easier to use.
+        //   Will be able to make more complex controls more easily.
+        //   Will use these features to make 'selectable' work properly.
+        //     The control's selection state will be one of the pieces of view data.
+
+
+
+
 
 
 
@@ -129,8 +144,6 @@ const model_data_view_compositional_representation = (ctrl, options = {}) => {
                 // Would depend on what syncing is set up.
                 //   Maybe implement this on a higher level to start with, then move to lower level when path is clear.
 
-
-
             }
 
         })
@@ -147,19 +160,8 @@ const model_data_view_compositional_representation = (ctrl, options = {}) => {
         //     Could maybe create them on access using getters.
         //     Focus on making a powerful, simple to use, and flexible API.
 
-        
-
-
-
         // ctrl.view.data.model.compositional.representation.model ????
         //   can make some very explicit namespaces for some very specific things.
-
-
-
-
-
-
-
 
     } else {
         console.trace();

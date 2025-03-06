@@ -9,7 +9,6 @@ const Control_View_UI_Low_Level = require('./Control_View_UI_Low_Level');
 
 // jsgui3-data for now.
 
-
 // And the Data class has a .model
 
 // Control_View_UI_Compositional
@@ -80,7 +79,6 @@ class Control_View_UI_Active_Compositional extends Control_View_UI_Compositional
 class Control_View_UI_Active extends Data_Object {
     constructor(...a) {
         super(...a);
-
 
         const compositional = new Control_View_UI_Active_Compositional();
         Object.defineProperty(this, 'compositional', {get: () => compositional});

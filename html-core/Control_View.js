@@ -44,6 +44,8 @@ class Control_View extends Evented_Class {
         this.data = new Control_View_Data(o_data);
         //field(this.data, 'model');
 
+        // Data: is the control selected
+
         // No, make it a Control_UI object. Or Control_View_UI.
         /*
 
@@ -58,6 +60,10 @@ class Control_View extends Evented_Class {
         }
 
         this.ui = new Control_View_UI(o_ui);
+
+        // UI - if the control is selected, how is that displayed?
+
+        
 
 
         // Not to sure we need the low level control view object.

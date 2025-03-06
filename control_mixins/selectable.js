@@ -3,6 +3,8 @@ const {
     field
 } = require('obext');
 
+const {each} = require('lang-mini');
+
 
 // Worth redoing this / changing it later
 //  Support press-events
@@ -22,6 +24,8 @@ const {
 
 // Maybe this can be rewritten and simplified.
 //  Code made less complex here?
+//    May need to be complex to handle everything properly. Want an easy to use API.
+//     Want to be able to select a control with a click. Make that easy to set up.
 //  Change it gradually?
 
 // Click, press, pointer dowm, pointer up etc...
@@ -29,6 +33,16 @@ const {
 
 // UI validation mixins too?
 //  So it does not need to be re-written on too many components?
+
+// May want to include 'selected' specifically in some kind of 'view data model'.
+//   Whether or not it's selected is data relevant to the UI state.
+//     Though that could determine a value in the data model.
+
+// Should maybe incorporate this into the new and more complex object properties structure.
+//   This has to do with its UI state.
+//     Has selectable functionality.
+//       Can be selected
+//         Is selected
 
 
 
@@ -117,8 +131,10 @@ let selectable = (ctrl, ctrl_handle, opts) => {
         //console.log('selectable click e', e);
         //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
         //console.log('ctrl.selectable', ctrl.selectable);
+        //console.log('!!ctrl.selection_scope', !!ctrl.selection_scope);
 
         if (ctrl.selectable && !ctrl.selection_scope && !ctrl.disabled) {
+            //console.log('1) Proceeding');
             if (!condition || condition()) {
                 //console.log('passed condition check');
                 var ctrl_key = e.ctrlKey;
@@ -143,6 +159,7 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                             ctrl.action_select_only();
                         }
                     } else {
+                        //console.log('pre ctrl.action_select_only();');
                         ctrl.action_select_only();
                     }
                 }
@@ -156,9 +173,12 @@ let selectable = (ctrl, ctrl_handle, opts) => {
             }
             //e.stopPropagation();
             //e.preventDefault();
+        } else {
+            //console.log('2) Did not meet conditions');
         }
     }
     ctrl.on('change', e_change => {
+        //console.log('ctrl e_change', e_change);
         let {
             name,
             value
@@ -191,10 +211,10 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                 //console.log('1) ss', ss);
                 if (value === true) {
                     ctrl.add_class('selected');
-                    ss.map_selected_controls[id] = ctrl;
+                    if (ss) ss.map_selected_controls[id] = ctrl;
                 } else {
                     ctrl.remove_class('selected');
-                    ss.map_selected_controls[id] = null;
+                    if (ss) ss.map_selected_controls[id] = null;
                 }
             }
             if (n === 'selectable') {
@@ -251,6 +271,19 @@ let selectable = (ctrl, ctrl_handle, opts) => {
                 ss.select_only(ctrl);
                 //ctrl.raise('select');
                 //ctrl.add_class('selected');
+            } else {
+                //console.log('no selection scope found');
+                // deselect every other control in the whole system?
+                //   or within that control's parent.
+                //   maybe deselect all siblings.
+                //     That would seem to be the most sensible default behaviour.
+
+                
+                each(ctrl.siblings, sibling => {
+                    sibling.selected = false;
+                });
+
+                ctrl.selected = true
             }
             //this.find_selection_scope().select_only(this);
         });
