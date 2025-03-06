@@ -17,15 +17,11 @@ class Control_View_UI_Low_Level extends Data_Object {
         // just set .data???
         //  from spec???
 
-
         if (spec.data) {
             this.data = spec.data;
         } else {
             this.data = new Control_View_UI_Low_Level_Data({context});
         }
-
-
-
     }
 }
 

@@ -1,11 +1,4 @@
-
-
-
-
-
-
-
-var pal_crayola = [{
+const pal_crayola = [{
     "hex": "#EFDECD",
     "name": "Almond",
     "rgb": "(239, 222, 205)"

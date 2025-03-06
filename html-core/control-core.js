@@ -1,110 +1,7 @@
-/**
- * Created by James on 16/09/2016.
- * 
- * 2022 - Could even see about moving some of this functionality / code to mixins.
- * 
- * Late 2023 - Want to make more subtle changes to the control system, keeping the current API working where possible.
- *   Though it seems likely to involve making a more deeply nested type of data structure inside the control.
- * 	 May be best to focus on things on a higher level for the moment, such as mixins, and then see what can be integrated here?
- * 
- * Maybe not though - the view.ui.data.model, view.data.model, data.model system seems like it may be useful.
- * As in making it standard that there are different things within each of the controls, with clearly defined roles,
- *  and where they overlap there are clear rules for syncing
- * 
- * composition.model makes a lot of sense
- * composition.models makes sense to (when defining them)
- * composition.model = 'divs' could make sense here when choosing between different ways something could be composed.
- * 
- * 
- * model_data_view_compositional_representation
- * 
- */
 const jsgui = require('lang-tools');
 const oext = require('obext');
-
-
 const {Data_Model, Data_Object, Collection, tof, stringify, get_a_sig, each, Evented_Class } = jsgui;
-
-
-
 const Text_Node = require('./text-node');
-
-//jsgui.custom_rendering = 'very-simple';
-
-// May need some core improvements, possibly very style focused.
-//   Ability to access a transitions object.
-
-// view.ui.data.model.options???
-
-// or a model that's not a Data_Model (explicitly in the . namespaces)
-
-// view.data.model???
-//  is that even necessary???
-// .view is a data_model itself???
-
-// .ui.data.model could work in fact.
-//  just may want the shortcut ui.model
-
-// DO WANT ctrl.view.ui.data.model
-//   that would represent things like the label text.
-//    possibly other options to do with the presentation of that text, and not necessarily following the same API as CSS.
-//    This is intended to be a higher level than CSS.
-
-// Putting things into ui.data.model would help when syncing or recording what happens within the UI.
-//   Things that would be useful for screen sharing, but not for application undo and redo.
-
-// ctrl.view.ui.data.model
-//   would have things such as position.
-
-// Maybe have a more explicit sync system between the ui data model and the ui dom.
-//   Probably should be done with onchange handlers.
-//     Focus mostly on syncing to the dom attributes and css.
-//  .ui.node ???
-//  ctrl.dom.node for example...???
-//  .node as well as .el.
-//  dom.node.type being either the HTML node type, or some kind of HTML_Node_Type instance, or a data type that expresses it.
-//   want to be able to get and set it as an integer or string.
-//  .node.type.toString() even???
-//  .node.type.name perhaps too.
-
-
-
-// May try making a new API-compatable control.
-//   And then could introduce more parts of the API / change it further.
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Though could solve this with a 'no-size-transitions' class that's temporarily there.
-
-
-// Keeping things within .data.model and .view.ui.data.model could be effective.
-
-// Though at what level of the controls it's worth integrating it's hard to know right now.
-//   Not so sure about using .data.model (with its types???) to model the dom attributes and style...
-//    Though the types could be effective for converting to valid CSS.
-//    Eg a CSS string type.
-// The main point will be to allow simpler / simplest higher / highest level syntax.
-
-
-
-
-
-
-
-
-
-
-
 const {
 	prop,
 	field
@@ -124,56 +21,12 @@ var px_handler = (target, property, value, receiver) => {
 	}
 	return res;
 }
-
-// This could be moved to / recreated within a view.ui.html.dom.style
-//   view.ui.html.model??? .dom.attributes.style????
-
-// Does seem like it's worth nesting some functionality / settings further within sub-objects.
-//   It would make for a more concise top level of the control (without the shortcuts)
-//   
-
-// Seems like this is possibly worth reimplementing using the new Data_Value system???
-//   Though maybe first improve Data_Value so it could then work as Data_Object and power the Control class?
-
-// Not so sure it's best to add this new functionality right into Control right now....?
-//   Maybe best to split up some functionality from here, like the Control_Dom...?
-
-// Maybe always put that into a Control_View class?
-//  Making Control_View standard could help.
-//   .view.data.model ??? there would not always be data in the view.
-//   .view.ui.data.model ??? such as the title of a window?
-
-// May be best putting propertyies behind .data.model for the moment and making it very standard.
-
-// Eg when 'data' is in a spec, it would be loaded into the .data.model.
-//  .data.load(x) could load it into the model (perhaps)
-
-
-
-
-
-
-
-
-
-
-
-// Even need something that models CSS styles.
-//   Seems like a job for Data_Model at the end of the day.
-
-
-
-
-
 var style_input_handlers = {
 	'width': px_handler,
 	'height': px_handler,
 	'left': px_handler,
 	'top': px_handler
 }
-
-// Not sure why it's not returning the property correctly....
-
 var new_obj_style = () => {
 	let style = new Evented_Class({});
 	style.__empty = true;
@@ -182,9 +35,6 @@ var new_obj_style = () => {
 		var first = true;
 		each(style, (value, key) => {
 			const tval = typeof value;
-
-			// Use hasownproperty instead.
-
 			if (tval !== 'function' && key !== 'toString' && key !== '__empty' && key !== '_bound_events' && key !== 'on' && key !== 'subscribe' && key !== 'raise' && key !== 'trigger') {
 				if (first) {
 					first = false;
@@ -216,13 +66,7 @@ var new_obj_style = () => {
 			return res;
 		},
 		get: (target, property, receiver) => {
-			//console.log('style proxy get property: ' + property);
-
 			if (property === 'toString') {
-				// return a function....
-
-				//console.log('target', target);
-
 				return () => target + '';
 			} else {
 				return target[property];
@@ -245,9 +89,6 @@ class DOM_Attributes extends Evented_Class {
 		})
 	}
 }
-
-// Could extend Data_Model or Data_Value???
-
 class Control_DOM extends Evented_Class {
 	constructor() {
 		super();
@@ -290,26 +131,6 @@ class Control_DOM extends Evented_Class {
 		});
 	}
 }
-
-
-// Part of the .view.ui I suppose.
-// view.data and view.ui may be all that's needed in .view directly.
-
-// ctrl.view.ui.background = ...
-
-
-// ctrl.background = ... and it sets it within the ctrl.view.ui.background
-//  or even ctrl.view.ui.data.model.background ???
-//    could make it very wordy at that level but allow shortcuts.
-//    eg setting the ctrl.background or ctrl.view.ui.background sets the above property.
-
-// Does seem somewhat important as the controls could be representing data in different kinds of ways and at different kinds of levels.
-
-
-
-
-// Looks like it would fit in with Data_Model.
-
 class Control_Background extends Evented_Class {
 	constructor(spec = {}) {
 		super(spec);
@@ -321,7 +142,6 @@ class Control_Background extends Evented_Class {
 			set(value) {
 				const old = _color;
 				_color = value;
-				
 				this.raise('change', {
 					'name': 'color',
 					'old': old,
@@ -335,23 +155,6 @@ class Control_Background extends Evented_Class {
 	}
 	set(val) {}
 }
-
-// Control_Background - maybe make it part of the Data_Model and Data_Type system.
-
-// There is a very large amount built on top of the current Data_Object.
-//   It would prove somewhat tricky making a new Data_Object based on Data_Value or similar.
-//   Possibly Data_Value while in 'object' mode. It's still a value of some sorts, and may be best
-//     to do away with the distinction but keep them compatable.
-
-// May be worth keeping different implementations of Control available for comparison.
-
-// Could make and try different implementations of Control_Core.
-//   Could carefully first make some changes to this current verson....
-//   And run the benchmark too.
-
-
-
-
 class Control_Core extends Data_Object {
 	constructor(spec = {}, fields) {
 		spec.__type_name = spec.__type_name || 'control';
@@ -366,68 +169,16 @@ class Control_Core extends Data_Object {
 		this.__type = 'control';
 		var spec_content;
 		let d = this.dom = new Control_DOM();
-
-		// OK, so prop actually is used effectively somewhere???
-
-		// .view.ui.background or .view.ui.data.model.background.
-		//   
-
-		// data model to dom syncing...?
-
-		// The various .view.ui.data.model properties.
-		//  Though there will likely be more.
-
-		// Putting them within .view.ui.data.model could make sense for now.
-		//  Later on could do some kind of view.ui.data.stream_to(something) for example.
-
-
-		// Maybe have a UI_View_Control???
-		// Data_View_UI_Control???
-
-		// Do need things like the .view.ui.compositional.data.model
-		//   Though want to avoid having to write them out too many times.
-
-		
-
-
-
-
-
-
-
 		prop(this, 'background', new Control_Background(), (e_change) => {
-			//console.log('background change');
-			// The background object itself has been changed.
 			let {
 				value
 			} = e_change;
-
-
-			// When the background gets changed?
-			// When the change happens to the background...?
-
-
-			/*
-			value.on('change', evt => {
-				if (evt.name === 'color') {
-					d.attributes.style['background-color'] = evt.value;
-				}
-			});
-			*/
 		});
-
-		// Maybe background could operate with a better facade pattern over CSS.
-		// . A CSS Facade mixin may work well...
-		// . Main priority to get API working.
-
-
-
 		this.background.on('change', evt => {
 			if (evt.name === 'color') {
 				d.attributes.style['background-color'] = evt.value;
 			}
 		});
-
 		prop(this, 'disabled', false);
 		prop(this, 'size', spec.size, (e_change) => {
 			let {
@@ -442,113 +193,24 @@ class Control_Core extends Data_Object {
 				'value': value
 			});
 		});
-
-		// OK, so this does have a 'pos' property, and should respect spec.pos.
-
-		// Possibly 'pos' should be more flexible and advanced.
-		//.  Have a simple interface to call, but take account of positions being set with translate3d properties of controls,
-		//.    and including such properties in typed arrays.
-		//   May want to be aware of different ways to position in CSS, but keep the 'pos' property simpler than all that
-		//.    where possible, and be able to deal with the different ways controls can be positioned on a lower level.
-
-
-
-		// Could model both left and top, as well as translate3d properties.
-		//.  Or could have other parts of the system that use t3d positions make use of left and top css, as well as translate3d
-
-		// Does seem worth it to bring more awareness of this functionality to a lower level, making it easy to avoid it being a problem
-		//.  but also easy to get and set the positions (and sizes) of controls.
-
-		// May be worth taking account of this in some Window code.
-		//. Like glide_to_pos perhaps.
-
-		// A more complex positioning API would help.
-		//. But maybe adjusting some translations by the left and top position could help.
-
-		// Maybe it could intelligently combine t3dpos and ltpos?
-
-
-		// Would be nice in some ways to keep this simple / backwards compatable.
-
-		// But maybe this is really ltpos, pos is somewhat more complex?
-
-
-		// yes, this should most likely go in the .view
-		//  or even .view.ui.data.model.pos
-
-		// It's not the .view.data.model here....
-
-
-		// But the UI data model.
-		//   May make sense to consider it 'UI data'.
-
-		// or ui.data.model even.
-		// though can refer to it as ctrl.ui.pos, and also ctrl.pos, though the coding will make it clear that it's not part of
-		//  the data.model or view.data.model, so when accessing the ctrl.data.model we know exactly what we are getting.
-
-
-		// So putting some properties deeper into the system would help.
-		//   A data model could possibly have a .pos property, so want to allow for that.
-
-
-		// The .view.ui.data.model seems a bit more of a difficult abstraction to make....
-
-		// .model would help to keep the data model itself enclosed.
-
-		// .data.sync(data) could be another thing within .data.
-		//   keeping properties like .sync available for other uses within the .model.
-
-
-
-
-		// .data.model may be a useful standard here for the moment.
-
-
-
-
-
-
-
-
-
 		prop(this, 'pos', undefined, (e_change) => {
 			let {
 				value,
 				old
 			} = e_change;
 			if (value.length === 2) {
-
-				/*
-				if (old && old.length === 3) {
-					value = [value[0], value[1], old[2]];
-					this.pos = value;
-				}
-				*/
-
 			}
 			let [left, top] = value;
-
-			// This could possibly set translate3d properties.
-
 			let o_style = {
 				'left': left,
 				'top': top
 			}
 			this.style(o_style);
-
-
 			this.raise('move', {
 				'value': value
 			});
 		});
-
-
-
 		if (spec.pos) this.pos = spec.pos;
-		//. Also need to read the 'pos' from the (inline?) css on activation.
-
-
-
 		this.on('change', e => {
 			if (e.name === 'disabled') {
 				if (e.value === true) {
@@ -558,11 +220,6 @@ class Control_Core extends Data_Object {
 				}
 			}
 		});
-
-
-
-
-		
 		let tagName = spec.tagName || spec.tag_name || 'div';
 		d.tagName = tagName;
 		var content = this.content = new Collection({});
@@ -599,63 +256,24 @@ class Control_Core extends Data_Object {
 		}
 	}
 	get left() {
-		
-
-		// Though making use of translate3d would be good too.
-		//.  Looks like this actually needs to make use of the .ta[6] .ta[7] properties as well.
-		//.  Include both of them in the calculation.
-
-
-
-		//return this.pos[0];
-
-		// Checking if we have that dom.attributes.style.left???
-
-
 		const sl = this.dom.attributes.style.left;
 		if (sl) {
 			return parseInt(sl) + this.ta[6];
 		}
-
-
-		
 	}
 	get top() {
-		//return this.pos[1];
 		const st = this.dom.attributes.style.top;
 		if (st) {
 			return parseInt(st) + this.ta[7];
 		}
-		
 	}
-
-	// and then setting the top...?
-	//.  should take account of the existing style property value, and make any adjustment using the t3d ta system.
-	//.    maybe not using translate3d by default? Not sure....
-	
 	set top(value) {
-		// Make the modification using t3d (as well?)
-
 		if (typeof value === 'number') {
 			const measured_current_top = this.top;
 			const diff = Math.round(value - measured_current_top);
-			// round to an int....
 			this.ta[7] += diff;
-
-
 		}
-
 	}
-
-
-
-	// And setters for them too....
-	//.  could even implement this with margin?
-	//.    .margin.top may be a good interface for this.
-
-
-
-
 	'hide'() {
 		let e = {
 			cancelDefault: false
@@ -757,27 +375,16 @@ class Control_Core extends Data_Object {
 				}
 			}
 			var arr = [];
-
 			const id = this._id();
 			if (id !== undefined) {
 				arr.push(' data-jsgui-id="' + this._id() + '"');
 			}
-
 			if (this.data && this.data._model instanceof Data_Model) {
 				const dmid = this.data._model.__id;
-				//console.log('dmid', dmid);
-
 				if (dmid) {
 					arr.push(' data-jsgui-data-model-id="' + dmid + '"');
 				}
-
-				
 			}
-
-
-			// 
-
-
 			const exempt_types = {
 				html: true,
 				head: true,
@@ -875,7 +482,6 @@ class Control_Core extends Data_Object {
 		ctrl_callback(this);
 		const content = this.content;
 		let tv;
-
 		if (typeof content !== 'string') {
 			content.each(v => {
 				tv = tof(v);
@@ -886,11 +492,8 @@ class Control_Core extends Data_Object {
 				}
 			});
 		}
-
-		
 	}
 	'all_html_render'(callback) {
-		// Should consider promises here too.
 		if (callback) {
 			var arr_waiting_controls = [];
 			this.iterate_this_and_subcontrols((control) => {
@@ -926,7 +529,6 @@ class Control_Core extends Data_Object {
 	}
 	'render_content'() {
 		var content = this.content;
-
 		if (tof(content) === 'string') {
 			return content;
 		} else {
@@ -953,14 +555,12 @@ class Control_Core extends Data_Object {
 			}
 			return res.join('');
 		}
-
-		
 	}
 	'all_html_render_internal_controls'() {
 		return this.render_content();
 	}
 	'render'() {
-		return this.all_html_render(); // No callback, sync render only. Await readiness some other way.
+		return this.all_html_render(); 
 	}
 	'pre_all_html_render'() {}
 	'compose'() {}
@@ -976,11 +576,6 @@ class Control_Core extends Data_Object {
 		}, callback);
 	}
 	'remove'() {
-
-		// Seems like collection is not working properly is remove is not working properly.
-
-		// .remove(this) should be an easy call. It would then need to note that it has been removed with the event(s).
-
 		return this.parent.content.remove(this);
 	}
 	'add'(new_content) {
@@ -1030,8 +625,6 @@ class Control_Core extends Data_Object {
 		let style_name, style_value, modify_dom = true;
 		if (sig == '[s]') {
 			style_name = a[0];
-			// Maybe don't have the element
-			// . Better to run some tests / checks
 			const res = getComputedStyle(d.el)[style_name];
 			return res;
 		} else if (sig == '[s,s,b]') {
@@ -1136,7 +729,6 @@ class Control_Core extends Data_Object {
 			}
 		}
 	}
-	
 	'is_ancestor_of'(target) {
 		var t_target = tof(target);
 		var el = this.dom.el;
@@ -1214,22 +806,11 @@ class Control_Core extends Data_Object {
 		})
 		return res;
 	}
-
-	// a function
 	'matches_selector'(selector) {
 		throw 'NYI'
-		// maybe the same as '$match'?
-
-		// or $find.
-
 	}
-
-	'find'(selector) { // or selector?
-		// Prob best to do rec desc here.
-		// . Assemble an array.
-
+	'find'(selector) { 
 		const res = [];
-
 		const desc = (node, callback) => {
 			if (node.$match(selector)) {
 				callback(node);
@@ -1238,16 +819,10 @@ class Control_Core extends Data_Object {
 				desc(child, callback);
 			})
 		}
-
 		desc(this, (node => res.push(node)));
-
 		return res;
 	}
-
-	// Only for matching classes right now.
-	// . I think accepting a function may work better, or be a decent alternative. Or an object (Control) type even.
 	'$match'(selector) {
-
 		if (typeof selector === 'function') {
 			return selector(this);
 		} else {
@@ -1270,10 +845,7 @@ class Control_Core extends Data_Object {
 				console.trace();
 				throw 'NYI';
 			}
-			
 		}
-
-		
 		let res = false;
 		let tn = this.__type_name;
 		if (tn) {
@@ -1310,7 +882,6 @@ class Control_Core extends Data_Object {
 		this.iterate_subcontrols(ctrl => res.push(ctrl));
 		return res;
 	}
-
 	get siblings() {
 		const res = [];
 		if (this.parent) {
@@ -1321,38 +892,23 @@ class Control_Core extends Data_Object {
 		}
 		return res;
 	}
-
 };
 var p = Control_Core.prototype;
 p.connect_fields = true;
 const customInspectSymbol = Symbol.for('nodejs.util.inspect.custom');
-
 if (jsgui.custom_rendering === 'very-simple') {
 	p[customInspectSymbol] = function(depth, inspectOptions, inspect) {
-		// Convert the object to a string and add some formatting
-		//return JSON.stringify(this, null, 2);
-
 		return '< ' + this.dom.tagName + ' ' + this.__type_name +  ' >'
 	};
 }
-
-
-
-
 module.exports = Control_Core;
-
 if (require.main === module) {
-
-	// May be a better syntax to accept attributes like this?
-
 	const Control = Control_Core;
-
 	function test_svg() {
 		const passed = [];
 		const failed = [];
 		let svg;
 		try {
-			// Create a new SVG control
 			svg = new Control({
 				tagName: 'svg'
 			});
@@ -1360,9 +916,7 @@ if (require.main === module) {
 		} catch (error) {
 			failed.push('Create SVG control');
 		}
-
 		try {
-			// Add a circle to the SVG control
 			const circle = new Control({
 				tagName: 'circle',
 				attrs: {
@@ -1377,9 +931,7 @@ if (require.main === module) {
 			console.log('error', error);
 			failed.push('Add circle to SVG control');
 		}
-
 		try {
-			// Add a rectangle to the SVG control
 			const rect = new Control({
 				tagName: 'rect',
 				attrs: {
@@ -1395,9 +947,7 @@ if (require.main === module) {
 			console.log('error', error);
 			failed.push('Add rectangle to SVG control');
 		}
-
 		try {
-			// Check the rendering of the SVG control
 			const expected = '<svg><circle cx="100" cy="100" r="50"></circle><rect x="150" y="150" width="100" height="100"></rect></svg>';
 			const actual = svg.all_html_render();
 			console.log('actual', actual);
@@ -1410,22 +960,18 @@ if (require.main === module) {
 			console.log('error', error);
 			failed.push('Check rendering of SVG control');
 		}
-
 		return {
 			passed,
 			failed
 		};
 	}
-	console.log(test_svg()); // prints the results of the test
-
+	console.log(test_svg()); 
 	const test_background_color = () => {
 		const expectedColor = '#ff0000';
 		const passed = [];
 		const failed = [];
 		let div;
-
 		try {
-			// Create a new div control
 			div = new Control({
 				tagName: 'div',
 			});
@@ -1433,17 +979,13 @@ if (require.main === module) {
 		} catch (error) {
 			failed.push(['Create div control', error]);
 		}
-
 		try {
-			// Set the background color of the div control
 			div.background.color = expectedColor;
 			passed.push('Set background color of div control');
 		} catch (error) {
 			failed.push(['Set background color of div control', error]);
 		}
-
 		try {
-			// Validate the background color of the div control
 			const validationColor = div.background.color;
 			if (validationColor === expectedColor) {
 				passed.push('Validate background color of div control');
@@ -1453,9 +995,7 @@ if (require.main === module) {
 		} catch (error) {
 			failed.push(['Validate background color of div control', error]);
 		}
-
 		try {
-			// Check the rendering of the div control
 			const expected = `<div style="background-color:${expectedColor}"></div>`;
 			const actual = div.all_html_render();
 			if (expected === actual) {
@@ -1469,21 +1009,12 @@ if (require.main === module) {
 		} catch (error) {
 			failed.push(['Check rendering of div control', error]);
 		}
-
 		return {
 			passed,
 			failed,
 		};
 	};
-
-	// Being able to recurse through a structure of controls would be interesting / useful.
-	//  Improving the 'match' function would help.
-	// . Worth having tests for its current functionality though.
-
-
-	//console.log(JSON.stringify(test_background_color()), null, 2);
 	const rtest = test_background_color();
 	console.log(rtest);
 	console.log(rtest.failed);
-
 }

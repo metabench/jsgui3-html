@@ -20,8 +20,6 @@ const Control_Validation_Validator = require('./Control_Validation_Validator');
 
 
 class Control_Validation extends Evented_Class {
-
-
     // Or set up validation on data model states?
 
     // Control validation will be about if the view.data.model.value is valid according to the data.model.valdate_value

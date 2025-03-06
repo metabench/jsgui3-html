@@ -3,9 +3,9 @@ const Control = jsgui.Control;
 const mx_selectable = require('./../../../../control_mixins/selectable');
 const { each, is_array, tof } = jsgui;
 const Panel = require('./panel');
-const List = require('./../../0-core/0-basic/list');
-const Radio_Button_Group = require('../../0-core/0-basic/radio-button-group');
-const Radio_Button = require('../../0-core/0-basic/radio-button');
+const List = require('../../0-core/0-basic/1-compositional/list');
+const Radio_Button_Group = require('../../0-core/0-basic/1-compositional/radio-button-group');
+const Radio_Button = require('../../0-core/0-basic/0-native-compositional/radio-button');
 
 class Tab extends Control {
     constructor(spec) {

@@ -1,5 +1,5 @@
 var jsgui = require('./../../../../html-core/html-core');
-var Plus_Minus_Toggle_Button = require('./../../0-core/0-basic/plus-minus-toggle-button');
+var Plus_Minus_Toggle_Button = require('./../../0-core/0-basic/1-compositional/plus-minus-toggle-button');
 var Vertical_Expander = require('./../6-layout/vertical-expander');
 
 const mx_selectable = require('./../../../../control_mixins/selectable');

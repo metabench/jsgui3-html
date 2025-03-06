@@ -12,41 +12,9 @@ const {
 const Text_Node = require('./text-node');
 var Control_Core = require('./control-core');
 const has_window = typeof window !== 'undefined';
-
-
-// Maybe worth moving some core shapes somewhere else, lower level, and not require gfx-core.
-
-// Also seems like a bit of testing here to do with making a control with the Data_Model system, rendering it,
-//   changing a value in the Data_Model, re-rendering.
-// Can't really test client-side things so well here.
-//   But can test many of the things that are depended on on the client-side.
-
-// Making a (simulated) Data_Model stack that's similar to controls could help here.
-//   For the moment, worth focusing a lot on the Text_Input Control and it's various data models and values.
-//   Make it easy to make it so it can represent a number or integer.
-//     (parsed types)
-//   Representing (hex or css) colors.
-//     Data types that can be represented as (some) strings seems like a very important thing to get right.
-
-// data type translations when syncing between data models of different data_type???
-
-
-// Let's get this all working for representing integers as strings within a Text_Input.
-
-
-
-// Some of this should be moved to jsgui3-client if poss and appropriate.
-
-
 const gfx = require('jsgui3-gfx-core');
 const {Rect} = gfx;
-
 const model_data_view_compositional_representation = require('../control_mixins/model_data_view_compositional_representation');
-
-// Maybe this can / can be used to assign parents to the child controls.
-
-// Next make Data_Model_View_Model_Control extend this....
-
 var desc = (ctrl, callback) => {
 	if (ctrl.get) {
 		var content = ctrl.get('content');
@@ -68,8 +36,6 @@ var desc = (ctrl, callback) => {
 		}
 	}
 }
-
-
 var dom_desc = (el, callback) => {
 	callback(el);
 	var cns = el.childNodes;
@@ -78,8 +44,6 @@ var dom_desc = (el, callback) => {
 		dom_desc(cns[c], callback);
 	}
 }
-
-
 const mapDomEventNames = {
 	'change': true,
 	'click': true,
@@ -125,34 +89,13 @@ const mapDomEventNames = {
 	'volumechange': true,
 	'waiting': true
 };
-
-// Basically everything extends this control.
-//   Late 2023 this works, don't want to break it, but it should be functionally refined somewhat.
-//   Some parts moved deeper into the namespace such as view.ui.commands perhaps.
-//     Then there could be shortcuts to get to them.
-//     May be able to further simplify the core code of controls themselves, moving other code into mixins.
-
-
-
-
-
-
-
-
 class Control extends Control_Core {
 	constructor(spec, fields) {
-
-		//console.log('construct ctrl-enh');
-
 		spec = spec || {};
 		super(spec, fields);
-
-		// Slows it down maybe 20 to 30 percent here.
-		//   But the flexibility could be worth it!
 		const o_repr = {};
 		if (spec.data) o_repr.data = spec.data;
 		model_data_view_compositional_representation(this, o_repr);
-
 		if (spec.id) {
 			this.__id = spec.id;
 		}
@@ -185,48 +128,16 @@ class Control extends Control_Core {
 			if (tn) this.__type_name = tn;
 			var id = spec.el.getAttribute('data-jsgui-id');
 			if (id) this.__id = id;
-
-			
 		}
-
 		if (!spec.el) {
 			this.compose_using_compositional_model();
-
-			// And when this model gets changed it should recompose using it.
-			
-			// this.view.ui.compositional.model.on('change'....?)
-			//  and when its value changes....
-
-			// or this.view.ui.compositional.on('change' model) perhaps....
-
-			// Need to work on making the compositional model change work best.
-
-			// model.on change 'self' even???
-			//   as in it changes to a new model even, not just changing the value?
-
-
-
-
-
 		}
-
-		// and maybe a 'has_composed'???
-
 		this.view.ui.compositional.on('change', e => {
-			//console.log('e', e);
 			const {name} = e;
 			if (name === 'model') {
-				//console.log('ctrl-enh constructor handle view.ui.compositional change model');
-
 				this.recompose_using_compositional_model();
-
-				
-
 			}
-
 		});
-
-
 		if (spec.size) {
 			this.size = spec.size;
 		}
@@ -235,9 +146,6 @@ class Control extends Control_Core {
 				this.background.color = spec.background.color;
 			}
 		}
-
-		// view.ui.compositional.model
-
 		const set_view_ui_composition_model_from_spec = () => {
 			if (spec.comp) {
 				this.view.ui.compositional.model = spec.comp;
@@ -254,167 +162,68 @@ class Control extends Control_Core {
 			}
 		}
 		set_view_ui_composition_model_from_spec();
-
-
-
 	}
-
 	recompose_using_compositional_model() {
-		//console.log('recompose_using_compositional_model');
 		this.content.clear();
 		this.compose_using_compositional_model();
 	}
-
-	// In the fairly near term this should help make controls such as Text_Field more concise in the definition,
-	//   as well as make data and view model interactions clearer.
-	
-	
-
-
-
 	compose_using_compositional_model() {
-		//console.log('ctrl-enh compose_using_compositional_model');
-
 		let cm;
-
 		const {context} = this;
-
-		// view.ui.compositional.model
-
 		if (this.view.ui.compositional.model) {
 			cm = this.view.ui.compositional.model;
 		}
-
-		/*
-
-		if (this.view.ui.active.compositional.data.model) {
-			cdm = this.view.ui.active.compositional.data.model;
-		} else if (this.view.ui.compositional.data.model) {
-			cdm = this.view.ui.compositional.data.model;
-		}
-		*/
-
 		const tcm = tof(cm);
-		//console.log('tcm', tcm);
-
 		const compose_from_compositional_model_array = (arr_cm) => {
 			const l = arr_cm.length;
 			if (l > 0) {
 				for (let c = 0; c < l; c++) {
 					const composition_item = arr_cm[c];
-
 					const tci = tof(composition_item);
-					//console.log('tci', tci);
-
 					if (tci === 'function' || tci === 'control') {
-						//control
-
-						// just create that control, no spec given here.
-
 						const ctrl = new composition_item({context});
 						this.add(ctrl);
-
-					} else if (tci === 'array') { // otherwise an array [Control_Class, spec]
-						
+					} else if (tci === 'array') { 
 						if (composition_item.length === 2) {
-
 							const [t0, t1] = [tof(composition_item[0]), tof(composition_item[1])];
-
 							if ((t0 === 'function' || t0 === 'control') && t1 === 'object') {
 								composition_item[1].context = context;
 								const ctrl = new composition_item[0](composition_item[1]);
 								this.add(ctrl);
-
 							} else if (t0 === 'string' && (t1 === 'function' || t1 === 'control')) {
-								//composition_item[1].context = context;
 								const ctrl = new composition_item[1]({context});
 								this.add(ctrl);
-
 								this._ctrl_fields = this._ctrl_fields || {};
 								this._ctrl_fields[composition_item[0]] = ctrl;
-
-								//console.log('composition_item[0]', composition_item[0]);
 							} else {
-
 								console.log('[t0, t1]', [t0, t1]);
-
 								console.trace();
 								throw 'stop / nyi';
-
 							}
-
-
-
 						} else if (composition_item.length === 3) {
-							// then what are the types...???
 							const [t0, t1, t2] = [tof(composition_item[0]), tof(composition_item[1]), tof(composition_item[2])];
-							
-
-
 							if ((t0 === 'string') && (t1 === 'function' || t1 === 'control') && t2 === 'object') {
 								composition_item[2].context = context;
-
-
-
 								const ctrl = new composition_item[1](composition_item[2]);
 								this.add(ctrl);
-
 								this._ctrl_fields = this._ctrl_fields || {};
 								this._ctrl_fields[composition_item[0]] = ctrl;
-
-								//console.log('composition_item[0]', composition_item[0]);
-
 							} else {
-
 								console.log('[t0, t1, t2]', [t0, t1, t2]);
 								console.trace();
 								throw 'stop / nyi';
-
 							}
-
-
-							//console.trace();
-							//throw 'stop / nyi';
-
 						} else {
 							console.trace();
 							throw 'stop / nyi';
 						}
-
-
-
 					}
 				}
 			}
-
-
 		}
-
 		if (tcm === 'array') {
-			// Simple enough for the moment....
 			compose_from_compositional_model_array(cm);
 		}
-
-		/*
-
-		if (cm !== undefined) {
-
-			console.log('cm', cm);
-
-
-			if (cm.value !== undefined) {
-				console.log('ctrl-enh compose_using_compositional_model found compositional model cm:', cm);
-
-				// Then compose accordingly....
-
-				console.trace();
-				throw 'stop';
-			}	
-
-			
-		}
-		*/
-
 	}
 	'ctrls' (obj_ctrls) {
 		this._ctrl_fields = this._ctrl_fields || {};
@@ -425,56 +234,16 @@ class Control extends Control_Core {
 		});
 		return this;
 	}
-
-
-	// and maybe a data_models too???
-
-	// Maybe it's a DOM method, through .DOM?
-	// . While there is the 'DOM facade' it may be suitable as part of the Control itself.
-
-
-	// change this to getter and setter.
-	//.  would be a breaking API change.
-	//.  also worth making it return a Rectangle object with a matching API.
-
 	'bcr' () {
-
-
-
 		var a = arguments;
 		a.l = a.length;
 		var sig = get_a_sig(a, 1);
-
 		if (sig === '[]') {
 			var el = this.dom.el;
 			var bcr = el.getBoundingClientRect();
-
-			/*
-			var res = [
-				[bcr.left, bcr.top],
-				[bcr.right, bcr.bottom],
-				[bcr.width, bcr.height]
-			];
-			*/
-
 			const res_rect = new Rect([bcr.width, bcr.height], [bcr.left, bcr.top]);
-
-			//console.log('res_rect', res_rect);
 			return res_rect;
 		} else if (sig === '[a]') {
-
-			// Likely to need a different and improved kind of bcr setting system.
-
-
-
-			// Set the bcr
-
-			// want more flexibility in terms of how it gets set?
-			//.  size will / may be before pos when defining rectangles.
-
-			// Though 2DPosition and 2DRectangleSize could help.
-
-
 			let [pos, br_pos, size] = a[0];
 			this.style({
 				'position': 'absolute',
@@ -485,20 +254,6 @@ class Control extends Control_Core {
 			});
 		}
 	}
-
-
-	// Presuming pixels when?
-	//.  Probably should change to a more advanced size system / algorithm.
-	//.    Size being integrated with some 'box' or 'rect' property perhaps. Or rect.box? .rect.size perhaps?
-	//.  with .size being a shortcut to .rect.size perhaps.
-	//     then would want the rect to have change events.
-
-	// a change_events function could help.
-	//. change_events(this) in the constructor.
-	//.  this.change(object) raises the change event, this.change(fn) adds a handler.
-
-
-
 	get size() {
 		if (this._size) {
 			return this._size;
@@ -509,11 +264,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
-
-
 	'add_text' (value) {
-		//console.log('add_text', value);
-		//console.trace();
 		var tn = new Text_Node({
 			'context': this.context,
 			'text': value + ''
@@ -591,12 +342,8 @@ class Control extends Control_Core {
 			const nt = el2.nodeType;
 			if (nt == 1) {
 				var jsgui_id = el2.getAttribute('data-jsgui-id');
-				//    but when were all the controls first contstructed??? client-side.
-
 				if (jsgui_id) {
 					var ctrl = map_controls[jsgui_id];
-
-
 					if (!ctrl.__active) ctrl.activate(el2);
 				}
 			}
@@ -682,7 +429,6 @@ class Control extends Control_Core {
 		}
 	}
 	'remove_event_listener' () {
-		// Part of the 'DOM facade / interop system?
 		const a = arguments;
 		const sig = get_a_sig(a, 1);
 		if (sig === '[s,f]') {
@@ -741,28 +487,8 @@ class Control extends Control_Core {
 			}, cb);
 		}
 	}
-
-	// Some of this will be moved away from 'activate'.
-	//   Within 'pre_activate', and may have a different name, not sure what though.
-	//     coalesce? rebuild ctrl structures? setup ctrl tree? connect ctrls (within ctrl tree?)?
-
-	// Connect / reconnect?
-
-	// connect ctrl dom el
-
-	// activate listeners?
-
-	// The 'activate' function will often be its own custom functionality that defines what the Control does client-side.
-	//   Some more standard things to do with having it represent the dom.attributes internally don't quite seem to be part of
-	//     'activate'. 
-
-	// It's kind of a view-model that gets assigned.
-	// pre_activate can set up the standard things before activate so that activate has the references set up properly.
-
 	'pre_activate'() {
-		//  && !this.__active
 		if (typeof document !== 'undefined') {
-			//this.__active = true;
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this) || this.context.map_els[this._id()] || document.querySelectorAll('[data-jsgui-id="' + this._id() + '"]')[0];
 				if (found_el) {
@@ -770,67 +496,20 @@ class Control extends Control_Core {
 				}
 			}
 			if (!this.dom.el) {} else {
-
-				// This likely will be covered by pre_activate.
-				//   That means it will be called on all controls before activate gets called on any of them.
-				//   Activate will be more speicifically about app or programmer specified custom client-side control behaviour.
-
-				// .connect_dom_attributes();
-
-				// See how much of this can be done before the 'activate' function gets called.
-
-				// Maybe all of it.
-
-				//console.log('ctrl-enh activate, has dom.el');
-
 				this.load_dom_attributes_from_dom();
-				//  That would include the data-jsgui-data-model-id
-
-				
-
 				if (this.dom.attributes["data-jsgui-data-model-id"] !== undefined) {
-					//console.log('this.dom.attributes["data-jsgui-data-model-id"]', this.dom.attributes["data-jsgui-data-model-id"]);
-
-					// can we get that data_model from the context???
-
-					//console.log('this.context.map_data_models', this.context.map_data_models);
-
 					const context_referenced_data_model = this.context.map_data_models[this.dom.attributes["data-jsgui-data-model-id"]];
-
 					if (context_referenced_data_model) {
 						this.data.model = context_referenced_data_model;
-
 						console.log('have used data.model referenced from context: ' + context_referenced_data_model.__id);
 					}
-
-
 				}
-
-
-				// Could use more explicit names for these. 'activate' is taking on a more specific meaning.
-				//   It's been decided that 'activate' will take place later in the process, with other things taking place first,
-				//   so 'activate' will be higher level and more specific functionality.
-
-
-				// Want to put these content controls in place in the relevant array / collection.
-				
-				//this.activate_content_controls();
 				this.pre_activate_content_controls();
 				this.add_content_change_event_listener();
-
-				// .setup_content_(change_?)listen ???
-
 				this.add_dom_attributes_changes_listener();
-
-				//console.log('post ctrl-enh activate, has dom.el');
-
-
-				//this.raise('activate');
 			}
 		} else {}
 	}
-
-
 	'activate' (el) {
 		if (typeof document !== 'undefined' && !this.__active) {
 			this.__active = true;
@@ -841,19 +520,7 @@ class Control extends Control_Core {
 				}
 			}
 			if (!this.dom.el) {} else {
-
-				// This likely will be covered by pre_activate.
-				//   That means it will be called on all controls before activate gets called on any of them.
-				//   Activate will be more speicifically about app or programmer specified custom client-side control behaviour.
-
-				//this.load_dom_attributes_from_dom();
 				this.activate_content_controls();
-				//
-
-				//this.add_content_change_event_listener();
-				//this.add_dom_attributes_changes_listener();
-
-
 				this.raise('activate');
 			}
 		} else {}
@@ -870,20 +537,13 @@ class Control extends Control_Core {
 		});
 	}
 	'activate_this_and_subcontrols' () {
-		//let context = this.context;
 		this.iterate_this_and_subcontrols((ctrl) => {
 			if (ctrl.dom.el) {
-
 				ctrl.activate();
 			}
 		});
 	}
 	'add_content_change_event_listener' () {
-
-		// Maybe not 'activate' exactly.
-
-		// add_content_change_event_listener
-
 		const {
 			context
 		} = this;
@@ -988,15 +648,8 @@ class Control extends Control_Core {
 			}
 		});
 	}
-
-	// Maybe they get activated anyway?
-	//   Or this activates / loads the fact that these are content controls? And activates them too?
 	'activate_content_controls' () {
-
-		// Not so sure about this, as maybe pre_activate would cover it.
-
 		const do_activation = () => {
-
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this);
 				if (found_el) {
@@ -1009,11 +662,7 @@ class Control extends Control_Core {
 				let ctrl_fields = {},
 					c, l;
 				if (el.getAttribute) {
-					
 					let cns = el.childNodes;
-
-					// This should be pre-activate as well.
-
 					let content = this.content;
 					for (c = 0, l = cns.length; c < l; c++) {
 						let cn = cns[c];
@@ -1024,38 +673,19 @@ class Control extends Control_Core {
 								let cctrl = context.map_controls[cn_jsgui_id];
 								let found = false;
 								if (cctrl) {
-									
-
-									// Maybe do the activate a bit later on...?
 									cctrl.activate();
-									
 								}
 							}
-							
 						}
 					}
 				}
 			} else {
-				//console.trace();
-				//console.log('missing el');
 			}
 		}
 		do_activation();
-		
 	}
-
-	// Possibly this should have some of / reference to what is in jsgui3-client.
-
-
-
 	'pre_activate_content_controls' () {
-
-		// Reconstruction perhaps....
-
-		// Not so sure about this, as maybe pre_activate would cover it.
-
 		const do_pre_activation = () => {
-
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this);
 				if (found_el) {
@@ -1081,9 +711,6 @@ class Control extends Control_Core {
 						this[key] = context.map_controls[value];
 					}
 					let cns = el.childNodes;
-
-					// This should be pre-activate as well.
-
 					let content = this.content;
 					for (c = 0, l = cns.length; c < l; c++) {
 						let cn = cns[c];
@@ -1096,23 +723,16 @@ class Control extends Control_Core {
 								if (cctrl) {
 									let ctrl_id = cctrl.__id;
 									if (ctrl_id) {
-
 										content.each((v, i) => {
 											if (v.__id) {
 												if (v.__id === ctrl_id) found = true;
 											}
 										});
-
 									}
 									if (!found) {
-										//content.add(cctrl);
 										content._arr.push(cctrl);
 									}
 									cctrl.parent = this;
-
-									// Maybe do the activate a bit later on...?
-									//cctrl.activate();
-									
 								}
 							}
 							if (nt === 3) {
@@ -1133,7 +753,6 @@ class Control extends Control_Core {
 										text: val,
 										el: cn
 									})
-									//console.log('content._arr.length', content._arr.length);
 									content.add(tn);
 								}
 							}
@@ -1141,28 +760,11 @@ class Control extends Control_Core {
 					}
 				}
 			} else {
-				//console.trace();
-				//console.log('missing el');
 			}
-
 		}
-
 		do_pre_activation();
-
-		
 	}
-
-	// Assign (most) dom attributes from the html document to the control.
-
-	// load dom attributes (from dom) makes sense.
-	// load non-special-case dom attributes from dom.
-
-
-
 	'load_dom_attributes_from_dom' () {
-
-
-
 		const el = this.dom.el;
 		const dom_attributes = this.dom.attributes;
 		let item, name, value, i;
@@ -1170,7 +772,6 @@ class Control extends Control_Core {
 			const attrs = el.attributes;
 			if (attrs) {
 				const l = attrs.length
-				//console.log('attrs l', l);
 				for (i = 0; i < l; i++) {
 					item = attrs.item(i);
 					name = item.name;
@@ -1186,17 +787,6 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	/*
-	'attach_dom_events' () {
-		console.trace();
-		throw 'stop - look into this';
-		each(this._bound_events, (handlers, name) => {
-			each(handlers, handler => {
-				this.add_dom_event_listener(name, handler);
-			});
-		});
-	}
-	*/
 	'_search_descendents' (search) {
 		const recursive_iterate = (ctrl, item_callback) => {
 			const content = ctrl.content,
@@ -1237,9 +827,7 @@ class Control extends Control_Core {
 		const {
 			context
 		} = this;
-
 		if (context) {
-
 			const m = context.map_controls_being_added_in_frame = context.map_controls_being_added_in_frame || {};
 			const tnc = tof(new_content);
 			if (tnc === 'array') {
@@ -1265,7 +853,6 @@ class Control extends Control_Core {
 					}
 				}
 			}
-
 		}
 		return super.add(new_content);
 	}

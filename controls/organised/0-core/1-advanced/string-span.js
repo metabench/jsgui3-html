@@ -21,7 +21,7 @@ const jsgui = require('./../../../../html-core/html-core');
 const {controls, parse, each, are_equal} = jsgui;
 const {Control, Text_Node} = controls;
 
-const Button = require('../0-basic/button');
+const Button = require('../0-basic/0-native-compositional/button');
 
 const {field, prop} = require('obext');
 const press_events = require('./../../../../control_mixins/press-events');

@@ -16,7 +16,7 @@
 //   Can choose various things to do with appearance using .view
 
 var jsgui = require('../../../../html-core/html-core');
-var Menu_Node = require('./../../0-core/0-basic/menu-node');
+var Menu_Node = require('../../0-core/0-basic/1-compositional/menu-node');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
