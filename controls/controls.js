@@ -10,6 +10,7 @@ const controls = {
     // Maybe more advanced?
     Context_Menu: require('./organised/0-core/0-basic/1-compositional/context-menu'),
     //Control: 
+    Color_Grid: require('./organised/0-core/0-basic/1-compositional/color-palette'),
     Color_Palette: require('./organised/0-core/0-basic/1-compositional/color-palette'),
     Checkbox: require('./organised/0-core/0-basic/0-native-compositional/checkbox'),
     Combo_Box: require('./organised/0-core/0-basic/1-compositional/combo-box'),

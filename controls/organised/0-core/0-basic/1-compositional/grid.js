@@ -1,114 +1,3 @@
-// Late 2023 - Still about 450 lines once comments and empty lines removed.
-//   Want to simplify this using idioms - maybe create idioms?
-//   Do want to make use of .data.model as well as .view.data.model, and .view.ui.data.model too.
-
-// The data.model could be the values in the cells?
-//   Same with the view.data.model .....
-
-// Setting the .data.model.cells[x][y] may make sense.
-//   Programming it with a very explicit higher level API would help.
-
-// Could hold off on this for the moment...
-//   Could see about the Calendar control, or enhancement on the Date_Picker making use of this.
-
-
-
-// grid.selected.value
-// grid.view.ui.data.model.selected.data.model.value perhaps....
-
-// Be able to have these shorter paths assembled, available to use idiomatically and clearly,
-//   but on a lower level will have / maintain / sync these different data models.
-
-// a .view.ui.data.model could be optional.
-//   Not sure.
-
-// Late 2023 - Breaking changes will not break very much right now.
-
-// ctrl.ui.mixins???
-// ctrl.data.mixins???
-
-// Basically make sure that the distinctions of different models are there, set up to operate easily,
-//   but also there and pluggable so that some more complex scenarios will work OK, or system can support it with a little
-//     modification / extension.
-
-
-// Possibly getting the 'select' options dropdown working will be better first.
-//   Will be a tiny bit like 'grid' where there are multiple options to select.
-
-// .selected.value may help in places....
-//   Want easy to use and idiomatic syntax, higher level than HTML.
-
-
-// Late 2023 - decision to move to a composition.model system, though keeping things backwards-compatable.
-//  .content may point to something else internally.
-
-// composition model being different to composition itself.
-//   That would make a lot of sense in terms of the distinction.
-
-// Or even there is a composition content model, as well as composition model.
-//   The composition content model would include all the content of the control, just like before.
-
-// May want a higher level composition content model (too)
-//   Ie for a window, we don't treat it as having the direct child controls that it has.
-//     compositional content is what we already have. We may want a new type of content (model), being some other kind
-//     of (composition) content that's more relevant to the usage of the control.
-//   So may want a .inner in many cases.
-//   Maybe want a .left.inner and .right.inner in some. top.inner bottom.inner
-//     and something for both hotizontal and vertical. Things like a 3 inner parts composition.
-//   An interface where inner parts can be numbered and named would help.
-//     Would definitely be a useful and intuitive interface.
-//     Want to be able to recognise different inner / internal parts of a control, where other controls can be placed.
-
-//   As in inner.controls???
-//     That may be a good readable API for referring to inner controls.
-//       Those controls being containers for other controls?
-
-// .inner.areas? .zones .places .containers .parts? .controls? or all 6 are synonyms.
-//   .inner.control when there is a single one or a primary one.
-//   .inner.primary.control?
-//   .inner.controls.primary ???
-
-// view.ui.composition.inner.controls.top;
-
-// It may make some sense to move some things explicitly within this view.ui.composition system.
-//   It does provide a place where some settings that already exist can be further categorised, and also used in a way so things
-//   will be more extendable and clearer.
-
-// Then can work on supporting some shorthands....
-//   Possibly with functions.
-
-
-
-
-
-
-// so a left/right movable bar could have 2 inner zones / areas / places / parts / containers.
-//   Making a really flexible API could be helpful.
-
-// And the Window control has a single inner area / control
-
-
-
-// This could benefit from lower level compositional logic.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const jsgui = require('../../../../../html-core/html-core');
 const {
     stringify,
@@ -117,87 +6,13 @@ const {
     def,
     Control
 } = jsgui;
-
-// Selectable should work in terms of view.ui.model???
-
-// though maybe .value, and .data.model.value should correspond with the day of the month.
-//   or .value is the full date????
-
-// This is a somewhat complex control, but may want to make sure it has a simple and consistent highest level API.
-// Having different composition modes / models could be useful.
-//   Possibly enabling all controls to take varying composition models would help.
-//     The composition model could be generated accoding to the number of cells, or it could be an abstraction that
-//     can handle things like num rows and num columns.
-
-
-
-
-// class Composition_Model perhaps....
-//   Would have the parts of the control itself.
-//   Then there would be the 'contents' type parts.
-
-// Compositional_Model.compose(ctrl) perhaps....
-//   Would set the content of that control / add the content.
-
-// and control.compose() would involk that compositional model.
-// compositional.model
-// compositional.content (that's everything, like normal .content ????) or the compositional content is different???
-//  makes sense to move .content collection to .view.ui.compositional.content
-// compositional.inner.content in some cases (like window)
-
-
-// Would be best to make multiple compositional models work within the curent system
-
-// Grid looks like a place where a slightly different compositional model could be used, as well as a Data_Model / Data_Value
-//   that represents a 2D grid of data.
-
-// 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const mx_selectable = require('../../../../../control_mixins/selectable');
-
-
 const {
     prop,
     field
 } = require('obext');
-
-
-// Move to the data model system as well as the view data model system.
-
-// .view.ui.data.model
-// .view.data.model
-// view.ui does seem like an important distinction.
-
-
-
 const Cell = require('./Cell');
 const Grid_Cell = Cell;
-
-
-// Should make some lower / mid level compositional routines / models / systems.
-//   Functions for expressing / processing those compositional models, such as Repeat(item, n);
-
-
-// Would be better to use different compositional models here.
-//   With underlying support for that.
-
-
-
 class Grid extends Control {
     constructor(spec, add, make) {
         spec = spec || {};
@@ -208,22 +23,8 @@ class Grid extends Control {
         }
         this.add_class('grid');
         var spec_data = spec.data;
-        //  Could give it a data_model here.
-
         this._arr_rows = [];
-
-        // instead use .view.ui.compositional.model(s) alternatives. 
-        //   .compositional.models.active/current perhaps?
-        //     eg composition made up of divs with float, or divs with flex grid, or others.
-
-        //   .and the representational model of some data being something corresponding with / compatable with this grid.
-
-
-        // .data.model.grid.size somewhere.
-
         field(this, 'composition_mode');
-
-
         if (spec.composition_mode) {
             this.composition_mode = spec.composition_mode
         } else {
@@ -250,35 +51,13 @@ class Grid extends Control {
             }
         });
         if (spec.grid_size) _grid_size = spec.grid_size;
-
-        // The view.ui.model or view.ui.data.model perhaps?
-        //   Including fields within that data model could help.
-        //     
-
-
-
         field(this, 'cell_size');
         if (spec.cell_size) this.cell_size = spec.cell_size;
-
-
-        // .data column names
-        // .data row names
-        // .data.row.names = [1, 2, 3, 4, 5, 6, 7, 8] for example. Allowing numbers as names?
-        //   or map to strings.
-
         field(this, 'column_headers', false);
         field(this, 'row_headers', false);
-
-        // No will be the control.data system. That will become standard.
         prop(this, 'data', false);
-
-
         this.map_cells = {};
         this.arr_cells = {};
-
-        // Integrate within internal Data_Model...
-
-
         if (spec.data) {
             let t_data = tof(spec.data);
             if (t_data === 'array') {
@@ -318,23 +97,6 @@ class Grid extends Control {
         });
     }
     'refresh_size'() {
-        //console.log('grid.js refresh_size this.composition_mode', this.composition_mode);
-
-        // .view.ui.compositional.mode
-        // .view.ui.composition.mode(l)
-
-        // Composition model does seem very useful as a concept for how the controls will be put together.
-
-
-
-        // .view.ui.composition.model.compose(this);
-        //   And a compositional model could contain a list of controls.
-        //     Maybe even as an array of pairs of [Ctrl, spec]
-        // .view.ui.composition.content perhaps???
-
-        // this.view.ui.composition.model.name === 'divs' perhaps in the future?
-
-
         if (this.composition_mode === 'divs') {
             let [num_columns, num_rows] = this.grid_size;
             var cell_border_thickness = 1;
@@ -382,9 +144,7 @@ class Grid extends Control {
         this.main.add(cell);
         return cell;
     }
-    // Different composition models could help here.
     'full_compose_as_divs'() {
-        //console.log('* full_compose_as_divs')
         let main = this.main = new Control({
             context: this.context,
             class: 'main'
