@@ -89,11 +89,17 @@ const Control = jsgui.Control;
 
 
 
+// Make this into a compositional type control?
+// Dropdown_Menu for now?
 
 
 class Dropdown_List extends Control {
     constructor(spec) {
         super(spec);
+
+        console.trace();
+        throw 'Deprtecating this control for the moment. Try Select_Options or Dropdown_Menu instead.';
+
         // and the options...
         //  an array of options.
         this.options = spec.options;
@@ -104,7 +110,7 @@ class Dropdown_List extends Control {
         if (!spec.skip_compose) this.compose();
     }
     compose() {
-        let context = this.context;
+        const context = this.context;
 
         // Make this more versitile, while also supporting a very intuitive high-level API.
         //   Such as being able to provide it options from a model or part of one to select from.
@@ -112,12 +118,12 @@ class Dropdown_List extends Control {
 
 
 
-        each(this.spec.options, option => {
+        each(this.options, option => {
             // Option could just be a string, a number or [number, string]
 
             let t = tof(option);
             let ctrl_option = new jsgui.option({
-                context: context
+                context
             });
             if (t === 'string') {
                 ctrl_option.dom.attributes.value = option;

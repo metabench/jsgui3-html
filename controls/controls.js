@@ -1,6 +1,7 @@
 
 
 
+
 const controls = {
     Arrow_Button: require('./organised/0-core/1-advanced/vector/arrow-button'),
     //Audio_Player: require('./audio-player'),
@@ -14,6 +15,7 @@ const controls = {
     Color_Palette: require('./organised/0-core/0-basic/1-compositional/color-palette'),
     Checkbox: require('./organised/0-core/0-basic/0-native-compositional/checkbox'),
     Combo_Box: require('./organised/0-core/0-basic/1-compositional/combo-box'),
+    Dropdown_Menu: require('./organised/0-core/0-basic/1-compositional/Dropdown_Menu'),
     // Not using (data-)connected controls.
     //Data_Grid: require('./connected/data-grid'),
     File_Upload: require('./organised/0-core/0-basic/0-native-compositional/file-upload'),

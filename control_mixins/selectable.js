@@ -44,6 +44,10 @@ const {each} = require('lang-mini');
 //       Can be selected
 //         Is selected
 
+// So would get into modifying the 'view' data model.
+//   .view.ui.data.model.selected
+//     .view.ui.data.model.selectable
+
 
 
 
