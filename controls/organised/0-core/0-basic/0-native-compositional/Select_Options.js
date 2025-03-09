@@ -74,9 +74,13 @@ class Select_Options extends Control {
 		}
 	}
     compose() {
+
+        // The options may really be within the view.ui object????
+        
+
         const {context} = this;
         const dm_options = this.data.model.options;
-        console.log('Select_Options compose dm_options:', dm_options);
+        //console.log('Select_Options compose dm_options:', dm_options);
         if (is_array(dm_options)) {
             if (is_arr_of_strs(dm_options)) {
                 console.log('dm_options is an array of strings');
