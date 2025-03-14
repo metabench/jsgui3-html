@@ -7,11 +7,15 @@ const {
 } = require('obext');
 
 const jsgui = require('../html-core/html-core');
+
+
 const stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof;
 const Control = jsgui.Control;
-const v_subtract = jsgui.util.v_subtract;
+
+
+//const v_subtract = jsgui.util.v_subtract;
 //let ofs = e => [e.offsetX, e.offsetY];
 /*
 const coords_to_lt_wh = (coords_pair) => {

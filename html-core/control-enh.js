@@ -14,8 +14,31 @@ var Control_Core = require('./control-core');
 const has_window = typeof window !== 'undefined';
 const gfx = require('jsgui3-gfx-core');
 const {Rect} = gfx;
+
+
+// Or can't load them at the very start?
+
+//const mixins = require('../control_mixins/mx');
+//const {model_data_view_compositional_representation} = mixins;
+
 const model_data_view_compositional_representation = require('../control_mixins/model_data_view_compositional_representation');
-var desc = (ctrl, callback) => {
+
+// Need to be able to load / access the mixins here.
+//   Need to avoid circular references. Therefore mixins can't use this module.
+//     Or not directly?
+//       Mixins do seem to need to be able to do things such as create controls.
+
+
+//console.trace();
+//throw 'stop';
+
+// Maybe have a 'mixins available' event somewhere.
+
+
+
+
+
+const desc = (ctrl, callback) => {
 	if (ctrl.get) {
 		var content = ctrl.get('content');
 		if (content) {
@@ -107,15 +130,31 @@ class Control extends Control_Core {
 		}
 		this.map_raises_dom_events = {};
 		if (spec.el) {
+
+			// Not so sure about putting it in the spec rather than applying it to the control.
+			//   Or keeping these persisted properties to apply later?
+
+			// ctrl._persisted_fields perhaps?
+			//   then can assign those persisted fields once the mixins have been initialised.
+
+
+
+
 			var jgf = spec.el.getAttribute('data-jsgui-fields');
 			if (jgf) {
+				//console.log('jgf', jgf);
+				this._persisted_fields = this._persisted_fields || {};
 				var s_pre_parse = jgf.replace(/\[DBL_QT\]/g, '"').replace(/\[SNG_QT\]/g, '\'');
 				s_pre_parse = s_pre_parse.replace(/\'/g, '"');
 				var props = JSON.parse(s_pre_parse);
+				//console.log('props', props);
 				let exempt_prop_names = {}
 				each(props, (v, i) => {
 					if (exempt_prop_names[i]) {} else {
-						spec[i] = v;
+						//spec[i] = v;
+						this._persisted_fields[i] = v;
+
+						// maybe apply those fields after the mixins have been set up.
 					}
 				});
 			}
@@ -497,6 +536,65 @@ class Control extends Control_Core {
 			}
 			if (!this.dom.el) {} else {
 				this.load_dom_attributes_from_dom();
+
+				//  reconstruct a special .view.data.model.mixins collection from the dom attributes.
+				//    collection seems logically best - though collection may be redone soon.
+
+				if (this.dom.attributes["data-jsgui-mixins"] !== undefined) {
+					const str_mixins = this.dom.attributes["data-jsgui-mixins"]?.replace(/'/g, '"');
+					if(str_mixins) {
+						const o_mixins = JSON.parse(str_mixins);
+						//this.view.data.model.mixins.clear();
+						//each(mixins, mixin => {
+						//	this.view.data.model.mixins.push(mixin);
+
+						const old_silent = this.view.data.model.mixins.silent;
+
+						// .silently(cb) function could be one way to do these things.
+
+						this.view.data.model.mixins.silent = true;
+						//});
+						//console.log('o_mixins', o_mixins);
+
+						each(o_mixins, (mixin) => {
+							const {name, options} = mixin;
+
+							//console.log('mixin', mixin);
+
+							//console.log('mixin name', name);
+
+							// and run the mixin here???
+
+							this.view.data.model.mixins.push(mixin);
+
+							const the_mixin = this.context.mixins[name];
+
+							//console.log('!!the_mixin', !!the_mixin);
+
+							if (the_mixin) {
+								the_mixin(this);
+							}
+
+							// And add this back to the view data model??
+
+
+
+						});
+
+						this.view.data.model.mixins.silent = old_silent;
+
+						// Set it back up in the view.data.model.mixins collection.
+
+
+					}
+				}
+
+				if (this._persisted_fields) {
+					each(this._persisted_fields, (v, i) => {
+						this[i] = v;
+					});
+				}
+
 				if (this.dom.attributes["data-jsgui-data-model-id"] !== undefined) {
 					const context_referenced_data_model = this.context.map_data_models[this.dom.attributes["data-jsgui-data-model-id"]];
 					if (context_referenced_data_model) {
@@ -521,6 +619,9 @@ class Control extends Control_Core {
 			}
 			if (!this.dom.el) {} else {
 				this.activate_content_controls();
+
+				// activate / load the mixins from the view model of them...???
+
 				this.raise('activate');
 			}
 		} else {}
@@ -776,6 +877,8 @@ class Control extends Control_Core {
 					item = attrs.item(i);
 					name = item.name;
 					value = item.value;
+
+					/*
 					if (name === 'data-jsgui-id') {} else if (name === 'data-jsgui-type') {} else if (name === 'style') {
 						dom_attributes[name] = value;
 					} else if (name === 'class') {
@@ -783,6 +886,9 @@ class Control extends Control_Core {
 					} else {
 						dom_attributes[name] = value;
 					}
+						*/
+
+					dom_attributes[name] = value;
 				}
 			}
 		}

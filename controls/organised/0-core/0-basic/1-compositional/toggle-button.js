@@ -28,6 +28,10 @@ const {stringify, each, tof, def, Control} = jsgui;
 //  Defining the grammar of objects and functions seems very useful.
 //   In some cases, it could be used to make more concise and declarative code.
 
+// Look at using mixin state management and display modes.
+//   Have the code in the controls more declarative and concise.
+
+
 const { prop, field } = require('obext');
 
 class Toggle_Button extends Control {

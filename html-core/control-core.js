@@ -374,7 +374,48 @@ class Control_Core extends Data_Object {
 					dom_attrs['data-jsgui-fields'] = sf;
 				}
 			}
-			var arr = [];
+
+			// Then will get these back in activate / pre-activate.
+			//   Or post-activate even?
+
+			// Pre seems best. Or the autoactivate part of the activate process.
+
+
+			if (this.view.data.model.mixins) {
+				let smxs = '[';
+				let first = true;
+				this.view?.data?.model?.mixins?.each((mx) => {
+					if (!first) {
+						smxs += ',';
+					} else {
+						first = false;
+					}
+					const smx = JSON.stringify(mx);
+					smxs += smx;
+					
+				});
+				smxs += ']';
+				smxs = smxs.replace(/"/g, "'");
+				if (smxs.length > 2) {
+					dom_attrs['data-jsgui-mixins'] = smxs;
+				}
+			}
+			
+			
+			
+			
+
+			// is this.
+
+			// mixins as well?
+			//   or within ._fields?
+
+			// a separate ._mixins property would help.
+
+
+
+
+			const arr = [];
 			const id = this._id();
 			if (id !== undefined) {
 				arr.push(' data-jsgui-id="' + this._id() + '"');
@@ -562,7 +603,17 @@ class Control_Core extends Data_Object {
 	'render'() {
 		return this.all_html_render(); 
 	}
-	'pre_all_html_render'() {}
+	'pre_all_html_render'() {
+		// if on the server side...
+		//   not sure to what extent this fn call on every render will slow it down, raising an event on the server too.
+
+		
+
+		if (typeof document === 'undefined') {
+			this.raise('server-pre-render');
+		}
+
+	}
 	'compose'() {}
 	'visible'(callback) {
 		this.style('display', 'block', callback);

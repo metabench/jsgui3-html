@@ -2,6 +2,7 @@
 //  Be able to mix in multiple at once?
 
 
+
 const mx = {
     coverable: require('./coverable'),
     date: require('./typed_data/date'),
@@ -18,7 +19,8 @@ const mx = {
     dragable: require('./dragable'),
     drag_like_events: require('./drag_like_events'),
     press_events: require('./press-events'),
-    press_outside: require('./press-outside')
+    press_outside: require('./press-outside'),
+    pressed_state: require('./pressed-state')
 }
 
 module.exports = mx;

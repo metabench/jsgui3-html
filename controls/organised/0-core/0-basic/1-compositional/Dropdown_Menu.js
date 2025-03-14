@@ -11,6 +11,25 @@ const {
     field,
     prop
 } = require('obext');
+
+// Seems worth using mixins, improving them to cover a variety of features that will be used in many controls.
+
+// Menu items being selectable individually.
+//   So when one gets selected, the control has its state changed to closed.
+
+// Also, consider state transitions in the state system.
+//   Could take a 1/2s or something to change between open and closed.
+
+// Pressed view state mixin?
+//   view ui data model or something like that.
+
+
+
+
+
+const {press_events, pressed_state, selectable} = require('../../../../../control_mixins/mx');
+
+
 class Dropdown_Menu extends Control {
     constructor(spec) {
         spec = spec || {};
@@ -62,6 +81,9 @@ class Dropdown_Menu extends Control {
             }
         });
         */
+
+        // View states of inner composed controls?
+
     }
     
     compose_dropdown_menu() {
@@ -84,6 +106,7 @@ class Dropdown_Menu extends Control {
         ctrl_closed_top.add(ctrl_closed_top_item_itself);
 
 
+        // Can we make the system transfer state changes to do with 'pressed'?
         const ctrl_dropdown_icon = new Control({ context });
         ctrl_dropdown_icon.add_class('dropdown-icon');
         ctrl_dropdown_icon.add('▼');
@@ -109,6 +132,30 @@ class Dropdown_Menu extends Control {
                     //ctrl_option.dom.attributes.value = str_option;
                     ctrl_option.add(str_option);
                     ctrl_open_items.add(ctrl_option);
+
+                    // Can we make these selectable here?
+                    //   So it would need to persist to the client, be automatically set up on the client.
+
+                    // Auto setting up mixins on client-side activation.
+
+                    //   Could see about further server to client persistnce of properties / features.
+                    //     Auto client-side mixin activation would help a lot when expressing various features in the
+                    //     composition (server and client-side) code.
+
+                    // Setting up selection scopes?
+                    //   Mixin initialisation being sent as data-jsgui properties of some sort?#
+                    //     data-jsgui-mixins property...
+                    //       would be able to bring accross JSON properties for client-side use.
+                    //         also would need to work properly with references to the various controls.
+
+
+                    // Selectable children - where they are all within the selection scope of this control.
+
+                    
+
+                    
+
+
                 })
             }
         }
@@ -124,20 +171,18 @@ class Dropdown_Menu extends Control {
     activate() {
         if (!this.__active) {
             super.activate();
-
             const {ctrl_dropdown_icon} = this;
-
             //console.log('activating Dropdown_Menu this.ctrl_dropdown_icon', this.ctrl_dropdown_icon);
 
             // Want to listen for clicks on the dropdown icon.
             //  Will change the state of the dropdown menu.
 
+            pressed_state(ctrl_dropdown_icon);
+
             // Though could have that control bound to the open/closed view state.
             
             ctrl_dropdown_icon.on('click', e_click => {
-
                 //console.log('ctrl_dropdown_icon e_click', e_click);
-
                 //console.log('this.view.data.model.state', this.view.data.model.state);
 
                 if (this.view.data.model.state === 'closed') {
@@ -147,6 +192,10 @@ class Dropdown_Menu extends Control {
                 }
 
             });
+
+            // Want hover and press states for that button too.
+            //   May want to implement / use mixins.
+
 
             
         }
@@ -196,6 +245,10 @@ Dropdown_Menu.css = `
     color: #888888;
 }
 
+.dropdown-menu .closed-top .dropdown-icon.pressed {
+    background-color: #F0F0F0;
+}
+
 .dropdown-menu .open-items {
     width: 376px;
     height: 414px;
@@ -215,6 +268,9 @@ Dropdown_Menu.css = `
     background-color: #FFFFFF;
     border-radius: 4px;
     border: 2px solid #CCCCCC;
+    text-indent: 12px;
+    font-size: 52px;
+    line-height: 56px;
 }
 
 .dropdown-menu .open-items .item:not(:first-child) {
