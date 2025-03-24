@@ -23,6 +23,7 @@ const press_events = require('./press-events');
 const pressed_state = (ctrl, options = {}) => {
     //let once = options.one || options.once || false;
     //console.log('press_outside');
+    //console.log('running pressed-state mixin');
 
     ctrl.__mx = ctrl.__mx || {};
 
@@ -30,6 +31,17 @@ const pressed_state = (ctrl, options = {}) => {
         press_events(ctrl);
     }
     ctrl.__mx.pressed_state = true;
+
+    const setup_isomorphic = () => {
+        const old_silent = ctrl.view.data.model.mixins.silent;
+        ctrl.view.data.model.mixins.silent = true;
+        ctrl.view.data.model.mixins.push({
+            name: 'pressed-state'
+        });
+        ctrl.view.data.model.mixins.silent = old_silent;
+        //field(ctrl, 'dragable');
+    }
+    setup_isomorphic();
 
     // begin and end presses.
     //   have a 'pressed' state in the control as well.

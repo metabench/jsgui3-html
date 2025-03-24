@@ -23,29 +23,36 @@ const test_doc_html_generation = () => {
 
             // Make the example on the server for the moment.
 
-            /*
+            
 
-
-            const compose = () => {
-                const num_windows = 5;
-
-                let [x, y] = [0, 0];
-                for (let c = 1; c <= num_windows; c++) {
-                    const window = new controls.Window({
-                        context: context,
-                        title: c + ') jsgui3-html Window Control',
-                        pos: [x, y]
-                    })
-                    this.body.add(window);
-
-                    x += 32; y += 64;
+            const eg_composition = () => {
+                const compose = () => {
+                    const num_windows = 5;
+    
+                    let [x, y] = [0, 0];
+                    for (let c = 1; c <= num_windows; c++) {
+                        const window = new controls.Window({
+                            context: context,
+                            title: c + ') jsgui3-html Window Control',
+                            pos: [x, y]
+                        })
+                        this.body.add(window);
+    
+                        x += 32; y += 64;
+                    }
+    
                 }
+                if (!spec.el) {
+                    compose();
+                }
+            }
 
-            }
-            if (!spec.el) {
-                compose();
-            }
-            */
+            //eg_composition();
+
+
+
+            
+            
         }
     }
 
@@ -77,7 +84,7 @@ const test_doc_html_generation = () => {
 
 
 
-    const num_iterations = 256;
+    const num_iterations = 1024;
 
     let t1, t2, tdiff;
     t1 = Date.now();

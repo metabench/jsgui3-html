@@ -548,6 +548,8 @@ class Control extends Control_Core {
 						//each(mixins, mixin => {
 						//	this.view.data.model.mixins.push(mixin);
 
+						//console.log('o_mixins', o_mixins);
+
 						const old_silent = this.view.data.model.mixins.silent;
 
 						// .silently(cb) function could be one way to do these things.
@@ -559,15 +561,17 @@ class Control extends Control_Core {
 						each(o_mixins, (mixin) => {
 							const {name, options} = mixin;
 
+							const converted_name = name.replace(/-/g, '_');
+
 							//console.log('mixin', mixin);
 
-							//console.log('mixin name', name);
+							//console.log('mixin converted_name', converted_name);
 
 							// and run the mixin here???
 
 							this.view.data.model.mixins.push(mixin);
 
-							const the_mixin = this.context.mixins[name];
+							const the_mixin = this.context.mixins[converted_name];
 
 							//console.log('!!the_mixin', !!the_mixin);
 

@@ -245,6 +245,12 @@ class Control_Core extends Data_Object {
 		if (spec['class']) {
 			this.add_class(spec['class']);
 		}
+		if (spec['css_class']) {
+			this.add_class(spec['css_class']);
+		}
+		if (spec['cssClass']) {
+			this.add_class(spec['cssClass']);
+		}
 		if (spec.hide) {
 			this.hide();
 		}
