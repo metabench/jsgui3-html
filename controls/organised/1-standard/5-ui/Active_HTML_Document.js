@@ -1,4 +1,4 @@
-const jsgui = require('./html-core');
+const jsgui = require('../html-core/html-core');
 
 const {Blank_HTML_Document} = jsgui;
 

@@ -3,6 +3,7 @@
 
 
 const controls = {
+    Active_HTML_Document: require('./organised/1-standard/5-ui/Active_HTML_Document'),
     Arrow_Button: require('./organised/0-core/1-advanced/vector/arrow-button'),
     //Audio_Player: require('./audio-player'),
     Audio_Volume: require('./organised/1-standard/5-ui/audio-volume'),
