@@ -205,8 +205,20 @@ let press_events = (ctrl, options = {}) => {
         
     }
 
-
-    
+    // emit 'press-outside' when press ends outside the control
+    if (typeof window !== 'undefined' && ctrl.dom && ctrl.dom.el) {
+        ctrl.on('press-start', e_ps => {
+            const outsideHandler = e_pe => {
+                if (!ctrl.dom.el.contains(e_pe.target)) {
+                    ctrl.raise('press-outside', e_pe);
+                }
+                window.removeEventListener('mouseup', outsideHandler);
+                window.removeEventListener('touchend', outsideHandler);
+            };
+            window.addEventListener('mouseup', outsideHandler);
+            window.addEventListener('touchend', outsideHandler);
+        });
+    }
     
 }
 module.exports = press_events;

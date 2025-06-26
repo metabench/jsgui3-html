@@ -363,6 +363,9 @@ class Relative extends Control {
         super(spec);
     }
 }
+
+//jsgui.Active_HTML_Document = require('./Active_HTML_Document');
+
 jsgui.Control_Data = Control_Data;
 jsgui.Control_View = Control_View;
 jsgui.Relative = Relative;

@@ -11,6 +11,7 @@ jsgui.Resource.load_compiler = (name, jsfn, options) => {
     throw 'NYI';
 }
 jsgui.controls = jsgui.controls || {};
+jsgui.controls.Active_HTML_Document = jsgui.Active_HTML_Document = require('./html-core/Active_HTML_Document');
 Object.assign(jsgui.controls, require('./controls/controls'));
 Object.assign(jsgui, jsgui.controls);
 jsgui.mixins = jsgui.mx = require('./control_mixins/mx');

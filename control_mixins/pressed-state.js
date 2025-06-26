@@ -20,6 +20,8 @@ const {
 
 const press_events = require('./press-events');
 
+// a state / states mixin???
+
 const pressed_state = (ctrl, options = {}) => {
     //let once = options.one || options.once || false;
     //console.log('press_outside');
@@ -48,34 +50,19 @@ const pressed_state = (ctrl, options = {}) => {
     //     Want to get the specifics working well on a low level.
     //       Then make them easier to use on a high level.
 
+    // define 'state' field for pressed-state
     field(ctrl.view.data.model, 'state');
 
-    ctrl.on('press-start', e_ps => { 
-        //console.log('press-start e_ps', e_ps);
+    // handle press-start and press-end events
+    ctrl.on('press-start', () => { ctrl.view.data.model.state = 'pressed'; });
+    ctrl.on('press-end',   () => { ctrl.view.data.model.state = 'not-pressed'; });
 
-        // set its view state to pressed. css change will follow automatically.
-
-        ctrl.view.data.model.state = 'pressed';
-
-        //ctrl_dropdown_icon.add_class('pressed');
-    });
-    ctrl.on('press-end', e_pe => { 
-        //console.log('press-end e_pe', e_pe);
-
-        ctrl.view.data.model.state = 'not-pressed';
-
-        //ctrl_dropdown_icon.remove_class('pressed');
-    });
-
-    ctrl.view.data.model.on('change', e_change => {
-        //console.log('ctrl_dropdown_icon view data model change', e_change);
-        const {name, value} = e_change;
+    // toggle 'pressed' CSS class based on view state changes
+    ctrl.view.data.model.on('change', e => {
+        const { name, value } = e;
         if (name === 'state') {
-            if (value === 'pressed') {
-                ctrl.add_class('pressed');
-            } else if (value === 'not-pressed') {
-                ctrl.remove_class('pressed');
-            }
+            if (value === 'pressed') ctrl.add_class('pressed');
+            else                        ctrl.remove_class('pressed');
         }
     });
 

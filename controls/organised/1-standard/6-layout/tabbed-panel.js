@@ -65,12 +65,11 @@ class Tab_Group extends List {
     }
     compose_tab_group() {
         each(this.tab_names, tab_name => {
-            let tab = new Tab({
+            this.add(new Tab({
                 context: this.context,
                 name: tab_name,
                 group_name: this.__id
-            });
-            this.add(tab);
+            }));
         });
     }
 }
