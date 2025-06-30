@@ -17,6 +17,15 @@ var Control = jsgui.Control;
 // Look into more advanced data binding (to client-side objects).
 
 
+const view_model_spec = {
+    name: 'single_line',
+    version: '0.0.1',
+    type: 'control',
+    fields: {
+        number_of_lines: 1
+    }
+
+}
 
 class Single_Line extends Control {
     // fields... text, value, type?

@@ -10,20 +10,15 @@ const {
     field,
     prop
 } = require('obext');
-class Color_Grid extends Grid {
+class Color_Grid extends Control {
     constructor(spec) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'color_grid';
         super(spec);
         this.add_class('color-grid');
         this.internal_relative_div = true;
-
-        // Will mainly be the 'view' model.
-
         prop(this, 'palette', spec.palette);
-        //prop(this, 'grid_size', spec.grid_size || [12, 12]);
-
-
+        prop(this, 'grid_size', spec.grid_size || [12, 12]);
         if (!spec.abstract && !spec.el) {
             this.compose_color_palette_grid();
         }

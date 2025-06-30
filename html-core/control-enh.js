@@ -431,41 +431,6 @@ class Control extends Control_Core {
 				el.removeEventListener(event_name, outer_handler, false);
 			}
 		}
-		const old_way = () => {
-			var listener = this._bound_events[event_name];
-			let outer_handler;
-			const m = this.map_handlers_to_outer_handlers;
-			if (m) {
-				if (m.has(fn_handler)) {
-					outer_handler = m.get(fn_handler);
-				}
-			}
-			outer_handler = outer_handler || fn_handler;
-			var el = this.dom.el;
-			if (el) {
-				var t_listener = tof(listener);
-				let tfnh;
-				tfnh = fn_handler;
-				if (t_listener === 'array') {
-					let c_removed = 0;
-					each(listener, (listener) => {
-						if (listener === tfnh) {
-							el.removeEventListener(event_name, listener, false);
-							c_removed++;
-						}
-					});
-					if (c_removed === listener.length) {
-						this.map_raises_dom_events[event_name] = false;
-					}
-				} else {
-					let tfnh;
-					tfnh = fn_handler.event_inner || fn_handler;
-					if (listener === tfnh) {
-						el.removeEventListener(event_name, listener, false);
-					}
-				}
-			}
-		}
 	}
 	'remove_event_listener' () {
 		const a = arguments;

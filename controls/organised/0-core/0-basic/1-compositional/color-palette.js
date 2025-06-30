@@ -14,6 +14,12 @@ class Color_Palette extends Control {
         super(spec);
         this.add_class('color-palette');
         prop(this, 'palette', spec.palette || pal_crayola);
+
+
+        // Have this within the 'view model'.
+        //   The color palette itself would be in the data model, probably.
+
+
         prop(this, 'grid_size', spec.grid_size || [12, 12]);
         if (!spec.abstract && !spec.el) {
             this.compose_color_grid();

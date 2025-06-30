@@ -126,7 +126,7 @@ class Checkbox extends Control {
 
             // Changes upon becoming checked?
             html_check.on('change', e_change => {
-                //console.log('el_radio.checked', el_radio.checked);
+                console.log('el_radio.checked', el_radio.checked);
 
                 // Track the old values here? Could help the 'change' event.
 
@@ -136,6 +136,13 @@ class Checkbox extends Control {
                         value: el_checkbox.checked
                     });
                 //}
+
+                // But have it updated in the data model...?
+
+                // Specification of the data model and the view model as a pair and have the system work out how to sync them properly.
+                //   Define the data, define how the data model can vary, define how those variations can be displayed.
+                //     Then use that to create the view model, use that to create the view.
+
             });
 
             // Need to listen for DOM change events. That will chage the value.

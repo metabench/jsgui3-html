@@ -13,6 +13,13 @@ const {
 } = require('obext');
 const Cell = require('./Cell');
 const Grid_Cell = Cell;
+
+// Some kind of compositional spec being part of the view (data) model.
+// view.data.model.composition = ...
+
+
+
+
 class Grid extends Control {
     constructor(spec, add, make) {
         spec = spec || {};
@@ -30,6 +37,10 @@ class Grid extends Control {
         } else {
             this.composition_mode = 'divs'
         }
+
+        prop(this, 'grid_size', spec.grid_size || [12, 12]);
+
+        /*
         let _grid_size;
         Object.defineProperty(this, 'grid_size', {
             get() {
@@ -51,6 +62,7 @@ class Grid extends Control {
             }
         });
         if (spec.grid_size) _grid_size = spec.grid_size;
+        */
         field(this, 'cell_size');
         if (spec.cell_size) this.cell_size = spec.cell_size;
         field(this, 'column_headers', false);
@@ -96,6 +108,10 @@ class Grid extends Control {
             }
         });
     }
+
+    //  Have the size system set up within the 'view model'.
+
+
     'refresh_size'() {
         if (this.composition_mode === 'divs') {
             let [num_columns, num_rows] = this.grid_size;
@@ -257,6 +273,10 @@ class Grid extends Control {
                         o.data = data[y][x];
                     }
                     var cell = new Grid_Cell(o);
+                    cell.selectable = true;
+
+                    // saying the cells are selectable within this scope...?
+
                     if (cell_size) cell.size = cell_size;
                     row_container.add(cell);
                     arr_cells[x] = arr_cells[x] || [];
@@ -309,7 +329,7 @@ class Grid extends Control {
     'activate'() {
         if (!this.__active) {
             super.activate();
-            this.selection_scope = this.context.new_selection_scope(this);
+            this.selection_scope = this.selection_scope || this.context.new_selection_scope(this);
             var load_rows = () => {
                 var _arr_rows = this._arr_rows = [];
                 this.rows.content._arr.forEach((v) => {
@@ -323,9 +343,14 @@ class Grid extends Control {
                     });
                 });
             };
+
+            /*
             this.each_cell(cell => {
                 cell.activate();
-            })
+            });
+            */
+
+
         }
     }
 }

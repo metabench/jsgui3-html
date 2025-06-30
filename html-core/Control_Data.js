@@ -5,6 +5,10 @@ const {field, Data_Object, Data_Value, Evented_Class} = require('lang-tools');
 
 const Data = require('./Data');
 
+// Probably worth getting deep into making code that uses both view model and data model to run the GUI.
+//     View model can include multiple ways to display something.
+
+
 // The model needs to share context....
 
 // Or extend Data_Object here even???

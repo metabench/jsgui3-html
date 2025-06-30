@@ -9,6 +9,8 @@ const {each, is_array, is_def} = require('lang-mini');
 
 // server-pre-render event I think.
 
+// Being able to say a grid is selectable or has selectableness, ie the grid cells can be selected.
+
 const selectable = (ctrl, ctrl_handle, opts) => {
     const setup_isomorphic = () => {
         const old_silent = ctrl.view.data.model.mixins.silent;

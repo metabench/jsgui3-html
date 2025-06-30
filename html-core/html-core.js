@@ -6,7 +6,9 @@ const Control_Data = require('./Control_Data');
 const Control_View = require('./Control_View');
 const {parse_mount, parse} = require('./parse-mount');
 const {str_arr_mapify, get_a_sig, each, prop} = jsgui;
-const Control = jsgui.Control = require('./control-enh');
+//const Control = jsgui.Control = require('./control-enh');
+
+const Control = jsgui.Control = require('./Data_Model_View_Model_Control');
 jsgui.load_type('control', 'C', item => (item instanceof Control));
 const Evented_Class = jsgui.Evented_Class;
 var tof = jsgui.tof;
@@ -185,6 +187,8 @@ const activate = function (context) {
 jsgui.controls = jsgui.controls || {
     Control
 };
+
+// Maybe get rid of this, should work in abstract anyway.
 jsgui.controls.span = jsgui.span = class span extends Control {
     constructor(spec) {
         spec.__type_name = 'span';

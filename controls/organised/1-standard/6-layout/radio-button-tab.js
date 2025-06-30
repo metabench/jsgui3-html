@@ -21,30 +21,6 @@
     
     var group = jsgui.group;
     
-    // And the tab buttons act as radio buttons.
-    //  Having a JSGUI radio button replacement would be nice.
-    //   Could choose whether to render as a radio button and progressively enhance on the client...
-    //    Client-side enhancement of semantic HTML.
-    
-    //   Or render as it appears on the client?
-    //    Being able to handle both would be nicest.
-    //    Possibly radio buttons could have good styling on modern clients anyway?
-    //    May want them to look very different to normal radio buttons though, eg using them for tabs.
-    
-    
-    // RadioButtonGroup could be a useful Control as well.
-    //  May provide an easier interface that abstracts away from having to directly make some of the controls.
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     var fields = {
         'name': String,
         'text': String,
@@ -53,77 +29,11 @@
     };
     
 
-    // Make it extend Radio_Button?
-
-    // 
-
-    // Would be nice to integrate this within the .data.model and .view.data.model, .view.ui.data.model.
-    //   
-
-    //   view.ui.data.model about how it's presented.
-
-
-    //   view.data.model about the data that's represented (not necessarily all the data that's presented) ???
-
-
-    // view.data.model should hold / represent all the data that's being presented?
-    //  eg in a list of options, including all the options being presented???
-    // and .data.model also including all the options being presented?
-
-    // data.model.options.values = ....
-    // data.model.value ???
-    // .selected.value ???
-    // .selected.data.model.value ???
-    // .view.ui.selected.data.model.value ???
-    // .view.ui.selected.value???
-    // .view.ui.data.model.selected.value ????
-
-    // And the value selected in the UI will represent the .data.model.value in some / many cases.
-    //   So when something gets selected, the data.model.value needs to be changed to the ctrl.view.ui.selected.data.model.value.
-
-    // Could make this fit in with most of the existing higher level API.
-    //   Would also provide more / better places for different abstractions to have clearly defined rules that both
-    //   react to changes to other abstractions (data models for the moment) and also will change values in those other
-    //   abstractions when values change.
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     class Radio_Button_Tab extends Control {
-        // panel name?
-    
-        // could have a title field.
-    
-        // Items field could be an array.
-    
-        // maybe add before make would be better. add will probably be used more.
         constructor(spec, add, make) {
     
     
             super(spec);
-    
-            // Will have set up some fields.
-            //  However, will not be directly using a Field_Collection.
-            //   Though perhaps that would help with keeping the ordering of the fields.
-            //   Currently we are just treating ._ as holding all fields.
-            //    Though not everything in there need be considered a field or set up as one.
-    
-    
-    
     
             this.__type_name = 'radio_button';
     

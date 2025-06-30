@@ -14,6 +14,16 @@ const {Control} = jsgui;
 // Worth having a 'text' property.
 //  Use oext.
 
+const view_model_spec = {
+    name: 'search_bar',
+    version: '0.0.1',
+    type: 'control',
+    fields: {
+        number_of_lines: 1
+    },
+    actions: ['search']
+}
+
 // Will support rapid lookups.
 //  Results will not be part of this right now though.
 
@@ -114,5 +124,7 @@ class Search_Bar extends Control {
         
     }
 }
+
+Search_Bar.prototype.view_model_spec = view_model_spec;
 
 module.exports = Search_Bar;

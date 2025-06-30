@@ -27,6 +27,7 @@ const Control_Validation = require('../html-core/Control_Validation');
 
 const model_data_view_compositional_representation = (ctrl, options = {}) => {
     const {data} = options;
+    ctrl.using_model_data_view_compositional_representation = true;
     const verify_ctrl_conditions = (ctrl) => {
         if (ctrl.data !== undefined) return false;
         if (ctrl.view !== undefined) return false;
