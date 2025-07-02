@@ -207,7 +207,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
         }
 
-        console.log('Data_Model_View_Model_Control !!this.dom.el', !!this.dom.el);
+        //console.log('Data_Model_View_Model_Control !!this.dom.el', !!this.dom.el);
 
         if (this.dom.el) {
 
@@ -220,19 +220,19 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
             if (this.dom.el.hasAttribute('data-jsgui-data-model')) {
                 const data_model_jsgui_id = this.dom.el.getAttribute('data-jsgui-data-model');
 
-                console.log('Data_Model_View_Model_Control data_model_jsgui_id:', data_model_jsgui_id);
+                //console.log('Data_Model_View_Model_Control data_model_jsgui_id:', data_model_jsgui_id);
 
                 const data_model = this.context.map_controls[data_model_jsgui_id];
 
-                console.log('Data_Model_View_Model_Control !!data_model', !!data_model);
+                //console.log('Data_Model_View_Model_Control !!data_model', !!data_model);
 
                 if (data_model) {
                     this.data = this.data || new Control_Data({context});
 
-                    console.log('Data_Model_View_Model_Control pre assign this.data.model');
-                    console.log('data_model', data_model);
+                    //console.log('Data_Model_View_Model_Control pre assign this.data.model');
+                    //console.log('data_model', data_model);
                     this.data.model = data_model;
-                    console.log('post assign this.data.model\n');
+                    //console.log('post assign this.data.model\n');
                 }
 
                 
@@ -244,7 +244,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
                 data_model.on('change', e => {
-                    console.log('Data_Model_View_Model_Control data_model change', e);
+                    //console.log('Data_Model_View_Model_Control data_model change', e);
                 })
             }
 
@@ -258,7 +258,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                 this.view = this.view || new Control_View({context});
                 const view_model_jsgui_id = this.dom.el.getAttribute('data-jsgui-view-model');
 
-                console.log('Data_Model_View_Model_Control view_model_jsgui_id:', view_model_jsgui_id);
+                //console.log('Data_Model_View_Model_Control view_model_jsgui_id:', view_model_jsgui_id);
 
                 // then get it from the context.
 
@@ -268,10 +268,10 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                     this.view.model = view_model;
 
                     view_model.on('change', e => {
-                        console.log('Data_Model_View_Model_Control view_model change', e);
+                        //console.log('Data_Model_View_Model_Control view_model change', e);
                     });
                 } else {
-                    console.log('Data_Model_View_Model_Control missing view_model (not found at this.context.map_controls[view_model_jsgui_id])');
+                    //console.log('Data_Model_View_Model_Control missing view_model (not found at this.context.map_controls[view_model_jsgui_id])');
                 }
 
                 
@@ -291,7 +291,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
             } else {
-                console.log('Data_Model_View_Model_Control with el lacks view model, need to make one');
+                //console.log('Data_Model_View_Model_Control with el lacks view model, need to make one');
                 this.view = this.view || {};
                 this.view.model = new Data_Object({
                     context
