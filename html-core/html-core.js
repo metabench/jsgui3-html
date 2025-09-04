@@ -258,7 +258,7 @@ class String_Control extends Control {
 }
 jsgui.pre_activate = pre_activate;
 jsgui.activate = activate;
-core_extension('html head title body div select option h1 h2 h3 h4 h5 h6 label p a script link button form textarea img ul li audio video table tr td caption thead colgroup col svg defs marker polygon line section code samp');
+core_extension('html head title body div select option h1 h2 h3 h4 h5 h6 label p a script link button form textarea img ul li audio video table tr td caption thead colgroup col svg defs marker polygon line section code samp canvas');
 core_extension_no_closing_tag('link input meta');
 class HTML_Document extends jsgui.Control {
     constructor(spec = {}) {
