@@ -20,6 +20,7 @@ const controls = {
     // Not using (data-)connected controls.
     //Data_Grid: require('./connected/data-grid'),
     File_Upload: require('./organised/0-core/0-basic/0-native-compositional/file-upload'),
+    Form_Field: require('./organised/1-standard/1-editor/form_field'),
     // maybe 0-basic/0-layout?
     //  A layout control may be / need to be displayed a little differently.
     Grid: require('./organised/0-core/0-basic/1-compositional/grid'),
@@ -54,6 +55,7 @@ const controls = {
     //Object_Editor: require('./editor/object'),
     Panel: require('./organised/1-standard/6-layout/panel'),
     Plus_Minus_Toggle_Button: require('./organised/0-core/0-basic/1-compositional/plus-minus-toggle-button'),
+    Property_Editor: require('./organised/1-standard/1-editor/property_editor'),
     // More advanced functionality - may require more work to keep it with the right APIs.
     Popup_Menu_Button: require('./organised/0-core/1-advanced/popup-menu-button'),
     Radio_Button: require('./organised/0-core/0-basic/0-native-compositional/radio-button'),
@@ -77,6 +79,7 @@ const controls = {
     Title_Bar: require('./organised/1-standard/6-layout//title-bar'),
     Titled_Panel: require('./organised/1-standard/6-layout/titled-panel'),
     Toggle_Button: require('./organised/0-core/0-basic/1-compositional/toggle-button'),
+    Toolbar: require('./organised/1-standard/5-ui/Toolbar'),
     Toolbox: require('./organised/1-standard/5-ui/toolbox'),
     Tree: require('./organised/1-standard/5-ui/tree'),
     Tree_Node: require('./organised/1-standard/5-ui/tree-node'),

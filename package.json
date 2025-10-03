@@ -5,15 +5,16 @@
   "dependencies": {
     "fnl": "^0.0.36",
     "htmlparser": "^1.7.7",
-    "lang-tools": "^0.0.36",
     "jsgui3-gfx-core": "^0.0.23",
+    "lang-tools": "^0.0.36",
     "obext": "^0.0.31",
     "url-parse": "^1.5.10"
   },
   "depNotes": {
-    "lang-tools": ["Will upgrade lang-tools so that it can have compilers loaded into it.?????2023???? ",
-                    "Compiler dependency would be within the server or app.",
-                    "Have it very lightweight actually within lang-tools"
+    "lang-tools": [
+      "Will upgrade lang-tools so that it can have compilers loaded into it.?????2023???? ",
+      "Compiler dependency would be within the server or app.",
+      "Have it very lightweight actually within lang-tools"
     ]
   },
   "removedDeps": {
@@ -23,7 +24,6 @@
   "notes": [
     "Not so sure on the lang-tools dependency.",
     "Want a way to integrate compilers easily both at server/app level and point of use.",
-
     "Making a jsgui3-html-core module would help / be the way. It would include ways to load more controls and then there will still be jsgui3-html"
   ],
   "engines": {
@@ -37,7 +37,8 @@
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
   "devDependencies": {
-    "esbuild": "^0.25.10"
+    "esbuild": "^0.25.10",
+    "jsgui3-server": "^0.0.134"
   },
-  "version": "0.0.167"
+  "version": "0.0.168"
 }

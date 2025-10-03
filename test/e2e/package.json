@@ -1,0 +1,16 @@
+{
+  "name": "jsgui3-html-e2e-tests",
+  "version": "1.0.0",
+  "description": "E2E test suite for jsgui3-html dev-examples",
+  "scripts": {
+    "test:e2e": "mocha **/*.test.js --timeout 30000 --exit",
+    "test:e2e:counter": "mocha counter.test.js --timeout 30000 --exit",
+    "test:e2e:user-form": "mocha user-form.test.js --timeout 30000 --exit",
+    "test:e2e:watch": "mocha **/*.test.js --watch --timeout 30000"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "chai": "^4.3.0",
+    "puppeteer": "^21.0.0"
+  }
+}

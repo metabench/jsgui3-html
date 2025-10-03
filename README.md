@@ -1513,10 +1513,48 @@ class SecureForm extends Control {
 For detailed information and quick starts:
 
 - **[EXAMPLES_AND_TESTS.md](EXAMPLES_AND_TESTS.md)** - Quick start guide for developers and AI agents
-- **[examples/README.md](examples/README.md)** - Complete examples documentation with patterns
+- **[examples/README.md](examples/README.md)** - Standalone examples (Node.js only, no server)
+- **[dev-examples/README.md](dev-examples/README.md)** - Server-integrated examples (with jsgui3-server)
+- **[dev-examples/DEVELOPMENT_EXAMPLES_SUMMARY.md](dev-examples/DEVELOPMENT_EXAMPLES_SUMMARY.md)** - ⭐ NEW: Enhanced examples with WYSIWYG form builder, history management, and new reusable controls
+- **[DEV_EXAMPLES_SUMMARY.md](DEV_EXAMPLES_SUMMARY.md)** - Summary of isomorphic patterns and examples
 - **[test/README.md](test/README.md)** - Testing guide and best practices
 - **[html-core/DATA_BINDING.md](html-core/DATA_BINDING.md)** - Complete data binding API reference
 - **[MVVM.md](MVVM.md)** - MVVM architecture analysis and enhancements
+
+### New in Dev Examples
+
+The dev-examples directory now includes three comprehensive examples:
+
+1. **Enhanced Counter** (`dev-examples/binding/counter/`) - ⭐ ENHANCED
+   - Undo/Redo with 50-item history
+   - Keyboard shortcuts (↑/↓, R, Ctrl+Z/Y)
+   - localStorage persistence
+   - Smooth animations
+   - Server-side rendering + client hydration
+
+2. **User Form** (`dev-examples/binding/user-form/`)
+   - Complex validation patterns
+   - Async server-side validation
+   - Email blacklist checking
+   - API endpoint integration
+
+3. **WYSIWYG Form Builder** (`dev-examples/wysiwyg-form-builder/`) - ⭐ NEW (WIP)
+   - Visual form building interface
+   - 9 field types (text, email, password, number, phone, url, textarea, select, checkbox)
+   - Real-time property editing
+   - Edit/Preview mode toggle
+   - JSON export/import
+   - localStorage auto-save
+
+### New Reusable Controls
+
+Three new controls added to the framework:
+
+- **`FormField`** - Composite control combining label + input + validation indicator
+- **`Toolbar`** - Flexible button container with icons, tooltips, separators
+- **`PropertyEditor`** - Dynamic property editing panel that adapts to item type
+
+All available via: `const { FormField, Toolbar, PropertyEditor } = require('jsgui3-html');`
 
 ## Contributing
 
