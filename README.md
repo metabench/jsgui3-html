@@ -1508,6 +1508,16 @@ class SecureForm extends Control {
 }
 ```
 
+## Quick Reference Guides
+
+For detailed information and quick starts:
+
+- **[EXAMPLES_AND_TESTS.md](EXAMPLES_AND_TESTS.md)** - Quick start guide for developers and AI agents
+- **[examples/README.md](examples/README.md)** - Complete examples documentation with patterns
+- **[test/README.md](test/README.md)** - Testing guide and best practices
+- **[html-core/DATA_BINDING.md](html-core/DATA_BINDING.md)** - Complete data binding API reference
+- **[MVVM.md](MVVM.md)** - MVVM architecture analysis and enhancements
+
 ## Contributing
 
 ### Development Setup
@@ -1519,8 +1529,16 @@ cd jsgui3-html
 # Install dependencies
 npm install
 
-# Run tests
+# Install test dependencies
+cd test && npm install
+
+# Run all tests
 npm test
+
+# Run specific test suites
+npm run test:core          # Core control tests
+npm run test:mvvm          # MVVM and binding tests
+npm run test:integration   # Integration tests
 
 # Run linter
 npm run lint

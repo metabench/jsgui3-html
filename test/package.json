@@ -1,0 +1,39 @@
+{
+  "name": "jsgui3-html-tests",
+  "version": "1.0.0",
+  "description": "Test suite for jsgui3-html framework",
+  "scripts": {
+    "test": "mocha test/**/*.test.js --timeout 5000",
+    "test:watch": "mocha test/**/*.test.js --watch",
+    "test:core": "mocha test/core/**/*.test.js",
+    "test:mvvm": "mocha test/mvvm/**/*.test.js",
+    "test:mixins": "mocha test/mixins/**/*.test.js",
+    "test:integration": "mocha test/integration/**/*.test.js",
+    "test:coverage": "nyc mocha test/**/*.test.js"
+  },
+  "devDependencies": {
+    "mocha": "^10.0.0",
+    "chai": "^4.3.0",
+    "sinon": "^15.0.0",
+    "nyc": "^15.1.0",
+    "jsdom": "^22.0.0"
+  },
+  "mocha": {
+    "require": ["test/setup.js"],
+    "recursive": true,
+    "colors": true
+  },
+  "nyc": {
+    "reporter": ["text", "html", "lcov"],
+    "include": [
+      "html-core/**/*.js",
+      "controls/**/*.js",
+      "control_mixins/**/*.js"
+    ],
+    "exclude": [
+      "test/**",
+      "examples/**",
+      "docs/**"
+    ]
+  }
+}

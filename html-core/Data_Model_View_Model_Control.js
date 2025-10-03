@@ -2,6 +2,8 @@
 const Ctrl_Enh = require('./control-enh');
 
 const {Data_Object} = require('lang-tools');
+const {ModelBinder, ComputedProperty, PropertyWatcher, BindingManager} = require('./ModelBinder');
+const {Transformations, Validators} = require('./Transformations');
 
 // Quite a lot of the standard controls should become this.
 //   It should provide mechanisms for the app to efficiently process and pass on updates at the various different stages.
@@ -87,6 +89,9 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         super(...a);
 
         const spec = a[0] || {};
+        
+        // Initialize binding manager
+        this._binding_manager = new BindingManager(this);
         // Possibly set up both models here, but should look out for data and view models in the spec.
 
         // Also, look out for it in pre_activate I think. Would be good to reconnect those models here.
@@ -321,6 +326,102 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         // should be able to access own data_model???
 
 
+    }
+    
+    /**
+     * Create a binding between data model and view model
+     * @param {Object} bindings - Property binding definitions
+     * @param {Object} options - Binding options
+     * @example
+     * this.bind({
+     *     'date': {
+     *         to: 'formattedDate',
+     *         transform: (date) => formatDate(date, 'YYYY-MM-DD'),
+     *         reverse: (str) => parseDate(str)
+     *     }
+     * });
+     */
+    bind(bindings, options = {}) {
+        if (!this.data || !this.data.model) {
+            console.warn('Data_Model_View_Model_Control.bind: No data.model available');
+            return null;
+        }
+        
+        if (!this.view || !this.view.data || !this.view.data.model) {
+            console.warn('Data_Model_View_Model_Control.bind: No view.data.model available');
+            return null;
+        }
+        
+        return this._binding_manager.bind(
+            this.data.model,
+            this.view.data.model,
+            bindings,
+            options
+        );
+    }
+    
+    /**
+     * Create a computed property on a model
+     * @param {Object} model - Target model (data.model or view.data.model)
+     * @param {Array|string} dependencies - Property names to watch
+     * @param {Function} computeFn - Function to compute the value
+     * @param {Object} options - Options including propertyName
+     * @example
+     * this.computed(this.view.data.model, ['firstName', 'lastName'], 
+     *     (first, last) => `${first} ${last}`,
+     *     { propertyName: 'fullName' }
+     * );
+     */
+    computed(model, dependencies, computeFn, options = {}) {
+        return this._binding_manager.createComputed(model, dependencies, computeFn, options);
+    }
+    
+    /**
+     * Watch a property for changes
+     * @param {Object} model - Model to watch
+     * @param {string} property - Property name to watch
+     * @param {Function} callback - Callback function (newVal, oldVal) => void
+     * @param {Object} options - Watch options
+     * @example
+     * this.watch(this.data.model, 'selectedItem', (newVal, oldVal) => {
+     *     console.log('Selection changed:', oldVal, '→', newVal);
+     * });
+     */
+    watch(model, property, callback, options = {}) {
+        return this._binding_manager.watch(model, property, callback, options);
+    }
+    
+    /**
+     * Get transformations library
+     */
+    get transforms() {
+        return Transformations;
+    }
+    
+    /**
+     * Get validators library
+     */
+    get validators() {
+        return Validators;
+    }
+    
+    /**
+     * Inspect all bindings for debugging
+     */
+    inspectBindings() {
+        return this._binding_manager.inspect();
+    }
+    
+    /**
+     * Cleanup bindings when control is destroyed
+     */
+    destroy() {
+        if (this._binding_manager) {
+            this._binding_manager.cleanup();
+        }
+        if (super.destroy) {
+            super.destroy();
+        }
     }
 }
 
