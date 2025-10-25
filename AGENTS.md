@@ -205,6 +205,11 @@ const controls = {
 module.exports = controls;
 ```
 
+## Vendor Dependencies
+
+- Treat everything under `node_modules/` as read-only. Do not edit files in installed packages.
+- Fix dependency issues by updating package versions, contributing upstream patches, or adding overrides, not by modifying vendor files directly.
+
 ## Testing Guidelines
 
 ### E2E Tests with Puppeteer

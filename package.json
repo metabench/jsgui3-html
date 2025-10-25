@@ -3,10 +3,10 @@
   "main": "html.js",
   "license": "MIT",
   "dependencies": {
-    "fnl": "^0.0.36",
+    "fnl": "^0.0.37",
     "htmlparser": "^1.7.7",
     "jsgui3-gfx-core": "^0.0.23",
-    "lang-tools": "^0.0.36",
+    "lang-tools": "^0.0.39",
     "obext": "^0.0.31",
     "url-parse": "^1.5.10"
   },
@@ -37,8 +37,8 @@
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
   "devDependencies": {
-    "esbuild": "^0.25.10",
-    "jsgui3-server": "^0.0.134"
+    "esbuild": "^0.25.11",
+    "jsgui3-server": "^0.0.138"
   },
-  "version": "0.0.168"
+  "version": "0.0.169"
 }

@@ -641,17 +641,42 @@ class FormBuilder extends Data_Model_View_Model_Control {
 /**
  * Demo UI wrapper
  */
-class Demo_UI extends Control {
-    constructor(options) {
-        super(options);
+class Demo_UI extends Active_HTML_Document {
+    constructor(spec = {}) {
+        spec.__type_name = spec.__type_name || 'wysiwyg_demo_ui';
+        super(spec);
         
         const { context } = this;
-        
-        this.add_class('wysiwyg-demo');
-        
-        // Create form builder
-        this.formBuilder = new FormBuilder({ context });
-        this.add(this.formBuilder);
+
+        if (typeof this.body.add_class === 'function') {
+            this.body.add_class('wysiwyg-body');
+        }
+
+        if (!spec.el) {
+            if (this.head) {
+                const title = new Control({ context, tag_name: 'title' });
+                title.add('WYSIWYG Form Builder');
+                this.head.add(title);
+            }
+
+            const container = new Control({ context, tag_name: 'div' });
+            container.add_class('wysiwyg-demo');
+
+            this.formBuilder = new FormBuilder({ context });
+            container.add(this.formBuilder);
+
+            if (this.body) {
+                this.body.add(container);
+            } else {
+                this.add(container);
+            }
+        }
+    }
+
+    activate() {
+        if (!this.__active) {
+            super.activate();
+        }
     }
 }
 

@@ -1,14 +1,13 @@
 /**
- * WYSIWYG Form Builder - Server
- * 
- * Demonstrates server-side rendering of a complex interactive application
+ * Rich Text Editor Demo Server
  */
+
 const net = require('node:net');
 const { Server } = require('jsgui3-server');
 const { Demo_UI } = require('./client');
 
 const HOST = '127.0.0.1';
-const DEFAULT_PORT = parseInt(process.env.PORT || '52002', 10);
+const DEFAULT_PORT = parseInt(process.env.PORT || '52010', 10);
 const MAX_PORT_PROBES = 10;
 const EXPIRY_MS = parseInt(process.env.EXPIRY_MS || '0', 10);
 
@@ -36,7 +35,7 @@ if (router && typeof router.on === 'function') {
     });
 }
 
-console.log('Preparing server...');
+console.log('Preparing Rich Text Editor demo...');
 console.log('Building client bundle...');
 
 server.on('ready', async () => {
@@ -126,26 +125,29 @@ function can_listen(port, host) {
 function print_instructions(port) {
     console.log('');
     console.log('================================================');
-    console.log('🎨 WYSIWYG Form Builder Started');
+    console.log('📝 Rich Text Editor Demo Started');
     console.log('================================================');
     console.log('');
     console.log('Open your browser to:');
     console.log(`  http://${HOST}:${port}`);
     console.log('');
     console.log('Features:');
-    console.log('  • Click field types to add them to your form');
-    console.log('  • Click fields to edit their properties');
-    console.log('  • Use ↑ ↓ buttons to reorder fields');
-    console.log('  • Toggle Preview mode to see the live form');
-    console.log('  • Export/Import JSON form definitions');
-    console.log('  • Auto-saves to localStorage');
+    console.log('  • Bold, Italic, Underline formatting');
+    console.log('  • Ordered and unordered lists');
+    console.log('  • Hyperlink insertion');
+    console.log('  • Clear formatting');
+    console.log('  • Clean paste (strips formatting)');
+    console.log('  • Keyboard shortcuts (Ctrl+B, Ctrl+I, Ctrl+U)');
+    console.log('  • HTML output with sanitization');
+    console.log('  • Character/word count');
+    console.log('  • Read-only mode toggle');
     console.log('');
-    console.log('Try building a form:');
-    console.log('  1. Click "Text Input" to add a field');
-    console.log('  2. Edit its label and properties');
-    console.log('  3. Add more fields (email, password, etc.)');
-    console.log('  4. Click Preview to see the rendered form');
-    console.log('  5. Export to save your form as JSON');
+    console.log('Try it out:');
+    console.log('  1. Type some text in the editor');
+    console.log('  2. Select text and click formatting buttons');
+    console.log('  3. Watch the HTML output update live');
+    console.log('  4. Click "Get HTML" to see full markup');
+    console.log('  5. Toggle read-only to disable editing');
     console.log('');
     console.log('Press Ctrl+C to stop the server');
     console.log('================================================');

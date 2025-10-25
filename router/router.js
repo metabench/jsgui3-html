@@ -26,10 +26,34 @@ var get_item_sig = jsgui.get_item_sig;
 
 const Routing_Tree = require('./routing-tree');
 
+const default_logger = (level, message, meta) => {
+    const log_meta = meta && Object.keys(meta).length ? meta : undefined;
+    if (level === 'error' && console.error) {
+        console.error('[router]', message, log_meta || '');
+    } else if (level === 'warn' && console.warn) {
+        console.warn('[router]', message, log_meta || '');
+    } else if (console.log) {
+        console.log('[router]', message, log_meta || '');
+    }
+};
+
+const default_not_found_handler = (req, res) => {
+    if (res) {
+        if (typeof res.statusCode === 'number') {
+            res.statusCode = res.statusCode && res.statusCode !== 200 ? res.statusCode : 404;
+        }
+        if (typeof res.setHeader === 'function' && !res.headersSent) {
+            res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        }
+        if (typeof res.end === 'function' && !res.writableEnded) {
+            res.end('Not Found');
+        }
+    }
+};
+
 class Router {
     constructor(spec) {
         spec = spec || {};
-        //super(spec);
         //this.set('type_levels', ['router']);
         if (spec.name) {
             this.name = spec.name;
@@ -37,6 +61,66 @@ class Router {
             this.name = 'Router';
         }
         this.routing_tree = new Routing_Tree();
+        this.logger = spec.logger || default_logger;
+        this.handle_not_found_fn = spec.handle_not_found || default_not_found_handler;
+        this.handle_error_fn = spec.handle_error;
+        this._listeners = new Map();
+    }
+    on(event_name, handler) {
+        if (!handler) return this;
+        let set_listeners = this._listeners.get(event_name);
+        if (!set_listeners) {
+            set_listeners = new Set();
+            this._listeners.set(event_name, set_listeners);
+        }
+        set_listeners.add(handler);
+        return this;
+    }
+    off(event_name, handler) {
+        if (!handler) return this;
+        const set_listeners = this._listeners.get(event_name);
+        if (set_listeners) {
+            set_listeners.delete(handler);
+            if (set_listeners.size === 0) {
+                this._listeners.delete(event_name);
+            }
+        }
+        return this;
+    }
+    emit(event_name, ...args) {
+        const set_listeners = this._listeners.get(event_name);
+        if (!set_listeners || set_listeners.size === 0) return false;
+        for (const listener of Array.from(set_listeners)) {
+            try {
+                listener(...args);
+            } catch (err) {
+                this._log('error', 'router_listener_error', {
+                    event: event_name,
+                    error: err
+                });
+            }
+        }
+        return true;
+    }
+    _log(level, message, meta) {
+        if (this.logger) {
+            try {
+                this.logger(level, message, meta || {});
+            } catch (err) {
+                if (console && console.error) {
+                    console.error('[router] logger error', err);
+                }
+            }
+        }
+    }
+    set_logger(fn_logger) {
+        this.logger = fn_logger || default_logger;
+    }
+    set_not_found_handler(fn_handler) {
+        this.handle_not_found_fn = fn_handler || default_not_found_handler;
+    }
+    set_error_handler(fn_handler) {
+        this.handle_error_fn = fn_handler;
     }
     'start'(callback) {
         callback(null, true);
@@ -45,165 +129,168 @@ class Router {
         //var rt = this.get('routing_tree');
 
         // Routing tree not properly setting routes beginning with '/'?
-        console.log('pre routing tree set route:', str_route);
+        this._log('debug', 'set_route', {
+            route: str_route
+        });
         return this.routing_tree.set(str_route, context, fn_handler);
     }
     'meets_requirements'() {
         return true;
+    }
+    _invoke_handler(handler, context, req, res, params, result) {
+        try {
+            if (params && typeof params === 'object') {
+                req.params = params;
+            }
+            if (context) {
+                handler.call(context, req, res);
+            } else {
+                handler(req, res);
+            }
+            result.handled = true;
+            result.params = params;
+        } catch (err) {
+            result.handled = true;
+            result.params = params;
+            result.handlerError = err;
+            this._log('error', 'handler_error', {
+                url: req && req.url,
+                error: err,
+                params
+            });
+            this.emit('error', err, {
+                req,
+                res,
+                params,
+                handler
+            });
+            if (this.handle_error_fn) {
+                try {
+                    this.handle_error_fn(err, req, res, params);
+                } catch (secondary_err) {
+                    this._log('error', 'error_handler_failure', {
+                        url: req && req.url,
+                        error: secondary_err
+                    });
+                    this.emit('error', secondary_err, {
+                        req,
+                        res,
+                        params,
+                        handler: this.handle_error_fn,
+                        stage: 'error-handler'
+                    });
+                }
+            }
+        }
+    }
+    _handle_not_found(req, res, meta, result) {
+        const details = Object.assign({
+            url: req && req.url
+        }, meta || {});
+        this._log('warn', 'route_not_found', details);
+        this.emit('not-found', {
+            req,
+            res,
+            meta: details
+        });
+        if (this.handle_not_found_fn) {
+            try {
+                this.handle_not_found_fn(req, res);
+            } catch (err) {
+                result.handlerError = err;
+                this._log('error', 'not_found_handler_error', {
+                    url: req && req.url,
+                    error: err
+                });
+                this.emit('error', err, {
+                    req,
+                    res,
+                    stage: 'not-found'
+                });
+            }
+        }
     }
     get arr_paths() {
         return this.routing_tree.arr_paths;
     }
     'process'(req, res) {
 
-        // Want to be able to pass things got from the router such as wildcard_value
+        const result = {
+            handled: false,
+            params: undefined,
+            handlerError: undefined
+        };
 
-        //console.log('jsgui3-html router processing request');
-        //console.log('');
-        //console.log('req.url', req.url);
-        //console.log('');
-
-        // hmmm... maybe could have already extracted req.url.
-        
-
-
-        //var remoteAddress = req.connection.remoteAddress;
-        //var rt = this.get('routing_tree');
         var rt = this.routing_tree;
 
-        //console.log('process rt', rt);
         let parsed_url;
         try {
             parsed_url = url(req.url, true);
         } catch (err) {
-            console.log('error parsing url', req.url);
+            this._log('error', 'url_parse_error', {
+                url: req && req.url,
+                error: err
+            });
+            result.handlerError = err;
+            this.emit('error', err, {
+                req,
+                res,
+                stage: 'url-parse'
+            });
+            return result;
         }
 
-        if (parsed_url) {
-            //console.log('parsed_url', parsed_url);
-            var splitPath = parsed_url.pathname.substr(1).split('/');
-            //console.log('splitPath', splitPath);
-
-            //console.log('pre rt.get(url) req.url', req.url);
-
-            var route_res = rt.get(req.url);
-
-            //console.log('!!route_res', !!route_res);
-
-
-            //console.log('route_res', route_res);
-
-
-            var processor_values_pair;
-            var t_handler;
-
-            ///console.log('Object.keys(route_res)', Object.keys(route_res));
-
-            //console.log('(route_res)', (route_res));
-
-            if (tof(route_res) === 'array') {
-
-
-
-                processor_values_pair = route_res;
-                var context, handler, params;
-
-                //console.log('route_res.length', route_res.length);
-
-                if (route_res.length === 2) {
-
-                    // Maybe is not a Data_Object....
-
-                    var rr_sig = get_item_sig(route_res, 1);
-
-                    //console.log('rr_sig', rr_sig);
-
-                    // Maybe just need the context and handler.
-                    //   Though having the router able to extract params would help a lot.
-                    //   
-
-
-                    if (rr_sig == '[D,f]') {
-                        context = processor_values_pair[0];
-                        handler = processor_values_pair[1];
-                    } else if (rr_sig == '[f,o]') {
-                        handler = processor_values_pair[0];
-                        params = processor_values_pair[1];
-                    } else if (rr_sig == '[o,f]') {
-                        context = processor_values_pair[0];
-                        handler = processor_values_pair[1];
-
-                        //console.log('params', params);
-
-                    }
-                }
-                if (route_res.length === 3) {
-                    context = processor_values_pair[0];
-                    handler = processor_values_pair[1];
-                    params = processor_values_pair[2];
-                }
-                if (params) req.params = params;
-
-                //console.log('context', context);
-                //console.log('handler', handler);
-                //console.log('params', params);
-
-                if (context) {
-                    handler.call(context, req, res);
-                } else {
-                    t_handler = typeof handler;
-                    //  The handler type being wrong....?
-
-                    if (typeof handler === 'function') {
-                        handler(req, res);
-                    } else {
-                        if (t_handler === 'undefined') {
-                            // Got this when some were trying to hack me.
-                            //  Any .php is a hack attempt.
-                            let their_ip = req.connection.remoteAddress;
-                            let last_part = splitPath[splitPath.length - 1];
-                            //console.log('last_part', last_part);
-                            if (last_part.indexOf('.php') > -1) {
-                                // looks like a hack attempt
-                            }
-                            console.log('1) no defined route result ', their_ip.padEnd(16, ' '), splitPath);
-
-                            console.log('req.url', req.url);
-                            console.log('parsed_url', parsed_url);
-
-                            // Some kind of 404 handler makes sense.
-                            return false;
-                        } else {
-                            // handler may be undefined.
-                            console.log('handler', handler);
-                            throw 'Expected handler to be a function';
-                        }
-                    }
-                }
-            } else if (tof(route_res) === 'function') {
-                if (context) {
-                    route_res.call(context, req, res);
-                } else {
-                    // call the function... but maybe it's best / necessary to include the context.
-                    //  call using the context when it exists, within the wildcard handler.
-                    route_res(req, res);
-                }
-            } else if (tof(route_res) === 'undefined') {
-
-
-
-                console.log('2) no defined route result', splitPath);
-                return false;
-            }
-            if (processor_values_pair) {
-
-            }
-            return true;
-        } else {
-            return false;
+        if (!parsed_url) {
+            return result;
         }
-        //var 
-        //console.log('parsed_url', parsed_url);
+
+        var route_res = rt.get(req.url);
+        var handler;
+        var context;
+        var params;
+
+        var route_type = tof(route_res);
+
+        if (route_type === 'array') {
+            var rr_sig = get_item_sig(route_res, 1);
+            if (route_res.length === 3) {
+                context = route_res[0];
+                handler = route_res[1];
+                params = route_res[2];
+            } else if (rr_sig == '[D,f]') {
+                context = route_res[0];
+                handler = route_res[1];
+            } else if (rr_sig == '[f,o]') {
+                handler = route_res[0];
+                params = route_res[1];
+            } else if (rr_sig == '[o,f]') {
+                context = route_res[0];
+                handler = route_res[1];
+            } else if (route_res.length === 2 && typeof route_res[0] === 'function' && tof(route_res[1]) === 'object') {
+                handler = route_res[0];
+                params = route_res[1];
+            }
+        } else if (route_type === 'function') {
+            handler = route_res;
+        } else if (route_type === 'object' && route_res) {
+            if (typeof route_res.handler === 'function') {
+                handler = route_res.handler;
+                context = route_res.context;
+                if (route_res.params) {
+                    params = route_res.params;
+                }
+            }
+        }
+
+        if (handler && typeof handler === 'function') {
+            this._invoke_handler(handler, context, req, res, params, result);
+            return result;
+        }
+
+        this._handle_not_found(req, res, {
+            url: req && req.url
+        }, result);
+        return result;
     }
 }
 //Router.prototype.type_levels = ['router'];

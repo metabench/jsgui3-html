@@ -61,6 +61,7 @@ const controls = {
     Radio_Button: require('./organised/0-core/0-basic/0-native-compositional/radio-button'),
     Radio_Button_Group: require('./organised/0-core/0-basic/1-compositional/radio-button-group'),
     //Resize_Handle: require('./organised/0-core/0-basic/_resize-handle'),
+    Rich_Text_Editor: require('./organised/1-standard/1-editor/Rich_Text_Editor'),
     Scroll_View: require('./organised/0-core/0-basic/1-compositional/scroll-view'),
     Scrollbar: require('./organised/0-core/0-basic/1-compositional/scrollbar'),
     Search_Bar: require('./organised/1-standard/5-ui/search-bar'),
