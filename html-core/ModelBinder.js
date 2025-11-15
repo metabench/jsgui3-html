@@ -21,6 +21,28 @@ const { Data_Object, Data_Value, tof, each } = require('lang-tools');
  */
 class ModelBinder {
     constructor(sourceModel, targetModel, bindings = {}, options = {}) {
+        if (typeof targetModel === 'string') {
+            const [
+                sourceProp,
+                legacyTargetModel,
+                targetProp,
+                legacyOptions = {}
+            ] = Array.prototype.slice.call(arguments, 1);
+            const normalizedBindings = {
+                [sourceProp]: Object.assign(
+                    {to: targetProp},
+                    legacyOptions.transform ? {transform: legacyOptions.transform} : {},
+                    legacyOptions.reverse ? {reverse: legacyOptions.reverse} : {}
+                )
+            };
+            const normalizedOptions = Object.assign({
+                bidirectional: legacyOptions.twoWay || legacyOptions.bidirectional || !!legacyOptions.reverse,
+                immediate: legacyOptions.immediate !== false,
+                debug: legacyOptions.debug || false
+            }, legacyOptions);
+            return new ModelBinder(sourceModel, legacyTargetModel, normalizedBindings, normalizedOptions);
+        }
+
         this.sourceModel = sourceModel;
         this.targetModel = targetModel;
         this.bindings = bindings;
@@ -31,6 +53,7 @@ class ModelBinder {
         }, options);
         
         this._listeners = [];
+        this._locks = new Set();
         this._active = false;
         
         if (this.options.immediate) {
@@ -101,10 +124,14 @@ class ModelBinder {
                 const transformedValue = transform ? transform(value) : value;
                 
                 if (!condition || condition(value)) {
-                    this.targetModel[targetProp] = transformedValue;
-                    
-                    if (this.options.debug) {
-                        console.log(`[ModelBinder] ${sourceProp} → ${targetProp}:`, value, '→', transformedValue);
+                    const lock_key = `${sourceProp}->${targetProp}`;
+                    if (this._acquire(lock_key)) {
+                        this.targetModel[targetProp] = transformedValue;
+                        
+                        if (this.options.debug) {
+                            console.log(`[ModelBinder] ${sourceProp} → ${targetProp}:`, value, '→', transformedValue);
+                        }
+                        this._release(lock_key);
                     }
                 }
             }
@@ -125,10 +152,14 @@ class ModelBinder {
                     const reversedValue = reverse(value);
                     
                     if (!condition || condition(reversedValue)) {
-                        this.sourceModel[sourceProp] = reversedValue;
-                        
-                        if (this.options.debug) {
-                            console.log(`[ModelBinder] ${targetProp} ← ${sourceProp}:`, value, '←', reversedValue);
+                        const lock_key = `${targetProp}->${sourceProp}`;
+                        if (this._acquire(lock_key)) {
+                            this.sourceModel[sourceProp] = reversedValue;
+                            
+                            if (this.options.debug) {
+                                console.log(`[ModelBinder] ${targetProp} → ${sourceProp}:`, value, '→', reversedValue);
+                            }
+                            this._release(lock_key);
                         }
                     }
                 }
@@ -141,6 +172,28 @@ class ModelBinder {
                 handler: targetHandler
             });
         }
+    }
+    
+    _acquire(key) {
+        if (!key) return true;
+        if (this._locks.has(key)) {
+            if (this.options.debug) {
+                console.warn('[ModelBinder] Loop suppressed for', key);
+            }
+            return false;
+        }
+        this._locks.add(key);
+        return true;
+    }
+
+    _release(key) {
+        if (key) {
+            this._locks.delete(key);
+        }
+    }
+
+    unbind() {
+        this.deactivate();
     }
     
     /**
@@ -264,6 +317,10 @@ class ComputedProperty {
     get value() {
         return this._lastValue;
     }
+
+    destroy() {
+        this.deactivate();
+    }
 }
 
 /**
@@ -277,7 +334,7 @@ class ComputedProperty {
 class PropertyWatcher {
     constructor(model, property, callback, options = {}) {
         this.model = model;
-        this.property = property;
+        this.properties = Array.isArray(property) ? property : [property];
         this.callback = callback;
         this.options = Object.assign({
             immediate: false,
@@ -296,17 +353,18 @@ class PropertyWatcher {
         this._active = true;
         
         // Call immediately if requested
-        if (this.options.immediate && this.model[this.property] !== undefined) {
-            this.callback(this.model[this.property], undefined);
+        if (this.options.immediate && this.properties.length > 0) {
+            const prop = this.properties[0];
+            this.callback(this.model[prop], undefined, prop);
         }
         
         // Setup change listener
         this._handler = (e) => {
-            if (e.name === this.property) {
-                this.callback(e.value, e.old);
+            if (this.properties.includes(e.name)) {
+                this.callback(e.value, e.old, e.name);
                 
                 if (this.options.debug) {
-                    console.log('[PropertyWatcher] Property changed:', this.property, e.old, '→', e.value);
+                    console.log('[PropertyWatcher] Property changed:', e.name, e.old, '→', e.value);
                 }
             }
         };
@@ -323,6 +381,10 @@ class PropertyWatcher {
         }
         
         this._handler = null;
+    }
+
+    unwatch() {
+        this.deactivate();
     }
 }
 
@@ -344,6 +406,45 @@ class BindingManager {
         const binder = new ModelBinder(sourceModel, targetModel, bindings, options);
         this.binders.push(binder);
         return binder;
+    }
+
+    bind_value(sourceModel, sourceProp, targetModel, targetProp = sourceProp, options = {}) {
+        const bindings = {
+            [sourceProp]: Object.assign(
+                {to: targetProp},
+                options.transform ? {transform: options.transform} : {},
+                options.reverse ? {reverse: options.reverse} : {},
+                options.condition ? {condition: options.condition} : {}
+            )
+        };
+        const binder_options = {
+            bidirectional: options.bidirectional !== undefined ? options.bidirectional : !!options.reverse,
+            immediate: options.immediate !== undefined ? options.immediate : true,
+            debug: options.debug || false
+        };
+        return this.bind(sourceModel, targetModel, bindings, binder_options);
+    }
+
+    bind_collection(sourceModel, sourceProp, targetModel, targetProp = sourceProp, options = {}) {
+        const map_fn = options.map;
+        const clone = options.clone !== false;
+        const transform = (collection = []) => {
+            const arr = Array.isArray(collection) ? collection : [];
+            const mapped = map_fn ? arr.map(map_fn) : arr.slice();
+            return clone ? mapped.slice() : mapped;
+        };
+        const reverse = options.reverse_map
+            ? (collection = []) => {
+                const arr = Array.isArray(collection) ? collection : [];
+                return arr.map(options.reverse_map);
+            }
+            : undefined;
+
+        return this.bind_value(sourceModel, sourceProp, targetModel, targetProp, Object.assign({}, options, {
+            transform,
+            reverse,
+            bidirectional: options.bidirectional && !!reverse
+        }));
     }
     
     /**

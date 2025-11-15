@@ -35,39 +35,13 @@ const Data = require('./Data');
 
 class Control_Data extends Data {
     constructor(spec = {}) {
-        super(spec);
-        //if (spec.context) this.context = spec.context;
-
-        // set up the .model field....
-        //  would help when responding to it being changed.
-
-        //this.model = {};
-
-        //field(this, 'model');
-
-        // .model is a Data_Value???
-        // .model.inner_value ????
-
-        // .model.value may be OK???
-        // as in value.value would be OK in that situation.
-
-        //console.log('spec.model', spec.model);
-        /*
-        const model = (() => {
-            if (spec.model) {
-                return spec.model;
-            } else {
-                //return new Control_View_Low_Level_Data({context});
-            }
-        })();
-        Object.defineProperty(this, 'model', {get: () => model});
-        */
-
-        
-
-        
-
-
+        const enriched_spec = Object.assign(
+            {
+                model_constructor: Data_Object
+            },
+            spec
+        );
+        super(enriched_spec);
     }
 
     

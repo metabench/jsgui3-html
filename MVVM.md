@@ -776,6 +776,56 @@ const selectable = (ctrl, options = {}) => {
 };
 ```
 
+### 3.5 Control Model Factory (`ensure_control_models`)
+
+To keep every control isomorphic and data-aware, use the helper exported from `html-core/control_model_factory.js`. It guarantees that `ctrl.data`, `ctrl.view`, `ctrl.view.data`, and `ctrl.view.ui` exist (creating `Data_Object` instances when necessary) and that constructor overrides (e.g., `spec.data.model`) are respected.
+
+```javascript
+const {ensure_control_models} = require('../../html-core/control_model_factory');
+
+class Text_Field extends Data_Model_View_Model_Control {
+    constructor(spec = {}) {
+        super(spec);
+        ensure_control_models(this, spec);
+
+        this.data.model.value = spec.value || '';
+        this.view.data.model.placeholder = spec.placeholder || '';
+    }
+}
+```
+
+The helper also prepares the structures mixins rely on (for example, `view.data.model.mixins`), so mixins should call it before attempting to access `ctrl.data` or `ctrl.view`.
+
+### 3.6 BindingManager Helper APIs
+
+`BindingManager` now exposes high-level helpers that wrap `ModelBinder`:
+
+```javascript
+const binder = this._binding_manager.bind_value(
+    this.data.model,
+    'value',
+    this.view.data.model,
+    'display_value',
+    {
+        transform: (v) => v.toUpperCase(),
+        reverse: (v) => v.toLowerCase(),
+        bidirectional: true
+    }
+);
+
+this._binding_manager.bind_collection(
+    this.data.model,
+    'items',
+    this.view.data.model,
+    'render_items',
+    { map: item => ({ label: item.name, id: item.id }) }
+);
+```
+
+- `bind_value` handles simple property bindings (with optional transforms, reverse transforms, and loop suppression).
+- `bind_collection` clones or maps array-like data for view usage.
+- `inspect()` now reports helper-created bindings, so diagnostics tools can show the active graphs.
+
 ## 4. Implementation Roadmap
 
 ### 4.1 Phase 1: Foundation Updates

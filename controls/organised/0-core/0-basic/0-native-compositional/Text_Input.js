@@ -330,7 +330,7 @@ class Text_Input extends Control {
         }
 
         this.dom.tagName = 'input';
-        this.dom.attributes.type = 'input';
+        this.dom.attributes.type = 'text';
         //this.dom.attributes.value = this.value;
 
         //console.log('Text_Input end of constructor this.view.ui.ll.data.model:', this.view.ui.ll.data.model);

@@ -25,6 +25,7 @@ const {Transformations, Validators} = require('./Transformations');
 
 const Control_Data = require('./Control_Data');
 const Control_View = require('./Control_View');
+const {ensure_control_models} = require('./control_model_factory');
 
 // Possibly not so much to do here right now???
 
@@ -135,81 +136,35 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         // This can likely be very effective....
 
 
-        if (spec.data) {
-            this.data = new Control_Data();
-            if (spec.data.model) {
-                this.data.model = spec.data.model;
+        ensure_control_models(this, spec);
 
-                this.data.model.on('change', e => {
-                    console.log('Data_Model_View_Model_Control this.data.model change e:', e);
+        if (this.data && this.data.model) {
+            this.data.model.on('change', e => {
+                console.log('Data_Model_View_Model_Control this.data.model change e:', e);
+            });
 
-                    // Set the view model here???
-
-
-                })
-
+            if (this.dom && this.dom.attributes) {
                 this.dom.attributes['data-jsgui-data-model'] = this.data.model._id();
             }
         }
-        if (spec.view) {
-            this.view = new Control_View();
 
-            // 
-
-            // data-jsgui-view-data-model
-            //   does seem like it would be worth being able to get that....
-            //     (even back from the context)
-            //   but maybe the view data model should (only) be internal to this (for the moment?)
-
-            // Maybe do need to / best to register these controls in the context.
-            //  
-
-
-            if (!spec.view.data) {
-                // create new view data model.
-
-                const view_data_model = new Data_Object({context});
-                this.view.data = {
-                    model: view_data_model
-                }
-            } else {
-                this.view.data = spec.view.data;
-
-                if (!this.view.data.model) {
-                    this.view.data.model = new Data_Object({context});
-                }
-
-            }
-
-
-
-            if (this.view.data.model) {
-
-                this.view.data.model.on('change', e => {
-                    console.log('Data_Model_View_Model_Control this.view.data.model change e:', e);
-                })
-
+        if (this.view && this.view.data && this.view.data.model) {
+            this.view.data.model.on('change', e => {
+                console.log('Data_Model_View_Model_Control this.view.data.model change e:', e);
+            });
+            if (this.dom && this.dom.attributes) {
                 this.dom.attributes['data-jsgui-view-data-model'] = this.view.data.model._id();
             }
-            // Could create other internal view.data???
+        }
 
-
-
-
-
-            // view.data.model????
-            if (spec.view.model) {
-                this.view.model = spec.view.model;
-                this.view.model.on('change', e => {
-                    console.log('Data_Model_View_Model_Control this.view.model change e:', e);
-                });
+        if (spec.view && spec.view.model) {
+            this.view.model = spec.view.model;
+            this.view.model.on('change', e => {
+                console.log('Data_Model_View_Model_Control this.view.model change e:', e);
+            });
+            if (this.dom && this.dom.attributes) {
                 this.dom.attributes['data-jsgui-view-model'] = this.view.model._id();
             }
-
-            // Otherwise create new internal view model?
-
-            
-
         }
 
         //console.log('Data_Model_View_Model_Control !!this.dom.el', !!this.dom.el);
@@ -238,19 +193,16 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                     //console.log('data_model', data_model);
                     this.data.model = data_model;
                     //console.log('post assign this.data.model\n');
+
+                    // Then set up the syncing here????
+
+                    //   If the data model changes, set the .value field....?
+
+
+                    data_model.on('change', e => {
+                        //console.log('Data_Model_View_Model_Control data_model change', e);
+                    })
                 }
-
-                
-
-
-                // Then set up the syncing here????
-
-                //   If the data model changes, set the .value field....?
-
-
-                data_model.on('change', e => {
-                    //console.log('Data_Model_View_Model_Control data_model change', e);
-                })
             }
 
 

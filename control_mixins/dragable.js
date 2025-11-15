@@ -98,6 +98,7 @@ let dragable = (ctrl, opts = {}) => {
 				const ctrl_pos_to_be = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
 				ctrl.pos = ctrl_pos_to_be;
 			} else if (drag_mode === 'translate') {
+				// Capture current translate position at drag start to avoid jumping after resize
 				initial_ctrl_translate = ctrl.ta.slice(6, 8);
 				dragging = true;
 			} else {
@@ -121,14 +122,23 @@ let dragable = (ctrl, opts = {}) => {
 				let tr_x = movement_offset[0] + initial_ctrl_translate[0];
 				let tr_y = movement_offset[1] + initial_ctrl_translate[1];
 				if (bounds) {
-					const min_x_movement_offset = -1 * (initial_bcr_offset_from_bounds[0][0] - initial_ctrl_translate[0]);
-					if (tr_x < min_x_movement_offset) tr_x = min_x_movement_offset;
-					const max_x_movement_offset = -1 * (initial_bcr_offset_from_bounds[1][0] - initial_ctrl_translate[0]);
-					if (tr_x > max_x_movement_offset) tr_x = max_x_movement_offset;
-					const min_y_movement_offset = -1 * (initial_bcr_offset_from_bounds[0][1] - initial_ctrl_translate[1]);
-					if (tr_y < min_y_movement_offset) tr_y = min_y_movement_offset;
-					const max_y_movement_offset = -1 * (initial_bcr_offset_from_bounds[1][1] - initial_ctrl_translate[1]);
-					if (tr_y > max_y_movement_offset) tr_y = max_y_movement_offset;
+					// Get current bounds BCR (allows for dynamic bounds updates if bounds move/resize)
+					const current_bounds_bcr = bounds.bcr();
+					// Calculate absolute containment bounds within parent
+					const bounds_left = current_bounds_bcr[0][0];
+					const bounds_top = current_bounds_bcr[0][1];
+					const bounds_right = current_bounds_bcr[1][0] - ctrl_size[0];
+					const bounds_bottom = current_bounds_bcr[1][1] - ctrl_size[1];
+					// Convert absolute bounds to movement offsets relative to initial translate position
+					const min_x_offset = bounds_left - initial_ctrl_translate[0];
+					const max_x_offset = bounds_right - initial_ctrl_translate[0];
+					const min_y_offset = bounds_top - initial_ctrl_translate[1];
+					const max_y_offset = bounds_bottom - initial_ctrl_translate[1];
+					// Apply containment constraints
+					if (tr_x < min_x_offset) tr_x = min_x_offset;
+					if (tr_x > max_x_offset) tr_x = max_x_offset;
+					if (tr_y < min_y_offset) tr_y = min_y_offset;
+					if (tr_y > max_y_offset) tr_y = max_y_offset;
 				}
 				ctrl.ta[6] = tr_x;
 				ctrl.ta[7] = tr_y;

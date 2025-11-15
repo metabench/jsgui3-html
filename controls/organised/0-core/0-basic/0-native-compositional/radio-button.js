@@ -89,6 +89,8 @@ class Radio_Button extends Control {
 
 
         if (spec.group_name) this.group_name = spec.group_name;
+        if (spec.text) this.text = spec.text;
+        if (spec.label) this.text = spec.label;
 
         //console.log('spec.el', spec.el);
 

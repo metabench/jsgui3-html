@@ -1,5 +1,6 @@
 var jsgui = require('./../../../../html-core/html-core');
 var Horizontal_Menu = require('./../../../organised/1-standard/5-ui/horizontal-menu');
+const Button = require('./../../../organised/0-core/0-basic/0-native-compositional/button');
 const {def, each} = jsgui;
 var Control = jsgui.Control;
 var fields = {
@@ -38,7 +39,7 @@ class Window extends Control {
 				});
 				right_button_group.add_class('button-group');
 				right_button_group.add_class('right');
-				btn_minimize = new jsgui.controls.Button({
+				btn_minimize = new Button({
 					context
 				});
 				const span = (text) => {
@@ -48,12 +49,12 @@ class Window extends Control {
 				}
 				btn_minimize.add(span('⊖'));
 				right_button_group.add(btn_minimize);
-				btn_maximize = new jsgui.controls.Button({
+				btn_maximize = new Button({
 					context
 				});
 				btn_maximize.add(span('⊕'))
 				right_button_group.add(btn_maximize);
-				btn_close = new jsgui.controls.Button({
+				btn_close = new Button({
 					context
 				});
 				btn_close.add(span('⊗'))

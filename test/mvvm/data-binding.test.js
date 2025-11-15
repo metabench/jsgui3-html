@@ -8,7 +8,12 @@ const { expect } = require('chai');
 const sinon = require('sinon');
 const { Data_Object } = require('lang-tools');
 const Data_Model_View_Model_Control = require('../../html-core/Data_Model_View_Model_Control');
-const ModelBinder = require('../../html-core/ModelBinder');
+const {
+    ModelBinder,
+    ComputedProperty,
+    PropertyWatcher,
+    BindingManager
+} = require('../../html-core/ModelBinder');
 
 describe('MVVM Pattern Tests', () => {
     let context;
@@ -71,9 +76,10 @@ describe('MVVM Pattern Tests', () => {
             const source = new Data_Object({ value: 10 });
             const target = new Data_Object({ value: 0 });
             
-            const binder = new ModelBinder(source, 'value', target, 'value');
+            const binder = new ModelBinder(source, target, {
+                value: 'value'
+            });
             
-            // Wait for initial sync
             setTimeout(() => {
                 expect(target.value).to.equal(10);
                 
@@ -91,20 +97,22 @@ describe('MVVM Pattern Tests', () => {
             const model1 = new Data_Object({ value: 10 });
             const model2 = new Data_Object({ value: 20 });
             
-            const binder = new ModelBinder(model1, 'value', model2, 'value', {
-                twoWay: true
+            const binder = new ModelBinder(model1, model2, {
+                value: {
+                    to: 'value',
+                    reverse: (val) => val
+                }
+            }, {
+                bidirectional: true
             });
             
             setTimeout(() => {
-                // Should sync to model1's initial value
                 expect(model2.value).to.equal(10);
-                
-                // Change model2, should update model1
                 model2.value = 30;
                 
                 setTimeout(() => {
                     expect(model1.value).to.equal(30);
-                    binder.unbind();
+                    binder.deactivate();
                     done();
                 }, 10);
             }, 10);
@@ -114,8 +122,11 @@ describe('MVVM Pattern Tests', () => {
             const source = new Data_Object({ value: 'hello' });
             const target = new Data_Object({ value: '' });
             
-            const binder = new ModelBinder(source, 'value', target, 'value', {
-                transform: (val) => val.toUpperCase()
+            const binder = new ModelBinder(source, target, {
+                value: {
+                    to: 'value',
+                    transform: (val) => val.toUpperCase()
+                }
             });
             
             setTimeout(() => {
@@ -125,7 +136,7 @@ describe('MVVM Pattern Tests', () => {
                 
                 setTimeout(() => {
                     expect(target.value).to.equal('WORLD');
-                    binder.unbind();
+                    binder.deactivate();
                     done();
                 }, 10);
             }, 10);
@@ -135,19 +146,20 @@ describe('MVVM Pattern Tests', () => {
             const source = new Data_Object({ celsius: 0 });
             const target = new Data_Object({ fahrenheit: 32 });
             
-            const binder = new ModelBinder(source, 'celsius', target, 'fahrenheit', {
-                twoWay: true,
-                transform: (c) => c * 9/5 + 32,
-                reverse: (f) => (f - 32) * 5/9
-            });
+            const binder = new ModelBinder(source, target, {
+                celsius: {
+                    to: 'fahrenheit',
+                    transform: (c) => c * 9/5 + 32,
+                    reverse: (f) => (f - 32) * 5/9
+                }
+            }, { bidirectional: true });
             
             setTimeout(() => {
-                // Change fahrenheit, should update celsius
                 target.fahrenheit = 212;
                 
                 setTimeout(() => {
                     expect(source.celsius).to.be.closeTo(100, 0.01);
-                    binder.unbind();
+                    binder.deactivate();
                     done();
                 }, 10);
             }, 10);
@@ -157,7 +169,9 @@ describe('MVVM Pattern Tests', () => {
             const source = new Data_Object({ value: 10 });
             const target = new Data_Object({ value: 0 });
             
-            const binder = new ModelBinder(source, 'value', target, 'value');
+            const binder = new ModelBinder(source, target, {
+                value: 'value'
+            });
             
             setTimeout(() => {
                 binder.unbind();
@@ -165,7 +179,7 @@ describe('MVVM Pattern Tests', () => {
                 source.value = 20;
                 
                 setTimeout(() => {
-                    expect(target.value).to.equal(10); // Should not update
+                    expect(target.value).to.equal(10);
                     done();
                 }, 10);
             }, 10);
@@ -177,8 +191,6 @@ describe('MVVM Pattern Tests', () => {
             const data = new Data_Object({
                 radius: 5
             });
-            
-            const ComputedProperty = require('../../html-core/ModelBinder').ComputedProperty;
             
             const computed = new ComputedProperty(
                 data,
@@ -206,8 +218,6 @@ describe('MVVM Pattern Tests', () => {
                 lastName: 'Doe'
             });
             
-            const ComputedProperty = require('../../html-core/ModelBinder').ComputedProperty;
-            
             const computed = new ComputedProperty(
                 data,
                 ['firstName', 'lastName'],
@@ -232,8 +242,6 @@ describe('MVVM Pattern Tests', () => {
             const data = new Data_Object({
                 value: null
             });
-            
-            const ComputedProperty = require('../../html-core/ModelBinder').ComputedProperty;
             
             const computed = new ComputedProperty(
                 data,
@@ -262,7 +270,6 @@ describe('MVVM Pattern Tests', () => {
                 value: 10
             });
             
-            const PropertyWatcher = require('../../html-core/ModelBinder').PropertyWatcher;
             const spy = sinon.spy();
             
             const watcher = new PropertyWatcher(data, 'value', spy);
@@ -283,7 +290,6 @@ describe('MVVM Pattern Tests', () => {
                 value: 10
             });
             
-            const PropertyWatcher = require('../../html-core/ModelBinder').PropertyWatcher;
             const spy = sinon.spy();
             
             const watcher = new PropertyWatcher(data, 'value', spy, {
@@ -304,7 +310,6 @@ describe('MVVM Pattern Tests', () => {
                 height: 20
             });
             
-            const PropertyWatcher = require('../../html-core/ModelBinder').PropertyWatcher;
             const spy = sinon.spy();
             
             const watcher = new PropertyWatcher(data, ['width', 'height'], spy);
@@ -329,7 +334,6 @@ describe('MVVM Pattern Tests', () => {
                 value: 10
             });
             
-            const PropertyWatcher = require('../../html-core/ModelBinder').PropertyWatcher;
             const spy = sinon.spy();
             
             const watcher = new PropertyWatcher(data, 'value', spy);
@@ -341,6 +345,83 @@ describe('MVVM Pattern Tests', () => {
                 expect(spy.called).to.be.false;
                 done();
             }, 10);
+        });
+    });
+    
+    describe('BindingManager Helpers', () => {
+        it('should bind simple values with bind_value', (done) => {
+            const manager = new BindingManager();
+            const source = new Data_Object({ value: 5 });
+            const target = new Data_Object({ value: 0 });
+            
+            manager.bind_value(source, 'value', target);
+            
+            setTimeout(() => {
+                expect(target.value).to.equal(5);
+                source.value = 12;
+                
+                setTimeout(() => {
+                    expect(target.value).to.equal(12);
+                    done();
+                }, 10);
+            }, 10);
+        });
+        
+        it('should bind collections with mapping', (done) => {
+            const manager = new BindingManager();
+            const source = new Data_Object({ items: [1, 2, 3] });
+            const target = new Data_Object({ doubles: [] });
+            
+            manager.bind_collection(source, 'items', target, 'doubles', {
+                map: (v) => v * 2
+            });
+            
+            setTimeout(() => {
+                expect(target.doubles).to.deep.equal([2, 4, 6]);
+                source.items = [3, 4];
+                
+                setTimeout(() => {
+                    expect(target.doubles).to.deep.equal([6, 8]);
+                    done();
+                }, 10);
+            }, 10);
+        });
+        
+        it('should prevent infinite loops with bidirectional bindings', (done) => {
+            const manager = new BindingManager();
+            const a = new Data_Object({ value: 1 });
+            const b = new Data_Object({ value: 0 });
+            const spy = sinon.spy();
+            
+            a.on('change', spy);
+            manager.bind_value(a, 'value', b, 'value', {
+                reverse: (v) => v,
+                bidirectional: true
+            });
+            
+            setTimeout(() => {
+                b.value = 9;
+                
+                setTimeout(() => {
+                    expect(a.value).to.equal(9);
+                    expect(spy.calledOnce).to.be.true;
+                    done();
+                }, 10);
+            }, 10);
+        });
+        
+        it('should expose diagnostics through inspectBindings', () => {
+            const manager = new BindingManager();
+            const source = new Data_Object({ value: 1 });
+            const target = new Data_Object({ display: 0 });
+            
+            manager.bind_value(source, 'value', target, 'display');
+            
+            const report = manager.inspect();
+            expect(report.binders).to.have.lengthOf(1);
+            expect(report.binders[0].value).to.include({
+                target: 'display'
+            });
         });
     });
     

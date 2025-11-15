@@ -371,7 +371,7 @@ class Text_Field extends Control {
 		}
 
 		if (spec.value !== undefined) {
-			this.data.model.value = value;
+			this.data.model.value = spec.value;
 		}
 
 		

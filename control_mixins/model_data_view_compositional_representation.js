@@ -10,6 +10,7 @@ const {
 const Control_Data = require('../html-core/Control_Data');
 const Control_View = require('../html-core/Control_View');
 const Control_Validation = require('../html-core/Control_Validation');
+const {ensure_control_models} = require('../html-core/control_model_factory');
 
 // Want to handle server to client persistance here too. Maybe not in this function - possibly control.view.data.model
 //   handle that.
@@ -37,17 +38,9 @@ const model_data_view_compositional_representation = (ctrl, options = {}) => {
     const can_proceed = verify_ctrl_conditions(ctrl);
     if (can_proceed) {
         const {context} = ctrl;
-        const o_cd = {
-            context
-        }
-        if (data) {
-            if (data.model) {
-                o_cd.model = data.model;
-            }
-        }
-        ctrl.data = new Control_Data(o_cd);
+        ensure_control_models(ctrl, {data});
         ctrl.validation = new Control_Validation();
-        ctrl.view = new Control_View({
+        ctrl.view = ctrl.view || new Control_View({
             context
         });
         ctrl.view.data.model.mixins = ctrl.view.data.model.mixins || new Collection();
