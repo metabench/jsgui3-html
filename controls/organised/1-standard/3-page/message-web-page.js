@@ -1,4 +1,4 @@
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../../../html-core/html-core');
 const Standard_Web_Page = require('./standard-web-page');
 
 class Message_Web_Page extends Standard_Web_Page {

@@ -1,5 +1,5 @@
 
-var jsgui = require('../../html-core/html-core');
+var jsgui = require('../../../../html-core/html-core');
 var factory = require('./factory');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
@@ -184,7 +184,7 @@ class Object_KVP_Viewer extends Control{
 
         // not sure why this should get activated again.
 
-        this._super(el);
+        super.activate(el);
         //console.log('activate Object_KVP_Viewer ' + this._id());
         var el = el || this.dom.el;
         //console.log('el.innerHTML ' + el.innerHTML);

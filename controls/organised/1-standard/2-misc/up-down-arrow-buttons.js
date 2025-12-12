@@ -12,7 +12,7 @@ var jsgui = require('../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 var group = jsgui.group;
-var Button = require('../button');
+var Button = require('../../0-core/0-basic/0-native-compositional/button');
 
 class Up_Down_Arrow_Buttons extends Control {
     // Maybe should put this into a form, so that it does a form post.
@@ -21,7 +21,7 @@ class Up_Down_Arrow_Buttons extends Control {
         super(spec);
         var make = this.make;
         //this._super(spec);
-        this.add_class('up-down arrow buttons');
+        this.add_class('up-down-arrow-buttons');
         this.__type_name = 'up_down_arrow_buttons';
         // Render up button and down button.
 
@@ -37,14 +37,16 @@ class Up_Down_Arrow_Buttons extends Control {
         this.add(btn_down);
         this.set('btn_up', btn_up);
         this.set('btn_down', btn_down);
+        this.btn_up = btn_up;
+        this.btn_down = btn_down;
         var that = this;
     }
     'activate'() {
         super.activate();
         var that = this;
         //that.click(function(e) { that.action_select_only() })
-        var btn_up = this.btn_up;
-        var btn_down = this.btn_down;
+        var btn_up = this.btn_up || this.get('btn_up');
+        var btn_down = this.btn_down || this.get('btn_down');
         var that = this;
 
         btn_up.on('click', function(e_click) {

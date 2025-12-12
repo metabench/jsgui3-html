@@ -946,7 +946,7 @@ For detailed implementation plans, see [MVVM.md](./MVVM.md).
 ## Installation
 
 ### Prerequisites
-- Node.js 14+ 
+- Node.js 18+ 
 - npm or yarn package manager
 
 ### Basic Installation

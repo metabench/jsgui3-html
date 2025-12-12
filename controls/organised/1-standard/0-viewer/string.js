@@ -12,7 +12,7 @@
  function(jsgui) {
  */
 
-var jsgui = require('../../html-core/html-core');
+var jsgui = require('../../../../html-core/html-core');
 
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -157,11 +157,11 @@ class String_Viewer extends Control {
         if (tval == 'data_value') {
             span_content.clear();
             //span_content.push('"' + value.value() + '"');
-            span_content.push(value.value());
+            span_content.push(typeof value.value === 'function' ? value.value() : value.value);
         }
     }
     'activate'() {
-        this._super();
+        super.activate();
 
         //var el = this.dom.el;
         // then we use that

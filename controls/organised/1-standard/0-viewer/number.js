@@ -1,5 +1,5 @@
 
-var jsgui = require('../../html-core/html-core');
+var jsgui = require('../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
@@ -33,7 +33,7 @@ class Number_Viewer extends Control {
 
         if (tval == 'data_value') {
             span_content.clear();
-            span_content.push(value.value());
+            span_content.push(typeof value.value === 'function' ? value.value() : value.value);
         }
         if (tval == 'number') {
             span_content.clear();
@@ -41,7 +41,7 @@ class Number_Viewer extends Control {
         }
     }
     'activate'() {
-        this._super();
+        super.activate();
         var that = this;
         var hover_class = 'bg-light-yellow';
         var span = this.get('span');

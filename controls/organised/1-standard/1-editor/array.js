@@ -7,7 +7,7 @@
  function(jsgui, Array_Viewer, factory) {
  */
 var jsgui = require('../../../../html-core/html-core');
-var Array_Viewer = require('../../../viewer/array');
+var Array_Viewer = require('../0-viewer/array');
 var factory = require('./factory');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -20,7 +20,7 @@ class Array_Editor extends Array_Viewer {
     //  That could possibly be disabled.
 
     constructor(spec) {
-    	super();
+    	super(spec);
         var make = this.make;
         this.factory = factory;
         //this._super(spec);
@@ -34,7 +34,7 @@ class Array_Editor extends Array_Viewer {
     }
     'refresh_internal'() {
         //this._super();
-		this.super.refresh_internal();
+		super.refresh_internal();
 
     }
 };

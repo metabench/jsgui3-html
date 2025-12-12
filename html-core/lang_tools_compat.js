@@ -229,6 +229,16 @@ class Data_Object_Compat extends Base_Data_Object {
 const detect_needs_patch = () => {
     if (needs_patch_cached !== null) return needs_patch_cached;
 
+    const with_suppressed_console_trace = fn => {
+        const orig_trace = console.trace;
+        console.trace = () => {};
+        try {
+            return fn();
+        } finally {
+            console.trace = orig_trace;
+        }
+    };
+
     const requirements = {
         needs_heavy_set_patch: false,
         needs_accessors_patch: false,
@@ -319,8 +329,10 @@ const detect_needs_patch = () => {
     // 7) set_fields_from_spec should not throw (new lang-tools deprecates it).
     if (typeof Base_Data_Object.prototype.set_fields_from_spec === 'function') {
         try {
-            // eslint-disable-next-line no-new
-            new Base_Data_Object({}, [['__compat_test', String]]);
+            with_suppressed_console_trace(() => {
+                // eslint-disable-next-line no-new
+                new Base_Data_Object({}, [['__compat_test', String]]);
+            });
         } catch (e) {
             requirements.needs_set_fields_patch = true;
         }

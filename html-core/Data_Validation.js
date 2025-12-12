@@ -70,4 +70,4 @@ class Data_Validation extends Evented_Class {
         }
     }
 }
-module.exports = Control_Validation;
+module.exports = Data_Validation;

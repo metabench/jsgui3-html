@@ -45,30 +45,30 @@ class Tile_Slider extends Control {
 
         const context = this.context;
         let above = new Control({
-            'contect': context
+            'context': context
         });
         above.add_class('above');
         this.add(above);
         let left = new Control({
-            'contect': context
+            'context': context
         });
         left.add_class('left');
         this.add(left);
 
         let right = new Control({
-            'contect': context
+            'context': context
         });
         right.add_class('right');
         this.add(right);
         let below = new Control({
-            'contect': context
+            'context': context
         });
         below.add_class('below');
         this.add(below);
 
 
         let central = new Control({
-            'contect': context
+            'context': context
         });
         central.add_class('central');
         this.add(central);
@@ -76,7 +76,7 @@ class Tile_Slider extends Control {
 
 
         this.above = above;
-        this.left = left;
+        this.left_ctrl = left;
         this.central = central;
         this.right = right;
         this.below = below;
@@ -182,10 +182,10 @@ class Tile_Slider extends Control {
             this.central.dom.attributes.style.transition = 'transform 0.33s';
             this.central.dom.attributes.style.transform = 'translate(' + this.size[0] + 'px, 0px)';
 
-            this.left.dom.attributes.style.transition = 'transform 0.33s';
-            this.left.dom.attributes.style.transform = 'translate(' + this.size[0] + 'px, 0px)';
+            this.left_ctrl.dom.attributes.style.transition = 'transform 0.33s';
+            this.left_ctrl.dom.attributes.style.transform = 'translate(' + this.size[0] + 'px, 0px)';
 
-            this.left.one('transitionend', e_end => {
+            this.left_ctrl.one('transitionend', e_end => {
                 //console.log('e_end', e_end);
                 resolve();
             });
@@ -308,12 +308,12 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
                 this.dom.attributes.style.overflow = 'hidden';
                 this.dom.attributes.style.position = 'relative';
 
-                this.left.dom.attributes.style.position = 'absolute';
-                this.left.dom.attributes.style.left = -1 * this.spec.size[0] + 'px';
+                this.left_ctrl.dom.attributes.style.position = 'absolute';
+                this.left_ctrl.dom.attributes.style.left = -1 * this.spec.size[0] + 'px';
                 this.right.dom.attributes.style.position = 'absolute';
                 this.right.dom.attributes.style.left = this.spec.size[0] + 'px';
 
-                this.left.size = this.spec.size;
+                this.left_ctrl.size = this.spec.size;
                 this.right.size = this.spec.size;
             }
 
@@ -321,7 +321,7 @@ const Tile_Slide = function (Ctrl, fn_prev_spec, fn_next_spec, adjacencies = {
                 // make a previous version to put left of it.
                 //let left_ctrl_prev_spec = fn_prev_spec()
                 let left_ctrl_prev = new Ctrl(prev_spec);
-                this.left.add(left_ctrl_prev);
+                this.left_ctrl.add(left_ctrl_prev);
                 //if (prev_spec.size) {
 
                 //}

@@ -13,8 +13,8 @@ define(["../../../jsgui-html-enh", "../viewer/object-kvp", "./factory", "./basic
 	function(jsgui, Object_KVP_Viewer, factory, String_Editor) {
 */
 
-var jsgui = require('../../lang/lang');
-var Object_KVP_Viewer = require('../../../viewer/object-kvp');
+var jsgui = require('../../../../html-core/html-core');
+var Object_KVP_Viewer = require('../0-viewer/object-kvp');
 var factory = require('./factory');
 var String_Editor = require('./string');
 var Number_Editor = require('./number');
@@ -61,11 +61,11 @@ class Object_KVP_Editor extends Object_KVP_Viewer {
     'refresh_internal'() {
         // Instead of having viewer components, this needs to have editor components.
 
-        this._super();
+        super.refresh_internal();
 
     }
     'activate'() {
-      this._super();
+      super.activate();
     }
 }
 module.exports = Object_KVP_Editor;

@@ -2,6 +2,12 @@
 
 Comprehensive test suite for the jsgui3-html framework, covering core functionality, MVVM patterns, mixins, transformations, and integration scenarios.
 
+## Requirements
+
+- Node.js 18+ (matches repo `package.json` `engines.node`)
+
+See `docs/regression_tests.md` for recently-added regression coverage.
+
 ## Installation
 
 Install test dependencies:

@@ -1,6 +1,6 @@
 // object editor
 var jsgui = require('../../../../html-core/html-core');
-var Object_Viewer = require('../../../viewer/object');
+var Object_Viewer = require('../0-viewer/object');
 var Object_KVP_Editor = require('./object-kvp');
 var factory = require('./factory');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;

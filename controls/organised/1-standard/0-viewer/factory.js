@@ -8,7 +8,7 @@
 //define(["require", "../../../jsgui-html-enh"/*, "./object", "./array", "./basic/string", "./basic/number" */],
 //function(require, jsgui /*, Object_Viewer, Array_Viewer, String_Viewer, Number_Viewer */) {
 
-var jsgui = require('../../html-core/html-core');
+var jsgui = require('../../../../html-core/html-core');
 var Object_Viewer = require('./object');
 var Array_Viewer = require('./array');
 var String_Viewer = require('./string');
@@ -126,11 +126,7 @@ var create = function(obj, context) {
         return res;
     }
     if (tobj == 'data_value') {
-        //var val = obj.value();
-        var tval = tof(val);
-
-        // then create it for the inner value.
-
+        const val = typeof obj.value === 'function' ? obj.value() : obj.value;
         return create(val, context);
 
 		/*
@@ -152,7 +148,6 @@ var create = function(obj, context) {
 		 }
 		 */
 
-        return res;
     }
 };
 module.exports = create;

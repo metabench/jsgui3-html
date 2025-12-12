@@ -28,7 +28,7 @@ class Color_Palette extends Control {
         });
     }
     activate() {
-        if (!this.activate.__active) {
+        if (!this.__active) {
             super.activate();
             const attach_on_change_named_property_handler = (obj, property_name, fn_handler) => {
                 obj.on('change', e => {

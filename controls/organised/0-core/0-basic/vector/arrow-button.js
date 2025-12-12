@@ -1,7 +1,7 @@
-var jsgui = require('../../../../html-core/html-core');
+var jsgui = require('../../../../../html-core/html-core');
 var Control = jsgui.Control;
 let def = jsgui.is_defined;
-const Button = require('../0-basic/button');
+const Button = require('../0-native-compositional/button');
 
 // Work on getting the expression of concepts really DRY and idiomatic. 
 

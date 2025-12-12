@@ -1,6 +1,6 @@
 // Vertical_Expander
 
-var jsgui = require('../html-core/html-core');
+var jsgui = require('../../../../html-core/html-core');
 var Horizontal_Slider = require('./horizontal-slider');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
@@ -64,7 +64,7 @@ class Media_Scrubber extends Control {
 
             var str_secs = secs.toString();
             if (str_secs.length == 1) {
-                str_secs = str_secs + '0';
+                str_secs = '0' + str_secs;
             }
 
             var str_time = mins + ':' + str_secs;
@@ -105,7 +105,7 @@ class Media_Scrubber extends Control {
         }
 
         if (!spec.abstract) {
-            this.set('ms_time', new jsgui.Data_Value({'contect': this.context}))
+            this.set('ms_time', new jsgui.Data_Value({'context': this.context}))
         }
     }
 

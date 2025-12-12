@@ -26,11 +26,11 @@
     "Making a jsgui3-html-core module would help / be the way. It would include ways to load more controls and then there will still be jsgui3-html"
   ],
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=18.0.0"
   },
   "description": "Jsgui HTML generation and processing module (isomorphic, runs on client and server, few npm requirements)",
   "author": "James Vickers <james@metabench.com>",
-  "assistant author": "ChatGPT from OpenAI",
+  "assistant_author": "ChatGPT from OpenAI",
   "repository": {
     "type": "git",
     "url": "https://github.com/metabench/jsgui3-html.git"
@@ -39,5 +39,5 @@
     "esbuild": "^0.27.1",
     "jsgui3-server": "^0.0.140"
   },
-  "version": "0.0.171"
+  "version": "0.0.172"
 }

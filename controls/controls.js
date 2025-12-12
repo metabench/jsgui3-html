@@ -12,7 +12,7 @@ const controls = {
     // Maybe more advanced?
     Context_Menu: require('./organised/0-core/0-basic/1-compositional/context-menu'),
     //Control: 
-    Color_Grid: require('./organised/0-core/0-basic/1-compositional/color-palette'),
+    Color_Grid: require('./organised/0-core/0-basic/1-compositional/color-grid'),
     Color_Palette: require('./organised/0-core/0-basic/1-compositional/color-palette'),
     Checkbox: require('./organised/0-core/0-basic/0-native-compositional/checkbox'),
     Combo_Box: require('./organised/0-core/0-basic/1-compositional/combo-box'),
@@ -77,7 +77,7 @@ const controls = {
     Tile_Slider: require('./organised/1-standard/6-layout/tile-slide'),
     // May be moved to vector?
     Timespan_Selector: require('./organised/0-core/0-basic/1-compositional/timespan-selector'),
-    Title_Bar: require('./organised/1-standard/6-layout//title-bar'),
+    Title_Bar: require('./organised/1-standard/6-layout/title-bar'),
     Titled_Panel: require('./organised/1-standard/6-layout/titled-panel'),
     Toggle_Button: require('./organised/0-core/0-basic/1-compositional/toggle-button'),
     Toolbar: require('./organised/1-standard/5-ui/Toolbar'),

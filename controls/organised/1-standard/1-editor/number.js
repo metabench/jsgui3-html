@@ -29,15 +29,15 @@ define(["../../../../jsgui-html-enh", "../../viewer/basic/number"],
 
 
 
-var jsgui = require('../../lang/lang');
-var Number_Viewer = require('../../../viewer/number');
+var jsgui = require('../../../../html-core/html-core');
+var Number_Viewer = require('../0-viewer/number');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
 // Could have arrows to adjust the numbers
 //  Could also listen to the scroll wheel on the mouse.
 
-var Up_Down_Arrow_Buttons = require('../up-down-arrow-buttons');
+var Up_Down_Arrow_Buttons = require('../2-misc/up-down-arrow-buttons');
 
 class Number_Editor extends Number_Viewer {
     // Maybe should put this into a form, so that it does a form post.
@@ -53,7 +53,7 @@ class Number_Editor extends Number_Viewer {
         this.__type_name = 'number_editor';
 
         var udab = new Up_Down_Arrow_Buttons({
-          'context': this._context
+          'context': this.context
         });
         this.add(udab);
         this.set('up_down_arrow_buttons', udab);
@@ -95,7 +95,7 @@ class Number_Editor extends Number_Viewer {
 
     }
     'activate'() {
-        this._super();
+        super.activate();
 
         var udab = this.get('up_down_arrow_buttons');
         var that = this;

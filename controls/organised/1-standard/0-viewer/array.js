@@ -6,7 +6,7 @@
  define(["../../../jsgui-html-enh", "./factory"],
  function(jsgui, factory) {
  */
-var jsgui = require('../../html-core/html-core');
+var jsgui = require('../../../../html-core/html-core');
 var factory = require('./factory');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
@@ -125,7 +125,7 @@ class Array_Viewer extends Control {
 
     }
     'activate'() {
-        this._super();
+        super.activate();
         //var el = this.dom.el;
         // then we use that
 

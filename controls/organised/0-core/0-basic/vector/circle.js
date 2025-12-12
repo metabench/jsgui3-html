@@ -1,7 +1,7 @@
 // JavaScript source code
 
 
-var jsgui = require('../../html-core/html-core');
+var jsgui = require('../../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 
@@ -13,7 +13,7 @@ class Circle extends Control {
     //  string property, can say 'month', 'week',
 
     constructor(spec) {
-        super();
+        super(spec);
 
         // should basically be whatever size is specified, with color, and border properties.
         // Will have some specific rendering code, default used is SVG rendering.
@@ -38,3 +38,4 @@ class Circle extends Control {
 
 
 }
+module.exports = Circle;

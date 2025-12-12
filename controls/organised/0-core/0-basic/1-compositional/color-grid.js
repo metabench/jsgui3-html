@@ -36,7 +36,7 @@ class Color_Grid extends Grid {
         });
     }
     activate() {
-        if (!this.activate.__active) {
+        if (!this.__active) {
             super.activate();
             this.grid.selection_scope.on('change', e => {
                 const {

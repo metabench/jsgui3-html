@@ -16,7 +16,7 @@ define(["../../../../jsgui-html-enh", "../../viewer/basic/string"],
 
 
 var jsgui = require('../../../../html-core/html-core');
-var String_Viewer = require('../../../viewer/string');
+var String_Viewer = require('../0-viewer/string');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
@@ -88,7 +88,7 @@ class String_Editor extends String_Viewer {
     }
     'refresh_internal'() {
         //this._super();
-        this.super.refresh_internal();
+        super.refresh_internal();
 
     }
     '_edit'() {
