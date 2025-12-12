@@ -6,8 +6,8 @@
 
 const { expect } = require('chai');
 const sinon = require('sinon');
-const { Data_Object } = require('lang-tools');
 const jsgui = require('../../html-core/html-core');
+const { Data_Object } = jsgui;
 const Data_Model_View_Model_Control = require('../../html-core/Data_Model_View_Model_Control');
 
 describe('Integration Tests', () => {
@@ -180,15 +180,16 @@ describe('Integration Tests', () => {
             // Bind all children to parent's first item
             children.forEach(child => {
                 child.watch(
-                    parent.data.model.items,
-                    '0',
-                    (newVal) => {
-                        child.data.model.value = newVal;
+                    parent.data.model,
+                    'items',
+                    (new_items) => {
+                        const arr = Array.isArray(new_items) ? new_items : [];
+                        child.data.model.value = arr[0];
                     }
                 );
             });
             
-            parent.data.model.items[0] = 100;
+            parent.data.model.items = [100, 2, 3];
             
             setTimeout(() => {
                 // All children should have updated

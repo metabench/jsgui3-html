@@ -1,6 +1,3 @@
-
-
-
 const {field, Data_Object, Data_Value, Evented_Class} = require('lang-tools');
 
 const Control_Validation_Data = require('./Control_Validation_Data');

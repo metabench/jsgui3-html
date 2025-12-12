@@ -13,7 +13,7 @@
 // parse_mount function will just create the controls.
 //  they could then be put into a DOM.
 
-var htmlparser = require("htmlparser");
+const { Default_Handler, Html_Parser } = require('./html_parser');
 const {tof, each} = require('lang-tools');
 
 const map_jsgui_attr_names = {
@@ -39,7 +39,7 @@ const parse = function(str_content, context, control_set, callback) {
     //console.log('');
     str_content = str_content.trim();
 
-    const handler = new htmlparser.DefaultHandler(function (error, dom) {
+    const handler = new Default_Handler(function (error, dom) {
         if (error) {
             log('parse error', error);
         }
@@ -207,7 +207,7 @@ const parse = function(str_content, context, control_set, callback) {
                         handle_text(item.raw, depth, sibling_index);
                     }
                     // Need to rapidly 
-                } else if (item.type === 'tag') {
+                } else if (item.type === 'tag' || item.type === 'script' || item.type === 'style') {
                     // does it have children?
                     // if not, create a control from the children.
                     // then if it does, what are its control children?
@@ -221,8 +221,8 @@ const parse = function(str_content, context, control_set, callback) {
         }
             //[...parsing done, do something...]
     });
-    var parser = new htmlparser.Parser(handler);
-    parser.parseComplete(str_content);
+    var parser = new Html_Parser(handler);
+    parser.parse_complete(str_content);
 }
 
 // Not sure why this separation breaks things.
@@ -380,7 +380,7 @@ const ____old_parse_mount = function(str_content, target, control_set) {
     //  This will enable much more concise expression of jgsui controls.
 
     //var rawHtml = "Xyz <script language= javascript>var foo = '<<bar>>';< /  script><!--<!-- Waah! -- -->";
-    var handler = new htmlparser.DefaultHandler(function (error, dom) {
+    var handler = new Default_Handler(function (error, dom) {
         if (error) {
             log('parse error', error);
         }
@@ -746,7 +746,7 @@ const ____old_parse_mount = function(str_content, target, control_set) {
                         handle_text(item.raw, depth);
                     }
                     // Need to rapidly 
-                } else if (item.type === 'tag') {
+                } else if (item.type === 'tag' || item.type === 'script' || item.type === 'style') {
                     // does it have children?
 
                     // if not, create a control from the children.
@@ -840,8 +840,8 @@ const ____old_parse_mount = function(str_content, target, control_set) {
         }
             //[...parsing done, do something...]
     });
-    var parser = new htmlparser.Parser(handler);
-    parser.parseComplete(str_content);
+    var parser = new Html_Parser(handler);
+    parser.parse_complete(str_content);
 }
 //
 

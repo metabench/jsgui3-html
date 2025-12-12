@@ -3,13 +3,14 @@
   "version": "1.0.0",
   "description": "Test suite for jsgui3-html framework",
   "scripts": {
-    "test": "mocha test/**/*.test.js --timeout 5000",
-    "test:watch": "mocha test/**/*.test.js --watch",
-    "test:core": "mocha test/core/**/*.test.js",
-    "test:mvvm": "mocha test/mvvm/**/*.test.js",
-    "test:mixins": "mocha test/mixins/**/*.test.js",
-    "test:integration": "mocha test/integration/**/*.test.js",
-    "test:coverage": "nyc mocha test/**/*.test.js"
+    "test": "mocha core/**/*.test.js mvvm/**/*.test.js mixins/**/*.test.js integration/**/*.test.js router/**/*.test.js *.test.js --timeout 5000",
+    "test:watch": "mocha core/**/*.test.js mvvm/**/*.test.js mixins/**/*.test.js integration/**/*.test.js router/**/*.test.js *.test.js --watch --timeout 5000",
+    "test:core": "mocha core/**/*.test.js",
+    "test:mvvm": "mocha mvvm/**/*.test.js",
+    "test:mixins": "mocha mixins/**/*.test.js",
+    "test:integration": "mocha integration/**/*.test.js",
+    "test:e2e": "npm --prefix e2e run test:e2e",
+    "test:coverage": "nyc mocha core/**/*.test.js mvvm/**/*.test.js mixins/**/*.test.js integration/**/*.test.js router/**/*.test.js *.test.js"
   },
   "devDependencies": {
     "chai": "^4.3.0",
@@ -20,7 +21,7 @@
   },
   "mocha": {
     "require": [
-      "test/setup.js"
+      "./setup.js"
     ],
     "recursive": true,
     "colors": true

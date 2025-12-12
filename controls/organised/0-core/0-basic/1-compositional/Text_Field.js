@@ -188,7 +188,24 @@ class Text_Field extends Control {
 		// could be 'password' for example...???
 
 
-		if (spec.placeholder) this.placeholder = spec.placeholder;
+			if (spec.placeholder) this.placeholder = spec.placeholder;
+
+			if (spec.label !== undefined && spec.text === undefined) {
+				this.text = spec.label;
+			}
+
+			if (spec.value !== undefined) {
+				try {
+					this.set('value', spec.value, true);
+				} catch (e) {
+					this.value = spec.value;
+				}
+				if (this.data && this.data.model && typeof this.data.model.set === 'function') {
+					this.data.model.set('value', spec.value, true);
+				} else if (this.data && this.data.model) {
+					this.data.model.value = spec.value;
+				}
+			}
 
 		// Binding 'value' to the model data???
 
@@ -370,9 +387,7 @@ class Text_Field extends Control {
 
 		}
 
-		if (spec.value !== undefined) {
-			this.data.model.value = spec.value;
-		}
+			// spec.value handled earlier for SSR composition.
 
 		
 	}

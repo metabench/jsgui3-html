@@ -134,6 +134,14 @@ class Tabbed_Panel extends Panel {
                     const tab_page = add_tab(tab_label_text, group_name);
                     tab_page.add(tab_content);
 
+                } else if (t === 'object') {
+                    const tab_label_text = tab.title || tab.name || tab.text || '';
+                    const tab_content = tab.content;
+                    const tab_page = add_tab(tab_label_text, group_name);
+                    if (typeof tab_content !== 'undefined') {
+                        tab_page.add(tab_content);
+                    }
+                    i_tab++;
                 } else {
                     console.log('tab', tab);
                     console.log('t', t);

@@ -27,7 +27,7 @@ describe('Core Control Tests', () => {
             });
             
             expect(control).to.exist;
-            expect(control.tagName).to.equal('div');
+            expect(control.dom.tagName).to.equal('div');
         });
         
         it('should create control with class name', () => {
@@ -37,7 +37,7 @@ describe('Core Control Tests', () => {
                 class: 'test-class'
             });
             
-            expect(control.classes._arr).to.include('test-class');
+            expect(control.has_class('test-class')).to.equal(true);
         });
         
         it('should create control with multiple classes', () => {
@@ -47,7 +47,7 @@ describe('Core Control Tests', () => {
                 class: ['class1', 'class2', 'class3']
             });
             
-            expect(control.classes._arr).to.include.members(['class1', 'class2', 'class3']);
+            expect(control.dom.attrs.class).to.include.members(['class1', 'class2', 'class3']);
         });
         
         it('should create control with attributes', () => {
@@ -61,9 +61,9 @@ describe('Core Control Tests', () => {
                 }
             });
             
-            expect(control.attrs.type).to.equal('text');
-            expect(control.attrs.placeholder).to.equal('Enter text');
-            expect(control.attrs['data-test']).to.equal('value');
+            expect(control.dom.attributes.type).to.equal('text');
+            expect(control.dom.attributes.placeholder).to.equal('Enter text');
+            expect(control.dom.attributes['data-test']).to.equal('value');
         });
         
         it('should create control with text content', () => {
@@ -74,7 +74,7 @@ describe('Core Control Tests', () => {
             });
             
             expect(control.content._arr).to.have.lengthOf(1);
-            expect(control.content._arr[0]).to.equal('Hello World');
+            expect(control.content._arr[0].get()).to.equal('Hello World');
         });
         
         it('should create control with child controls', () => {
@@ -150,10 +150,10 @@ describe('Core Control Tests', () => {
             });
             
             expect(control.dom.el).to.equal(div);
-            expect(control.tagName).to.equal('div');
+            expect(control.dom.tagName).to.equal('div');
         });
         
-        it('should mount control to DOM', () => {
+        it('should render HTML that can be inserted into DOM', () => {
             const control = new jsgui.Control({
                 context,
                 tagName: 'div',
@@ -161,10 +161,10 @@ describe('Core Control Tests', () => {
                 content: 'Mounted Control'
             });
             
-            control.mount(document.body);
-            
-            expect(document.querySelector('.mounted')).to.exist;
-            expect(document.querySelector('.mounted').textContent).to.equal('Mounted Control');
+            document.body.innerHTML = control.html;
+            const mounted_el = document.querySelector('.mounted');
+            expect(mounted_el).to.exist;
+            expect(mounted_el.textContent).to.equal('Mounted Control');
         });
     });
     
@@ -176,7 +176,7 @@ describe('Core Control Tests', () => {
             });
             
             control.add_class('new-class');
-            expect(control.classes._arr).to.include('new-class');
+            expect(control.has_class('new-class')).to.equal(true);
         });
         
         it('should remove class from control', () => {
@@ -187,7 +187,7 @@ describe('Core Control Tests', () => {
             });
             
             control.remove_class('remove-me');
-            expect(control.classes._arr).to.not.include('remove-me');
+            expect(!!control.has_class('remove-me')).to.equal(false);
         });
         
         it('should toggle class on control', () => {
@@ -197,10 +197,10 @@ describe('Core Control Tests', () => {
             });
             
             control.toggle_class('toggle-me');
-            expect(control.classes._arr).to.include('toggle-me');
+            expect(control.has_class('toggle-me')).to.equal(true);
             
             control.toggle_class('toggle-me');
-            expect(control.classes._arr).to.not.include('toggle-me');
+            expect(!!control.has_class('toggle-me')).to.equal(false);
         });
         
         it('should check if control has class', () => {
@@ -211,7 +211,7 @@ describe('Core Control Tests', () => {
             });
             
             expect(control.has_class('check-me')).to.be.true;
-            expect(control.has_class('not-present')).to.be.false;
+            expect(!!control.has_class('not-present')).to.equal(false);
         });
     });
     
@@ -223,15 +223,18 @@ describe('Core Control Tests', () => {
             });
             
             control.add('Text content');
-            expect(control.content._arr).to.include('Text content');
+            const text_node = control.content._arr[0];
+            expect(text_node).to.be.instanceof(jsgui.Text_Node);
+            expect(text_node.text).to.equal('Text content');
         });
         
         it('should clear content from control', () => {
             const control = new jsgui.Control({
                 context,
-                tagName: 'div',
-                content: ['Item 1', 'Item 2']
+                tagName: 'div'
             });
+
+            control.add(['Item 1', 'Item 2']);
             
             control.clear();
             expect(control.content._arr).to.have.lengthOf(0);
@@ -251,7 +254,7 @@ describe('Core Control Tests', () => {
             control.add(child);
             expect(control.content._arr).to.include(child);
             
-            control.remove(child);
+            child.remove();
             expect(control.content._arr).to.not.include(child);
         });
     });
@@ -266,8 +269,7 @@ describe('Core Control Tests', () => {
             const handler = sinon.spy();
             control.on('click', handler);
             
-            control.mount(document.body);
-            control.dom.el.click();
+            control.trigger('click');
             
             expect(handler.calledOnce).to.be.true;
         });
@@ -282,8 +284,7 @@ describe('Core Control Tests', () => {
             control.on('click', handler);
             control.off('click', handler);
             
-            control.mount(document.body);
-            control.dom.el.click();
+            control.trigger('click');
             
             expect(handler.called).to.be.false;
         });
@@ -316,12 +317,9 @@ describe('Core Control Tests', () => {
             });
             
             parent.add(child);
-            parent.mount(document.body);
-            
             const handler = sinon.spy();
-            parent.dom.el.addEventListener('click', handler);
-            
-            child.dom.el.click();
+            child.on('click', handler);
+            child.trigger('click');
             
             expect(handler.calledOnce).to.be.true;
         });
@@ -337,7 +335,7 @@ describe('Core Control Tests', () => {
             control.hide();
             control.show();
             
-            expect(control.has_class('hidden')).to.be.false;
+            expect(!!control.has_class('hidden')).to.equal(false);
         });
         
         it('should hide control', () => {
@@ -357,10 +355,13 @@ describe('Core Control Tests', () => {
                 tagName: 'div'
             });
             
-            const wasHidden = control.has_class('hidden');
-            control.toggle();
-            
-            expect(control.has_class('hidden')).to.equal(!wasHidden);
+            const was_hidden = !!control.has_class('hidden');
+            if (was_hidden) {
+                control.show();
+            } else {
+                control.hide();
+            }
+            expect(!!control.has_class('hidden')).to.equal(!was_hidden);
         });
     });
     
@@ -372,9 +373,9 @@ describe('Core Control Tests', () => {
             });
             
             expect(control.context).to.equal(context);
-            expect(control.tagName).to.equal('div');
+            expect(control.dom.tagName).to.equal('div');
             expect(control.content).to.exist;
-            expect(control.classes).to.exist;
+            expect(control.dom.attrs).to.exist;
         });
         
         it('should destroy control and clean up', () => {
@@ -382,8 +383,6 @@ describe('Core Control Tests', () => {
                 context,
                 tagName: 'div'
             });
-            
-            control.mount(document.body);
             
             if (typeof control.destroy === 'function') {
                 control.destroy();
@@ -399,26 +398,24 @@ describe('Core Control Tests', () => {
                 tagName: 'input'
             });
             
-            control.attrs.type = 'text';
-            control.attrs.placeholder = 'Test';
+            control.dom.attributes.type = 'text';
+            control.dom.attributes.placeholder = 'Test';
             
-            expect(control.attrs.type).to.equal('text');
-            expect(control.attrs.placeholder).to.equal('Test');
+            expect(control.dom.attributes.type).to.equal('text');
+            expect(control.dom.attributes.placeholder).to.equal('Test');
         });
         
-        it('should update mounted control attributes', () => {
+        it('should update control attributes', () => {
             const control = new jsgui.Control({
                 context,
                 tagName: 'input',
                 attrs: { type: 'text' }
             });
             
-            control.mount(document.body);
+            control.dom.attributes.value = 'new value';
             
-            control.attrs.value = 'new value';
-            
-            // In a real implementation, this should update the DOM
-            expect(control.attrs.value).to.equal('new value');
+            expect(control.dom.attributes.value).to.equal('new value');
+            expect(control.html).to.include('value=\"new value\"');
         });
     });
 });

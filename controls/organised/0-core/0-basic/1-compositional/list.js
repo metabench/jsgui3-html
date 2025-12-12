@@ -139,7 +139,8 @@ class List extends Control {
 
 
 
-        prop(this, 'items', spec.items);
+        const items = spec.items || [];
+        prop(this, 'items', items);
         /*
 
         if (spec.items) {

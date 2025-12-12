@@ -244,76 +244,108 @@ class ModelBinder {
  * );
  */
 class ComputedProperty {
-    constructor(model, dependencies, computeFn, options = {}) {
-        this.model = model;
+    constructor(models, dependencies, computeFn, options = {}) {
+        this.models = Array.isArray(models) ? models : [models];
         this.dependencies = Array.isArray(dependencies) ? dependencies : [dependencies];
         this.computeFn = computeFn;
         this.options = Object.assign({
             propertyName: 'computed',
             immediate: true,
-            debug: false
+            debug: false,
+            target: null
         }, options);
-        
+
         this._listeners = [];
         this._active = false;
         this._lastValue = undefined;
-        
+
         if (this.options.immediate) {
             this.activate();
         }
     }
-    
+
+    _resolve_dependency(dep) {
+        for (const model of this.models) {
+            if (!model) continue;
+
+            if (typeof model.get === 'function') {
+                const got = model.get(dep);
+                if (typeof got !== 'undefined') {
+                    return got && got.__data_value ? got.value : got;
+                }
+            }
+
+            if (dep in model) {
+                const val = model[dep];
+                if (typeof val !== 'undefined') {
+                    return val && val.__data_value ? val.value : val;
+                }
+            }
+        }
+    }
+
     activate() {
         if (this._active) return;
         this._active = true;
-        
-        // Compute initial value
+
         this.compute();
-        
-        // Setup listeners for dependencies
+
         const handler = (e) => {
             if (this.dependencies.includes(e.name)) {
                 this.compute();
             }
         };
-        
-        this.model.on('change', handler);
-        this._listeners.push({ model: this.model, event: 'change', handler });
-        
+
+        this.models.forEach(model => {
+            if (model && model.on) {
+                model.on('change', handler);
+                this._listeners.push({ model, event: 'change', handler });
+            }
+        });
+
         if (this.options.debug) {
             console.log('[ComputedProperty] Activated for dependencies:', this.dependencies);
         }
     }
-    
+
     deactivate() {
         if (!this._active) return;
         this._active = false;
-        
+
         this._listeners.forEach(({ model, event, handler }) => {
             if (model && model.off) {
                 model.off(event, handler);
             }
         });
-        
+
         this._listeners = [];
     }
-    
+
     compute() {
-        const args = this.dependencies.map(dep => this.model[dep]);
+        const args = this.dependencies.map(dep => this._resolve_dependency(dep));
         const newValue = this.computeFn(...args);
-        
+
         if (newValue !== this._lastValue) {
             this._lastValue = newValue;
-            this.model[this.options.propertyName] = newValue;
-            
+            const target_model = this.options.target || this.models[0];
+            const property_name = this.options.propertyName || this.options.property_name || 'computed';
+
+            if (target_model) {
+                if (typeof target_model.set === 'function') {
+                    target_model.set(property_name, newValue);
+                } else {
+                    target_model[property_name] = newValue;
+                }
+            }
+
             if (this.options.debug) {
-                console.log('[ComputedProperty] Updated:', this.options.propertyName, '=', newValue);
+                console.log('[ComputedProperty] Updated:', property_name, '=', newValue);
             }
         }
-        
+
         return newValue;
     }
-    
+
     get value() {
         return this._lastValue;
     }
@@ -397,6 +429,8 @@ class BindingManager {
         this.binders = [];
         this.computed = [];
         this.watchers = [];
+        // Backwards-compatible alias used by older tests/docs.
+        this._bindings = this.binders;
     }
     
     /**
@@ -473,9 +507,9 @@ class BindingManager {
         this.computed.forEach(c => c.deactivate());
         this.watchers.forEach(w => w.deactivate());
         
-        this.binders = [];
-        this.computed = [];
-        this.watchers = [];
+        this.binders.length = 0;
+        this.computed.length = 0;
+        this.watchers.length = 0;
     }
     
     /**

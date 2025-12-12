@@ -1,6 +1,7 @@
 const jsgui = require('lang-tools');
 const oext = require('obext');
-const {Data_Model, Data_Object, Collection, tof, stringify, get_a_sig, each, Evented_Class } = jsgui;
+const { Base_Data_Object } = require('./lang_tools_compat');
+const {Data_Model, Collection, tof, stringify, get_a_sig, each, Evented_Class } = jsgui;
 const Text_Node = require('./text-node');
 const {
 	prop,
@@ -155,7 +156,7 @@ class Control_Background extends Evented_Class {
 	}
 	set(val) {}
 }
-class Control_Core extends Data_Object {
+class Control_Core extends Base_Data_Object {
 	constructor(spec = {}, fields) {
 		spec.__type_name = spec.__type_name || 'control';
 		super(spec, fields);
@@ -585,14 +586,28 @@ class Control_Core extends Data_Object {
 			var arr = content._arr;
 			var c, l = arr.length,
 				n;
-			for (c = 0; c < l; c++) {
-				n = arr[c];
-				tn = tof(n);
-				if (tn === 'string') {
-					res.push(jsgui.output_processors['string'](n));
-				} else if (tn === 'data_value') {
-					res.push(n._);
-				} else {
+				for (c = 0; c < l; c++) {
+					n = arr[c];
+					tn = tof(n);
+					if (tn === 'string') {
+						const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
+						if (string_processor) {
+							res.push(string_processor(n));
+						} else {
+							res.push(new Text_Node(n).all_html_render());
+						}
+					} else if (tn === 'data_value') {
+						let dv_val;
+						if (typeof n.value !== 'undefined') {
+							dv_val = n.value;
+						} else if (typeof n._ !== 'undefined') {
+							dv_val = n._;
+						} else {
+							dv_val = n.toString();
+						}
+						if (dv_val === null || typeof dv_val === 'undefined') dv_val = '';
+						res.push('' + dv_val);
+					} else {
 					if (tn === 'data_object') {
 						throw 'stop';
 					} else {
@@ -783,6 +798,22 @@ class Control_Core extends Data_Object {
 					c++;
 				}
 				da['class'] = arr_res.join(' ');
+			}
+		}
+	}
+	'toggle_class'(class_name, value) {
+		const has_value = typeof value !== 'undefined';
+		if (has_value) {
+			if (value) {
+				this.add_class(class_name);
+			} else {
+				this.remove_class(class_name);
+			}
+		} else {
+			if (this.has_class(class_name)) {
+				this.remove_class(class_name);
+			} else {
+				this.add_class(class_name);
 			}
 		}
 	}

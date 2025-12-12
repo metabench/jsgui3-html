@@ -76,7 +76,7 @@ class Validation_Status_Indicator extends Status_Indicator {
 
 
 
-        const create_control_validation_but_maybe_we_dont_need_it = () => {
+	        const create_control_validation_but_maybe_we_dont_need_it = () => {
 
             const o_validation = {context};
 
@@ -113,10 +113,19 @@ class Validation_Status_Indicator extends Status_Indicator {
                 }
             })
 
-        }
+	        }
 
-        // 
-        this.data.on('change', e => {
+	        create_control_validation_but_maybe_we_dont_need_it();
+	        if (this.data && this.data.model) {
+	            try {
+	                this.data.model.set('validation', this.validation, true);
+	            } catch (e) {
+	                this.data.model.validation = this.validation;
+	            }
+	        }
+
+	        // 
+	        this.data.on('change', e => {
 
             console.log('V_S_I change e:', e);
 
@@ -129,11 +138,13 @@ class Validation_Status_Indicator extends Status_Indicator {
                 console.log('vsi data model change e', e);
 
             }
-        })
+	        })
 
-        this.data.model.validation.state.on('change', e => {
-            console.log('Validation_Status_Indicator .data.model.validation.state change e:', e);
-        })
+	        if (this.data && this.data.model && this.data.model.validation && this.data.model.validation.state && this.data.model.validation.state.on) {
+	            this.data.model.validation.state.on('change', e => {
+	                console.log('Validation_Status_Indicator .data.model.validation.state change e:', e);
+	            });
+	        }
 
 
         // this.data.model.validation.status.on('change' 'valid')

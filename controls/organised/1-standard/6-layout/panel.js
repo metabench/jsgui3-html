@@ -56,6 +56,9 @@ class Panel extends Control {
             this.name = spec.name;
         }
 
+        if (def(spec.title)) {
+            this.title = spec.title;
+        }
 
 
         // With name as a field, that field should get sent to the client...
@@ -68,6 +71,21 @@ class Panel extends Control {
             if (def(n)) {
                 let f = this._fields = this._fields || {};
                 f.name = n;
+            }
+
+            if (def(this.title)) {
+                const title_ctrl = new Control({
+                    context: this.context,
+                    class: 'panel-title'
+                });
+                title_ctrl.add(this.title);
+                this.add(title_ctrl);
+                this._ctrl_fields = this._ctrl_fields || {};
+                this._ctrl_fields.title = title_ctrl;
+            }
+
+            if (def(spec.content)) {
+                this.add(spec.content);
             }
 
 

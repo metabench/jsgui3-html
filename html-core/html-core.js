@@ -1,4 +1,6 @@
 const jsgui = require('lang-tools');
+const { patch_lang_tools } = require('./lang_tools_compat');
+patch_lang_tools();
 const Text_Node = require('./text-node');
 const Page_Context = require('./page-context');
 const Selection_Scope = require('./selection-scope');

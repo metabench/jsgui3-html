@@ -1,5 +1,3 @@
-
-
 const {field, Data_Object, Evented_Class} = require('lang-tools');
 
 // And the View Data as well...

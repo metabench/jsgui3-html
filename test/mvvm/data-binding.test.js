@@ -6,7 +6,8 @@
 
 const { expect } = require('chai');
 const sinon = require('sinon');
-const { Data_Object } = require('lang-tools');
+const jsgui = require('../../html-core/html-core');
+const { Data_Object } = jsgui;
 const Data_Model_View_Model_Control = require('../../html-core/Data_Model_View_Model_Control');
 const {
     ModelBinder,

@@ -1,40 +1,31 @@
 const { tof } = require('lang-tools');
 
 /**
- * Transformation utilities for data binding
- * Provides common formatters, parsers, and validators for use in ModelBinder
+ * Transformation utilities for data binding.
+ * Module exports the Transformations object directly, with Validators attached
+ * for backwards compatibility via `{Transformations, Validators}` destructuring.
  */
 
+const add_commas = (num_str) => {
+    return num_str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
 const Transformations = {
-    /**
-     * Date transformations
-     */
     date: {
-        /**
-         * Format a Date object to ISO string
-         */
         toISO: (date) => {
             if (!date) return '';
-            if (date instanceof Date) return date.toISOString();
-            return new Date(date).toISOString();
+            const d = date instanceof Date ? date : new Date(date);
+            return isNaN(d.getTime()) ? '' : d.toISOString();
         },
-        
-        /**
-         * Format a Date object to locale string
-         */
         toLocale: (date, locale = 'en-US', options = {}) => {
             if (!date) return '';
-            if (date instanceof Date) return date.toLocaleDateString(locale, options);
-            return new Date(date).toLocaleDateString(locale, options);
+            const d = date instanceof Date ? date : new Date(date);
+            return isNaN(d.getTime()) ? '' : d.toLocaleDateString(locale, options);
         },
-        
-        /**
-         * Format a Date object to custom format
-         */
         format: (date, format = 'YYYY-MM-DD') => {
             if (!date) return '';
             const d = date instanceof Date ? date : new Date(date);
-            
+            if (isNaN(d.getTime())) return '';
             const map = {
                 YYYY: d.getFullYear(),
                 MM: String(d.getMonth() + 1).padStart(2, '0'),
@@ -43,268 +34,199 @@ const Transformations = {
                 mm: String(d.getMinutes()).padStart(2, '0'),
                 ss: String(d.getSeconds()).padStart(2, '0')
             };
-            
             return format.replace(/YYYY|MM|DD|HH|mm|ss/g, matched => map[matched]);
         },
-        
-        /**
-         * Parse a date string
-         */
         parse: (str) => {
             if (!str) return null;
-            const date = new Date(str);
-            return isNaN(date.getTime()) ? null : date;
+            const d = new Date(str);
+            return isNaN(d.getTime()) ? null : d;
         },
-        
-        /**
-         * Parse a date from custom format
-         */
         parseFormat: (str, format = 'YYYY-MM-DD') => {
             if (!str) return null;
-            
             const parts = {
                 YYYY: { start: format.indexOf('YYYY'), length: 4 },
                 MM: { start: format.indexOf('MM'), length: 2 },
                 DD: { start: format.indexOf('DD'), length: 2 }
             };
-            
             const year = parseInt(str.substr(parts.YYYY.start, parts.YYYY.length));
             const month = parseInt(str.substr(parts.MM.start, parts.MM.length)) - 1;
             const day = parseInt(str.substr(parts.DD.start, parts.DD.length));
-            
             return new Date(year, month, day);
+        },
+        relative: (date, now = new Date()) => {
+            if (!date) return '';
+            const d = date instanceof Date ? date : new Date(date);
+            if (isNaN(d.getTime())) return '';
+            const diff_ms = now.getTime() - d.getTime();
+            const diff_s = Math.floor(Math.abs(diff_ms) / 1000);
+            const is_past = diff_ms >= 0;
+
+            const units = [
+                ['year', 60 * 60 * 24 * 365],
+                ['month', 60 * 60 * 24 * 30],
+                ['day', 60 * 60 * 24],
+                ['hour', 60 * 60],
+                ['minute', 60],
+                ['second', 1]
+            ];
+
+            let unit_name = 'second';
+            let unit_value = diff_s;
+            for (const [name, seconds] of units) {
+                if (diff_s >= seconds) {
+                    unit_name = name;
+                    unit_value = Math.floor(diff_s / seconds);
+                    break;
+                }
+            }
+
+            const plural = unit_value === 1 ? '' : 's';
+            return is_past
+                ? `${unit_value} ${unit_name}${plural} ago`
+                : `in ${unit_value} ${unit_name}${plural}`;
         }
     },
-    
-    /**
-     * Number transformations
-     */
+
     number: {
-        /**
-         * Format number to string with decimals
-         */
         toFixed: (num, decimals = 2) => {
-            if (num === null || num === undefined) return '';
+            if (num === null || num === undefined || num === '') return '';
             return Number(num).toFixed(decimals);
         },
-        
-        /**
-         * Format number with thousands separator
-         */
-        toLocale: (num, locale = 'en-US', options = {}) => {
-            if (num === null || num === undefined) return '';
-            return Number(num).toLocaleString(locale, options);
+        round: (num, decimals = 0) => {
+            if (num === null || num === undefined || num === '') return 0;
+            const factor = Math.pow(10, decimals);
+            return Math.round(Number(num) * factor) / factor;
         },
-        
-        /**
-         * Format number as currency
-         */
-        toCurrency: (num, currency = 'USD', locale = 'en-US') => {
-            if (num === null || num === undefined) return '';
-            return Number(num).toLocaleString(locale, {
-                style: 'currency',
-                currency: currency
-            });
+        withCommas: (num) => {
+            if (num === null || num === undefined || num === '') return '';
+            const n = Number(num);
+            if (isNaN(n)) return '';
+            const [int_part, dec_part] = String(n).split('.');
+            const int_with = add_commas(int_part);
+            return dec_part ? `${int_with}.${dec_part}` : int_with;
         },
-        
-        /**
-         * Format number as percentage
-         */
-        toPercent: (num, decimals = 0) => {
-            if (num === null || num === undefined) return '';
+        toCurrency: (num, symbol = '$', decimals = 2) => {
+            const n = num === null || num === undefined || num === '' ? 0 : Number(num);
+            if (isNaN(n)) return `${symbol}0.00`;
+            const sign = n < 0 ? '-' : '';
+            const abs = Math.abs(n);
+            const fixed = abs.toFixed(decimals);
+            const [int_part, dec_part] = fixed.split('.');
+            const int_with = add_commas(int_part);
+            return `${sign}${symbol}${int_with}.${dec_part}`;
+        },
+        toPercent: (num, decimals = 2) => {
+            if (num === null || num === undefined || num === '') return '';
             return (Number(num) * 100).toFixed(decimals) + '%';
         },
-        
-        /**
-         * Parse number from string
-         */
+        toLocale: (num, locale = 'en-US', options = {}) => {
+            if (num === null || num === undefined || num === '') return '';
+            return Number(num).toLocaleString(locale, options);
+        },
         parse: (str) => {
             if (str === null || str === undefined || str === '') return null;
             const num = parseFloat(String(str).replace(/[^0-9.-]/g, ''));
             return isNaN(num) ? null : num;
         },
-        
-        /**
-         * Parse integer from string
-         */
         parseInt: (str) => {
             if (str === null || str === undefined || str === '') return null;
             const num = parseInt(String(str).replace(/[^0-9-]/g, ''));
             return isNaN(num) ? null : num;
         },
-        
-        /**
-         * Clamp number between min and max
-         */
-        clamp: (min, max) => (num) => {
-            return Math.max(min, Math.min(max, Number(num)));
-        }
+        clamp: (num, min, max) => {
+            const n = Number(num);
+            if (isNaN(n)) return min;
+            return Math.max(min, Math.min(max, n));
+        },
+        clamp_fn: (min, max) => (num) => Transformations.number.clamp(num, min, max)
     },
-    
-    /**
-     * String transformations
-     */
+
     string: {
-        /**
-         * Convert to uppercase
-         */
-        toUpper: (str) => {
+        toUpperCase: (str) => {
             return str ? String(str).toUpperCase() : '';
         },
-        
-        /**
-         * Convert to lowercase
-         */
-        toLower: (str) => {
+        toLowerCase: (str) => {
             return str ? String(str).toLowerCase() : '';
         },
-        
-        /**
-         * Capitalize first letter
-         */
+        toUpper: (str) => Transformations.string.toUpperCase(str),
+        toLower: (str) => Transformations.string.toLowerCase(str),
         capitalize: (str) => {
             if (!str) return '';
             const s = String(str);
             return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
         },
-        
-        /**
-         * Capitalize each word
-         */
         titleCase: (str) => {
             if (!str) return '';
-            return String(str).split(' ')
+            return String(str).split(/\s+/)
+                .filter(v => v.length > 0)
                 .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
                 .join(' ');
         },
-        
-        /**
-         * Trim whitespace
-         */
         trim: (str) => {
             return str ? String(str).trim() : '';
         },
-        
-        /**
-         * Truncate string to length
-         */
-        truncate: (maxLength, suffix = '...') => (str) => {
+        truncate: (str, maxLength, suffix = '...') => {
             if (!str) return '';
             const s = String(str);
             if (s.length <= maxLength) return s;
-            return s.substr(0, maxLength - suffix.length) + suffix;
+            const head = s.substr(0, maxLength).trimEnd();
+            return head + suffix;
         },
-        
-        /**
-         * Default value if empty
-         */
+        truncate_fn: (maxLength, suffix = '...') => (str) => Transformations.string.truncate(str, maxLength, suffix),
+        slugify: (str) => {
+            if (!str) return '';
+            return String(str)
+                .toLowerCase()
+                .replace(/&/g, ' ')
+                .replace(/[^a-z0-9\s-]/g, '')
+                .trim()
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        },
         default: (defaultValue) => (str) => {
             return str ? String(str) : defaultValue;
         }
     },
-    
-    /**
-     * Boolean transformations
-     */
+
     boolean: {
-        /**
-         * Convert to boolean
-         */
         toBool: (value) => {
             if (value === null || value === undefined) return false;
             if (typeof value === 'boolean') return value;
             if (typeof value === 'number') return value !== 0;
             const str = String(value).toLowerCase();
-            return str === 'true' || str === '1' || str === 'yes';
+            return str === 'true' || str === '1' || str === 'yes' || str === 'on' || str === 'enabled';
         },
-        
-        /**
-         * Convert to yes/no string
-         */
-        toYesNo: (value) => {
-            return Transformations.boolean.toBool(value) ? 'Yes' : 'No';
-        },
-        
-        /**
-         * Convert to on/off string
-         */
-        toOnOff: (value) => {
-            return Transformations.boolean.toBool(value) ? 'On' : 'Off';
-        },
-        
-        /**
-         * Invert boolean
-         */
-        not: (value) => {
-            return !Transformations.boolean.toBool(value);
-        }
+        parse: (value) => Transformations.boolean.toBool(value),
+        toYesNo: (value) => Transformations.boolean.toBool(value) ? 'Yes' : 'No',
+        toOnOff: (value) => Transformations.boolean.toBool(value) ? 'On' : 'Off',
+        toEnabledDisabled: (value) => Transformations.boolean.toBool(value) ? 'Enabled' : 'Disabled',
+        not: (value) => !Transformations.boolean.toBool(value)
     },
-    
-    /**
-     * Array transformations
-     */
+
     array: {
-        /**
-         * Join array to string
-         */
-        join: (separator = ', ') => (arr) => {
-            if (!Array.isArray(arr)) return '';
+        join: (arr, separator = ', ') => {
+            if (!Array.isArray(arr) || arr.length === 0) return '';
             return arr.join(separator);
         },
-        
-        /**
-         * Get array length
-         */
-        length: (arr) => {
-            return Array.isArray(arr) ? arr.length : 0;
-        },
-        
-        /**
-         * Filter array
-         */
-        filter: (predicate) => (arr) => {
+        first: (arr) => Array.isArray(arr) && arr.length > 0 ? arr[0] : undefined,
+        last: (arr) => Array.isArray(arr) && arr.length > 0 ? arr[arr.length - 1] : undefined,
+        length: (arr) => Array.isArray(arr) ? arr.length : 0,
+        reverse: (arr) => Array.isArray(arr) ? arr.slice().reverse() : [],
+        sort: (arr, compare_fn) => {
             if (!Array.isArray(arr)) return [];
-            return arr.filter(predicate);
+            const copy = arr.slice();
+            if (compare_fn) return copy.sort(compare_fn);
+            return copy.sort((a, b) => {
+                const ta = tof(a), tb = tof(b);
+                if (ta === 'number' && tb === 'number') return a - b;
+                return String(a).localeCompare(String(b));
+            });
         },
-        
-        /**
-         * Map array
-         */
-        map: (mapper) => (arr) => {
-            if (!Array.isArray(arr)) return [];
-            return arr.map(mapper);
-        },
-        
-        /**
-         * Get first element
-         */
-        first: (arr) => {
-            return Array.isArray(arr) && arr.length > 0 ? arr[0] : null;
-        },
-        
-        /**
-         * Get last element
-         */
-        last: (arr) => {
-            return Array.isArray(arr) && arr.length > 0 ? arr[arr.length - 1] : null;
-        },
-        
-        /**
-         * Sort array
-         */
-        sort: (compareFn) => (arr) => {
-            if (!Array.isArray(arr)) return [];
-            return [...arr].sort(compareFn);
-        }
+        unique: (arr) => Array.isArray(arr) ? Array.from(new Set(arr)) : [],
+        pluck: (arr, prop) => Array.isArray(arr) ? arr.map(item => item && item[prop]) : []
     },
-    
-    /**
-     * Object transformations
-     */
+
     object: {
-        /**
-         * Get property value
-         */
         get: (propertyPath) => (obj) => {
             if (!obj) return null;
             const parts = propertyPath.split('.');
@@ -315,139 +237,82 @@ const Transformations = {
             }
             return value;
         },
-        
-        /**
-         * Check if object has property
-         */
-        has: (property) => (obj) => {
-            return obj && obj.hasOwnProperty(property);
+        has: (property) => (obj) => obj && Object.prototype.hasOwnProperty.call(obj, property),
+        keys: (obj) => obj ? Object.keys(obj) : [],
+        values: (obj) => obj ? Object.values(obj) : [],
+        entries: (obj) => obj ? Object.entries(obj) : [],
+        pick: (obj, keys) => {
+            const res = {};
+            if (!obj || !Array.isArray(keys)) return res;
+            keys.forEach(k => {
+                if (Object.prototype.hasOwnProperty.call(obj, k)) res[k] = obj[k];
+            });
+            return res;
         },
-        
-        /**
-         * Get object keys
-         */
-        keys: (obj) => {
-            return obj ? Object.keys(obj) : [];
-        },
-        
-        /**
-         * Get object values
-         */
-        values: (obj) => {
-            return obj ? Object.values(obj) : [];
+        omit: (obj, keys) => {
+            const res = {};
+            if (!obj) return res;
+            const omit_set = new Set(Array.isArray(keys) ? keys : []);
+            Object.keys(obj).forEach(k => {
+                if (!omit_set.has(k)) res[k] = obj[k];
+            });
+            return res;
         }
     },
-    
-    /**
-     * Compose multiple transformations
-     */
-    compose: (...fns) => {
-        return (value) => {
-            return fns.reduce((acc, fn) => fn(acc), value);
-        };
-    },
-    
-    /**
-     * Identity transformation (returns input unchanged)
-     */
+
+    compose: (...fns) => (value) => fns.reduce((acc, fn) => fn(acc), value),
+    pipe: (...fns) => (value) => fns.reduce((acc, fn) => fn(acc), value),
     identity: (value) => value,
-    
-    /**
-     * Default value transformation
-     */
-    defaultTo: (defaultValue) => (value) => {
-        return value !== null && value !== undefined ? value : defaultValue;
-    },
-    
-    /**
-     * Conditional transformation
-     */
-    when: (condition, thenTransform, elseTransform = Transformations.identity) => {
-        return (value) => {
-            return condition(value) ? thenTransform(value) : elseTransform(value);
-        };
-    },
-    
-    /**
-     * Create a bidirectional transformation pair
-     */
-    bidirectional: (forward, reverse) => {
-        return {
-            transform: forward,
-            reverse: reverse
-        };
-    }
+    defaultTo: (defaultValue) => (value) => value !== null && value !== undefined ? value : defaultValue,
+    when: (condition, thenTransform, elseTransform = Transformations.identity) => (value) => condition(value) ? thenTransform(value) : elseTransform(value),
+    bidirectional: (forward, reverse) => ({ transform: forward, reverse })
 };
 
-/**
- * Validators - Common validation functions
- */
 const Validators = {
-    /**
-     * Required field validator
-     */
     required: (value) => {
         if (value === null || value === undefined) return false;
         if (typeof value === 'string' && value.trim() === '') return false;
         if (Array.isArray(value) && value.length === 0) return false;
         return true;
     },
-    
-    /**
-     * Email validator
-     */
     email: (value) => {
-        if (!value) return true; // Empty is valid, use required for mandatory
+        if (!value) return true;
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(String(value));
     },
-    
-    /**
-     * URL validator
-     */
     url: (value) => {
-        if (!value) return true;
+        if (!value) return false;
         try {
-            new URL(value);
-            return true;
+            const u = new URL(value);
+            return u.protocol === 'http:' || u.protocol === 'https:';
         } catch {
             return false;
         }
     },
-    
-    /**
-     * Number range validator
-     */
-    range: (min, max) => (value) => {
+    range: (value, min, max) => {
         const num = Number(value);
         if (isNaN(num)) return false;
         return num >= min && num <= max;
     },
-    
-    /**
-     * String length validator
-     */
-    length: (min, max) => (value) => {
-        if (!value) return true;
+    length: (value, min, max) => {
+        if (value === null || value === undefined) return false;
         const len = String(value).length;
         return len >= min && len <= max;
     },
-    
-    /**
-     * Pattern validator
-     */
-    pattern: (regex) => (value) => {
-        if (!value) return true;
+    pattern: (value, regex) => {
+        if (value === null || value === undefined) return false;
         return regex.test(String(value));
     },
-    
-    /**
-     * Custom validator
-     */
+    min: (value, min) => Number(value) >= min,
+    max: (value, max) => Number(value) <= max,
     custom: (fn) => fn
 };
 
-module.exports = {
+Transformations.validators = Validators;
+Transformations.Validators = Validators;
+
+module.exports = Object.assign(Transformations, {
     Transformations,
-    Validators
-};
+    Validators,
+    validators: Validators
+});

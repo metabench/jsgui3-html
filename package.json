@@ -4,10 +4,9 @@
   "license": "MIT",
   "dependencies": {
     "fnl": "^0.0.37",
-    "htmlparser": "^1.7.7",
-    "jsgui3-gfx-core": "^0.0.24",
-    "lang-tools": "^0.0.39",
-    "obext": "^0.0.31",
+    "jsgui3-gfx-core": "^0.0.25",
+    "lang-tools": "^0.0.43",
+    "obext": "^0.0.33",
     "url-parse": "^1.5.10"
   },
   "depNotes": {
@@ -27,7 +26,7 @@
     "Making a jsgui3-html-core module would help / be the way. It would include ways to load more controls and then there will still be jsgui3-html"
   ],
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=12.0.0"
   },
   "description": "Jsgui HTML generation and processing module (isomorphic, runs on client and server, few npm requirements)",
   "author": "James Vickers <james@metabench.com>",
@@ -37,8 +36,8 @@
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
   "devDependencies": {
-    "esbuild": "^0.27.0",
-    "jsgui3-server": "^0.0.139"
+    "esbuild": "^0.27.1",
+    "jsgui3-server": "^0.0.140"
   },
-  "version": "0.0.170"
+  "version": "0.0.171"
 }

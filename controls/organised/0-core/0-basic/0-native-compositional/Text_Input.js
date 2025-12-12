@@ -64,10 +64,13 @@ class Text_Input extends Control {
         super(spec);
         const {context} = this;
 
-        if (spec.placeholder) this.placeholder = spec.placeholder;
-        if (!spec.el) {
-            //this.compose_text_input();
-        }
+	        if (spec.placeholder) this.placeholder = spec.placeholder;
+	        if (this.placeholder) {
+	            this.dom.attributes.placeholder = this.placeholder;
+	        }
+	        if (!spec.el) {
+	            //this.compose_text_input();
+	        }
 
 
         // Likely to need improved client-side data coherence.
@@ -112,14 +115,13 @@ class Text_Input extends Control {
 
             //console.log('Text_Input view_data_model_change_handler [old, value]', [old, value]);
 
-            if (name === 'value') {
-                //console.log('Text_Input pre set dom attributes value to:', value);
-                //console.log('tof(value)', tof(value));
+	            if (name === 'value') {
+	                //console.log('Text_Input pre set dom attributes value to:', value);
+	                //console.log('tof(value)', tof(value));
 
+	                this.dom.attributes.value = value;
 
-                //this.dom.attributes.value = value;
-
-                //console.log('!!this.dom.el', this.dom.el);
+	                //console.log('!!this.dom.el', this.dom.el);
 
                 if (this.dom.el) {
                     //this.dom.el.setAttribute('value', value + '');
@@ -309,25 +311,14 @@ class Text_Input extends Control {
             this.view.data.model.value = this.data.model.value;
         }
 
-        if (spec.value) {
-            // Sets the .data.model.value, which in turn sets the .view.data.model.value, which in turn sets the dom.attributes,
-            //   which then sets it in the live element if active on the client, or in the rendering.
-
-            // .value will be a shortcut.
-
-
-
-            //this.value = spec.value;
-
-            this.data.model.value = spec.value; // more explicit here.
-
-
-
-            // Will need to also work with the view ui ll data model.
-            //   Maybe only have an optional view data model or stack of them.
-
-
-        }
+	        if (spec.value !== undefined) {
+	            if (this.data && this.data.model && typeof this.data.model.set === 'function') {
+	                this.data.model.set('value', spec.value, true);
+	            } else {
+	                this.data.model.value = spec.value;
+	            }
+	            this.dom.attributes.value = spec.value;
+	        }
 
         this.dom.tagName = 'input';
         this.dom.attributes.type = 'text';

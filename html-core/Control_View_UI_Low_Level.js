@@ -1,5 +1,3 @@
-
-
 const {field, Data_Object, Data_Value, Evented_Class} = require('lang-tools');
 
 const Control_View_UI_Low_Level_Data = require('./Control_View_UI_Low_Level_Data');

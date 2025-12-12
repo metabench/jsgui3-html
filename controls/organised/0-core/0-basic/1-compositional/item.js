@@ -67,6 +67,56 @@ class Item extends Control {
         super(spec);
         this.add_class('item');
 
+        const { context } = this;
+        const item_value = typeof spec.value !== 'undefined' ? spec.value : spec.item;
+
+        const compose_item = () => {
+            const t_item = tf(item_value);
+
+            if (t_item === 's' || t_item === 'n' || t_item === 'b') {
+                this.add(String(item_value));
+                return;
+            }
+
+            if (item_value && (item_value instanceof Control || item_value.__type === 'control')) {
+                this.add(item_value);
+                return;
+            }
+
+            if (t_item === 'o' && item_value) {
+                const item_keys = Object.keys(item_value).sort();
+                if (item_keys.length === 2 && are_equal(item_keys, ['icon', 'text'])) {
+                    const main_content = new span({ context });
+                    main_content.add(item_value.text);
+
+                    const lr = c_left_right(context, new Icon({
+                        context,
+                        key: item_value.icon,
+                        size: [64, 64]
+                    }), main_content);
+
+                    each(lr, ctrl => this.add(ctrl));
+                    return;
+                }
+
+                if (typeof item_value.text !== 'undefined') {
+                    this.add(String(item_value.text));
+                    return;
+                }
+
+                this.add(JSON.stringify(item_value));
+                return;
+            }
+
+            if (t_item === 'a') {
+                this.add(JSON.stringify(item_value));
+            }
+        };
+
+        if (!spec.el && typeof item_value !== 'undefined') {
+            compose_item();
+        }
+
         // item can be given in the spec.
         //  then look at that object.
 
