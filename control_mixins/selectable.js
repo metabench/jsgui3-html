@@ -12,13 +12,30 @@ const {each, is_array, is_def} = require('lang-mini');
 // Being able to say a grid is selectable or has selectableness, ie the grid cells can be selected.
 
 const selectable = (ctrl, ctrl_handle, opts) => {
+    ctrl._selectable_mixin_state = ctrl._selectable_mixin_state || {};
+    const mx_state = ctrl._selectable_mixin_state;
+
     const setup_isomorphic = () => {
-        const old_silent = ctrl.view.data.model.mixins.silent;
-        ctrl.view.data.model.mixins.silent = true;
-        ctrl.view.data.model.mixins.push({
-            name: 'selectable'
-        });
-        ctrl.view.data.model.mixins.silent = old_silent;
+        if (mx_state.isomorphic_applied) return;
+        mx_state.isomorphic_applied = true;
+
+        const mixins = ctrl.view?.data?.model?.mixins;
+        if (mixins && typeof mixins.each === 'function' && typeof mixins.push === 'function') {
+            let has_selectable = false;
+            mixins.each(mixin => {
+                if (mixin && mixin.name === 'selectable') has_selectable = true;
+            });
+
+            if (!has_selectable) {
+                const old_silent = mixins.silent;
+                mixins.silent = true;
+                mixins.push({
+                    name: 'selectable'
+                });
+                mixins.silent = old_silent;
+            }
+        }
+
         ctrl.on('change', e_change => {
             let {
                 name,
@@ -37,7 +54,10 @@ const selectable = (ctrl, ctrl_handle, opts) => {
     setup_isomorphic();
 
     if (typeof document === 'undefined') {
-        ctrl.on('server-pre-render', e => {
+        if (!mx_state.server_pre_render_applied) {
+            mx_state.server_pre_render_applied = true;
+
+            ctrl.on('server-pre-render', e => {
             //console.log('selectable server-pre-render');
 
             if (ctrl.selectable === true) {
@@ -52,57 +72,54 @@ const selectable = (ctrl, ctrl_handle, opts) => {
 
             }
 
-        })
+            })
+        }
     }
 
     if (ctrl.dom.el) {
+        if (mx_state.dom_applied) return;
+        mx_state.dom_applied = true;
+
         let select_toggle = false;
         let select_multi = false;
         let condition;
         let preventDefault = true;
         let selection_action = ['mousedown', 'touchstart'];
 
-        const old_selectable = ctrl.selectable;
-
-
-        if (old_selectable) {
-            console.trace();
-            throw 'NYI / Deprecated';
-        } else {
-            if (!opts) {
-                if (ctrl_handle) {
-                    if (!ctrl_handle.activate) {
-                        opts = ctrl_handle;
-                        ctrl_handle = undefined;
-                    }
+        if (!opts) {
+            if (ctrl_handle) {
+                if (!ctrl_handle.activate) {
+                    opts = ctrl_handle;
+                    ctrl_handle = undefined;
                 }
             }
-            if (opts) {
-                if (opts.handle) {
-                    ctrl_handle = opts.handle;
-                }
-                if (opts.select_toggle || opts.toggle) {
-                    select_toggle = true;
-                }
-                if (opts.select_multi || opts.multi) {
-                    select_multi = true;
-                }
-                if (opts.single) {
-                    select_multi = false;
-                }
-                if (opts.selection_action) {
-                    selection_action = opts.selection_action;
-                }
-                if (opts.condition) {
-                    condition = opts.condition;
-                }
-                if (opts.preventDefault === false) {
-                    preventDefault = false;
-                }
+        }
+        if (opts) {
+            if (opts.handle) {
+                ctrl_handle = opts.handle;
             }
-            ctrl_handle = ctrl_handle || ctrl;
-            
-            let click_handler = (e) => {
+            if (opts.select_toggle || opts.toggle) {
+                select_toggle = true;
+            }
+            if (opts.select_multi || opts.multi) {
+                select_multi = true;
+            }
+            if (opts.single) {
+                select_multi = false;
+            }
+            if (opts.selection_action) {
+                selection_action = opts.selection_action;
+            }
+            if (opts.condition) {
+                condition = opts.condition;
+            }
+            if (opts.preventDefault === false) {
+                preventDefault = false;
+            }
+        }
+        ctrl_handle = ctrl_handle || ctrl;
+        
+        let click_handler = (e) => {
                 if (ctrl.selectable && !ctrl.selection_scope && !ctrl.disabled) {
                     if (!condition || condition()) {
                         var ctrl_key = e.ctrlKey;
@@ -226,7 +243,6 @@ const selectable = (ctrl, ctrl_handle, opts) => {
             //if (old_selectable !== undefined) {
             //    ctrl.selectable = old_selectable;
             //}
-        }
 
         
     }

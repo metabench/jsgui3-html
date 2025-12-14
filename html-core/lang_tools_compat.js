@@ -9,6 +9,7 @@ const {
 let data_object_set_patched = false;
 let data_value_id_patched = false;
 let data_object_fields_patched = false;
+let collection_data_model_push_patched = false;
 let needs_patch_cached = null;
 
 const is_plain_object = (value) => {
@@ -153,6 +154,55 @@ const patch_data_value_id = () => {
     };
 };
 
+const patch_collection_data_model_push = () => {
+    if (collection_data_model_push_patched) return;
+    collection_data_model_push_patched = true;
+
+    const { Collection } = lang_tools;
+    if (!Collection || !Collection.prototype || typeof Collection.prototype.push !== 'function') return;
+
+    const original_push = Collection.prototype.push;
+
+    Collection.prototype.push = function(value) {
+        const tv = tof(value);
+        if (tv === 'data_model') {
+            const { silent } = this;
+            const fn_index = this.fn_index;
+            let idx_key;
+            let has_idx_key = false;
+            if (fn_index) {
+                idx_key = fn_index(value);
+                has_idx_key = true;
+            }
+
+            const pos = this._arr.length;
+            this._arr.push(value);
+            this._arr_idx++;
+
+            if (!silent) {
+                this.raise('change', {
+                    target: this,
+                    item: value,
+                    value: value,
+                    position: pos,
+                    name: 'insert'
+                });
+            }
+
+            if (has_idx_key && this.index && typeof this.index.put === 'function') {
+                this.index.put(idx_key, pos);
+            }
+
+            return value;
+        }
+
+        return original_push.call(this, value);
+    };
+
+    // Keep `.add` aligned with `.push` (lang-tools assigns it as an alias once at load-time).
+    Collection.prototype.add = Collection.prototype.push;
+};
+
 const normalize_fields_spec = (fields) => {
     if (!fields) return [];
     if (Array.isArray(fields)) return fields;
@@ -244,7 +294,8 @@ const detect_needs_patch = () => {
         needs_accessors_patch: false,
         needs_data_value_id_patch: false,
         needs_data_object_compat: false,
-        needs_set_fields_patch: false
+        needs_set_fields_patch: false,
+        needs_collection_data_model_patch: false
     };
 
     // 1) Spec hydration should populate internal storage (get) not just direct props.
@@ -338,6 +389,20 @@ const detect_needs_patch = () => {
         }
     }
 
+    // 8) Collection should accept Data_Model/Data_Object items (new lang-tools uses tof === 'data_model').
+    try {
+        const { Collection, Data_Object } = lang_tools;
+        if (Collection && Data_Object) {
+            const col = new Collection({});
+            col.add(new Data_Object({}));
+            if (typeof col.length === 'function' && col.length() === 0) {
+                requirements.needs_collection_data_model_patch = true;
+            }
+        }
+    } catch (e) {
+        requirements.needs_collection_data_model_patch = true;
+    }
+
     needs_patch_cached = requirements;
     return requirements;
 };
@@ -361,6 +426,10 @@ const apply_patches_if_needed = () => {
 
     if (requirements.needs_data_object_compat) {
         lang_tools.Data_Object = Data_Object_Compat;
+    }
+
+    if (requirements.needs_collection_data_model_patch) {
+        patch_collection_data_model_push();
     }
 };
 

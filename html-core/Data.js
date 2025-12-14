@@ -9,7 +9,7 @@ class Data extends Evented_Class {
                 this._model = spec.model;
             } else {
                 console.trace();
-                throw 'stop';
+                throw new Error('Data: Expected spec.model to be a Data_Model');
             }
         }
         if (spec.model_constructor) {

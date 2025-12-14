@@ -142,8 +142,42 @@ class Grid extends Control {
         });
     }
     'get_cell'(x, y) {
-        console.trace();
-        throw 'NYI';
+        let cell_x = x;
+        let cell_y = y;
+
+        if (typeof cell_x === 'object' && cell_x !== null) {
+            if (Array.isArray(cell_x)) {
+                cell_y = cell_x[1];
+                cell_x = cell_x[0];
+            } else if (typeof cell_y === 'undefined') {
+                cell_y = cell_x.y;
+                cell_x = cell_x.x;
+            }
+        }
+
+        if (typeof cell_x === 'undefined' || typeof cell_y === 'undefined') return undefined;
+
+        const x_num = typeof cell_x === 'number' ? cell_x : parseInt(cell_x, 10);
+        const y_num = typeof cell_y === 'number' ? cell_y : parseInt(cell_y, 10);
+        if (!Number.isFinite(x_num) || !Number.isFinite(y_num)) return undefined;
+
+        const key = '[' + x_num + ',' + y_num + ']';
+        if (this.map_cells && this.map_cells[key]) return this.map_cells[key];
+
+        if (this.arr_cells && this.arr_cells[x_num] && this.arr_cells[x_num][y_num]) {
+            return this.arr_cells[x_num][y_num];
+        }
+
+        if (this._arr_rows && this._arr_rows[y_num]) {
+            const row = this._arr_rows[y_num];
+            const offset = this.row_headers ? 1 : 0;
+            const idx = x_num + offset;
+            if (row && row.content && row.content._arr && row.content._arr[idx]) {
+                return row.content._arr[idx];
+            }
+        }
+
+        return undefined;
     }
     'add_cell'(content) {
         var cell = new Grid_Cell({

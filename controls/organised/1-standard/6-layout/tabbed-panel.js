@@ -91,8 +91,9 @@ class Tabbed_Panel extends Panel {
     compose_tabbed_panel(tabs_def) {
         const { context } = this;
         this.tab_pages = [];
+        const tabs = tabs_def || this.tabs || [];
 
-        const add_tab = (name, group_name) => {
+        const add_tab = (name, group_name, is_checked) => {
             var html_radio = new Control({ context });
             {
                 const { dom } = html_radio;
@@ -100,6 +101,7 @@ class Tabbed_Panel extends Panel {
                 const { attributes } = dom;
                 attributes.type = 'radio';
                 attributes.name = group_name;
+                if (is_checked) attributes.checked = 'checked';
             }
             html_radio.add_class('tab-input');
             this.add(html_radio);
@@ -118,38 +120,37 @@ class Tabbed_Panel extends Panel {
             return tab_page;
         };
 
-        let i_tab = 0;
-        each(this.tabs, tab => {
-            const group_name = this._id();
+        const group_name = this._id();
+        const normalize_tab_def = (tab, idx_tab) => {
             const t = tof(tab);
-            if (t === 'string') {
-                add_tab(tab, group_name);
-                i_tab++;
-            } else {
 
-                if (t === 'array') {
+            if (t === 'string') return { label_text: tab, content: undefined };
 
-                    const tab_label_text = tab[0];
-                    const tab_content = tab[1];
-                    const tab_page = add_tab(tab_label_text, group_name);
-                    tab_page.add(tab_content);
+            if (t === 'array') {
+                return { label_text: tab[0], content: tab[1] };
+            }
 
-                } else if (t === 'object') {
-                    const tab_label_text = tab.title || tab.name || tab.text || '';
-                    const tab_content = tab.content;
-                    const tab_page = add_tab(tab_label_text, group_name);
-                    if (typeof tab_content !== 'undefined') {
-                        tab_page.add(tab_content);
-                    }
-                    i_tab++;
-                } else {
-                    console.log('tab', tab);
-                    console.log('t', t);
-                    throw 'NYI';
-                }
-                
-                
+            if (tab instanceof Control) {
+                const label_text = tab.title || tab.name || tab.text || tab.__type_name || ('Tab ' + (idx_tab + 1));
+                return { label_text, content: tab };
+            }
 
+            if (t === 'object') {
+                const label_text = tab.title || tab.name || tab.text || ('Tab ' + (idx_tab + 1));
+                const content = tab.content;
+                return { label_text, content };
+            }
+
+            return { label_text: String(tab), content: undefined };
+        };
+
+        each(tabs, (tab, idx_tab) => {
+            const is_checked = idx_tab === 0;
+            const normalized = normalize_tab_def(tab, idx_tab);
+            const label_text = typeof normalized.label_text === 'undefined' ? '' : normalized.label_text;
+            const tab_page = add_tab(label_text, group_name, is_checked);
+            if (typeof normalized.content !== 'undefined') {
+                tab_page.add(normalized.content);
             }
         });
 
@@ -161,13 +162,12 @@ class Tabbed_Panel extends Panel {
     }
     activate() {
         if (!this.__active) {
-            this.__active = true;
+            super.activate();
             const tab_pages = [];
             each(this.content._arr, ctrl => {
                 if (ctrl.has_class('tab-page')) { tab_pages.push(ctrl); }
             });
             this.tab_pages = tab_pages;
-            console.log('tab_pages.length', tab_pages.length);
         }
     }
 }

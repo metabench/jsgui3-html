@@ -5,6 +5,12 @@ class Page_Context extends Evented_Class {
     constructor(spec) {
         spec = spec || {};
         super(spec);
+        this.map_els = this.map_els || {};
+        if (spec.document) {
+            this.document = spec.document;
+        } else if (typeof document !== 'undefined') {
+            this.document = document;
+        }
         if (spec.browser_info) {
             this.browser_info = spec.browser_info;
         };
@@ -42,6 +48,66 @@ class Page_Context extends Evented_Class {
         this.map_data_model_iids = this.map_data_model_iids || {};
         this.map_control_iids = {};
         this.next_iid = 1;
+    }
+    'get_ctrl_el'(ctrl) {
+        if (!ctrl) return undefined;
+
+        const ctrl_el = ctrl.dom && ctrl.dom.el;
+        if (ctrl_el) return ctrl_el;
+
+        let ctrl_id;
+        if (typeof ctrl === 'string') {
+            ctrl_id = ctrl;
+        } else if (typeof ctrl._id === 'function') {
+            ctrl_id = ctrl._id();
+        } else if (ctrl.__id) {
+            ctrl_id = ctrl.__id;
+        }
+
+        if (!ctrl_id) return undefined;
+
+        const cached = this.map_els && this.map_els[ctrl_id];
+        if (cached) return cached;
+
+        const doc = this.document;
+        if (doc && typeof doc.querySelector === 'function') {
+            const found = doc.querySelector('[data-jsgui-id="' + ctrl_id + '"]');
+            if (found) {
+                this.map_els[ctrl_id] = found;
+                return found;
+            }
+        }
+
+        return undefined;
+    }
+    'body'() {
+        if (this._body_control) return this._body_control;
+
+        const doc = this.document;
+        if (!doc || !doc.body) return undefined;
+
+        const Control = require('./control');
+
+        const body_control = new Control({
+            context: this,
+            __type_name: 'body',
+            tag_name: 'body',
+            el: doc.body
+        });
+
+        this._body_control = body_control;
+        if (typeof body_control._id === 'function') {
+            this.map_els[body_control._id()] = doc.body;
+        }
+
+        if (typeof body_control.add_content_change_event_listener === 'function') {
+            body_control.add_content_change_event_listener();
+        }
+        if (typeof body_control.add_dom_attributes_changes_listener === 'function') {
+            body_control.add_dom_attributes_changes_listener();
+        }
+
+        return body_control;
     }
     'new_selection_scope'(ctrl) {
         var res = new Selection_Scope({

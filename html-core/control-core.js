@@ -445,44 +445,69 @@ class Control_Core extends Base_Data_Object {
 			}
 			var dom_attrs_keys = Object.keys(dom_attrs);
 			var key, item;
-			for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
-				key = dom_attrs_keys[c];
-				if (key == '_bound_events') {} else if (key === 'style') {
-					item = dom_attrs[key];
-					if (typeof item !== 'function') {
-						if (typeof item === 'object') {
-							if (key === 'style') {
-								const sprops = [];
-								each(item, (v, k) => {
-									const tval = typeof v;
-									if (tval !== 'function') {
-										if (k !== '__empty') {
-											const sprop = k + ':' + v;
-											sprops.push(sprop);
+				for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
+					key = dom_attrs_keys[c];
+					if (key == '_bound_events') {} else if (key === 'style') {
+						item = dom_attrs[key];
+						if (typeof item !== 'function') {
+							if (typeof item === 'object') {
+								if (key === 'style') {
+									const sprops = [];
+									each(item, (v, k) => {
+										const tval = typeof v;
+										if (tval !== 'function') {
+											if (k !== '__empty') {
+												const sprop = k + ':' + v;
+												sprops.push(sprop);
+											}
+										}
+									});
+									if (sprops.length > 0) arr.push(' ', key, '="', sprops.join(';'), '"');
+								} else {
+									let s_obj;
+									try {
+										s_obj = stringify(item);
+									} catch (e) {
+										if (item && item.toString) {
+											s_obj = item.toString();
+										} else {
+											s_obj = '';
 										}
 									}
-								});
-								if (sprops.length > 0) arr.push(' ', key, '="', sprops.join(';'), '"');
+									if (s_obj && s_obj.length > 0) {
+										s_obj = s_obj.replace(/\"/g, "'")
+										arr.push(' ', key, '="', s_obj, '"');
+									}
+								}
 							} else {
-								console.trace();
-								throw 'NYI';
-							}
-						} else {
-							let is = item.toString();
-							if (!item.__empty && is.length > 0) {
-								arr.push(' ', key, '="', is, '"');
+								let is = item.toString();
+								if (!item.__empty && is.length > 0) {
+									arr.push(' ', key, '="', is, '"');
 							}
 						}
 					}
-				} else {
-					item = dom_attrs[key];
-					if (item && item.toString) {
-						arr.push(' ', key, '="', item.toString(), '"');
+					} else {
+						item = dom_attrs[key];
+						if (item && item.toString) {
+							if (typeof item === 'object' && item !== null) {
+								let s_obj;
+								try {
+									s_obj = stringify(item);
+								} catch (e) {
+									s_obj = item.toString();
+								}
+								if (s_obj && s_obj.length > 0) {
+									s_obj = s_obj.replace(/\"/g, "'")
+									arr.push(' ', key, '="', s_obj, '"');
+								}
+							} else {
+								arr.push(' ', key, '="', item.toString(), '"');
+							}
+						}
 					}
 				}
+				return arr.join('');
 			}
-			return arr.join('');
-		}
 	}
 	'renderBeginTagToHtml'() {
 		const tagName = this.dom.tagName;
@@ -575,19 +600,23 @@ class Control_Core extends Base_Data_Object {
 			}
 		}
 	}
-	'render_content'() {
-		var content = this.content;
-		if (tof(content) === 'string') {
-			return content;
-		} else {
-			var contentLength = content.length();
-			var res = new Array(contentLength);
-			var tn, output;
-			var arr = content._arr;
-			var c, l = arr.length,
-				n;
+		'render_content'() {
+			var content = this.content;
+			if (tof(content) === 'string') {
+				return content;
+			} else {
+				var contentLength = content.length();
+				var res = new Array(contentLength);
+				var tn, output;
+				var arr = content._arr;
+				var c, l = arr.length,
+					n;
 				for (c = 0; c < l; c++) {
 					n = arr[c];
+					if (n === null || typeof n === 'undefined') {
+						res.push('');
+						continue;
+					}
 					tn = tof(n);
 					if (tn === 'string') {
 						const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
@@ -607,17 +636,39 @@ class Control_Core extends Base_Data_Object {
 						}
 						if (dv_val === null || typeof dv_val === 'undefined') dv_val = '';
 						res.push('' + dv_val);
-					} else {
-					if (tn === 'data_object') {
-						throw 'stop';
-					} else {
+					} else if (tn === 'data_model' || tn === 'data_object') {
+						let s_val;
+						try {
+							s_val = stringify(n);
+						} catch (e) {
+							s_val = '' + n;
+						}
+						if (typeof s_val === 'string' && s_val.length >= 2 && s_val[0] === '\"' && s_val[s_val.length - 1] === '\"') {
+							s_val = s_val.slice(1, -1);
+						}
+						const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
+						if (string_processor) {
+							res.push(string_processor(s_val));
+						} else {
+							res.push(new Text_Node(s_val).all_html_render());
+						}
+					} else if (tn === 'number' || tn === 'boolean') {
+						res.push('' + n);
+					} else if (n && typeof n.all_html_render === 'function') {
 						res.push(n.all_html_render());
+					} else {
+						const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
+						const fallback = '' + n;
+						if (string_processor) {
+							res.push(string_processor(fallback));
+						} else {
+							res.push(new Text_Node(fallback).all_html_render());
+						}
 					}
 				}
+				return res.join('');
 			}
-			return res.join('');
 		}
-	}
 	'all_html_render_internal_controls'() {
 		return this.render_content();
 	}
@@ -871,8 +922,8 @@ class Control_Core extends Base_Data_Object {
 			}
 			return search(this);
 		}
-	}
-	'shallow_copy'() {
+		}
+		'shallow_copy'() {
 		var res = new Control({
 			'context': this.context
 		});
@@ -893,14 +944,14 @@ class Control_Core extends Base_Data_Object {
 			}
 		})
 		return res;
-	}
-	'matches_selector'(selector) {
-		throw 'NYI'
-	}
-	'find'(selector) { 
-		const res = [];
-		const desc = (node, callback) => {
-			if (node.$match(selector)) {
+		}
+		'matches_selector'(selector) {
+			return this.$match(selector);
+		}
+		'find'(selector) { 
+			const res = [];
+			const desc = (node, callback) => {
+				if (node.$match(selector)) {
 				callback(node);
 			}
 			node.content.each(child => {
@@ -909,38 +960,86 @@ class Control_Core extends Base_Data_Object {
 		}
 		desc(this, (node => res.push(node)));
 		return res;
-	}
-	'$match'(selector) {
-		if (typeof selector === 'function') {
-			return selector(this);
-		} else {
-			let parse_word = word => {
-				if (word[0] === '.') {
-					return () => this.has_class(word.substr(1));
-				} else {
-					return () => this.__type_name === word;
-				}
-			}
-			let parse_selector = selector => {
-				let words = selector.split(' ');
-				let res = words.map(x => parse_word(x));
-				return res;
-			}
-			let parsed = parse_selector(selector);
-			if (parsed.length === 1) {
-				return parsed[0]();
+		}
+		'$match'(selector) {
+			if (typeof selector === 'function') {
+				return selector(this);
 			} else {
-				console.trace();
-				throw 'NYI';
+				const str_selector = String(selector || '').trim();
+				if (str_selector === '') return false;
+
+				const parse_part = (part) => {
+					const str_part = String(part || '').trim();
+					if (str_part === '' || str_part === '*') return () => true;
+
+					if (str_part[0] === '.') {
+						const cls = str_part.substr(1);
+						return (node) => node && typeof node.has_class === 'function' && node.has_class(cls);
+					}
+
+					if (str_part[0] === ':') {
+						const type_name = str_part.substr(1);
+						return (node) => node && node.__type_name === type_name;
+					}
+
+					if (str_part[0] === '#') {
+						const id = str_part.substr(1);
+						return (node) => node && (node.dom?.attributes?.id === id || node._id?.() === id);
+					}
+
+					if (str_part[0] === '[' && str_part[str_part.length - 1] === ']') {
+						const inner = str_part.substring(1, str_part.length - 1).trim();
+						const eq_pos = inner.indexOf('=');
+						if (eq_pos === -1) {
+							const prop_name = inner;
+							return (node) => {
+								if (!node) return false;
+								const v = node[prop_name];
+								return typeof v !== 'undefined' && v !== null && v !== false;
+							};
+						}
+						const prop_name = inner.substring(0, eq_pos).trim();
+						let expected = inner.substring(eq_pos + 1).trim();
+						if (
+							(expected[0] === '"' && expected[expected.length - 1] === '"') ||
+							(expected[0] === "'" && expected[expected.length - 1] === "'")
+						) {
+							expected = expected.substring(1, expected.length - 1);
+						}
+						return (node) => {
+							if (!node) return false;
+							const actual = node[prop_name];
+							return String(actual) === expected;
+						};
+					}
+
+					return (node) => node && node.__type_name === str_part;
+				};
+
+				const parts = str_selector.split(/\s+/).filter(part => part.length > 0);
+				if (parts.length === 0) return false;
+
+				const match_fns = parts.map(parse_part);
+
+				if (match_fns.length === 1) {
+					return match_fns[0](this);
+				}
+
+				let node = this;
+				let idx = match_fns.length - 1;
+				if (!match_fns[idx](node)) return false;
+
+				for (idx = idx - 1; idx >= 0; idx--) {
+					node = node.parent;
+					while (node && !match_fns[idx](node)) {
+						node = node.parent;
+					}
+					if (!node) return false;
+				}
+
+				return true;
 			}
 		}
-		let res = false;
-		let tn = this.__type_name;
-		if (tn) {
-			if (tn === selector) res = true;
-		}
-		return res;
-	}
 	'$'(selector, handler) {
 		let match = this.$match(selector);
 		let res = [];

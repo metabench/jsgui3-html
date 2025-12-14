@@ -106,20 +106,18 @@ module.exports = jsgui;
 
 ## Identified NYI (Not Yet Implemented) Areas
 
-From grep search of codebase:
+This repo previously contained a handful of runtime `NYI` / debug-throw (`stop`) paths in core rendering and control plumbing. These were addressed so that common server/client paths no longer throw opaque `"NYI"` rejections.
 
-### 1. Control Core NYI Issues
-- `control-core.js:467` - Some control operation throws 'NYI'
-- `control-core.js:867` - Another core operation not implemented
-- `control-core.js:903` - Third core operation missing
+Current status (high-level):
+- Core selector matching (`Control.$match`, `matches_selector`, `find`) no longer throws `NYI`.
+- Compositional model wiring no longer throws `stop / nyi` for supported shapes (and now supports `Control` instances in composition arrays).
+- `Validation_State.set(...)` accepts richer payloads and emits `change` events.
+- `Resource.load_compiler(...)` is implemented and registers compiler resources.
+- Rendering is more robust for object-valued DOM attributes and `Data_Model`/`Data_Object` content items.
 
-### 2. Control Enhancement NYI Issues
-- `control-enh.js:240,253,257` - Enhancement operations throw 'stop / nyi'
-- `control-enh.js:679` - Unexpected change type handling missing
+For implementation notes, see `docs/MVC_MVVM_Developer_Guide.md` section 10.
 
-### 3. HTML Core NYI Issues
-- `html-core.js:211` - Core HTML functionality missing
-- `Validation_State.js:33` - Validation state not implemented
+Remaining `NYI` strings are confined to old/experimental files (for example `html-core/old/**` and `_3_level_attempt_*`) or commented-out blocks.
 
 ## Missing Control Dependencies
 

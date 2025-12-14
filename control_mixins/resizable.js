@@ -85,14 +85,36 @@ const Control = require('../html-core/control');
 const drag_like_events = require('./drag_like_events');
 
 const {tof} = require('lang-tools');
+const {field} = require('obext');
 
 
 // Will also allow resizing with a 'frame' surrounding it.
 
 const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
+  const opts = options || {};
+
+  const ensure_isomorphic_mixin = () => {
+    const mixins = ctrl.view?.data?.model?.mixins;
+    if (!mixins || typeof mixins.each !== 'function' || typeof mixins.push !== 'function') return;
+
+    let has_resizable = false;
+    mixins.each(mixin => {
+      if (mixin && mixin.name === 'resizable') has_resizable = true;
+    });
+    if (has_resizable) return;
+
+    const old_silent = mixins.silent;
+    mixins.silent = true;
+    mixins.push({ name: 'resizable' });
+    mixins.silent = old_silent;
+  };
+
+  ensure_isomorphic_mixin();
+  field(ctrl, 'resizable');
+  ctrl.resizable = true;
 
 
-  const extra_margin = options.extra_margin !== undefined ? options.extra_margin : 2;
+  const extra_margin = opts.extra_margin !== undefined ? opts.extra_margin : 2;
   // And specify a minimum size here?
   //  Or size bounds? Could just specify lower size bounds.
 
@@ -102,8 +124,8 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
   // Size bounds as well as extent bounds.
 
 
-  const {bounds} = options;
-  const extent_bounds = options.extent_bounds || options.extent;
+  const {bounds} = opts;
+  const extent_bounds = opts.extent_bounds || opts.extent;
 
   const t_extent_bounds = tof(extent_bounds);
 
@@ -147,7 +169,7 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
   // borders-all-directions perhaps?
   //   maybe better with thicker borders, or accept 1, 2 or 3 pixels more, inside the borders?
 
-  const {resize_mode} = options;
+  const {resize_mode} = opts;
 
 
   const start_action = ['touchstart', 'mousedown'];
@@ -160,7 +182,29 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
   if (resize_mode === 'br_handle') {
 
-    if (ctrl.ctrl_relative) {
+    const ctrl_relative = ctrl.ctrl_relative || ctrl;
+    if (!ctrl.ctrl_relative) {
+      ctrl.ctrl_relative = ctrl_relative;
+      if (ctrl.dom && ctrl.dom.attributes && ctrl.dom.attributes.style && !ctrl.dom.attributes.style.position) {
+        ctrl.dom.attributes.style.position = 'relative';
+      }
+    }
+
+    const find_existing_resize_handle = () => {
+      const arr = ctrl_relative?.content?._arr || [];
+      for (let idx = 0; idx < arr.length; idx++) {
+        const item = arr[idx];
+        if (item && typeof item.has_class === 'function') {
+          if (item.has_class('resize-handle') && item.has_class('bottom-right')) return item;
+        }
+      }
+      return undefined;
+    };
+
+    if (!ctrl.ctrl_br_resize_handle) {
+      const found = find_existing_resize_handle();
+      if (found) ctrl.ctrl_br_resize_handle = found;
+    }
 
 
 
@@ -168,7 +212,6 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
       // Check if it's already installed???
 
       if (ctrl.ctrl_br_resize_handle) {
-        console.log('ctrl.ctrl_br_resize_handle already detected');
       } else {
         const ctrl_br_resize_handle = new Control({
           context: ctrl.context
@@ -178,14 +221,25 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
         ctrl_br_resize_handle.add('◢');
 
         // But does it have one already???
-        ctrl.ctrl_relative.add(ctrl_br_resize_handle);
-        ctrl_br_resize_handle.pre_activate();
-        ctrl_br_resize_handle.activate();
+        ctrl_relative.add(ctrl_br_resize_handle);
+        if (typeof document !== 'undefined' && ctrl_relative.dom && ctrl_relative.dom.el && ctrl_relative.__active) {
+          ctrl_br_resize_handle.pre_activate();
+          if (ctrl_br_resize_handle.dom && ctrl_br_resize_handle.dom.el) {
+            ctrl_br_resize_handle.activate();
+          }
+        }
 
         ctrl.ctrl_br_resize_handle = ctrl_br_resize_handle;
+      }
 
+      const ctrl_br_resize_handle = ctrl.ctrl_br_resize_handle;
+      if (typeof document !== 'undefined' && ctrl_br_resize_handle.context && typeof ctrl_br_resize_handle.context.body === 'function') {
         drag_like_events(ctrl_br_resize_handle);
         ctrl_br_resize_handle.drag_like_events = true;
+      }
+
+      if (!ctrl_br_resize_handle.__has_resizable_handle_events) {
+        ctrl_br_resize_handle.__has_resizable_handle_events = true;
 
         let css_transition;
 
@@ -344,10 +398,7 @@ const resizable = (ctrl, options = {resize_mode: 'br_handle'}) => {
 
 
 
-    } else {
-      console.trace();
-      throw 'NYI';
-    }
+
 
   }
 

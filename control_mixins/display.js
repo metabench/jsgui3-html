@@ -182,9 +182,8 @@ class Ctrl_Display_Mode_Category extends Evented_Class {
 
         // spec.name should exist.
 
-        let name;
         if (spec.name) {
-            name = spec.name;
+            this.name = spec.name;
         } else {
             throw 'Ctrl_Display_Mode_Category requires a name property';
         }
@@ -201,17 +200,26 @@ class Ctrl_Display_Modes_Categories extends Evented_Class {
         const map_categories = {}, arr_categories = [];
 
         if (spec.names) {
+            const add_category = (name) => {
+                if (typeof name !== 'string' || name.length === 0) return;
+                if (map_categories[name]) return;
+                const cat = new Ctrl_Display_Mode_Category({ name });
+                map_categories[name] = cat;
+                arr_categories.push(cat);
+            };
+
             if (tof(spec.names) === 'array') {
-                each(spec.names, name => {
-                    const cat = new Ctrl_Display_Mode_Category({name: name});
-                    map_categories[name] = cat;
-                    arr_categories.push(cat);
-                })
-            } else {
-                throw 'NYI';
+                each(spec.names, name => add_category(name));
+            } else if (tof(spec.names) === 'string') {
+                add_category(spec.names);
+            } else if (tof(spec.names) === 'object') {
+                each(spec.names, (_value, key) => add_category(key));
             }
         }
         // then use proxy to get by index???
+
+        this.map = map_categories;
+        this.arr = arr_categories;
 
         // What to do with them though?
 
@@ -248,12 +256,17 @@ class Ctrl_Display_Modes extends Evented_Class {
 
         const categories = new Ctrl_Display_Modes_Categories({names: arr_category_names});
 
-        Object.defineProperty(ctrl, 'categories', {
+        Object.defineProperty(this, 'categories', { get: () => categories });
+
+        let _value;
+        Object.defineProperty(this, 'value', {
             get() {
-                return categories;
+                return _value;
             },
             set(value) {
-                throw 'NYI';
+                const old = _value;
+                _value = value;
+                this.raise('change', { name: 'value', old, value });
             }
         });
 
@@ -293,23 +306,14 @@ class Ctrl_Display extends Evented_Class {
 
 
 
-        const modes = new Ctrl_Display_Modes({});
+        const modes = new Ctrl_Display_Modes({ ctrl });
 
         Object.defineProperty(this, 'modes', {
             get() {
                 return modes;
             },
             set(value) {
-
-                // determine the type of the value
-
-                // ctrl_display.mode = ...
-
-                //  a string - is it one word? does it match a name of the defined or default display types.
-
-                // eg .display = 'mini', sets the display mode.
-
-                throw 'NYI';
+                modes.value = value;
             }
         });
 
@@ -377,32 +381,21 @@ let display = (ctrl, opts = {}) => {
     // Should set up the modes here too?
     //  mx display makes a lot of sense for the name of the functionality.
 
-    if (ctrl.display) {
-        throw 'ctrl already has .display property';
-    } else {
-        const ctrl_display = new Ctrl_Display({
-            ctrl: ctrl
-        });
-        Object.defineProperty(ctrl, 'display', {
-            get() {
-                return ctrl_display;
-            },
-            set(value) {
+    if (ctrl.display) return ctrl.display;
 
-                // determine the type of the value
+    const ctrl_display = new Ctrl_Display({
+        ctrl: ctrl
+    });
+    Object.defineProperty(ctrl, 'display', {
+        get() {
+            return ctrl_display;
+        },
+        set(value) {
+            ctrl_display.modes = value;
+        }
+    });
 
-                // ctrl_display.mode = ...
-
-                //  a string - is it one word? does it match a name of the defined or default display types.
-
-                // eg .display = 'mini', sets the display mode.
-
-                throw 'NYI';
-            }
-        });
-
-
-    }
+    return ctrl_display;
 
 
 

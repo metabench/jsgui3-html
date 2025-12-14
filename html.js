@@ -8,7 +8,32 @@ jsgui.Resource.Compilation = require('./resource/compilation-resource');
 jsgui.Resource.Compiler = require('./resource/compiler-resource');
 jsgui.gfx = require('jsgui3-gfx-core');
 jsgui.Resource.load_compiler = (name, jsfn, options) => {
-    throw 'NYI';
+    const compiler_name = name;
+    const compiler_fn = jsfn;
+    const compiler_options = options || {};
+
+    if (typeof compiler_name !== 'string' || compiler_name.length === 0) {
+        throw new Error('Resource.load_compiler(name, fn, options) requires a non-empty string name');
+    }
+    if (typeof compiler_fn !== 'function') {
+        throw new Error('Resource.load_compiler(name, fn, options) requires a function compiler implementation');
+    }
+
+    const compiler_resource = new jsgui.Resource.Compiler({ name: compiler_name });
+    compiler_resource.transform = (input, transform_options = {}) => {
+        const merged_options = Object.assign({}, compiler_options, transform_options);
+        return compiler_fn(input, merged_options);
+    };
+
+    jsgui.Resource.compilers = jsgui.Resource.compilers || {};
+    jsgui.Resource.compilers[compiler_name] = compiler_resource;
+
+    const pool = compiler_options.pool || compiler_options.resource_pool;
+    if (pool && typeof pool.add === 'function') {
+        pool.add(compiler_resource);
+    }
+
+    return compiler_resource;
 }
 jsgui.controls = jsgui.controls || {};
 //jsgui.controls.Active_HTML_Document = jsgui.Active_HTML_Document = require('./controls/organised/1-standard/5-ui/Active_HTML_Document');

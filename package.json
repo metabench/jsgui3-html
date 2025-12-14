@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "esbuild": "^0.27.1",
-    "jsgui3-server": "^0.0.140"
+    "jsgui3-server": "^0.0.141"
   },
-  "version": "0.0.172"
+  "version": "0.0.173"
 }

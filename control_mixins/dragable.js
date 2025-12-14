@@ -25,13 +25,12 @@ let dragable = (ctrl, opts = {}) => {
 	if (bounds) {
 		bounds_pos = bounds.pos || [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
 	}
-	handle = handle || ctrl;
-	const old_dragable = ctrl.dragable;
+		handle = handle || ctrl;
+		const old_dragable = ctrl.dragable;
 
-	if (old_dragable) {
-		console.trace();
-		throw 'NYI / Deprecated';
-	}
+		if (old_dragable) {
+			return;
+		}
 
 	let drag_mode = opts.drag_mode || opts.mode || 'translate';
 	if (bounds_is_parent) {
@@ -92,31 +91,34 @@ let dragable = (ctrl, opts = {}) => {
 					]
 				}
 			}
-			if (drag_mode === 'within-parent') {
-				dragging = true;
-				item_start_pos = ctrl.pos;
-				const ctrl_pos_to_be = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
-				ctrl.pos = ctrl_pos_to_be;
-			} else if (drag_mode === 'translate') {
-				// Capture current translate position at drag start to avoid jumping after resize
-				initial_ctrl_translate = ctrl.ta.slice(6, 8);
-				dragging = true;
-			} else {
-				if (drag_mode === 'x') {
+				if (drag_mode === 'within-parent') {
 					dragging = true;
-					item_start_pos = ctrl.pos || [ctrl.dom.el.offsetLeft, ctrl.dom.el.offsetTop];
-					half_item_width = Math.round(ctrl.dom.el.offsetWidth / 2);
-					item_width = (ctrl.dom.el.offsetWidth);
-					bounds_offset = [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
-					ctrl.pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1]];
+					item_start_pos = ctrl.pos;
+					const ctrl_pos_to_be = [item_start_pos[0] - movement_offset[0], item_start_pos[1] - movement_offset[1]];
+					ctrl.pos = ctrl_pos_to_be;
+				} else if (drag_mode === 'translate') {
+					// Capture current translate position at drag start to avoid jumping after resize
+					initial_ctrl_translate = ctrl.ta.slice(6, 8);
+					dragging = true;
 				} else {
-					console.log('drag_mode', drag_mode);
-					throw 'NYI';
+					if (drag_mode === 'y') {
+						dragging = true;
+						item_start_pos = ctrl.pos || [ctrl.dom.el.offsetLeft, ctrl.dom.el.offsetTop];
+						ctrl.pos = [item_start_pos[0], item_start_pos[1] + movement_offset[1]];
+					} else if (drag_mode === 'x') {
+						dragging = true;
+						item_start_pos = ctrl.pos || [ctrl.dom.el.offsetLeft, ctrl.dom.el.offsetTop];
+						half_item_width = Math.round(ctrl.dom.el.offsetWidth / 2);
+						item_width = (ctrl.dom.el.offsetWidth);
+						bounds_offset = [bounds.dom.el.offsetLeft, bounds.dom.el.offsetTop];
+						ctrl.pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1]];
+					} else {
+						throw new Error('Unsupported drag_mode: ' + drag_mode);
+					}
 				}
+				ctrl.raise('dragstart');
 			}
-			ctrl.raise('dragstart');
-		}
-		const move_drag = (pos) => {
+			const move_drag = (pos) => {
 			let ctrl_size = [ctrl.dom.el.offsetWidth, ctrl.dom.el.offsetHeight];
 			if (drag_mode === 'translate') {
 				let tr_x = movement_offset[0] + initial_ctrl_translate[0];
@@ -142,23 +144,26 @@ let dragable = (ctrl, opts = {}) => {
 				}
 				ctrl.ta[6] = tr_x;
 				ctrl.ta[7] = tr_y;
-			} else if (drag_mode === 'within-parent') {
-				bounds = bounds || ctrl.parent;
-				bounds_size = bounds.bcr()[2];
-				let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1] + movement_offset[1]];
-				if (new_pos[0] < 0) new_pos[0] = 0;
-				if (new_pos[1] < 0) new_pos[1] = 0;
-				if (new_pos[0] > bounds_size[0] - ctrl_size[0]) new_pos[0] = bounds_size[0] - ctrl_size[0];
-				if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
-				ctrl.pos = new_pos;
-			} else if (drag_mode === 'x') {
-				bounds_size = [bounds.dom.el.offsetWidth, bounds.dom.el.offsetHeight];
-				let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1]];
-				if (new_pos[0] < bounds_pos[0] - half_item_width) new_pos[0] = bounds_pos[0] - half_item_width;
-				if (new_pos[0] > bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width) new_pos[0] = bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width;
-				ctrl.pos = new_pos;
+				} else if (drag_mode === 'within-parent') {
+					bounds = bounds || ctrl.parent;
+					bounds_size = bounds.bcr()[2];
+					let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1] + movement_offset[1]];
+					if (new_pos[0] < 0) new_pos[0] = 0;
+					if (new_pos[1] < 0) new_pos[1] = 0;
+					if (new_pos[0] > bounds_size[0] - ctrl_size[0]) new_pos[0] = bounds_size[0] - ctrl_size[0];
+					if (new_pos[1] > bounds_size[1] - ctrl_size[1]) new_pos[1] = bounds_size[1] - ctrl_size[1];
+					ctrl.pos = new_pos;
+				} else if (drag_mode === 'y') {
+					let new_pos = [item_start_pos[0], item_start_pos[1] + movement_offset[1]];
+					ctrl.pos = new_pos;
+				} else if (drag_mode === 'x') {
+					bounds_size = [bounds.dom.el.offsetWidth, bounds.dom.el.offsetHeight];
+					let new_pos = [item_start_pos[0] + movement_offset[0], item_start_pos[1]];
+					if (new_pos[0] < bounds_pos[0] - half_item_width) new_pos[0] = bounds_pos[0] - half_item_width;
+					if (new_pos[0] > bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width) new_pos[0] = bounds_size[0] - ctrl_size[0] + bounds_offset[0] + half_item_width;
+					ctrl.pos = new_pos;
+				}
 			}
-		}
 		const body_mm = e_mm => {
 			let touch_count = 0;
 			if (e_mm.touches) touch_count = e_mm.touches.length;

@@ -54,12 +54,10 @@ const escape_html = (str) => {
 class textNode extends Evented_Class {
 //class textNode extends Control {
     constructor(spec) {
-        spec.__type_name = spec.__type_name || 'text_node'
-
         super();
 
         //super(spec);
-        if (typeof spec == 'string') {
+        if (typeof spec === 'string') {
             //this._.text = spec;
             //this.innerHtml = spec;
             spec = {
@@ -67,8 +65,9 @@ class textNode extends Evented_Class {
             };
         }
 
-        spec.nodeType = 3;
         spec = spec || {};
+        spec.__type_name = spec.__type_name || 'text_node';
+        spec.nodeType = 3;
 
         if (spec.el) {
             this.dom = {

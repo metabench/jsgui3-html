@@ -206,61 +206,79 @@ class Control extends Control_Core {
 		this.content.clear();
 		this.compose_using_compositional_model();
 	}
-	compose_using_compositional_model() {
-		let cm;
-		const {context} = this;
-		if (this.view.ui.compositional.model) {
-			cm = this.view.ui.compositional.model;
-		}
-		const tcm = tof(cm);
-		const compose_from_compositional_model_array = (arr_cm) => {
-			const l = arr_cm.length;
-			if (l > 0) {
-				for (let c = 0; c < l; c++) {
-					const composition_item = arr_cm[c];
-					const tci = tof(composition_item);
-					if (tci === 'function' || tci === 'control') {
-						const ctrl = new composition_item({context});
-						this.add(ctrl);
-					} else if (tci === 'array') { 
-						if (composition_item.length === 2) {
-							const [t0, t1] = [tof(composition_item[0]), tof(composition_item[1])];
-							if ((t0 === 'function' || t0 === 'control') && t1 === 'object') {
-								composition_item[1].context = context;
-								const ctrl = new composition_item[0](composition_item[1]);
-								this.add(ctrl);
-							} else if (t0 === 'string' && (t1 === 'function' || t1 === 'control')) {
-								const ctrl = new composition_item[1]({context});
-								this.add(ctrl);
-								this._ctrl_fields = this._ctrl_fields || {};
-								this._ctrl_fields[composition_item[0]] = ctrl;
+		compose_using_compositional_model() {
+			let cm;
+			const {context} = this;
+			if (this.view.ui.compositional.model) {
+				cm = this.view.ui.compositional.model;
+			}
+			const tcm = tof(cm);
+			const compose_from_compositional_model_array = (arr_cm) => {
+				const l = arr_cm.length;
+				if (l > 0) {
+					for (let c = 0; c < l; c++) {
+						const composition_item = arr_cm[c];
+						const tci = tof(composition_item);
+						if (tci === 'function') {
+							const ctrl = new composition_item({context});
+							this.add(ctrl);
+						} else if (tci === 'control') {
+							if (!composition_item.context) composition_item.context = context;
+							this.add(composition_item);
+						} else if (tci === 'string' || tci === 'number' || tci === 'boolean') {
+							this.add('' + composition_item);
+						} else if (tci === 'array') { 
+							if (composition_item.length === 2) {
+								const [t0, t1] = [tof(composition_item[0]), tof(composition_item[1])];
+								if (t0 === 'function' && t1 === 'object') {
+									const ctrl_spec = composition_item[1];
+									ctrl_spec.context = ctrl_spec.context || context;
+									const ctrl = new composition_item[0](ctrl_spec);
+									this.add(ctrl);
+								} else if (t0 === 'string' && t1 === 'function') {
+									const ctrl = new composition_item[1]({context});
+									this.add(ctrl);
+									this._ctrl_fields = this._ctrl_fields || {};
+									this._ctrl_fields[composition_item[0]] = ctrl;
+									this[composition_item[0]] = ctrl;
+								} else if (t0 === 'string' && t1 === 'control') {
+									const ctrl = composition_item[1];
+									if (!ctrl.context) ctrl.context = context;
+									this.add(ctrl);
+									this._ctrl_fields = this._ctrl_fields || {};
+									this._ctrl_fields[composition_item[0]] = ctrl;
+									this[composition_item[0]] = ctrl;
+								} else {
+									throw new Error('compose_using_compositional_model: Unsupported composition item (length 2)');
+								}
+							} else if (composition_item.length === 3) {
+								const [t0, t1, t2] = [tof(composition_item[0]), tof(composition_item[1]), tof(composition_item[2])];
+								if ((t0 === 'string') && (t1 === 'function') && t2 === 'object') {
+									const ctrl_spec = composition_item[2];
+									ctrl_spec.context = ctrl_spec.context || context;
+									const ctrl = new composition_item[1](ctrl_spec);
+									this.add(ctrl);
+									this._ctrl_fields = this._ctrl_fields || {};
+									this._ctrl_fields[composition_item[0]] = ctrl;
+									this[composition_item[0]] = ctrl;
+								} else if ((t0 === 'string') && (t1 === 'control') && t2 === 'object') {
+									const ctrl = composition_item[1];
+									if (!ctrl.context) ctrl.context = context;
+									this.add(ctrl);
+									this._ctrl_fields = this._ctrl_fields || {};
+									this._ctrl_fields[composition_item[0]] = ctrl;
+									this[composition_item[0]] = ctrl;
+								} else {
+									throw new Error('compose_using_compositional_model: Unsupported composition item (length 3)');
+								}
 							} else {
-								console.log('[t0, t1]', [t0, t1]);
-								console.trace();
-								throw 'stop / nyi';
+								throw new Error('compose_using_compositional_model: Unsupported composition item length: ' + composition_item.length);
 							}
-						} else if (composition_item.length === 3) {
-							const [t0, t1, t2] = [tof(composition_item[0]), tof(composition_item[1]), tof(composition_item[2])];
-							if ((t0 === 'string') && (t1 === 'function' || t1 === 'control') && t2 === 'object') {
-								composition_item[2].context = context;
-								const ctrl = new composition_item[1](composition_item[2]);
-								this.add(ctrl);
-								this._ctrl_fields = this._ctrl_fields || {};
-								this._ctrl_fields[composition_item[0]] = ctrl;
-							} else {
-								console.log('[t0, t1, t2]', [t0, t1, t2]);
-								console.trace();
-								throw 'stop / nyi';
-							}
-						} else {
-							console.trace();
-							throw 'stop / nyi';
 						}
 					}
 				}
 			}
-		}
-		if (tcm === 'array') {
+			if (tcm === 'array') {
 			compose_from_compositional_model_array(cm);
 		}
 	}
@@ -345,20 +363,27 @@ class Control extends Control_Core {
 			throw 'Required argument: (array)'
 		}
 	}
-	'border' () {
-		var a = arguments;
-		a.l = arguments.length;
-		var sig = get_a_sig(a, 1);
-		if (sig == '[]') {
-			var left, top, right, bottom;
-			var c_border = this.computed_style('border');
-			console.log('c_border', c_border);
-			throw 'stop';
-		} else {
-			console.trace();
-			throw 'Required argument: (array)'
+		'border' () {
+			var a = arguments;
+			a.l = arguments.length;
+			var sig = get_a_sig(a, 1);
+			if (sig == '[]') {
+				if (!has_window) return;
+				if (!this.dom.el) return;
+				const parse_px = (value) => {
+					const parsed = parseFloat(value);
+					return Number.isFinite(parsed) ? parsed : 0;
+				};
+				const left = parse_px(this.computed_style('border-left-width') || 0);
+				const top = parse_px(this.computed_style('border-top-width') || 0);
+				const right = parse_px(this.computed_style('border-right-width') || 0);
+				const bottom = parse_px(this.computed_style('border-bottom-width') || 0);
+				return [left, top, right, bottom];
+			} else {
+				console.trace();
+				throw 'Required argument: (array)'
+			}
 		}
-	}
 	'border_thickness' () {
 		var a = arguments;
 		a.l = arguments.length;
@@ -670,16 +695,57 @@ class Control extends Control_Core {
 				if (el) {
 					el.innerHTML = '';
 				}
-			} else if (type === 'remove') {
-				if (e_change.value.dom.el) {
-					e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
+				} else if (type === 'remove') {
+					if (e_change.value.dom.el) {
+						e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
+					}
+				} else {
+					if (el) {
+						el.innerHTML = '';
+						this.content.each(item => {
+							let item_dom_el;
+							if (item instanceof Text_Node) {
+								item_dom_el = document.createTextNode(item.text || '');
+								item.dom.el = item_dom_el;
+							} else {
+								const retrieved_item_dom_el = item.dom && item.dom.el;
+								if (retrieved_item_dom_el) {
+									item_dom_el = retrieved_item_dom_el;
+								} else if (item && typeof item.all_html_render === 'function') {
+									let item_tag_name = 'div';
+									const dv_tag_name = item.dom && item.dom.tagName;
+									if (dv_tag_name) item_tag_name = dv_tag_name;
+									let temp_el;
+									if (item_tag_name === 'circle' || item_tag_name === 'line' || item_tag_name === 'polyline') {
+										const temp_svg_container = context.document.createElement('div');
+										temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + item.all_html_render() + '</svg>';
+										item_dom_el = temp_svg_container.childNodes[0].childNodes[0];
+									} else {
+										temp_el = context.document.createElement('div');
+										temp_el.innerHTML = item.all_html_render();
+										item_dom_el = temp_el.childNodes[0];
+									}
+									item.dom.el = item_dom_el;
+									if (item._id && typeof item._id === 'function') {
+										context.map_els[item._id()] = item_dom_el;
+									}
+								}
+							}
+							const t_item_dom_el = tof(item_dom_el);
+							if (t_item_dom_el === 'string') {
+								item_dom_el = document.createTextNode(item_dom_el);
+							}
+							if (item_dom_el) {
+								el.appendChild(item_dom_el);
+								if (item && typeof item.register_this_and_subcontrols === 'function') {
+									item.register_this_and_subcontrols();
+								}
+							}
+						});
+					}
 				}
-			} else {
-				console.trace();
-				throw 'NYI - Unexpected change type. e_change: ' + e_change;
-			}
-		});
-	}
+			});
+		}
 	'rec_desc_ensure_ctrl_el_refs' (el) {
 		el = el || this.dom.el;
 		var context = this.context;

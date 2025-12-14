@@ -198,23 +198,39 @@ jsgui.controls.span = jsgui.span = class span extends Control {
         this.dom.tagName = 'span';
         spec = spec || {};
         prop(this, 'text', spec.text || '');
-        this.on('change', e_change => {
-            const {name} = e_change;
-            if (name === 'text') {
-                if (this.content._arr.length === 1) {
-                    if (this.content._arr[0] instanceof Text_Node) {
-                        this.content._arr[0].text = e_change.value;
-                    }
-                } else {
-                    if (this.content._arr.length === 0) {
-                    } else {
-                        console.log('this.content._arr', this.content._arr);
-                        console.trace();
-                        throw 'NYI';
-                    }
-                }
-            }
-        })
+	        this.on('change', e_change => {
+	            const {name} = e_change;
+	            if (name === 'text') {
+	                const new_text = typeof e_change.value === 'undefined' || e_change.value === null ? '' : String(e_change.value);
+	                const content_arr = this.content._arr;
+
+	                if (content_arr.length === 1 && content_arr[0] instanceof Text_Node) {
+	                    content_arr[0].text = new_text;
+	                } else {
+	                    let existing_text_node;
+	                    for (let idx = 0; idx < content_arr.length; idx++) {
+	                        if (content_arr[idx] instanceof Text_Node) {
+	                            existing_text_node = content_arr[idx];
+	                            break;
+	                        }
+	                    }
+	                    if (existing_text_node) {
+	                        existing_text_node.text = new_text;
+	                    } else {
+	                        const tn = new Text_Node({
+	                            context: this.context,
+	                            text: new_text
+	                        });
+	                        if (this.content && typeof this.content.insert === 'function') {
+	                            this.content.insert(tn, 0);
+	                        } else {
+	                            this.add(tn);
+	                        }
+	                        this.tn = this.text_node = tn;
+	                    }
+	                }
+	            }
+	        })
         if (!spec.el) {
             this.compose_span();
         }

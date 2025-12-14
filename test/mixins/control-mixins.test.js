@@ -127,7 +127,10 @@ describe('Control Mixin Tests', () => {
                 tagName: 'div'
             });
 
-            expect(() => Resizable(control)).to.throw();
+            expect(() => Resizable(control)).to.not.throw();
+            expect('resizable' in control).to.equal(true);
+            expect(control.resizable).to.equal(true);
+            expect(control.ctrl_br_resize_handle).to.exist;
         });
     });
     

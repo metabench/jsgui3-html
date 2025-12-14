@@ -98,7 +98,8 @@ describe('Module Load Regression Tests', () => {
 
         const result = spawnSync(process.execPath, ['-e', script], {
             cwd: repo_root_path,
-            encoding: 'utf8'
+            encoding: 'utf8',
+            timeout: 15000
         });
 
         expect(result.status).to.equal(0);
