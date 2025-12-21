@@ -101,6 +101,23 @@
     overflow-y: auto;
 }
 
+.rte-markdown {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    outline: none;
+    font-family: "Courier New", monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    resize: vertical;
+}
+
+.rte-editor.is-hidden,
+.rte-markdown.is-hidden {
+    display: none;
+}
+
 /* Placeholder */
 .rte-editor:empty::before {
     content: attr(data-placeholder);

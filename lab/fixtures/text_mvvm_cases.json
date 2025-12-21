@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "name": "trim_upper_slug",
+      "raw_text": "  Hello World  ",
+      "expected_trimmed": "Hello World",
+      "expected_upper": "  HELLO WORLD  ",
+      "expected_slug": "hello-world"
+    },
+    {
+      "name": "punctuation_slug",
+      "raw_text": "Hello, World!",
+      "expected_trimmed": "Hello, World!",
+      "expected_upper": "HELLO, WORLD!",
+      "expected_slug": "hello-world"
+    },
+    {
+      "name": "multiple_spaces",
+      "raw_text": "Multiple   Spaces",
+      "expected_trimmed": "Multiple   Spaces",
+      "expected_upper": "MULTIPLE   SPACES",
+      "expected_slug": "multiple-spaces"
+    },
+    {
+      "name": "mixed_case",
+      "raw_text": "MiXeD CaSe",
+      "expected_trimmed": "MiXeD CaSe",
+      "expected_upper": "MIXED CASE",
+      "expected_slug": "mixed-case"
+    },
+    {
+      "name": "empty",
+      "raw_text": "",
+      "expected_trimmed": "",
+      "expected_upper": "",
+      "expected_slug": ""
+    }
+  ]
+}

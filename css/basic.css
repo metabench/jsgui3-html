@@ -11,7 +11,142 @@ html {
 
 body {
     min-height: 100%;
-    font-family: Arial, sans-serif;
+    font-family: var(--theme-font-family-base);
+    font-size: var(--theme-font-size-base);
+    line-height: var(--theme-line-height-base);
+    color: var(--theme-color-text);
+    background-color: var(--theme-color-bg);
+}
+
+@layer base, components, utilities;
+
+@layer base {
+    :root {
+        --theme-color-bg: #ffffff;
+        --theme-color-surface: #ffffff;
+        --theme-color-surface-muted: #f5f5f5;
+        --theme-color-border: #d9d9d9;
+        --theme-color-text: #1a1a1a;
+        --theme-color-text-muted: #5a5a5a;
+        --theme-color-primary: #1f5fcc;
+        --theme-color-primary-contrast: #ffffff;
+        --theme-color-accent: #0f766e;
+        --theme-color-focus: var(--theme-color-primary);
+
+        --theme-space-1: 4px;
+        --theme-space-2: 8px;
+        --theme-space-3: 12px;
+        --theme-space-4: 16px;
+        --theme-space-5: 24px;
+        --theme-space-6: 32px;
+
+        --theme-radius-1: 2px;
+        --theme-radius-2: 4px;
+        --theme-radius-3: 8px;
+
+        --theme-font-family-base: Arial, sans-serif;
+        --theme-font-family-mono: "Courier New", monospace;
+        --theme-font-size-base: 16px;
+        --theme-line-height-base: 1.4;
+        --theme-font-weight-regular: 400;
+        --theme-font-weight-semibold: 600;
+
+        --theme-focus-ring-offset: 2px;
+        --focus-ring-color: var(--theme-color-focus);
+        --focus-ring-offset: var(--theme-focus-ring-offset);
+
+        --motion-duration-fast: 120ms;
+        --motion-duration-standard: 200ms;
+        --motion-duration-slow: 320ms;
+        --motion-ease-standard: ease;
+    }
+
+    [data-theme="light"] {
+        --theme-color-bg: #ffffff;
+        --theme-color-surface: #ffffff;
+        --theme-color-surface-muted: #f5f5f5;
+        --theme-color-border: #d9d9d9;
+        --theme-color-text: #1a1a1a;
+        --theme-color-text-muted: #5a5a5a;
+        --theme-color-primary: #1f5fcc;
+        --theme-color-primary-contrast: #ffffff;
+        --theme-color-accent: #0f766e;
+        --theme-color-focus: var(--theme-color-primary);
+    }
+
+    [data-theme="dark"] {
+        --theme-color-bg: #0f172a;
+        --theme-color-surface: #111827;
+        --theme-color-surface-muted: #1f2937;
+        --theme-color-border: #2f3b52;
+        --theme-color-text: #e5e7eb;
+        --theme-color-text-muted: #9ca3af;
+        --theme-color-primary: #60a5fa;
+        --theme-color-primary-contrast: #0f172a;
+        --theme-color-accent: #2dd4bf;
+        --theme-color-focus: var(--theme-color-primary);
+    }
+}
+
+@layer components {
+    .theme-surface {
+        background-color: var(--theme-color-surface);
+        color: var(--theme-color-text);
+        border: 1px solid var(--theme-color-border);
+        border-radius: var(--theme-radius-2);
+    }
+
+    .theme-surface-muted {
+        background-color: var(--theme-color-surface-muted);
+        color: var(--theme-color-text);
+        border: 1px solid var(--theme-color-border);
+        border-radius: var(--theme-radius-2);
+    }
+}
+
+@layer utilities {
+    .focus-ring:focus {
+        outline: 2px solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    .focus-ring:focus:not(:focus-visible) {
+        outline: none;
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .u-text-muted {
+        color: var(--theme-color-text-muted);
+    }
+
+    .u-border {
+        border: 1px solid var(--theme-color-border);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --motion-duration-fast: 0ms;
+        --motion-duration-standard: 0ms;
+        --motion-duration-slow: 0ms;
+    }
+
+    * {
+        animation-duration: 0ms !important;
+        transition-duration: 0ms !important;
+        scroll-behavior: auto !important;
+    }
 }
 
 .clearall {

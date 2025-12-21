@@ -561,7 +561,8 @@ class Control extends Control_Core {
 
 							this.view.data.model.mixins.push(mixin);
 
-							const the_mixin = this.context.mixins[converted_name];
+								const mixins = this.context && this.context.mixins;
+								const the_mixin = mixins ? mixins[converted_name] : undefined;
 
 							//console.log('!!the_mixin', !!the_mixin);
 
@@ -879,11 +880,11 @@ class Control extends Control_Core {
 										corresponding_ctrl.dom.el = cn;
 									}
 								} else {
-									console.log('&&& no corresponding control');
+									// console.log('&&& no corresponding control');
 								}
 								const do_add = () => {
 									let val = cn.nodeValue;
-									console.log('adding Text_Node control', val);
+									// console.log('adding Text_Node control', val);
 									const tn = new Text_Node({
 										context: this.context,
 										text: val,

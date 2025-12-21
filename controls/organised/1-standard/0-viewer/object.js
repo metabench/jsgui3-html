@@ -71,7 +71,8 @@ class Object_Viewer extends Control {
 				'inner': ctrlInner._id()
 			}
 			// use different quotes...
-			this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
+			this.dom.attributes = this.dom.attributes || {};
+			this.dom.attributes['data-jsgui-ctrl-fields'] = stringify(ctrl_fields).replace(/"/g, "'");
 			this.refresh_internal();
 		}
 		var that = this;

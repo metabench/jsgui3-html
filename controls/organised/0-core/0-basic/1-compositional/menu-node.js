@@ -1,5 +1,9 @@
 
 const jsgui = require('../../../../../html-core/html-core');
+const {
+    apply_focus_ring,
+    apply_role
+} = require('../../../../../control_mixins/a11y');
 
 const {stringify, each, tof, Control} = jsgui;
 //var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
@@ -47,6 +51,7 @@ class Menu_Node extends Control {
         // Can take some text.
         //  That's all I'll have in the Menu node for now.
         this.__type_name = 'menu_node';
+        this.dom.attributes.role = 'none';
         //var that = this;
         if (!this._abstract) {
             if (!spec.el) {
@@ -55,6 +60,10 @@ class Menu_Node extends Control {
 
                 var main_control = make(Control({ 'class': 'main' }));
                 this.add(main_control);
+                this.main_control = main_control;
+                apply_role(main_control, 'menuitem');
+                apply_focus_ring(main_control);
+                main_control.dom.attributes.tabindex = '-1';
                 //console.log('**** spec.img_src', spec.img_src);
                 if (spec.img_src) {
                     //var img_src = this.get('img_src');
@@ -78,6 +87,8 @@ class Menu_Node extends Control {
                 }
 
                 var inner_control = this.inner_control = make(Control({ 'class': 'inner hidden' }));
+                inner_control.dom.attributes.role = 'menu';
+                inner_control.dom.attributes.id = inner_control._id();
                 this.add(inner_control);
 
                 // Inner may not just be the title.
@@ -136,6 +147,7 @@ class Menu_Node extends Control {
                 } else {
                     state = this.set('state', 'open');
                 }
+                this.update_aria_state();
             }
         }
     }
@@ -150,6 +162,19 @@ class Menu_Node extends Control {
 
             var that = this;
 
+        }
+    }
+    update_aria_state() {
+        const main_control = this.main_control;
+        if (!main_control || !main_control.dom) return;
+        const has_children = !!(this.inner_control && this.inner_control.content && this.inner_control.content._arr.length);
+        if (has_children) {
+            main_control.dom.attributes['aria-haspopup'] = 'true';
+            main_control.dom.attributes['aria-controls'] = this.inner_control.dom.attributes.id;
+            main_control.dom.attributes['aria-expanded'] = this.state === 'open' ? 'true' : 'false';
+        } else {
+            main_control.dom.attributes['aria-haspopup'] = 'false';
+            main_control.dom.attributes['aria-expanded'] = 'false';
         }
     }
     'close_all'() {
@@ -175,17 +200,20 @@ class Menu_Node extends Control {
         inner_control.hide();
         // this.silent?
         this.set('state', 'closed', true); // silent
+        this.update_aria_state();
 
     }
     'close'() {
         var inner_control = this.inner_control;
         inner_control.hide();
         this.set('state', 'closed', true);
+        this.update_aria_state();
     }
     'open'() {
         var inner_control = this.inner_control;
         inner_control.show();
         this.set('state', 'open', true);
+        this.update_aria_state();
     }
 
 

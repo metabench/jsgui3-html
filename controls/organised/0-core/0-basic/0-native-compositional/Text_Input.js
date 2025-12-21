@@ -2,6 +2,7 @@ const jsgui = require('../../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 const {Control, Control_Data, Control_View, Data_Object, Data_Model, Data_Value} = jsgui;
 const {prop, field} = require('obext');
+const apply_input_mask = require('../../../../../control_mixins/input_mask');
 
 // Late 2023 - not so much code.
 //   Do want to make use of view.data.model syntax.
@@ -64,6 +65,8 @@ class Text_Input extends Control {
         super(spec);
         const {context} = this;
 
+        apply_input_mask(this, spec || {});
+
 	        if (spec.placeholder) this.placeholder = spec.placeholder;
 	        if (this.placeholder) {
 	            this.dom.attributes.placeholder = this.placeholder;
@@ -115,23 +118,27 @@ class Text_Input extends Control {
 
             //console.log('Text_Input view_data_model_change_handler [old, value]', [old, value]);
 
-	            if (name === 'value') {
-	                //console.log('Text_Input pre set dom attributes value to:', value);
-	                //console.log('tof(value)', tof(value));
+            if (name === 'value') {
+                //console.log('Text_Input pre set dom attributes value to:', value);
+                //console.log('tof(value)', tof(value));
 
-	                this.dom.attributes.value = value;
+                const masked_value = this.apply_input_mask_value
+                    ? this.apply_input_mask_value(value)
+                    : value;
 
-	                //console.log('!!this.dom.el', this.dom.el);
+                this.dom.attributes.value = masked_value;
+
+                //console.log('!!this.dom.el', this.dom.el);
 
                 if (this.dom.el) {
                     //this.dom.el.setAttribute('value', value + '');
-                    this.dom.el.value = value + '';
+                    this.dom.el.value = masked_value + '';
                 }
 
 
                 //this.view.ll.data.model.value = value;
 
-                this.data.model.value = value;
+                this.data.model.value = masked_value;
 
                 // and update the view.ui.ll.data.model....
 
@@ -430,7 +437,13 @@ class Text_Input extends Control {
                 //console.log('Text_Input DOM handle_change_event');
 
                 //console.log('dom.el.value', dom.el.value);
-                this.view.data.model.value = dom.el.value;
+                const masked_value = this.apply_input_mask_value
+                    ? this.apply_input_mask_value(dom.el.value)
+                    : dom.el.value;
+                if (dom.el.value !== masked_value) {
+                    dom.el.value = masked_value;
+                }
+                this.view.data.model.value = masked_value;
             }
 
             const activate_sync_dom_to_view_ll_data_model = () => {

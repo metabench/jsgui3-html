@@ -1,6 +1,11 @@
 {
   "name": "jsgui3-html",
   "main": "html.js",
+  "scripts": {
+    "lab:list": "node lab/experiment_runner.js list",
+    "lab:run": "node lab/experiment_runner.js run",
+    "lab:run-all": "node lab/experiment_runner.js run-all"
+  },
   "license": "MIT",
   "dependencies": {
     "fnl": "^0.0.37",
@@ -37,7 +42,8 @@
   },
   "devDependencies": {
     "esbuild": "^0.27.1",
-    "jsgui3-server": "^0.0.141"
+    "jsdom": "^22.1.0",
+    "jsgui3-server": "^0.0.143"
   },
-  "version": "0.0.175"
+  "version": "0.0.176"
 }

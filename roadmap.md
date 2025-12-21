@@ -1,4 +1,38 @@
 
+JSGUI3-HTML Improvements Roadmap
+===============================
+
+This section translates `docs/jsgui3_html_improvement_plan.md` into phased milestones.
+
+Phase 1: Core and reliability
+-----------------------------
+- Add missing native inputs: textarea, number, range, progress, meter.
+- Add compositional basics: toggle switch, badge, inline validation message.
+- Fix known control bugs (checkbox `el_radio` typo, `checked` sync).
+- Baseline a11y on core inputs (roles, labels, focus states).
+- Normalize naming duplicates with deprecation aliases.
+
+Phase 2: Data and forms
+-----------------------
+- Data table with sort, filter, pagination, and a11y semantics.
+- Virtual list/grid for large datasets with windowed rendering.
+- Form container with validation routing and inline errors.
+- Tag/chip input and object editor improvements (schema-driven).
+- Reconnect or replace `controls/connected/data-grid.js` with a modern API.
+
+Phase 3: Layout and advanced UX
+-------------------------------
+- Split pane, accordion, drawer, stepper.
+- Window/panel enhancements: snap, dock, resize, z-index management.
+- Tree and file tree: lazy loading, multi-select, drag reparent.
+- Theming tokens and theme context; improve swaps approach.
+
+Documentation and tests
+-----------------------
+- Add docs entries for new controls and update README.
+- Add dev-examples for complex controls (data table, virtual list, form).
+- Add E2E tests for interactive examples; add unit tests for helpers.
+
 
 Make the current controls use parse_mount to save code.
 Will be clearer and simpler to code in.

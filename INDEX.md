@@ -18,6 +18,10 @@ Start here if you're new to jsgui3-html:
   - Installation, quick start, component library
   - Performance, debugging, browser compatibility
 
+- **[docs/controls/INDEX.md](docs/controls/INDEX.md)** - Controls documentation index
+- **[docs/accessibility_and_semantics.md](docs/accessibility_and_semantics.md)** - Accessibility roles, keyboard patterns, reduced motion
+- **[docs/theming_and_styling_system.md](docs/theming_and_styling_system.md)** - Theme tokens, layers, SASS compatibility
+
 - **[MVVM.md](MVVM.md)** - MVVM architecture analysis
   - Three-layer model architecture
   - Current implementation analysis

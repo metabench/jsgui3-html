@@ -31,6 +31,9 @@ class Checkbox extends Control {
 
         this.add_class('checkbox');
         const context = this.context;
+        const has_checked = is_defined(spec.checked);
+        const initial_checked = has_checked ? !!spec.checked : false;
+        this.checked = initial_checked;
 
         if (!spec.abstract && !spec.el) {
             const name = this.name;
@@ -45,6 +48,10 @@ class Checkbox extends Control {
             html_check.dom.attributes.type = 'checkbox';
             html_check.dom.attributes.name = name;
             html_check.dom.attributes.id = html_check._id();
+            if (has_checked && initial_checked) {
+                html_check.dom.attributes.checked = 'checked';
+            }
+            html_check.dom.attributes['aria-checked'] = initial_checked ? 'true' : 'false';
 
             //html_check.set('dom.tagName', 'input');
             //html_check.set('dom.attributes.type', 'checkbox');
@@ -101,11 +108,45 @@ class Checkbox extends Control {
 
             this._fields = this._fields || {};
 
-			if (is_defined(this.value)) this._fields.value = this.value;
+            if (is_defined(this.value)) this._fields.value = this.value;
+            if (has_checked) this._fields.checked = this.checked;
+            this.set_checked(initial_checked);
 
 
         }
 
+    }
+
+    /**
+     * Set the checked state.
+     * @param {boolean} checked - The checked state.
+     */
+    set_checked(checked) {
+        const next_checked = !!checked;
+        this.checked = next_checked;
+        this._fields = this._fields || {};
+        this._fields.checked = next_checked;
+
+        const html_check = this.check || (this._ctrl_fields && this._ctrl_fields.check);
+        if (html_check) {
+            html_check.dom.attributes['aria-checked'] = next_checked ? 'true' : 'false';
+            if (next_checked) {
+                html_check.dom.attributes.checked = 'checked';
+            } else {
+                html_check.dom.attributes.checked = '';
+            }
+            if (html_check.dom.el) {
+                html_check.dom.el.checked = next_checked;
+            }
+        }
+    }
+
+    /**
+     * Get the checked state.
+     * @returns {boolean}
+     */
+    get_checked() {
+        return !!this.checked;
     }
     //'resizable': function() {
     //},
@@ -114,9 +155,11 @@ class Checkbox extends Control {
         if (!this.__active) {
             super.activate();
 
-            var html_check = this.check;
-            var el_checkbox = html_check.dom.el;//???
-            var label = this.label;
+            var html_check = this.check || (this._ctrl_fields && this._ctrl_fields.check);
+            if (!html_check || !html_check.dom || !html_check.dom.el) {
+                return;
+            }
+            var el_checkbox = html_check.dom.el;
             //var that = this;
 
             //var el = this.dom.el;
@@ -125,17 +168,13 @@ class Checkbox extends Control {
             // No, refer specifically to the radio button element's control.
 
             // Changes upon becoming checked?
-            html_check.on('change', e_change => {
-                console.log('el_radio.checked', el_radio.checked);
-
-                // Track the old values here? Could help the 'change' event.
-
-                //if (el_radio.checked) {
-                    this.raise('change', {
-                        name: 'checked',
-                        value: el_checkbox.checked
-                    });
-                //}
+            html_check.on('change', () => {
+                const checked = !!el_checkbox.checked;
+                this.set_checked(checked);
+                this.raise('change', {
+                    name: 'checked',
+                    value: checked
+                });
 
                 // But have it updated in the data model...?
 
@@ -157,6 +196,10 @@ class Checkbox extends Control {
 Checkbox.css = `
 .checkbox input + label {
     margin-left: 6px;
+}
+.checkbox input:focus-visible + label {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
 }
 `
 

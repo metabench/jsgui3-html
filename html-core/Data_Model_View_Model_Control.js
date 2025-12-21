@@ -4,6 +4,10 @@ const Ctrl_Enh = require('./control-enh');
 const {Data_Object} = require('lang-tools');
 const {ModelBinder, ComputedProperty, PropertyWatcher, BindingManager} = require('./ModelBinder');
 const {Transformations, Validators} = require('./Transformations');
+const {
+    apply_theme,
+    apply_theme_overrides
+} = require('../control_mixins/theme');
 
 // Quite a lot of the standard controls should become this.
 //   It should provide mechanisms for the app to efficiently process and pass on updates at the various different stages.
@@ -90,6 +94,18 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         super(...a);
 
         const spec = a[0] || {};
+
+        const theme_context = spec.theme || (this.context && this.context.theme);
+        if (theme_context) {
+            this.theme_context = theme_context;
+            apply_theme(this, theme_context);
+        }
+        if (spec.theme_tokens) {
+            apply_theme_overrides(this, spec.theme_tokens);
+        }
+        if (spec.theme_overrides) {
+            apply_theme_overrides(this, spec.theme_overrides);
+        }
         
         // Initialize binding manager
         this._binding_manager = new BindingManager(this);
@@ -140,7 +156,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
         if (this.data && this.data.model) {
             this.data.model.on('change', e => {
-                console.log('Data_Model_View_Model_Control this.data.model change e:', e);
+                // console.log('Data_Model_View_Model_Control this.data.model change e:', e);
             });
 
             if (this.dom && this.dom.attributes) {
@@ -150,7 +166,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
         if (this.view && this.view.data && this.view.data.model) {
             this.view.data.model.on('change', e => {
-                console.log('Data_Model_View_Model_Control this.view.data.model change e:', e);
+                // console.log('Data_Model_View_Model_Control this.view.data.model change e:', e);
             });
             if (this.dom && this.dom.attributes) {
                 this.dom.attributes['data-jsgui-view-data-model'] = this.view.data.model._id();
@@ -273,7 +289,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
 
-        console.log('Data_Model_View_Model_Control pre_activate complete');
+    // console.log('Data_Model_View_Model_Control pre_activate complete');
 
         // should be able to access own data_model???
 

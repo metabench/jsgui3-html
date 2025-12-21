@@ -1,0 +1,66 @@
+{
+  "cases": [
+    {
+      "name": "en_us_basic",
+      "input_text": "03/15/2025",
+      "input_locale": "en-US",
+      "expected_iso": "2025-03-15",
+      "expected_primary_display": "2025-03-15",
+      "secondary_locale": "en-GB",
+      "expected_secondary_display": "15/03/2025"
+    },
+    {
+      "name": "en_gb_basic",
+      "input_text": "15/03/2025",
+      "input_locale": "en-GB",
+      "expected_iso": "2025-03-15",
+      "expected_primary_display": "2025-03-15",
+      "secondary_locale": "en-US",
+      "expected_secondary_display": "03/15/2025"
+    },
+    {
+      "name": "de_de_basic",
+      "input_text": "15.03.2025",
+      "input_locale": "de-DE",
+      "expected_iso": "2025-03-15",
+      "expected_primary_display": "2025-03-15",
+      "secondary_locale": "sv-SE",
+      "expected_secondary_display": "2025-03-15"
+    },
+    {
+      "name": "ja_jp_basic",
+      "input_text": "2025/03/15",
+      "input_locale": "ja-JP",
+      "expected_iso": "2025-03-15",
+      "expected_primary_display": "2025-03-15",
+      "secondary_locale": "en-GB",
+      "expected_secondary_display": "15/03/2025"
+    },
+    {
+      "name": "iso_input",
+      "input_text": "2025-03-15",
+      "input_locale": "en-US",
+      "expected_iso": "2025-03-15",
+      "expected_primary_display": "2025-03-15",
+      "secondary_locale": "ja-JP",
+      "expected_secondary_display": "2025/03/15"
+    },
+    {
+      "name": "custom_format_override",
+      "input_text": "15/03/2025",
+      "input_locale": "en-GB",
+      "expected_iso": "2025-03-15",
+      "expected_primary_display": "2025-03-15",
+      "secondary_format": "YYYY/MM/DD",
+      "expected_secondary_display": "2025/03/15"
+    },
+    {
+      "name": "invalid_day",
+      "input_text": "31/02/2025",
+      "input_locale": "en-GB",
+      "expected_iso": "",
+      "expected_primary_display": "",
+      "expected_secondary_display": ""
+    }
+  ]
+}

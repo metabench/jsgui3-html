@@ -1605,6 +1605,11 @@ When reporting bugs, please include:
 
 ## Roadmap
 
+For detailed control improvement planning and checklists, see:
+- `docs/jsgui3_html_improvement_plan.md`
+- `docs/jsgui3_html_improvement_priorities.md`
+- `docs/improvement_checklists/INDEX.md`
+
 ### Version 2.x (Current)
 - ✅ Core control system with isomorphic rendering
 - ✅ Basic mixins (selectable, dragable, press events)

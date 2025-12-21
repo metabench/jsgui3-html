@@ -10,6 +10,11 @@
 
 const Control = require('../../../../html-core/control');
 const Button = require('../../0-core/0-basic/0-native-compositional/button');
+const {
+    apply_focus_ring,
+    apply_label,
+    ensure_sr_text
+} = require('../../../../control_mixins/a11y');
 
 class Toolbar extends Control {
     constructor(options = {}) {
@@ -33,6 +38,7 @@ class Toolbar extends Control {
         const { context } = this;
         const button = new Button({ context });
         button.add_class('toolbar-button');
+        apply_focus_ring(button);
         
         if (config.icon) {
             const icon = new Control({ context, tag_name: 'span' });
@@ -46,6 +52,15 @@ class Toolbar extends Control {
             label.add_class('toolbar-button-label');
             label.add(config.label);
             button.add(label);
+        }
+
+        if (config.aria_label) {
+            apply_label(button, config.aria_label, {force: true});
+        }
+
+        if (!config.label && config.icon) {
+            const sr_text = config.aria_label || config.tooltip || 'Toolbar action';
+            ensure_sr_text(button, sr_text);
         }
         
         if (config.tooltip) {

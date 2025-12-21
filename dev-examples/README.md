@@ -40,11 +40,10 @@ Then open your browser to `http://localhost:52000` (or the port shown in console
 Demonstrate MVVM data binding with server-side rendering:
 - **counter/** - Simple counter with server-side rendering and client-side hydration
 - **user-form/** - Form with server-side validation API
-- **data-grid/** - Grid with server-provided data and client-side operations
-
-### Navigation Examples (`navigation/`)
-Show routing and navigation patterns:
-- **master-detail/** - Master-detail navigation with server-side rendering
+- **missing-controls/** - New core controls demo (inputs, indicators, navigation, feedback)
+- **data-controls/** - Data table, data grid, virtualization, and collection controls
+- **layout-controls/** - Layout and navigation controls (split pane, tabs, drawer, stepper)
+- **form_editor_features/** - Form container, validation, input masks, autosize, rich text, object editor
 
 ## Key Patterns Demonstrated
 

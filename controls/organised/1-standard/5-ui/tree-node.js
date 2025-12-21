@@ -1,342 +1,367 @@
-var jsgui = require('./../../../../html-core/html-core');
-var Plus_Minus_Toggle_Button = require('./../../0-core/0-basic/1-compositional/plus-minus-toggle-button');
-var Vertical_Expander = require('./../6-layout/vertical-expander');
-
+const jsgui = require('./../../../../html-core/html-core');
+const Plus_Minus_Toggle_Button = require('./../../0-core/0-basic/1-compositional/plus-minus-toggle-button');
+const Vertical_Expander = require('./../6-layout/vertical-expander');
 const mx_selectable = require('./../../../../control_mixins/selectable');
-const {
-	prop,
-	field
-} = require('obext');
-
-const {
-	stringify,
-	each,
-	tof,
-	def,
-	Control
-} = jsgui;
-
-/*
-var stringify = jsgui.stringify,
-	each = jsgui.each,
-	tof = jsgui.tof,
-	def = jsgui.def;
-var Control = jsgui.Control;
-*/
-
-var fields = [
-	//['text', String]
-	['toggle_button', Control],
-	['inner_control', Control],
-	['expander', Control]
-];
+const { apply_label } = require('../../../../control_mixins/a11y');
+const {field} = require('obext');
+const {each, def, Control} = jsgui;
 
 class Tree_Node extends Control {
-	constructor(spec) {
-		// Wont fields have been set?
-		spec = spec || {};
-		//console.log('1) spec', spec);
-		spec.__type_name = spec.__type_name || 'tree_node';
-		//spec.expandable = spec.expandable || true;
-		if (!def(spec.expandable)) spec.expandable = true;
-		super(spec);
-		mx_selectable(this);
+    constructor(spec = {}) {
+        spec.__type_name = spec.__type_name || 'tree_node';
+        if (!def(spec.expandable)) spec.expandable = true;
+        super(spec);
 
-		field(this, 'depth');
-		field(this, 'state', 'open');
-		this.expandable = spec.expandable;
-		if (def(spec.depth)) this.depth = spec.depth;
-		if (spec) {
-			var spec_state = spec.state,
-				state;
-			//this.depth = spec.depth || 0;
-			//console.log('spec_state', spec_state);
-			if (spec_state === 'open' || spec_state === 'closed') {
-				this.state = spec_state;
-			} else {
-				//this.state = 'closed';
-				//throw 'spec.state expects "expanded" or "contracted".';
-			}
-			if (spec.text) {
-				//this.set('text', spec.text);
-				this.text = spec.text;
-			} else {
-				if (spec.name) {
-					//this.set('text', spec.text);
-					this.text = spec.name;
-				}
-			}
-		} else {
-			//state = this.set('state', 'expanded');
-			this.state = 'open';
-		}
+        this.node_class = spec.node_class || Tree_Node;
+        this.expandable = spec.expandable;
+        this.load_children = typeof spec.load_children === 'function'
+            ? spec.load_children
+            : (typeof spec.children_loader === 'function' ? spec.children_loader : null);
+        this.has_loaded_children = Array.isArray(spec.nodes) && spec.nodes.length > 0;
+        this.loading = false;
+        this.multi_select = !!spec.multi_select;
+        this.drag_reparent = !!spec.drag_reparent;
+        this.selectable = spec.selectable !== false;
 
-		if (spec.img_src) {
-			//this.set('img_src', spec.img_src);
-			//var img_src = this.img_src;
-			//console.log('img_src', img_src);
-			//console.log('this._', this._);
-			//throw '1) stop;'
-		}
-		if (typeof spec.el === 'undefined') {
-			//console.log('4) spec', spec);
-			//console.log('5) spec2', spec2);
-			//console.log('typeof spec2', typeof spec2);
-			//console.log('**** spec.img_src', spec.img_src);
-			this.compose_tree_node(spec);
-			// Tree node name, or text.
-			//  Could give it a name
-		}
-		//this.selectable = true;
-		//}
+        mx_selectable(this, null, {
+            multi: this.multi_select,
+            toggle: !!spec.select_toggle
+        });
+        if (this.selectable) {
+            this.selectable = true;
+        }
 
-		// need to listen to content change...
-		//  how many tree nodes are in the content.
+        field(this, 'depth');
+        field(this, 'state', 'open');
+        this.state = spec.state === 'closed' ? 'closed' : 'open';
+        if (def(spec.depth)) this.depth = spec.depth;
+        if (spec.text) {
+            this.text = spec.text;
+        } else if (spec.name) {
+            this.text = spec.name;
+        }
 
-		// inner_control content change
+        if (!spec.el) {
+            this.compose_tree_node(spec);
+        }
 
-		if (this.inner_control) {
-			this.inner_control.content.on('change', e_change => {
-				//console.log('tree inner_control content change', e_change);
+        if (this.inner_control) {
+            this.inner_control.content.on('change', () => {
+                this.update_toggle_visibility();
+            });
+        }
+    }
 
-				let coll = e_change.target;
-				// then does the collection contain at least one Tree_Node?
+    compose_tree_node(spec) {
+        const my = (p) => {
+            p.context = this.context;
+            return p;
+        };
 
-				// can we do has by type?
-				//  has an instance of a function constructor.
-				let has_tree_node = false;
-				each(coll, (v, i, stop) => {
-					if (v instanceof Tree_Node) {
-						has_tree_node = true;
-						stop();
-					}
-				});
+        const top_line = this.add(new Control(my({
+            'class': 'top-line'
+        })));
+        this.top_line = top_line;
 
-				if (has_tree_node) {
-					this.toggle_button.show();
-				} else {
-					this.toggle_button.hide();
-				}
-			})
-		}
-	}
+        if (def(this.depth)) {
+            for (let c = 0; c < this.depth; c++) {
+                const depth_block = new Control(my({
+                    'class': 'depth-block'
+                }));
+                top_line.add(depth_block);
+            }
+        }
 
-	'compose_tree_node'(spec) {
-		//console.log('!!this.context', !!this.context);
-		//throw 'stop';
-		//let my = p => p.context = this.context;
-		let my = (p) => {
-			p.context = this.context;
-			return p;
-		}
-		const add = item => this.add(item);
-		const make = item => this.make(item);
-		// Old way of doing things...
-		//  allowed classes to be involked without new, meaning they were in a passive mode and held params describing them.
-		var top_line = add(new Control(my({
-			'class': 'top-line'
-		})));
-		let rest_of_top_line;
+        let plus_minus;
+        const spec_state = this.state === 'closed' ? '+' : '-';
+        top_line.add(plus_minus = new Plus_Minus_Toggle_Button(my({
+            state: spec_state
+        })));
+        this.toggle_button = plus_minus;
+        this.update_toggle_aria();
 
-		// Could try with parse_mount. Maybe it's not the best for loops
+        const main_box = top_line.add(new Control(my({
+            'class': 'main-box'
+        })));
 
-		if (def(this.depth)) {
-			// add that many depth blocks
-			//console.log('this.depth', this.depth);
-			for (let c = 0; c < this.depth; c++) {
-				let depth_block = new Control(my({
-					'class': 'depth-block'
-				}))
-				top_line.add(depth_block);
-			}
-		}
-		/*
-		rest_of_top_line = new Control(my({
-			'class': 'rest-of'
-		}));
-		top_line.add(rest_of_top_line);
-		*/
-		//var plus_minus = make(new Plus_Minus_Toggle_Button({}));
-		//top_line.add(plus_minus);
-		let plus_minus, inner_control;
-		let spec3 = {};
-		if (this.state === 'closed') {
-			spec3.state = '+';
-		}
+        main_box.add(new jsgui.span(my({
+            text: this.text,
+            'class': 'text'
+        })));
 
-		// only if there are other nodes within this node?
+        let expander;
+        if (this.expandable) {
+            expander = this.add(new Vertical_Expander(my({})));
+            expander.add(this.inner_control = new Control(my({
+                'class': 'inner'
+            })));
+            this.expander = expander;
 
-		top_line.add(plus_minus = new Plus_Minus_Toggle_Button(my(spec3)));
-		this.toggle_button = plus_minus;
-		plus_minus.hide();
+            if (spec.nodes) {
+                for (let node of spec.nodes) {
+                    const node_spec = Object.assign({}, node, {
+                        context: this.context,
+                        depth: (this.depth || 0) + 1,
+                        multi_select: this.multi_select,
+                        selectable: this.selectable,
+                        drag_reparent: this.drag_reparent,
+                        node_class: this.node_class
+                    });
+                    const Node_Class = this.node_class;
+                    const tn = node instanceof Control ? node : new Node_Class(node_spec);
+                    this.inner_control.add(tn);
+                }
+                expander.state = this.state = 'open';
+            } else {
+                expander.state = this.state = 'closed';
+            }
+        }
 
-		// Whenever the collection of nodes changes, if there are 0 nodes, then hide this plus minus button.
+        this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
+            toggle_button: plus_minus,
+            top_line: top_line,
+            main_box: main_box
+        });
+        if (expander) {
+            this._ctrl_fields.inner_control = this.inner_control;
+            this._ctrl_fields.expander = expander;
+        }
 
-		var main_box = top_line.add(new Control(my({
-			'class': 'main-box'
-		})));
+        this.dom.attributes.id = this._id();
+        this.dom.attributes.role = 'treeitem';
+        this.update_aria_state();
+        this.update_toggle_visibility();
+    }
 
-		//plus_minus.hide();
-		//var img_src = ;
+    update_toggle_visibility() {
+        if (!this.toggle_button) return;
+        const has_children = this.has_children() || this.load_children;
+        if (has_children) {
+            this.toggle_button.show();
+        } else {
+            this.toggle_button.hide();
+        }
+    }
 
-		if (this.img_src) {
-			rest_of_top_line.add(new jsgui.img(my({
-				'dom': {
-					'attributes': {
-						'src': this.img_src
-					}
-				}
-			})));
-		}
-		//var img = make(new jsgui.img({}));
-		//img.dom.attributes.src = img_src;
-		// Also add the text to the top line.
-		//var span = make(new jsgui.span({}));
-		//var text = this.text;
-		//console.log('this.text', this.text);
-		//span.add(text);
-		// inner_box
-		main_box.add(new jsgui.span(my({
-			text: this.text,
-			'class': 'text'
-		})));
+    update_aria_state() {
+        const aria_level = (this.depth || 0) + 1;
+        this.dom.attributes['aria-level'] = String(aria_level);
+        if (this.expandable) {
+            this.dom.attributes['aria-expanded'] = this.state === 'open' ? 'true' : 'false';
+        }
+        if (this.selected !== undefined) {
+            this.dom.attributes['aria-selected'] = this.selected ? 'true' : 'false';
+        }
+        this.update_toggle_aria();
+    }
 
-		/*
-		var clearall = add(new Control(my({
-			'class': 'clearall'
-		})));
-		*/
-		// expandable by default.
-		//  Some won't be.
+    update_toggle_aria() {
+        if (!this.toggle_button || !this.toggle_button.dom) return;
+        const label_text = this.state === 'open' ? 'Collapse' : 'Expand';
+        apply_label(this.toggle_button, label_text, {force: true});
+    }
 
-		let expander;
-		//console.log('this.expandable', this.expandable);
-		if (this.expandable) {
-			expander = add(new Vertical_Expander(my({
-				//state: this.state
-			})));
-			//var inner_control = make(new Control({ 'class': 'inner' }));
-			expander.add(inner_control = new Control(my({
-				'class': 'inner'
-			})));
+    /**
+     * Check if the node has child nodes.
+     * @returns {boolean}
+     */
+    has_children() {
+        return !!(this.inner_control && this.inner_control.content && this.inner_control.content._arr.length);
+    }
 
-			/*
-			var inner_control_content = inner_control.content;
-			inner_control_content.on('change', e_change => {
-				//console.log('Tree_Node inner_control_content change', e_change);
-				//throw 'stop';
-				var l = inner_control_content.length();
-				console.log('inner_control_content', l);
-				if (l > 0) {
-					// so could / should be hidden bydefault anyway.
-					plus_minus.show();
-				}
-				//throw 'stop';
-			});
-			*/
-			
-			//console.log('pre set inner_control');
-			this.inner_control = inner_control;
-			//console.log('post set inner_control');
-			this.expander = expander;
+    /**
+     * Get child tree nodes.
+     * @returns {Array}
+     */
+    get_child_nodes() {
+        if (!this.inner_control || !this.inner_control.content) return [];
+        const res = [];
+        this.inner_control.content.each(ctrl => {
+            if (ctrl instanceof Tree_Node) res.push(ctrl);
+        });
+        return res;
+    }
 
-			if (spec.nodes) {
-				for (let node of spec.nodes) {
-					node.context = this.context;
-					node.depth = this.depth + 1;
-					let tn = new Tree_Node(node);
-					this.inner_control.add(tn);
-				}
-				expander.state = this.state = 'open';
-			} else {
-				expander.state = this.state = 'closed';
-				//plus_minus.hide();
-				//expander.close();
-			}
-		} else {
-			//console.log('should hide plus_minus');
-			plus_minus.hide();
-		}
+    /**
+     * Get the parent tree node.
+     * @returns {Tree_Node|null}
+     */
+    get_parent_node() {
+        return this.closest(ctrl => ctrl instanceof Tree_Node);
+    }
 
-		var ctrl_fields = this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
-			'toggle_button': plus_minus
-		});
-		if (expander) {
-			ctrl_fields.inner_control = inner_control;
-			ctrl_fields.expander = expander;
-		}
-		this.add_class('tree-node');
-		// only active on the server.
-		//  on the client, we don't need those extra references?
-		this.active();
-	}
+    is_open() {
+        return this.state === 'open';
+    }
 
-	// adding a node - need to set up its depth?
+    /**
+     * Open the node and load children if needed.
+     */
+    open() {
+        if (!this.expandable || !this.expander) return;
+        this.expander.open();
+        this.state = 'open';
+        if (this.toggle_button) this.toggle_button.state = '-';
+        this.update_aria_state();
+        this.ensure_children_loaded();
+    }
 
+    /**
+     * Close the node.
+     */
+    close() {
+        if (!this.expandable || !this.expander) return;
+        this.expander.close();
+        this.state = 'closed';
+        if (this.toggle_button) this.toggle_button.state = '+';
+        this.update_aria_state();
+    }
 
-	// I think a pre-render function would be useful.
-	//  Something that sets data-jsgui DOM attributes.
+    /**
+     * Toggle open/closed state.
+     */
+    toggle() {
+        if (this.is_open()) {
+            this.close();
+        } else {
+            this.open();
+        }
+    }
 
-	// Seems we need a separate 'register' stage, where controls, with their DOM els get registered with the central jsgui system.
+    /**
+     * Update the node depth and refresh indentation.
+     * @param {number} next_depth - New depth.
+     */
+    update_depth(next_depth) {
+        this.depth = next_depth;
+        if (this.top_line) {
+            const to_remove = [];
+            this.top_line.content.each(ctrl => {
+                if (ctrl.has_class && ctrl.has_class('depth-block')) {
+                    to_remove.push(ctrl);
+                }
+            });
+            to_remove.forEach(ctrl => ctrl.remove());
+            for (let c = 0; c < next_depth; c++) {
+                const depth_block = new Control({
+                    context: this.context,
+                    class: 'depth-block'
+                });
+                this.top_line.content.insert(depth_block, c);
+                depth_block.parent = this.top_line;
+            }
+        }
+        const children = this.get_child_nodes();
+        children.forEach(child => child.update_depth(next_depth + 1));
+        this.update_aria_state();
+    }
 
-	// whenever something is added to the DOM, the nodes need to be registered.
-	//  within the page context
+    /**
+     * Load children asynchronously when configured.
+     * @returns {Promise<void>}
+     */
+    async ensure_children_loaded() {
+        if (this.has_loaded_children || !this.load_children || !this.inner_control) return;
+        this.set_loading_state(true);
+        try {
+            const result = await this.load_children(this);
+            const nodes = Array.isArray(result) ? result : [];
+            nodes.forEach(node => {
+                const node_spec = Object.assign({}, node, {
+                    context: this.context,
+                    depth: (this.depth || 0) + 1,
+                    multi_select: this.multi_select,
+                    selectable: this.selectable,
+                    drag_reparent: this.drag_reparent,
+                    node_class: this.node_class
+                });
+                const Node_Class = this.node_class;
+                const tn = node instanceof Control ? node : new Node_Class(node_spec);
+                this.inner_control.add(tn);
+            });
+            this.has_loaded_children = true;
+            this.update_toggle_visibility();
+        } catch (error) {
+            this.raise('load-error', {error});
+        } finally {
+            this.set_loading_state(false);
+        }
+    }
 
-	// Want automatic activation of any control that gets added.
-	//  Added to an active control.
+    set_loading_state(is_loading) {
+        this.loading = !!is_loading;
+        if (this.loading) {
+            this.add_class('loading');
+            this.dom.attributes['aria-busy'] = 'true';
+        } else {
+            this.remove_class('loading');
+            this.dom.attributes['aria-busy'] = 'false';
+        }
+    }
 
-	// __is_active
+    attach_drag_reparent_events() {
+        if (!this.drag_reparent || !this.dom.el) return;
+        this.dom.attributes.draggable = 'true';
+        this.add_dom_event_listener('dragstart', e_drag => {
+            if (e_drag && e_drag.dataTransfer) {
+                e_drag.dataTransfer.setData('text/plain', this._id());
+            }
+            const tree = this.get_tree();
+            if (tree) {
+                tree.drag_node = this;
+            }
+        });
+        this.add_dom_event_listener('dragover', e_drag => {
+            e_drag.preventDefault();
+            this.add_class('drag-over');
+        });
+        this.add_dom_event_listener('dragleave', () => {
+            this.remove_class('drag-over');
+        });
+        this.add_dom_event_listener('drop', e_drop => {
+            e_drop.preventDefault();
+            this.remove_class('drag-over');
+            const tree = this.get_tree();
+            if (tree && tree.drag_node) {
+                tree.reparent_node(tree.drag_node, this);
+            }
+        });
+    }
 
+    get_tree() {
+        return this.closest(ctrl => ctrl && (ctrl.__type_name === 'tree' || ctrl.__type_name === 'file_tree'));
+    }
 
-	'activate'(el) {
-		if (!this.__active) {
-			super.activate(el);
+    activate() {
+        if (!this.__active) {
+            super.activate();
+            this.rec_desc_ensure_ctrl_el_refs();
 
-			// Maybe shouldn't need this.
-			this.rec_desc_ensure_ctrl_el_refs();
-			//this.selectable();
+            if (this.toggle_button) {
+                this.toggle_button.on('toggle', e_toggle => {
+                    const state = e_toggle.state;
+                    if (state === '-') {
+                        this.open();
+                        this.raise('expand');
+                        this.raise('open');
+                    } else {
+                        this.close();
+                        this.raise('contract');
+                        this.raise('close');
+                    }
+                });
+            }
 
-			//console.log('activate Tree_Node');
-			// ctrl-fields not working?
-			// Need to listen to the toggle event of the plus minus toggle button
+            this.on('change', e_change => {
+                if (e_change.name === 'selected') {
+                    this.dom.attributes['aria-selected'] = e_change.value ? 'true' : 'false';
+                }
+            });
 
-			// This will be done through the ctrl~_fields system.
-			//  Would like an easier way of setting that up.
-			var toggle_button = this.toggle_button;
-			//console.log('toggle_button', toggle_button);
-
-			var inner_control = this.inner_control;
-			var expander = this.expander;
-			//console.log('inner_control', inner_control);
-
-			//console.log('expander', expander);
-			//console.log('toggle_button', toggle_button);
-
-			if (expander) {
-				if (toggle_button) {
-					toggle_button.on('toggle', e_toggle => {
-						// set the expander state depending on the value.
-						// '-' state means open at that time.
-						let state = e_toggle.state;
-						if (state === '-') {
-							expander.open();
-							this.raise('expand');
-							this.raise('open');
-						} else {
-							//console.log('expander', expander);
-							//console.log('expander.close', expander.close);
-							//console.log('Object.keys(expander)', Object.keys(expander));
-							expander.close();
-							this.raise('contract');
-							this.raise('close');
-						}
-					})
-
-					//console.log('toggle_button.__active', toggle_button.__active);
-				}
-			}
-		}
-
-	}
+            this.update_aria_state();
+            this.attach_drag_reparent_events();
+        }
+    }
 }
+
 module.exports = Tree_Node;

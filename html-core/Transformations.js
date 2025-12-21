@@ -10,8 +10,171 @@ const add_commas = (num_str) => {
     return num_str.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };
 
+const DATE_I18N_FORMATS = Object.freeze({
+    'en-US': 'MM/DD/YYYY',
+    'en-GB': 'DD/MM/YYYY',
+    'de-DE': 'DD.MM.YYYY',
+    'fr-FR': 'DD/MM/YYYY',
+    'es-ES': 'DD/MM/YYYY',
+    'it-IT': 'DD/MM/YYYY',
+    'nl-NL': 'DD-MM-YYYY',
+    'sv-SE': 'YYYY-MM-DD',
+    'ja-JP': 'YYYY/MM/DD',
+    'zh-CN': 'YYYY/MM/DD',
+    'ko-KR': 'YYYY.MM.DD'
+});
+
+const escape_regex = (value) => String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const pad_2 = (value) => String(value).padStart(2, '0');
+const is_leap_year = (year) => (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+const days_in_month = (year, month) => {
+    const days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    if (month === 2 && is_leap_year(year)) {
+        return 29;
+    }
+    return days[month - 1] || 0;
+};
+
+const build_format_regex = (format) => {
+    const tokens = [];
+    const parts = String(format).split(/(YYYY|MM|DD)/g).filter(part => part !== '');
+    const regex_body = parts.map(part => {
+        if (part === 'YYYY') {
+            tokens.push(part);
+            return '(\\d{4})';
+        }
+        if (part === 'MM' || part === 'DD') {
+            tokens.push(part);
+            return '(\\d{1,2})';
+        }
+        return escape_regex(part);
+    }).join('');
+    return {
+        regex: new RegExp(`^${regex_body}$`),
+        tokens
+    };
+};
+
+const parse_format_parts = (value, format = 'YYYY-MM-DD') => {
+    if (value === null || value === undefined) return null;
+    const str = String(value).trim();
+    if (str === '') return null;
+    const { regex, tokens } = build_format_regex(format);
+    const match = str.match(regex);
+    if (!match) return null;
+
+    const parts = {
+        year: null,
+        month: null,
+        day: null
+    };
+
+    tokens.forEach((token, idx) => {
+        const num = parseInt(match[idx + 1], 10);
+        if (Number.isNaN(num)) {
+            return;
+        }
+        if (token === 'YYYY') parts.year = num;
+        if (token === 'MM') parts.month = num;
+        if (token === 'DD') parts.day = num;
+    });
+
+    if (!parts.year || !parts.month || !parts.day) return null;
+    if (parts.month < 1 || parts.month > 12) return null;
+    const max_day = days_in_month(parts.year, parts.month);
+    if (parts.day < 1 || parts.day > max_day) return null;
+
+    return parts;
+};
+
+const format_parts = (parts, format = 'YYYY-MM-DD') => {
+    if (!parts || !parts.year || !parts.month || !parts.day) return '';
+    const year = String(parts.year).padStart(4, '0');
+    const month = pad_2(parts.month);
+    const day = pad_2(parts.day);
+    return String(format)
+        .replace(/YYYY/g, year)
+        .replace(/MM/g, month)
+        .replace(/DD/g, day);
+};
+
+const parts_to_iso = (parts) => format_parts(parts, 'YYYY-MM-DD');
+const iso_to_parts = (iso_str) => parse_format_parts(iso_str, 'YYYY-MM-DD');
+const resolve_i18n_format = (locale, fallback = 'YYYY-MM-DD') => {
+    if (!locale) return fallback;
+    return DATE_I18N_FORMATS[locale] || fallback;
+};
+
 const Transformations = {
     date: {
+        /**
+         * Map of locale tags to default date formats.
+         */
+        i18n_formats: DATE_I18N_FORMATS,
+        /**
+         * Resolve a locale to a supported format string.
+         * @param {string} locale - Locale tag (e.g. en-US).
+         * @param {string} fallback - Fallback format string.
+         * @returns {string} Format string.
+         */
+        resolve_i18n_format: (locale, fallback = 'YYYY-MM-DD') => resolve_i18n_format(locale, fallback),
+        /**
+         * Parse a date string into parts using a format string.
+         * @param {string} value - Date string to parse.
+         * @param {string} format - Format string (e.g. DD/MM/YYYY).
+         * @returns {Object|null} Parsed parts or null.
+         */
+        parse_format_parts: (value, format = 'YYYY-MM-DD') => parse_format_parts(value, format),
+        /**
+         * Format date parts using a format string.
+         * @param {Object} parts - { year, month, day }.
+         * @param {string} format - Format string (e.g. YYYY-MM-DD).
+         * @returns {string} Formatted date string.
+         */
+        format_parts: (parts, format = 'YYYY-MM-DD') => format_parts(parts, format),
+        /**
+         * Convert date parts into ISO YYYY-MM-DD format.
+         * @param {Object} parts - { year, month, day }.
+         * @returns {string} ISO date string.
+         */
+        parts_to_iso: (parts) => parts_to_iso(parts),
+        /**
+         * Parse ISO YYYY-MM-DD string into date parts.
+         * @param {string} iso_str - ISO date string.
+         * @returns {Object|null} Parsed parts or null.
+         */
+        iso_to_parts: (iso_str) => iso_to_parts(iso_str),
+        /**
+         * Parse a locale-specific date string into ISO YYYY-MM-DD.
+         * @param {string} value - Date string to parse.
+         * @param {string} locale - Locale tag (e.g. en-GB).
+         * @param {string} format_override - Optional format override.
+         * @returns {string} ISO date string.
+         */
+        parse_i18n_to_iso: (value, locale = 'en-US', format_override) => {
+            if (!value) return '';
+            const iso_parts = parse_format_parts(value, 'YYYY-MM-DD');
+            if (iso_parts) {
+                return parts_to_iso(iso_parts);
+            }
+            const format = format_override || resolve_i18n_format(locale);
+            const parts = parse_format_parts(value, format);
+            return parts ? parts_to_iso(parts) : '';
+        },
+        /**
+         * Format an ISO YYYY-MM-DD date string for a locale or format override.
+         * @param {string} iso_str - ISO date string.
+         * @param {string} locale - Locale tag (e.g. en-US).
+         * @param {string} format_override - Optional format override.
+         * @returns {string} Formatted date string.
+         */
+        format_iso_to_locale: (iso_str, locale = 'en-US', format_override) => {
+            if (!iso_str) return '';
+            const parts = parse_format_parts(iso_str, 'YYYY-MM-DD');
+            if (!parts) return '';
+            const format = format_override || resolve_i18n_format(locale);
+            return format_parts(parts, format);
+        },
         toISO: (date) => {
             if (!date) return '';
             const d = date instanceof Date ? date : new Date(date);

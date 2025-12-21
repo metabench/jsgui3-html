@@ -21,6 +21,10 @@ npm run test:e2e
 Run specific test file:
 ```bash
 npm run test:e2e:counter
+npm run test:e2e:data-controls
+npm run test:e2e:form-editor-features
+npm run test:e2e:layout-controls
+npm run test:e2e:missing-controls
 npm run test:e2e:user-form
 ```
 
@@ -169,6 +173,10 @@ E2E tests use different ports to avoid conflicts:
 - Counter tests: `52001`
 - User form tests: `52002`
 - WYSIWYG tests: `52003`
+- Missing controls tests: `52004`
+- Data controls tests: `52005`
+- Layout controls tests: `52006`
+- Form editor features tests: `52007`
 - Add more as needed...
 
 ## Performance

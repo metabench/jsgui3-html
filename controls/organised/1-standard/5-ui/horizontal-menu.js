@@ -17,6 +17,11 @@
 
 var jsgui = require('../../../../html-core/html-core');
 var Menu_Node = require('../../0-core/0-basic/1-compositional/menu-node');
+const keyboard_navigation = require('../../../../control_mixins/keyboard_navigation');
+const {
+	apply_label,
+	apply_role
+} = require('../../../../control_mixins/a11y');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
@@ -35,6 +40,11 @@ class Horizontal_Menu extends Control {
 		super(spec);
 		this.__type_name = 'horizontal_menu';
 		this.dom.attrs.class = 'horizontal menu';
+		this.aria_label = spec.aria_label;
+		apply_role(this, 'menubar');
+		if (this.aria_label !== undefined) {
+			apply_label(this, this.aria_label);
+		}
 		if (!spec.abstract && !spec.el) {
 			var obj = spec.value;
 			//var that = this;
@@ -56,6 +66,46 @@ class Horizontal_Menu extends Control {
 
 		if (!this.__active) {
 			super.activate();
+			const get_menu_nodes = () => {
+				const nodes = [];
+				this.content.each((ctrl) => {
+					if (ctrl && ctrl.__type_name === 'menu_node') nodes.push(ctrl);
+				});
+				return nodes;
+			};
+			const get_menu_items = () => get_menu_nodes().map(node => node.main_control || node);
+			const set_active_index = (next_index) => {
+				const menu_nodes = get_menu_nodes();
+				if (!menu_nodes.length) return;
+				const clamped = Math.max(0, Math.min(next_index, menu_nodes.length - 1));
+				this.active_index = clamped;
+				const menu_items = get_menu_items();
+				menu_items.forEach((item, idx) => {
+					if (item && item.dom) {
+						item.dom.attributes = item.dom.attributes || {};
+						item.dom.attributes.tabindex = idx === clamped ? '0' : '-1';
+					}
+				});
+			};
+			set_active_index(0);
+			keyboard_navigation(this, {
+				orientation: 'horizontal',
+				roving_tabindex: true,
+				focus_item: true,
+				get_items: () => get_menu_items(),
+				get_active_index: () => this.active_index,
+				set_active_index,
+				on_activate: () => {
+					const menu_nodes = get_menu_nodes();
+					const active_node = menu_nodes[this.active_index];
+					if (active_node && active_node.open) active_node.open();
+				},
+				on_down: () => {
+					const menu_nodes = get_menu_nodes();
+					const active_node = menu_nodes[this.active_index];
+					if (active_node && active_node.open) active_node.open();
+				}
+			});
 
 			//console.log('activate Horizontal_Menu');
 			// While it is open, clicking outside of the menu should close it.

@@ -1,0 +1,72 @@
+const jsgui = require('../../../../html-core/html-core');
+
+const { Control } = jsgui;
+
+const DEFAULT_BUTTONS = [
+    { command: 'bold', label: '<strong>B</strong>', title: 'Bold (Ctrl+B)' },
+    { command: 'italic', label: '<em>I</em>', title: 'Italic (Ctrl+I)' },
+    { command: 'underline', label: '<u>U</u>', title: 'Underline (Ctrl+U)' },
+    { command: 'strikeThrough', label: '<s>S</s>', title: 'Strikethrough' },
+    { type: 'separator' },
+    { command: 'formatBlock', value: '<h2>', label: 'H2', title: 'Heading 2' },
+    { command: 'formatBlock', value: '<blockquote>', label: '❝', title: 'Block quote' },
+    { type: 'separator' },
+    { command: 'insertUnorderedList', label: '• List', title: 'Bullet List' },
+    { command: 'insertOrderedList', label: '1. List', title: 'Numbered List' },
+    { type: 'separator' },
+    { command: 'createLink', label: '🔗', title: 'Insert Link' },
+    { command: 'unlink', label: '🔗✗', title: 'Remove Link' },
+    { type: 'separator' },
+    { command: 'removeFormat', label: '✗', title: 'Clear Formatting' }
+];
+
+class Rich_Text_Toolbar extends Control {
+    constructor(spec = {}) {
+        spec.__type_name = spec.__type_name || 'rich_text_toolbar';
+        super(spec);
+        this.add_class('rte-toolbar');
+        this.dom.tagName = 'div';
+
+        this.buttons = Array.isArray(spec.buttons) ? spec.buttons : DEFAULT_BUTTONS;
+
+        if (!spec.el) {
+            this.compose_toolbar();
+        }
+    }
+
+    compose_toolbar() {
+        const { context } = this;
+        this.button_controls = [];
+
+        this.buttons.forEach(button_def => {
+            if (button_def.type === 'separator') {
+                const sep = new Control({ context, tag_name: 'span' });
+                sep.add_class('rte-toolbar-separator');
+                this.add(sep);
+                return;
+            }
+
+            const button = new Control({ context, tag_name: 'button' });
+            button.add_class('rte-toolbar-button');
+            button.dom.attributes.type = 'button';
+            button.dom.attributes.title = button_def.title || '';
+            button.dom.attributes['data-command'] = button_def.command;
+            if (button_def.value) {
+                button.dom.attributes['data-value'] = button_def.value;
+            }
+            if (button_def.label) {
+                button.dom.innerHTML = button_def.label;
+            }
+            if (typeof button_def.handler === 'function') {
+                button.custom_handler = button_def.handler;
+            }
+
+            this.button_controls.push(button);
+            this.add(button);
+        });
+    }
+}
+
+Rich_Text_Toolbar.DEFAULT_BUTTONS = DEFAULT_BUTTONS;
+
+module.exports = Rich_Text_Toolbar;

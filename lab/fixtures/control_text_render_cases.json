@@ -1,0 +1,36 @@
+{
+  "cases": [
+    {
+      "name": "basic_div",
+      "tag_name": "div",
+      "class_name": "fixture-basic",
+      "content": "Fixture Basic",
+      "expected_contains": [
+        "<div",
+        "Fixture Basic",
+        "fixture-basic"
+      ]
+    },
+    {
+      "name": "span_text",
+      "tag_name": "span",
+      "class_name": "fixture-span",
+      "content": "Span Text",
+      "expected_contains": [
+        "<span",
+        "Span Text",
+        "fixture-span"
+      ]
+    },
+    {
+      "name": "paragraph_lines",
+      "tag_name": "p",
+      "content": "Line 1\nLine 2",
+      "expected_contains": [
+        "<p",
+        "Line 1",
+        "Line 2"
+      ]
+    }
+  ]
+}
