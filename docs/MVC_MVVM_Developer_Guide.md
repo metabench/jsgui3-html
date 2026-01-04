@@ -423,9 +423,9 @@ app.get('/user/:id', async (req, res) => {
 });
 ```
 
-### Client-Side Hydration
+### Client-Side Activation
 
-When the page loads on the client, controls are "hydrated" - reconnected to their DOM elements:
+When the page loads on the client, controls are "activated" - reconnected to their DOM elements:
 
 ```javascript
 // client.js

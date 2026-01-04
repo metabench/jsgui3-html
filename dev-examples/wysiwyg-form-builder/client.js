@@ -16,7 +16,7 @@ const { Data_Object } = require('lang-tools');
 const { Control, Active_HTML_Document } = jsgui;
 const Data_Model_View_Model_Control = require('../../html-core/Data_Model_View_Model_Control');
 const Toolbar = require('../../controls/organised/1-standard/5-ui/Toolbar');
-const PropertyEditor = require('../../controls/organised/1-standard/1-editor/PropertyEditor');
+const Property_Editor = require('../../controls/organised/1-standard/1-editor/property_editor');
 const Panel = require('../../controls/organised/1-standard/6-layout/panel');
 const Button = require('../../controls/organised/0-core/0-basic/0-native-compositional/button');
 const mx = require('../../control_mixins/mx');
@@ -265,7 +265,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
         this.mainContainer.add(this.canvasPanel);
         
         // Right panel - Properties
-        this.propertyEditor = new PropertyEditor({ context });
+        this.propertyEditor = new Property_Editor({ context });
         this.propertyEditor.add_class('form-builder-properties');
         this.propertyEditor.setOnDelete((item) => this._deleteField(item.index));
         
@@ -413,10 +413,10 @@ class FormBuilder extends Data_Model_View_Model_Control {
     _renderPreviewMode(fields) {
         const context = this.context;
         
-        const FormField = require('../../controls/organised/1-standard/1-editor/FormField');
+        const Form_Field = require('../../controls/organised/1-standard/1-editor/form_field');
         
         fields.forEach((field, index) => {
-            const formField = new FormField({
+            const formField = new Form_Field({
                 context,
                 label: field.label,
                 name: field.name,

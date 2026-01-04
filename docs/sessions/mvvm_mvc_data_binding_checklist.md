@@ -13,7 +13,7 @@ Dense reference for agents implementing or extending the MVVM/MVC stack in **jsg
 ## 2. Core Model Infrastructure
 - [ ] **Control_Data lifecycle** (`html-core/Control_Data.js`): implement / verify constructors accept `context`, enforce `Data_Model` instances, and emit `change` events when swapping models. Add helper utilities for consistent creation (`create_control_models` TODO).
 - [ ] **Control_View scaffolding** (`html-core/Control_View.js`): ensure view data models are instantiated consistently and that UI substructures (`Control_View_UI`, low-level data) exist before composition.
-- [ ] **Hydration attributes**: confirm controls set `data-jsgui-data-model` / `data-jsgui-view-model` attributes before server render; update serialization helpers if missing.
+- [ ] **Activation attributes**: confirm controls set `data-jsgui-data-model` / `data-jsgui-view-model` attributes before server render; update serialization helpers if missing.
 - [ ] **Model factories**: design or adopt shared factories that create `data`, `view`, and `view.ui` objects in constructors; reference them from mixins and `Data_Model_View_Model_Control`.
 
 ## 3. Binding & Computation Layer

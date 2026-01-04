@@ -15,7 +15,7 @@ This document surveys the MVVM infrastructure currently available in **jsgui3-ht
 
 ### 1.2 MVVM Control Base Class
 - `Data_Model_View_Model_Control` extends `control-enh` and wires a `BindingManager` per control (`html-core/Data_Model_View_Model_Control.js:1-210`).
-- It inspects `spec.data`, `spec.view`, and serialized DOM attributes (`data-jsgui-data-model`, `data-jsgui-view-model`) to hydrate models on the server and reconnect them on the client (`html-core/Data_Model_View_Model_Control.js:83-206`).
+- It inspects `spec.data`, `spec.view`, and serialized DOM attributes (`data-jsgui-data-model`, `data-jsgui-view-model`) to activate models on the server and reconnect them on the client (`html-core/Data_Model_View_Model_Control.js:83-206`).
 - Public helpers (`bind`, `computed`, `watch`, `inspectBindings`) wrap the `BindingManager` API, exposing a declarative binding DSL to higher-level controls (`html-core/Data_Model_View_Model_Control.js:214-308`).
 
 ### 1.3 Binding Infrastructure
@@ -37,7 +37,7 @@ This document surveys the MVVM infrastructure currently available in **jsgui3-ht
 
 ### 2.1 Incomplete Model Lifecycle
 - `Control_Data`/`Control_View` do not enforce or document how models should be instantiated, validated, or torn down. Many controls silently assume `this.data` exists and contains a `Data_Object`, leading to runtime errors (see the `Validation_Status_Indicator` bug in `docs/bugs/detailed-fix-plans.md`).
-- Server/client hydration currently relies on DOM attributes parsed in `Data_Model_View_Model_Control`, but there is no symmetric serialization API for controls that are not DMVM-based. This makes isomorphic rendering fragile.
+- Server/client activation currently relies on DOM attributes parsed in `Data_Model_View_Model_Control`, but there is no symmetric serialization API for controls that are not DMVM-based. This makes isomorphic rendering fragile.
 
 ### 2.2 View/UI Layers Are Stubs
 - `Control_View_UI` establishes placeholders for compositional models but never reconciles them with actual child controls or DOM nodes. Compositions such as a toolbar or layout container therefore bypass this layer and add child controls manually.
@@ -52,7 +52,7 @@ This document surveys the MVVM infrastructure currently available in **jsgui3-ht
 - History/undo, optimistic updates, offline buffering, and derived caches—all staples of powerful UI engines—are absent.
 
 ### 2.5 Testing & Tooling Gaps
-- The test suite lacks coverage for MVVM hydration, binding loops, and cross-context serialization. Most documented failures (see `docs/bugs/control-rendering-bugs.md`) stem from missing initialization logic that tests could have caught.
+- The test suite lacks coverage for MVVM activation, binding loops, and cross-context serialization. Most documented failures (see `docs/bugs/control-rendering-bugs.md`) stem from missing initialization logic that tests could have caught.
 - There is no inspector to visualize data/view/view-models at runtime, which makes debugging binding issues difficult.
 
 ---
@@ -60,7 +60,7 @@ This document surveys the MVVM infrastructure currently available in **jsgui3-ht
 ## 3. Target Capabilities for a Powerful Interactive Engine
 
 1. **Deterministic Model Initialization**
-   - Every control should declare what models it owns (data, view, UI layers) and how they are created, serialized, and hydrated.
+   - Every control should declare what models it owns (data, view, UI layers) and how they are created, serialized, and activated.
    - Context-level registries should provide model factories so servers can emit deterministic IDs and clients can rehydrate without custom code.
 
 2. **Composable Binding Pipelines**
@@ -91,7 +91,7 @@ This document surveys the MVVM infrastructure currently available in **jsgui3-ht
      1. Add construction helpers under `html-core/model-factory.js`.
      2. Refactor `Data_Model_View_Model_Control` and mixins to call the helper instead of ad-hoc checks.
      3. Add serialization utilities that set `data-jsgui-*` attributes automatically before server render.
-     4. Write hydration tests in `test/mvvm/data-binding.test.js`.
+     4. Write activation tests in `test/mvvm/data-binding.test.js`.
 
 2. **Control View/UI Completion**
    - Flesh out `Control_View_UI_Compositional` to store named slots, current layout, and activation metadata.
@@ -154,7 +154,7 @@ When implementing MVVM-powered controls going forward:
 3. **Guard Server/Client Differences**  
    - Only read `this.dom.el` when it exists; rely on models for initial state. Pair every DOM mutation with a model update.
 4. **Serialize Models Explicitly**  
-   - Before server render completes, set `data-jsgui-*` attributes so hydration will reuse the same IDs.
+   - Before server render completes, set `data-jsgui-*` attributes so activation will reuse the same IDs.
 5. **Test Both HTML and Model Graphs**  
    - Rendering tests should assert that initial models contain the expected values (leveraging `inspectBindings()` for verification).
 
@@ -169,7 +169,7 @@ When implementing MVVM-powered controls going forward:
   1. Instantiate bare models (`new Data_Object({ ... })`) and register change listeners or spies (via `sinon`).
   2. Compose bindings through `new ModelBinder(...)` or `binding_manager.bind(...)` and assert synchronous invariants (initial sync) plus asynchronous propagation (using promises or fake timers).
   3. Exercise failure modes (circular bindings, invalid transforms) by asserting emitted warnings/exceptions without spinning up controls.
-  4. Persist models through serialization utilities once they exist, verifying that rehydration reproduces IDs and events.
+  4. Persist models through serialization utilities once they exist, verifying that reactivation reproduces IDs and events.
 - **Advantages:** Fast (<10ms) unit tests, zero reliance on `Control`, perfect for regression coverage of binding logic.
 
 ### 6.2 Headless Control Simulation (Active Models, No HTML Rendering)
@@ -181,7 +181,7 @@ When implementing MVVM-powered controls going forward:
   1. Compose child pseudo-controls with stubbed `data`/`view` objects so `this.add()` is never invoked; rely on `BindingManager` to propagate state.
   2. Trigger "user" interactions by mutating `view.data.model` or raising events the way DOM would—observe resulting mutations in `data.model` or context stores.
   3. Assert that slot definitions, computed properties, and watchers fire in the intended order; capture asynchronous flows by awaiting microtasks or using fake timers.
-  4. Rehydrate simulated controls by serializing their models (attach `data-jsgui-*` attributes manually) and instantiating clones to ensure hydration parity.
+  4. Rehydrate simulated controls by serializing their models (attach `data-jsgui-*` attributes manually) and instantiating clones to ensure activation parity.
 - **Advantages:** Exercises activation paths, mixin wiring, and binding graphs without relying on HTML serialization or jsdom.
 
 ### 6.3 Scenario Testing Without HTML Rendering
@@ -215,7 +215,7 @@ These methodologies keep MVVM verification fast and deterministic, protect again
 - [ ] Publish helper APIs for guaranteed data/view creation.
 - [ ] Document slot-based view composition and adopt it in layout controls.
 - [ ] Convert at least three core controls (Text_Field, Window, Panel) to use declarative bindings.
-- [ ] Add MVVM-focused tests covering hydration, binding, and serialization scenarios.
+- [ ] Add MVVM-focused tests covering activation, binding, and serialization scenarios.
 - [ ] Prototype a shared context state store and wire it into an example (e.g., window manager).
 
 Delivering the above steps will transition jsgui3-html from ad-hoc MVVM usage to a cohesive engine capable of powering complex interactive applications with confidence.

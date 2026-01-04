@@ -1038,6 +1038,7 @@ app.get('/', (req, res) => {
 ```
 
 ### Client-Side Activation
+This activation step is often called "Hydration" in other UI frameworks.
 ```javascript
 // client.js
 const jsgui = require('jsgui3-html');
@@ -1052,6 +1053,11 @@ document.addEventListener('DOMContentLoaded', () => {
 ## Component Library
 
 ### Built-in Controls
+
+Controls are grouped by stability tier:
+- **Stable**: exported at top level from `controls/controls.js`.
+- **Experimental**: exported under `controls.experimental`.
+- **Deprecated**: legacy aliases under `controls.deprecated` (emit warnings).
 
 #### Basic Controls
 ```javascript
@@ -1530,7 +1536,7 @@ The dev-examples directory now includes three comprehensive examples:
    - Keyboard shortcuts (↑/↓, R, Ctrl+Z/Y)
    - localStorage persistence
    - Smooth animations
-   - Server-side rendering + client hydration
+   - Server-side rendering + client activation
 
 2. **User Form** (`dev-examples/binding/user-form/`)
    - Complex validation patterns

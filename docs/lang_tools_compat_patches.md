@@ -212,7 +212,7 @@ Implemented in `patch_set_fields_from_spec()`:
 
 ---
 
-## Patch: `Data_Object` constructor spec hydration (Data_Object_Compat)
+## Patch: `Data_Object` constructor spec activation (Data_Object_Compat)
 
 ### Symptom
 
@@ -227,7 +227,7 @@ When needed, `lang_tools.Data_Object` is replaced with `Data_Object_Compat`:
 - Calls `super(spec, fields)`.
 - Iterates keys in `spec` and calls `this.set(key, v, true)` to ensure internal storage is initialized.
 - Skips reserved keys (`context`, ids, type fields, etc.) and any keys starting with `__`.
-- Ensures accessors exist for each hydrated key.
+- Ensures accessors exist for each activated key.
 
 ### Detection
 

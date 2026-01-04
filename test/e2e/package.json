@@ -9,6 +9,7 @@
     "test:e2e:form-editor-features": "mocha form_editor_features.test.js --timeout 30000 --exit",
     "test:e2e:layout-controls": "mocha layout-controls.test.js --timeout 30000 --exit",
     "test:e2e:missing-controls": "mocha missing-controls.test.js --timeout 30000 --exit",
+    "test:e2e:progressive": "mocha progressive.test.js --timeout 120000 --exit",
     "test:e2e:user-form": "mocha user-form.test.js --timeout 30000 --exit",
     "test:e2e:watch": "mocha **/*.test.js --watch --timeout 30000"
   },

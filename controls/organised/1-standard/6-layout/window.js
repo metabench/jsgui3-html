@@ -62,21 +62,21 @@ class Window extends Control {
 				}
 				btn_minimize.add(span('⊖'));
 				apply_focus_ring(btn_minimize);
-				ensure_sr_text(btn_minimize, 'Minimize window');
+				ensure_sr_text(btn_minimize, 'Minimize window', { add_sr_only: false });
 				right_button_group.add(btn_minimize);
 				btn_maximize = new Button({
 					context
 				});
 				btn_maximize.add(span('⊕'))
 				apply_focus_ring(btn_maximize);
-				ensure_sr_text(btn_maximize, 'Maximize window');
+				ensure_sr_text(btn_maximize, 'Maximize window', { add_sr_only: false });
 				right_button_group.add(btn_maximize);
 				btn_close = new Button({
 					context
 				});
 				btn_close.add(span('⊗'))
 				apply_focus_ring(btn_close);
-				ensure_sr_text(btn_close, 'Close window');
+				ensure_sr_text(btn_close, 'Close window', { add_sr_only: false });
 				right_button_group.add(btn_close);
 				title_bar.add(right_button_group);
 			}
@@ -202,6 +202,15 @@ class Window extends Control {
 		if (this.manager && typeof this.manager.minimize === 'function') {
 			this.manager.minimize(this);
 		} else {
+			const has_parent_bounds = this.parent && typeof this.parent.bcr === 'function';
+			if (!has_parent_bounds) {
+				if (this.has_class('minimized')) {
+					this.remove_class('minimized');
+				} else {
+					this.add_class('minimized');
+				}
+				return;
+			}
 			const my_bcr = this.bcr();
 			if (!this.has_class('minimized')) {
 				const width_to_minimize_to = 280;
@@ -352,9 +361,38 @@ class Window extends Control {
 					this.minimize();
 				})
 			}
-			title_bar.on('dblclick', () => {
-				this.maximize();
-			})
+			const dom_el = this.dom && this.dom.el;
+			const dom_title_bar = dom_el ? dom_el.querySelector('.title.bar') : null;
+			const dom_buttons = dom_el ? dom_el.querySelectorAll('.title.bar button.button') : null;
+			const dom_minimize_button = dom_buttons && dom_buttons[0] ? dom_buttons[0] : null;
+			const dom_maximize_button = dom_buttons && dom_buttons[1] ? dom_buttons[1] : null;
+			const dom_close_button = dom_buttons && dom_buttons[2] ? dom_buttons[2] : null;
+
+			if (!btn_minimize && dom_minimize_button) {
+				dom_minimize_button.addEventListener('click', () => {
+					this.minimize();
+				});
+			}
+			if (!btn_maximize && dom_maximize_button) {
+				dom_maximize_button.addEventListener('click', () => {
+					this.maximize();
+				});
+			}
+			if (!btn_close && dom_close_button) {
+				dom_close_button.addEventListener('click', () => {
+					this.close();
+				});
+			}
+
+			if (title_bar) {
+				title_bar.on('dblclick', () => {
+					this.maximize();
+				})
+			} else if (dom_title_bar) {
+				dom_title_bar.addEventListener('dblclick', () => {
+					this.maximize();
+				});
+			}
 			this.on('mousedown', () => {
 				this.bring_to_front_z();
 			});

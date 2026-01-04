@@ -20,3 +20,19 @@ Checklists:
 - [06 Accessibility and Semantics](06_accessibility_and_semantics.md)
 - [07 Theming and Styling System](07_theming_and_styling_system.md)
 - [08 Consistency and Packaging](08_consistency_and_packaging.md)
+
+## Detailed Implementation Plans
+
+For in-depth technical specifications, code patterns, and implementation guides, see the detailed plans directory:
+
+**[Detailed Plans Index](../detailed_plans/INDEX.md)**
+
+Key detailed plans:
+- [Consistency and Packaging](../detailed_plans/01_consistency_and_packaging.md) - Naming normalization, export stability
+- [Progressive Enhancement](../detailed_plans/02_progressive_enhancement_swaps.md) - Swaps and activation strategy
+- [Control Quality Audit](../detailed_plans/03_control_quality_audit.md) - Per-control improvement tracking
+- [Data Controls Deep Dive](../detailed_plans/04_data_controls_deep_dive.md) - Advanced data control features
+- [Window Management System](../detailed_plans/05_window_management_system.md) - Window/panel enhancements
+- [Input System Unification](../detailed_plans/06_input_system_unification.md) - Shared input base patterns
+- [Validation System Architecture](../detailed_plans/07_validation_system_architecture.md) - Form validation infrastructure
+- [Performance Optimization](../detailed_plans/08_performance_optimization.md) - Rendering and virtualization

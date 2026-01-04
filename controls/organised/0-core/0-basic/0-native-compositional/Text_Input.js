@@ -3,6 +3,7 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 const {Control, Control_Data, Control_View, Data_Object, Data_Model, Data_Value} = jsgui;
 const {prop, field} = require('obext');
 const apply_input_mask = require('../../../../../control_mixins/input_mask');
+const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
 
 // Late 2023 - not so much code.
 //   Do want to make use of view.data.model syntax.
@@ -56,8 +57,7 @@ const apply_input_mask = require('../../../../../control_mixins/input_mask');
 
 class Text_Input extends Control {
     constructor(spec) {
-
-
+        spec = spec || {};
         spec.__type_name = spec.__type_name || 'text_input';
         spec.class = 'text-input';
 
@@ -65,7 +65,14 @@ class Text_Input extends Control {
         super(spec);
         const {context} = this;
 
+        this.enhance_only = !!spec.enhance_only && !!spec.el;
+
         apply_input_mask(this, spec || {});
+        apply_full_input_api(this, {
+            disabled: spec.disabled,
+            readonly: spec.readonly,
+            required: spec.required
+        });
 
 	        if (spec.placeholder) this.placeholder = spec.placeholder;
 	        if (this.placeholder) {
@@ -467,4 +474,19 @@ class Text_Input extends Control {
         }
     }
 }
+
+const { register_swap } = require('../../../../../control_mixins/swap_registry');
+
+const should_enhance = el => {
+    if (!el || !el.classList) return false;
+    if (el.classList.contains('jsgui-enhance')) return true;
+    if (typeof el.closest === 'function' && el.closest('.jsgui-form')) return true;
+    return false;
+};
+
+register_swap('input[type="text"], input:not([type])', Text_Input, {
+    enhancement_mode: 'enhance',
+    predicate: should_enhance
+});
+
 module.exports = Text_Input;

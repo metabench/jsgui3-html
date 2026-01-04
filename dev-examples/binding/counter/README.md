@@ -1,11 +1,11 @@
 # Simple Counter Example with Server-Side Rendering
 
-This example demonstrates the most basic server-side rendering pattern with client-side hydration using jsgui3-html and jsgui3-server.
+This example demonstrates the most basic server-side rendering pattern with client-side activation using jsgui3-html and jsgui3-server.
 
 ## What It Demonstrates
 
 1. **Server-Side Rendering**: The counter UI is rendered to HTML on the server
-2. **Client-Side Hydration**: JavaScript activates the rendered HTML in the browser
+2. **Client-Side Activation**: JavaScript activates the rendered HTML in the browser
 3. **MVVM Data Binding**: Display automatically updates when model changes
 4. **Computed Properties**: Even/odd styling updates automatically
 5. **Event Handling**: Button clicks modify the model
@@ -51,7 +51,7 @@ When a browser requests the page:
 4. Includes client JavaScript bundle
 5. Sends complete HTML to browser
 
-### Step 3: Client-Side Hydration
+### Step 3: Client-Side Activation
 When browser loads the page:
 1. Parses HTML and displays content (already visible!)
 2. Loads and executes client JavaScript bundle

@@ -1,5 +1,10 @@
 # Controls Documentation Index
 
+Stability notes:
+- **Stable** controls are exported at top level from `controls/controls.js`.
+- **Experimental** controls (if any) are exported under `controls.experimental`.
+- **Deprecated** aliases are listed in `controls.deprecated` and emit warnings.
+
 - `docs/controls/alert_banner.md`
 - `docs/controls/accordion.md`
 - `docs/controls/badge.md`

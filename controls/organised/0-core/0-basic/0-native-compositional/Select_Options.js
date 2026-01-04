@@ -10,6 +10,7 @@ const {
     apply_focus_ring,
     apply_label
 } = require('../../../../../control_mixins/a11y');
+const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
 
 class Select_Options extends Control {
     constructor(spec = {}) {
@@ -17,6 +18,7 @@ class Select_Options extends Control {
         spec.tag_name = 'select';
         super(spec);
         this.add_class('select-options');
+        this.enhance_only = !!spec.enhance_only && !!spec.el;
 
         const {context} = this;
         this.items = [];
@@ -29,6 +31,21 @@ class Select_Options extends Control {
         this.aria_label = spec.aria_label;
 
         this.construct_synchronised_data_and_view_models(spec, context);
+
+        apply_full_input_api(this, {
+            disabled: spec.disabled,
+            readonly: spec.readonly,
+            required: spec.required,
+            get_value: () => {
+                if (this.data && this.data.model && this.data.model.value !== undefined) {
+                    return this.data.model.value;
+                }
+                return this.selected_item ? this.selected_item.value : '';
+            },
+            set_value: value => {
+                this.set_selected_value(value);
+            }
+        });
 
         if (spec.items || spec.options) {
             this.set_items(spec.items || spec.options, {from_model: true});
@@ -216,8 +233,14 @@ class Select_Options extends Control {
         const active_item = this.selected_item;
         if (active_item && active_item.id) {
             this.dom.attributes['aria-activedescendant'] = active_item.id;
+            if (this.dom.el && typeof this.dom.el.setAttribute === 'function') {
+                this.dom.el.setAttribute('aria-activedescendant', active_item.id);
+            }
         } else {
             this.dom.attributes['aria-activedescendant'] = '';
+            if (this.dom.el && typeof this.dom.el.removeAttribute === 'function') {
+                this.dom.el.removeAttribute('aria-activedescendant');
+            }
         }
     }
 
@@ -231,6 +254,15 @@ class Select_Options extends Control {
     }
 
     compose() {
+        if (this.enhance_only && this.dom.el) {
+            this.dom.attributes.role = this.dom.attributes.role || 'listbox';
+            if (typeof this.dom.el.setAttribute === 'function') {
+                this.dom.el.setAttribute('role', this.dom.attributes.role);
+            }
+            this.update_aria_active_descendant();
+            return;
+        }
+
         this.clear();
         this.dom.attributes.role = 'listbox';
 
@@ -254,10 +286,35 @@ class Select_Options extends Control {
         this.update_aria_active_descendant();
     }
 
+    _load_items_from_dom() {
+        if (!this.dom.el || !this.dom.el.options) return;
+        const dom_items = [];
+        const options = this.dom.el.options;
+        for (let i = 0; i < options.length; i += 1) {
+            const option = options[i];
+            dom_items.push({
+                value: option.value,
+                label: option.text,
+                disabled: option.disabled,
+                id: option.id || `${this.item_id_prefix}-${i}`
+            });
+        }
+
+        this.items = normalize_items(dom_items, {id_prefix: this.item_id_prefix});
+        this.filtered_items = filter_items(this.items, this.filter_text);
+
+        if (this.dom.el) {
+            this.set_selected_value(this.dom.el.value);
+        }
+    }
+
     activate() {
         if (!this.__active) {
             super.activate();
             if (this.dom.el) {
+                if (this.enhance_only && !this.items.length) {
+                    this._load_items_from_dom();
+                }
                 this.add_dom_event_listener('change', () => {
                     const next_value = this.dom.el.value;
                     this.set_selected_value(next_value);
@@ -273,5 +330,19 @@ class Select_Options extends Control {
         }
     }
 }
+
+const { register_swap } = require('../../../../../control_mixins/swap_registry');
+
+const should_enhance = el => {
+    if (!el || !el.classList) return false;
+    if (el.classList.contains('jsgui-enhance')) return true;
+    if (typeof el.closest === 'function' && el.closest('.jsgui-form')) return true;
+    return false;
+};
+
+register_swap('select', Select_Options, {
+    enhancement_mode: 'enhance',
+    predicate: should_enhance
+});
 
 module.exports = Select_Options;

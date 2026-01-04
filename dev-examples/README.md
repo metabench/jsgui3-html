@@ -6,7 +6,7 @@ This directory contains examples that demonstrate client-side functionality usin
 
 These examples require `jsgui3-server` which is listed as a **devDependency** only. This means:
 - They demonstrate client-side capabilities in a realistic server context
-- They showcase server-side rendering + client-side hydration patterns
+- They showcase server-side rendering + client-side activation patterns
 - They don't add `jsgui3-server` to production dependencies
 - The main `examples/` directory contains standalone examples that don't require a server
 
@@ -38,16 +38,20 @@ Then open your browser to `http://localhost:52000` (or the port shown in console
 
 ### Binding Examples (`binding/`)
 Demonstrate MVVM data binding with server-side rendering:
-- **counter/** - Simple counter with server-side rendering and client-side hydration
+- **counter/** - Simple counter with server-side rendering and client-side activation
 - **user-form/** - Form with server-side validation API
 - **missing-controls/** - New core controls demo (inputs, indicators, navigation, feedback)
 - **data-controls/** - Data table, data grid, virtualization, and collection controls
 - **layout-controls/** - Layout and navigation controls (split pane, tabs, drawer, stepper)
 - **form_editor_features/** - Form container, validation, input masks, autosize, rich text, object editor
 
+### Progressive Enhancement (`progressive/`)
+Demonstrates Activation tiers for native controls:
+- **progressive/** - Tier 0 (native), Tier 1 (styled), Tier 2 (activated), and mixed activation markers
+
 ## Key Patterns Demonstrated
 
-### 1. Server-Side Rendering + Client-Side Hydration
+### 1. Server-Side Rendering + Client-Side Activation
 
 ```javascript
 // server.js
@@ -71,7 +75,7 @@ The server:
 1. Renders the control to HTML on the server
 2. Bundles the client-side JavaScript
 3. Sends HTML with embedded data to the client
-4. Client JavaScript "hydrates" the DOM, attaching event handlers
+4. Client JavaScript activates the DOM, attaching event handlers
 
 ### 2. Server-Side API with `server.publish()`
 

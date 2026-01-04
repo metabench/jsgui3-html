@@ -9,4 +9,18 @@ class Url_Input extends Text_Input {
     }
 }
 
+const { register_swap } = require('../../../../../control_mixins/swap_registry');
+
+const should_enhance = el => {
+    if (!el || !el.classList) return false;
+    if (el.classList.contains('jsgui-enhance')) return true;
+    if (typeof el.closest === 'function' && el.closest('.jsgui-form')) return true;
+    return false;
+};
+
+register_swap('input[type="url"]', Url_Input, {
+    enhancement_mode: 'enhance',
+    predicate: should_enhance
+});
+
 module.exports = Url_Input;

@@ -140,7 +140,7 @@ class Status_Indicator extends Indicator {
 
 ### Action Items
 - Add explicit initialization in `controls/organised/0-core/0-basic/1-compositional/Status_Indicator.js` so `this.data`, `this.data.model`, and `this.data.model.validation.state` exist before listeners are attached; use `Control_Data`, `Data_Object`, and `Data_Value` from `html-core`.
-- Ensure `Validation_Status_Indicator.js` registers the status change handler after the base class has prepared the data model and that the optional `spec.validation` payload can hydrate the model during construction.
+- Ensure `Validation_Status_Indicator.js` registers the status change handler after the base class has prepared the data model and that the optional `spec.validation` payload can activate the model during construction.
 - Expand diagnostic coverage so the failing constructor trace is guarded by a regression test that instantiates a `Validation_Status_Indicator` with nested validation data.
 
 ### Implementation Workflow
@@ -236,7 +236,7 @@ class List extends Control {
 
 ### Implementation Workflow
 1. Wire the Item constructors to accept `value` and render it immediately so looping tests can inspect `<li>` contents.
-2. Adjust the List constructor/composer to hydrate items from `spec.items`, creating new Item instances with the computed values.
+2. Adjust the List constructor/composer to activate items from `spec.items`, creating new Item instances with the computed values.
 3. Run the targeted diagnostic command (`npx mocha test/diagnostic-bugs.test.js --grep "List Items Rendering Bug" --require test/setup.js`) and the rendering suite to catch any display regressions.
 4. Update this document with the test results and mark the bug fixed once the assertions pass.
 

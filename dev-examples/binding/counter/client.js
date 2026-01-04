@@ -3,7 +3,7 @@
  * 
  * Demonstrates:
  * - Basic MVVM data binding
- * - Server-side rendering + client-side hydration
+ * - Server-side rendering + client-side activation
  * - Computed properties
  * - Event handling in isomorphic context
  * - Undo/Redo functionality
@@ -563,7 +563,7 @@ class Demo_UI extends Active_HTML_Document {
             
             const description = new Control({ context, tag_name: 'p' });
             description.add('A fully-featured counter with undo/redo, localStorage persistence, animations, and keyboard shortcuts. ' +
-                          'Server-rendered and client-hydrated with MVVM data binding.');
+                          'Server-rendered and client-activated with MVVM data binding.');
             description.add_class('demo-description');
             
             const counter = new Counter({

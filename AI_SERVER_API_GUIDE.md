@@ -549,7 +549,7 @@ this.computed(
 
 // ✅ Watch for changes (client-only after initial render)
 this.watch(this.model, 'fullName', (newName) => {
-    // This will only fire on client after hydration
+    // This will only fire on client after activation
     console.log('Full name changed:', newName);
 });
 ```

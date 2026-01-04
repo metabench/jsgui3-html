@@ -3,13 +3,13 @@
 Each checklist item should include tests and documentation updates.
 
 ## Naming normalization
-- [ ] Identify duplicates (e.g., `FormField.js` vs `form_field.js`).
-- [ ] Choose canonical file and provide legacy alias exports.
-- [ ] Add deprecation note in docs.
+- [x] Identify duplicates (e.g., `FormField.js` vs `form_field.js`).
+- [x] Choose canonical file and provide legacy alias exports.
+- [x] Add deprecation note in docs.
 
 ## Export stability
-- [ ] Define stable public API list in `controls/controls.js`.
-- [ ] Mark experimental controls explicitly.
+- [x] Define stable public API list in `controls/controls.js`.
+- [x] Mark experimental controls explicitly.
 - [ ] Add an export audit checklist for new controls.
 
 ## Core vs showcase separation

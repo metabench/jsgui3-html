@@ -1,6 +1,19 @@
+/**
+ * jsgui3-html Controls
+ *
+ * Main exports for all jsgui3-html controls.
+ *
+ * Stability Tiers:
+ * - STABLE: Safe for production use
+ * - EXPERIMENTAL: API may change
+ * - DEPRECATED: Will be removed in v1.0.0
+ */
 
+'use strict';
 
-
+// ============================================
+// STABLE API - Safe for production use
+// ============================================
 
 const controls = {
     Active_HTML_Document: require('./organised/1-standard/5-ui/Active_HTML_Document'),
@@ -127,7 +140,8 @@ const controls = {
     Range_Input: require('./organised/0-core/0-basic/0-native-compositional/range_input'),
     Password_Input: require('./organised/0-core/0-basic/0-native-compositional/password_input'),
     Virtual_List: require('./organised/1-standard/4-data/virtual_list'),
-    Virtual_Grid: require('./organised/1-standard/4-data/virtual_grid')
+    Virtual_Grid: require('./organised/1-standard/4-data/virtual_grid'),
+    Error_Summary: require('../validation/error_summary')
 }
 
 // a show_validation_status mixin perhaps???
@@ -147,5 +161,30 @@ const controls = {
 //  Can use this to cut down on composition code.
 
 // compose, render, activate, modify
+
+// ============================================
+// EXPERIMENTAL API - Subject to change
+// ============================================
+
+controls.experimental = {};
+
+// ============================================
+// DEPRECATED API - Will be removed in v1.0.0
+// ============================================
+
+// These are legacy aliases for backwards compatibility.
+// They emit deprecation warnings when used.
+// See docs/migrations/naming_normalization.md for migration guide.
+
+controls.deprecated = {
+    // Legacy camelCase names - use Camel_Case versions instead
+    FormField: require('./organised/1-standard/1-editor/FormField'),
+    PropertyEditor: require('./organised/1-standard/1-editor/PropertyEditor')
+};
+
+// Also export at top level for backwards compatibility
+// (will emit deprecation warnings)
+controls.FormField = controls.deprecated.FormField;
+controls.PropertyEditor = controls.deprecated.PropertyEditor;
 
 module.exports = controls;

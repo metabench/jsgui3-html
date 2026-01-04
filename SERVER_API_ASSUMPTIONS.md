@@ -208,9 +208,9 @@ Counter.css = `
 3. NYI implementations should provide helpful error messages
 4. Build process should validate all dependencies
 
-## Client Hydration Assumptions
+## Client Activation Assumptions
 
-**Hydration Pattern:**
+**Activation Pattern:**
 ```javascript
 activate() {
     if (!this.__active) {
@@ -225,7 +225,7 @@ activate() {
 2. Client JavaScript "hydrates" the page by attaching interactivity
 3. `activate()` method only runs on client
 4. DOM structure matches between server render and client expectations
-5. Data binding automatically synchronizes after hydration
+5. Data binding automatically synchronizes after activation
 
 ## Storage and Persistence Assumptions
 

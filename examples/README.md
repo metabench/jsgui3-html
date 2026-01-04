@@ -436,7 +436,7 @@ const control = new UserForm({ context });
 const html = control.html;
 res.send(html);
 
-// Client-side hydration
+// Client-side activation
 const control = new UserForm({
     context,
     el: document.getElementById('user-form')

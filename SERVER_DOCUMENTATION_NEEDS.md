@@ -59,7 +59,7 @@ Based on analysis of the failing examples and server code patterns, this documen
 - Data_Object usage patterns on server
 - Computed property handling during rendering
 - Watch/binding behavior differences between server/client
-- Initial state hydration process
+- Initial state activation process
 - State serialization requirements
 
 **Impact:** Data-bound controls fail to render properly on server, breaking the MVVM pattern.
@@ -140,7 +140,7 @@ this.input.dom.el.value = initialValue;
 ## Testing Server Rendering
 1. Create simple control without client-only features
 2. Test server-side rendering in isolation
-3. Add client-side hydration
+3. Add client-side activation
 4. Test full isomorphic functionality
 
 ## Debugging Bundle Failures

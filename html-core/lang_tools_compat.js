@@ -298,7 +298,7 @@ const detect_needs_patch = () => {
         needs_collection_data_model_patch: false
     };
 
-    // 1) Spec hydration should populate internal storage (get) not just direct props.
+    // 1) Spec activation should populate internal storage (get) not just direct props.
     try {
         const inst = new Base_Data_Object({ a: 1 });
         const got = typeof inst.get === 'function' ? inst.get('a') : undefined;

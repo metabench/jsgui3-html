@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(tree:*)",
+      "Bash(cat:*)",
+      "Bash(wc:*)",
+      "Bash(grep:*)",
+      "Bash(npm test:*)",
+      "Bash(node -e:*)",
+      "Bash(npx mocha deprecation.test.js swap-infrastructure.test.js --timeout 5000)"
+    ]
+  }
+}

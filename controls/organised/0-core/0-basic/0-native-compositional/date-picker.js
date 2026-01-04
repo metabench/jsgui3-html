@@ -1,6 +1,7 @@
 const jsgui = require('../../../../../html-core/html-core');
 const {Control, Control_Data, Control_View, Data_Object} = jsgui;
 const {field} = require('obext');
+const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
 
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const pad_2 = value => String(value).padStart(2, '0');
@@ -51,11 +52,35 @@ class Date_Picker extends Control {
         this.add_class('date-picker');
         this.dom.tagName = 'input';
         this.dom.attributes.type = 'date';
+        this.enhance_only = !!spec.enhance_only && !!spec.el;
 
         this.locale = spec.locale || '';
         this.week_start = spec.week_start !== undefined ? Number(spec.week_start) : 0;
         this.min_value = spec.min ? this.format_date(spec.min, {format: 'iso'}) : '';
         this.max_value = spec.max ? this.format_date(spec.max, {format: 'iso'}) : '';
+
+        if (this.enhance_only && spec.el) {
+            const dom_locale = spec.el.getAttribute('lang');
+            const dom_week_start = spec.el.getAttribute('data-week-start');
+            const dom_min = spec.el.getAttribute('min');
+            const dom_max = spec.el.getAttribute('max');
+
+            if (!spec.locale && dom_locale) {
+                this.locale = dom_locale;
+            }
+            if (spec.week_start === undefined && dom_week_start !== null && dom_week_start !== '') {
+                const parsed_week_start = Number(dom_week_start);
+                if (!Number.isNaN(parsed_week_start)) {
+                    this.week_start = parsed_week_start;
+                }
+            }
+            if (!spec.min && dom_min) {
+                this.min_value = dom_min;
+            }
+            if (!spec.max && dom_max) {
+                this.max_value = dom_max;
+            }
+        }
 
         if (this.locale) {
             this.dom.attributes.lang = this.locale;
@@ -70,10 +95,20 @@ class Date_Picker extends Control {
             this.dom.attributes.max = this.max_value;
         }
 
+        apply_full_input_api(this, {
+            disabled: spec.disabled,
+            readonly: spec.readonly,
+            required: spec.required
+        });
+
         this.construct_synchronised_data_and_view_models(spec);
 
         if (spec.value !== undefined) {
             this.set_value(spec.value, {from_model: true});
+        } else if (this.enhance_only && spec.el && spec.el.value) {
+            const dom_value = spec.el.value;
+            this.set_model_value('value', dom_value);
+            this.set_value(dom_value, {from_model: true});
         }
     }
 
@@ -322,8 +357,23 @@ class Date_Picker extends Control {
                 this.handle_keydown(e_keydown);
                 sync_value();
             });
+            sync_value();
         }
     }
 }
+
+const { register_swap } = require('../../../../../control_mixins/swap_registry');
+
+const should_enhance = el => {
+    if (!el || !el.classList) return false;
+    if (el.classList.contains('jsgui-enhance')) return true;
+    if (typeof el.closest === 'function' && el.closest('.jsgui-form')) return true;
+    return false;
+};
+
+register_swap('input[type="date"]', Date_Picker, {
+    enhancement_mode: 'enhance',
+    predicate: should_enhance
+});
 
 module.exports = Date_Picker;

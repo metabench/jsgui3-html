@@ -2,6 +2,7 @@ const jsgui = require('../../../../../html-core/html-core');
 
 const { Control } = jsgui;
 const { is_defined } = jsgui;
+const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
 
 const normalize_number_value = value => {
     if (!is_defined(value)) return '';
@@ -24,14 +25,23 @@ class Number_Input extends Control {
         this.add_class('number-input');
         this.dom.tagName = 'input';
         this.dom.attributes.type = 'number';
+        this.enhance_only = !!spec.enhance_only && !!spec.el;
 
         set_attr_if_defined(this.dom.attributes, 'min', spec.min);
         set_attr_if_defined(this.dom.attributes, 'max', spec.max);
         set_attr_if_defined(this.dom.attributes, 'step', spec.step);
         set_attr_if_defined(this.dom.attributes, 'inputmode', spec.inputmode);
 
+        apply_full_input_api(this, {
+            disabled: spec.disabled,
+            readonly: spec.readonly,
+            required: spec.required
+        });
+
         if (is_defined(spec.value)) {
             this.set_value(spec.value);
+        } else if (this.enhance_only && spec.el && is_defined(spec.el.value)) {
+            this.set_value(spec.el.value);
         }
     }
 
@@ -68,8 +78,23 @@ class Number_Input extends Control {
 
             this.add_dom_event_listener('input', sync_value);
             this.add_dom_event_listener('change', sync_value);
+            sync_value();
         }
     }
 }
+
+const { register_swap } = require('../../../../../control_mixins/swap_registry');
+
+const should_enhance = el => {
+    if (!el || !el.classList) return false;
+    if (el.classList.contains('jsgui-enhance')) return true;
+    if (typeof el.closest === 'function' && el.closest('.jsgui-form')) return true;
+    return false;
+};
+
+register_swap('input[type="number"]', Number_Input, {
+    enhancement_mode: 'enhance',
+    predicate: should_enhance
+});
 
 module.exports = Number_Input;

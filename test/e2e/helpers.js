@@ -55,6 +55,53 @@ async function start_server(example_name, port = 52000) {
 }
 
 /**
+ * Start a server from an explicit example path.
+ * @param {string} example_path - Absolute path to example directory.
+ * @param {number} port - Port to run the server on.
+ * @param {Object} [options] - Optional settings.
+ * @param {number} [options.startup_timeout_ms=10000] - Startup timeout in ms.
+ * @returns {Promise<Object>} Server process and URL.
+ */
+async function start_server_from_path(example_path, port = 52000, options = {}) {
+    const startup_timeout_ms = Number(options.startup_timeout_ms) || 10000;
+    return new Promise((resolve, reject) => {
+        const server_process = spawn('node', ['server.js'], {
+            cwd: example_path,
+            env: { ...process.env, PORT: port },
+            shell: true
+        });
+
+        let startup_timeout = setTimeout(() => {
+            server_process.kill();
+            reject(new Error(`Server failed to start within ${startup_timeout_ms}ms`));
+        }, startup_timeout_ms);
+
+        server_process.stdout.on('data', (data) => {
+            const output = data.toString();
+            if (output.includes(`listening on port ${port}`) ||
+                output.includes('Server running') ||
+                output.includes('Server Started') ||
+                output.includes(`localhost:${port}`)) {
+                clearTimeout(startup_timeout);
+                resolve({
+                    process: server_process,
+                    url: `http://localhost:${port}`
+                });
+            }
+        });
+
+        server_process.stderr.on('data', (data) => {
+            console.error(`Server error: ${data}`);
+        });
+
+        server_process.on('error', (error) => {
+            clearTimeout(startup_timeout);
+            reject(error);
+        });
+    });
+}
+
+/**
  * Stop a running server
  * @param {Object} server_process - The server process to stop
  */
@@ -150,6 +197,7 @@ async function wait_for_condition(condition, timeout = 5000, interval = 100) {
 
 module.exports = {
     start_server,
+    start_server_from_path,
     stop_server,
     launch_browser,
     get_text,

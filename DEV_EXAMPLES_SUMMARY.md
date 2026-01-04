@@ -21,7 +21,7 @@ This document summarizes the server-integrated examples created to demonstrate j
 - `README.md` (180+ lines) - Complete documentation
 
 **Demonstrates:**
-- Basic server-side rendering + client-side hydration
+- Basic server-side rendering + client-side activation
 - Two-way data binding
 - Computed properties (even/odd styling)
 - Event handling in isomorphic context
@@ -57,7 +57,7 @@ This document summarizes the server-integrated examples created to demonstrate j
 
 ## Architecture Patterns
 
-### Server-Side Rendering + Client-Side Hydration
+### Server-Side Rendering + Client-Side Activation
 
 ```
 Server Process:
@@ -76,6 +76,15 @@ Client Process:
 5. Call activate() - adds interactivity
 6. Page is now fully interactive
 ```
+
+### Progressive Enhancement (Activation)
+
+The progressive example demonstrates activation tiers for native inputs:
+
+1. Tier 0: plain native inputs without activation
+2. Tier 1: native inputs styled with CSS tokens
+3. Tier 2: activated native inputs using swap registration
+4. Mixed: `.jsgui-form` activation with `.jsgui-no-enhance` opt-out
 
 ### Isomorphic Control Pattern
 

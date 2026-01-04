@@ -25,6 +25,7 @@ npm run test:e2e:data-controls
 npm run test:e2e:form-editor-features
 npm run test:e2e:layout-controls
 npm run test:e2e:missing-controls
+npm run test:e2e:progressive
 npm run test:e2e:user-form
 ```
 
@@ -177,6 +178,7 @@ E2E tests use different ports to avoid conflicts:
 - Data controls tests: `52005`
 - Layout controls tests: `52006`
 - Form editor features tests: `52007`
+- Progressive enhancement tests: `52008`
 - Add more as needed...
 
 ## Performance

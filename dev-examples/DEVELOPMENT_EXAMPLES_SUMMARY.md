@@ -4,11 +4,12 @@ This document provides a comprehensive overview of the enhanced development exam
 
 ## Overview
 
-The dev-examples directory now contains three comprehensive examples demonstrating different aspects of jsgui3-html:
+The dev-examples directory now contains four comprehensive examples demonstrating different aspects of jsgui3-html:
 
 1. **Enhanced Counter** - MVVM binding with history management
 2. **User Form** - Complex form validation patterns  
-3. **WYSIWYG Form Builder** - Visual form building tool (WIP)
+3. **Progressive Enhancement** - Activation tiers for native controls
+4. **WYSIWYG Form Builder** - Visual form building tool (WIP)
 
 ## New Reusable Controls
 
@@ -141,7 +142,7 @@ propertyEditor.setOnDelete((item) => {
 - History management
 - Keyboard event handling
 - CSS transitions and animations
-- Server-side rendering + client hydration
+- Server-side rendering + client activation
 
 ### 2. User Form (Unchanged)
 
