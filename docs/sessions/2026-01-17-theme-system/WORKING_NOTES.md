@@ -90,6 +90,174 @@ Session: Theme system implementation (low/medium/high layers + Window first)
 
 ---
 
+## Phase 3: Input Control Theming (2026-01-17)
+
+**Goal**: Add theme support to Text_Input control
+
+**Implementation**:
+- [x] Added 7 input variants to `themes/variants.js`: default, compact, floating, filled, underline, search, inline
+- [x] Updated `control_mixins/theme_params.js` with input/text_input schema and derive_hooks
+- [x] Refactored `Text_Input.js` with themeable mixin and token mapping
+- [x] Updated TypeScript declarations: theme.d.ts, variants.d.ts, index.d.ts
+- [x] Created comprehensive unit tests (24 tests)
+
+**Results**: All 86 tests passing (24 theme_params + 8 window + 15 button + 15 panel + 24 input)
+
+**Files Modified**:
+- `themes/variants.js` - added input_variants (7 variants)
+- `control_mixins/theme_params.js` - added input/text_input schema and hooks
+- `controls/.../Text_Input.js` - themeable mixin integration
+
+**Files Created**:
+- `test/controls/input_theme.test.js` - 24 unit tests
+
+---
+
+## Phase 4: Navigation Controls Theming (2026-01-17)
+
+**Goal**: Add theme support to Tabbed_Panel and Horizontal_Menu controls
+
+**Implementation**:
+- [x] Added 8 tabbed_panel variants to `themes/variants.js`: default, pills, card, vertical, vertical-right, bottom, icon, compact
+- [x] Added 6 menu variants to `themes/variants.js`: default, vertical, compact, divided, pills, icon
+- [x] Updated `themes/token_maps.js` with tab and menu size tokens
+- [x] Updated `control_mixins/theme_params.js` with tabbed_panel and menu schemas + derive_hooks
+- [x] Integrated themeable mixin into `Tabbed_Panel.js` and `Horizontal_Menu.js`
+- [x] Updated TypeScript declarations with TabbedPanelParams, MenuParams, TabbedPanelVariant, MenuVariant
+
+**Results**: All 86 tests still passing (variants registered, controls use theme params)
+
+**Files Modified**:
+- `themes/variants.js` - added tabbed_panel_variants (8), menu_variants (6)
+- `themes/token_maps.js` - added tab and menu size tokens
+- `control_mixins/theme_params.js` - added schemas and hooks
+- `controls/.../tabbed-panel.js` - themeable mixin integration
+- `controls/.../horizontal-menu.js` - themeable mixin integration
+- `types/theme.d.ts` - TabbedPanelParams, MenuParams, variant types
+- `types/index.d.ts` - new exports
+
+---
+
+## Phase 5: Control Testing Infrastructure (2026-01-17)
+
+**Goal**: Create comprehensive testing infrastructure for controls covering SSR, theme integration, and client-side behavior
+
+**Implementation**:
+- [x] Created `test/helpers/control_test_base.js` - reusable test utilities
+- [x] Added 5 dropdown_menu variants to `themes/variants.js`
+- [x] Added dropdown_menu schema and hooks to `control_mixins/theme_params.js`
+- [x] Refactored `Dropdown_Menu.js` with themeable mixin and token maps
+- [x] Created comprehensive `test/controls/dropdown_menu.test.js` with 37 tests
+
+**Test Coverage**:
+| Category | Tests |
+|----------|-------|
+| SSR Structure | 7 tests |
+| SSR Options | 4 tests |
+| Theme Variants | 5 tests |
+| Token Application | 4 tests |
+| Data Attributes | 3 tests |
+| CSS Classes | 2 tests |
+| Spec Override | 1 test |
+| Context Theme | 2 tests |
+| State Management | 3 tests |
+| Activation | 2 tests |
+| Accessibility | 2 tests |
+| Backward Compat | 2 tests |
+
+**Results**: All 123 theme tests passing (86 existing + 37 new dropdown tests)
+
+**Files Created**:
+- `test/helpers/control_test_base.js` - reusable test utilities
+- `test/controls/dropdown_menu.test.js` - 37 tests
+
+**Files Modified**:
+- `themes/variants.js` - added dropdown_menu_variants (5)
+- `control_mixins/theme_params.js` - added dropdown_menu schema and hooks
+- `controls/.../Dropdown_Menu.js` - themeable mixin, token maps, JSDoc
+
+---
+
+## Phase 6: Additional Control Theming (2026-01-17)
+
+**Goal**: Apply testing pattern to more controls - Context_Menu and List
+
+**Implementation**:
+- [x] Added 3 context_menu variants to `themes/variants.js`
+- [x] Added 5 list variants to `themes/variants.js`
+- [x] Added schemas and hooks to `control_mixins/theme_params.js`
+- [x] Integrated themeable mixin into `Context_Menu.js` and `List.js`
+- [x] Created `test/controls/context_menu.test.js` (10 tests)
+- [x] Created `test/controls/list.test.js` (19 tests)
+- [x] Fixed bug in Context_Menu._features initialization
+
+**Variants Added**:
+| Control | Variants |
+|---------|----------|
+| Context_Menu | default, compact, dark |
+| List | default, compact, divided, large, cards |
+
+**Results**: All 153 theme tests passing (2 pending for legacy pattern)
+
+**Files Created**:
+- `test/controls/context_menu.test.js` - 10 tests
+- `test/controls/list.test.js` - 19 tests
+
+**Files Modified**:
+- `themes/variants.js` - added context_menu_variants (3), list_variants (5)
+- `control_mixins/theme_params.js` - added schemas and hooks
+- `controls/.../context-menu.js` - themeable mixin, fixed bug
+- `controls/.../list.js` - themeable mixin
+
+---
+
+## Phase 7: Charting System with Data Binding (2026-01-17)
+
+**Goal**: Create modern chart controls with MVVM data binding and theme support
+
+**Implementation**:
+- [x] Created `controls/charts/Chart_Base.js` - abstract base with data binding
+- [x] Created `controls/charts/Bar_Chart.js` - grouped/stacked bar charts
+- [x] Created `controls/charts/Pie_Chart.js` - pie and donut charts
+- [x] Created `controls/charts/Area_Chart.js` - overlap/stacked area charts
+- [x] Created `controls/charts/Scatter_Chart.js` - 2D scatter with trend lines
+- [x] Created `controls/charts/index.js` - module exports
+- [x] Created `controls/charts/README.md` - comprehensive API documentation
+- [x] Added 6 chart variants to `themes/variants.js`
+- [x] Added chart schema to `control_mixins/theme_params.js`
+- [x] Created `test/controls/chart.test.js` with 35 tests
+- [x] Fixed critical super() initialization order bug
+- [x] Browser verified with demo server
+
+**Chart Types**:
+| Chart | Modes | Key Features |
+|-------|-------|--------------|
+| Bar_Chart | grouped, stacked | Vertical/horizontal orientation |
+| Pie_Chart | pie, donut | Segment labels, percentages |
+| Area_Chart | overlap, stacked | Fill opacity, border lines, points |
+| Scatter_Chart | basic | Trend lines, custom point size |
+
+**Bug Fix - Super() Initialization Order**:
+> [!IMPORTANT]
+> Chart_Base.super() calls compose_chart() before subclass properties were initialized,
+> causing NaN calculations. Fixed by adding default fallbacks in render methods and
+> re-rendering after super().
+
+**Results**: All 188 tests passing (35 chart + 153 existing)
+
+**Files Created**:
+- `controls/charts/Chart_Base.js` - 485 lines
+- `controls/charts/Bar_Chart.js` - 335 lines
+- `controls/charts/Pie_Chart.js` - 305 lines
+- `controls/charts/Area_Chart.js` - 320 lines
+- `controls/charts/Scatter_Chart.js` - 365 lines
+- `controls/charts/index.js` - Module exports
+- `controls/charts/README.md` - API documentation
+- `test/controls/chart.test.js` - 35 tests
+- `lab/chart_demo_server.js` - Visual demo server
+
+---
+
 <!-- Add new entries above this line -->
 
 

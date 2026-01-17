@@ -13,6 +13,8 @@ const {
     apply_role,
     ensure_sr_text
 } = require('../../../../control_mixins/a11y');
+const { themeable } = require('../../../../control_mixins/themeable');
+const { apply_token_map } = require('../../../../themes/token_maps');
 
 class Tab extends Control {
     constructor(spec) {
@@ -87,10 +89,34 @@ Tab_Group.css = `
 }
 `;
 
+/**
+ * Tabbed Panel Control
+ * 
+ * A panel with tabbed navigation.
+ * 
+ * Supports variants: default, pills, card, vertical, vertical-right, bottom, icon, compact
+ * 
+ * @example
+ * // Default tabs
+ * new Tabbed_Panel({ tabs: ['Tab 1', 'Tab 2', 'Tab 3'] });
+ * 
+ * // Pill tabs
+ * new Tabbed_Panel({ variant: 'pills', tabs: ['Home', 'Profile', 'Settings'] });
+ * 
+ * // Vertical tabs
+ * new Tabbed_Panel({ variant: 'vertical', tabs: ['Overview', 'Details'] });
+ */
 class Tabbed_Panel extends Panel {
     constructor(spec) {
         spec.__type_name = spec.__type_name || 'tabbed_panel';
         super(spec);
+
+        // Apply themeable - resolves params and applies hooks
+        const params = themeable(this, 'tabbed_panel', spec);
+
+        // Apply token mappings (size -> CSS variables)
+        apply_token_map(this, 'tab', params);
+
         this.add_class('tab-container');
         this.tabs = spec.tabs;
         this.tab_bar = spec.tab_bar || {};
@@ -105,7 +131,7 @@ class Tabbed_Panel extends Panel {
         const tab_variant = tab_bar.variant || null;
         const max_tabs = Number.isFinite(Number(tab_bar.max_tabs)) ? Number(tab_bar.max_tabs) : null;
         const use_overflow = !!tab_bar.overflow && Number.isFinite(max_tabs) && tabs.length > max_tabs;
-        apply_role(this, 'tablist', {force: true});
+        apply_role(this, 'tablist', { force: true });
         this.dom.attributes['aria-orientation'] = (tab_bar_position === 'left' || tab_bar_position === 'right')
             ? 'vertical'
             : 'horizontal';
@@ -338,7 +364,7 @@ class Tabbed_Panel extends Panel {
                     const selected = overflow_select.dom.el.value;
                     const selected_index = Number(selected);
                     if (!Number.isFinite(selected_index)) return;
-                    this.set_active_tab_index(selected_index, {focus: true});
+                    this.set_active_tab_index(selected_index, { focus: true });
                 });
             }
             if (Array.isArray(tab_labels) && tab_labels.length) {
@@ -350,10 +376,10 @@ class Tabbed_Panel extends Panel {
                     get_items: () => tab_labels,
                     get_active_index: () => this.active_index || 0,
                     set_active_index: (index, options_set = {}) => {
-                        this.set_active_tab_index(index, {focus: !!options_set.from_keyboard});
+                        this.set_active_tab_index(index, { focus: !!options_set.from_keyboard });
                     },
                     on_activate: () => {
-                        this.set_active_tab_index(this.active_index || 0, {focus: true});
+                        this.set_active_tab_index(this.active_index || 0, { focus: true });
                     }
                 });
             }

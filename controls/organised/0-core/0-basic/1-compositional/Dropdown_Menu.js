@@ -1,48 +1,68 @@
 const jsgui = require('../../../../../html-core/html-core');
-var stringify = jsgui.stringify,
-    each = jsgui.each,
-    tof = jsgui.tof,
-    is_defined = jsgui.is_defined;
+const { each, tof, is_array, is_arr_of_strs } = jsgui;
+const Control = jsgui.Control;
+const { field, prop } = require('obext');
+const { press_events, pressed_state, selectable } = require('../../../../../control_mixins/mx');
+const { themeable } = require('../../../../../control_mixins/themeable');
+const { apply_token_map, apply_radius_tokens } = require('../../../../../themes/token_maps');
 
-const {is_array, is_arr_of_strs} = jsgui;
-
-var Control = jsgui.Control;
-const {
-    field,
-    prop
-} = require('obext');
-
-// Seems worth using mixins, improving them to cover a variety of features that will be used in many controls.
-
-// Menu items being selectable individually.
-//   So when one gets selected, the control has its state changed to closed.
-
-// Also, consider state transitions in the state system.
-//   Could take a 1/2s or something to change between open and closed.
-
-// Pressed view state mixin?
-//   view ui data model or something like that.
-
-
-
-
-
-const {press_events, pressed_state, selectable} = require('../../../../../control_mixins/mx');
+/**
+ * Dropdown Menu Control
+ * 
+ * A dropdown selector that shows options when opened.
+ * 
+ * Supports variants: default, compact, filled, ghost, native
+ * Supports sizes: small, medium, large
+ * 
+ * @example
+ * // Basic dropdown with options
+ * new Dropdown_Menu({ 
+ *     options: ['Option A', 'Option B', 'Option C'] 
+ * });
+ * 
+ * // Compact dropdown
+ * new Dropdown_Menu({ 
+ *     variant: 'compact',
+ *     options: ['Small', 'Medium', 'Large'] 
+ * });
+ * 
+ * // Filled style
+ * new Dropdown_Menu({ 
+ *     variant: 'filled',
+ *     options: ['Alpha', 'Beta', 'Gamma'] 
+ * });
+ */
 
 
 class Dropdown_Menu extends Control {
+    /**
+     * Create a Dropdown Menu.
+     * @param {Object} spec - Control specification
+     * @param {string[]} [spec.options] - Array of option strings
+     * @param {string} [spec.variant] - Theme variant name
+     * @param {Object} [spec.params] - Theme parameters override
+     */
     constructor(spec) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'dropdown_menu';
         super(spec);
+
+        // Apply themeable - resolves params and applies hooks
+        const params = themeable(this, 'dropdown_menu', spec);
+
+        // Apply token mappings
+        apply_token_map(this, 'input', params);  // Use input size tokens
+        apply_radius_tokens(this, params);
+
         this.add_class('dropdown-menu');
 
+        // Setup view model fields
         field(this.view.data.model, 'state');
         field(this.view.data.model, 'options');
 
         this.view.data.model.on('change', e_change => {
             //console.log('this.view.data.model.on change e_change', e_change);
-            const {name, value} = e_change;
+            const { name, value } = e_change;
 
             if (name === 'state') {
                 if (value === 'open') {
@@ -85,10 +105,10 @@ class Dropdown_Menu extends Control {
         // View states of inner composed controls?
 
     }
-    
+
     compose_dropdown_menu() {
 
-        const {context} = this;
+        const { context } = this;
 
         // Popup can be modal or not.
 
@@ -118,7 +138,7 @@ class Dropdown_Menu extends Control {
         ctrl_open_items.add_class('open-items');
         this.add(ctrl_open_items);
 
-        
+
         const dm_options = this.view.data.model.options;
         //console.log('Select_Options compose dm_options:', dm_options);
         if (is_array(dm_options)) {
@@ -151,9 +171,9 @@ class Dropdown_Menu extends Control {
 
                     // Selectable children - where they are all within the selection scope of this control.
 
-                    
 
-                    
+
+
 
 
                 })
@@ -163,7 +183,7 @@ class Dropdown_Menu extends Control {
 
 
         this._ctrl_fields = this._ctrl_fields || {};
-		this._ctrl_fields.ctrl_dropdown_icon = ctrl_dropdown_icon;
+        this._ctrl_fields.ctrl_dropdown_icon = ctrl_dropdown_icon;
 
 
     }
@@ -171,7 +191,7 @@ class Dropdown_Menu extends Control {
     activate() {
         if (!this.__active) {
             super.activate();
-            const {ctrl_dropdown_icon} = this;
+            const { ctrl_dropdown_icon } = this;
             //console.log('activating Dropdown_Menu this.ctrl_dropdown_icon', this.ctrl_dropdown_icon);
 
             // Want to listen for clicks on the dropdown icon.
@@ -180,7 +200,7 @@ class Dropdown_Menu extends Control {
             pressed_state(ctrl_dropdown_icon);
 
             // Though could have that control bound to the open/closed view state.
-            
+
             ctrl_dropdown_icon.on('click', e_click => {
                 //console.log('ctrl_dropdown_icon e_click', e_click);
                 //console.log('this.view.data.model.state', this.view.data.model.state);
@@ -197,7 +217,7 @@ class Dropdown_Menu extends Control {
             //   May want to implement / use mixins.
 
 
-            
+
         }
     }
 

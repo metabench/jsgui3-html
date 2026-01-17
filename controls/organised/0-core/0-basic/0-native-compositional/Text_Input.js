@@ -1,69 +1,47 @@
 const jsgui = require('../../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
-const {Control, Control_Data, Control_View, Data_Object, Data_Model, Data_Value} = jsgui;
-const {prop, field} = require('obext');
+const { Control, Control_Data, Control_View, Data_Object, Data_Model, Data_Value } = jsgui;
+const { prop, field } = require('obext');
 const apply_input_mask = require('../../../../../control_mixins/input_mask');
 const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
+const { themeable } = require('../../../../../control_mixins/themeable');
+const { apply_token_map } = require('../../../../../themes/token_maps');
 
-// Late 2023 - not so much code.
-//   Do want to make use of view.data.model syntax.
-//     Separate to for example view.data.ui.options.model
-//   Be really explicit with what it's about, but allow for shortened syntax when it's clear(er) what it's doing.
-
-// May see about making this a Data_Model_View_Model_Control (later), but this is quite concise right now without the comments and
-//   empty lines.
-
-// Will also make a new version of Text_Input.
-//   Want some kind of specification of what data it models / represents.
-//   Maybe just say String somewhere.
-// ctrl.data.type = String perhaps.
-//  data_type: String possibly.
-
-
-// Then some means to sync this data with the value in the DOM.
-
-// view.ll.model???
-
-
-//   Maybe just make it the view model for the moment???
-//   Does seem worth being able to have (at least) 2 levels of view.data.model
-
-
-
-
-// And Text_Item too...
-//   Seems a bit like Text_Input but possibly more flexible.
-
-
-
-
-// Need to do more basic work on Data_Value of data_type String
-//   and then could make some easy system / API for specifying maxLength. It could be implemented using a more complex
-//   constraint though.
-
-
-// data_value.constraint(s)
-
-// data_value.constraints.add(new Constraint())
-// data_value constraints being separate to the data type.
-
-
-// Definitely has a View_Model.
-// Possibly has a separate Data_Model.
-
-// The syncing code is not actually all that complex on this level.
-//   May make some functions to get it working with much less code, but later on once patterns are clear.
-
-
+/**
+ * Text Input Control
+ * 
+ * A text input field with theme support.
+ * 
+ * Supports variants: default, compact, floating, filled, underline, search, inline
+ * Supports sizes: small, medium, large
+ * 
+ * @example
+ * // Default input
+ * new Text_Input({ placeholder: 'Enter text...' });
+ * 
+ * // Search input
+ * new Text_Input({ variant: 'search', placeholder: 'Search...' });
+ * 
+ * // Filled input with small size
+ * new Text_Input({ 
+ *     variant: 'filled', 
+ *     params: { size: 'small' }
+ * });
+ */
 class Text_Input extends Control {
     constructor(spec) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'text_input';
         spec.class = 'text-input';
 
-
         super(spec);
-        const {context} = this;
+        const { context } = this;
+
+        // Apply themeable - resolves params and applies hooks
+        const params = themeable(this, 'text_input', spec);
+
+        // Apply token mappings (size -> CSS variables)
+        apply_token_map(this, 'input', params);
 
         this.enhance_only = !!spec.enhance_only && !!spec.el;
 
@@ -74,13 +52,13 @@ class Text_Input extends Control {
             required: spec.required
         });
 
-	        if (spec.placeholder) this.placeholder = spec.placeholder;
-	        if (this.placeholder) {
-	            this.dom.attributes.placeholder = this.placeholder;
-	        }
-	        if (!spec.el) {
-	            //this.compose_text_input();
-	        }
+        if (spec.placeholder) this.placeholder = spec.placeholder;
+        if (this.placeholder) {
+            this.dom.attributes.placeholder = this.placeholder;
+        }
+        if (!spec.el) {
+            //this.compose_text_input();
+        }
 
 
         // Likely to need improved client-side data coherence.
@@ -119,7 +97,7 @@ class Text_Input extends Control {
 
 
         const view_data_model_change_handler = e => {
-            const {name, value, old} = e;
+            const { name, value, old } = e;
 
             //console.log('Text_Input view data model change e:', e);
 
@@ -157,7 +135,7 @@ class Text_Input extends Control {
         this.view.data.model.on('change', view_data_model_change_handler);
 
         this.view.data.on('change', e => {
-            const {name, value, old} = e;
+            const { name, value, old } = e;
             if (name === 'model') {
                 if (old instanceof Data_Model) {
                     old.off('change', view_data_model_change_handler);
@@ -284,7 +262,7 @@ class Text_Input extends Control {
 
 
         const data_model_change_handler = e => {
-            const {name, value, old} = e;
+            const { name, value, old } = e;
             //console.log('Text_Input data_model_change_handler e:', e);
             if (name === 'value') {
                 //this.dom.attributes.value = value;
@@ -299,7 +277,7 @@ class Text_Input extends Control {
 
         const setup_handle_data_model_itself_changing = () => {
             this.data.on('change', e => {
-                const {name, value, old} = e;
+                const { name, value, old } = e;
                 //console.log('Text_Input .data change e:', e);
                 if (name === 'model') {
 
@@ -313,7 +291,7 @@ class Text_Input extends Control {
                         value.on('change', data_model_change_handler);
                     }
 
-                    
+
                 }
             })
         }
@@ -325,14 +303,14 @@ class Text_Input extends Control {
             this.view.data.model.value = this.data.model.value;
         }
 
-	        if (spec.value !== undefined) {
-	            if (this.data && this.data.model && typeof this.data.model.set === 'function') {
-	                this.data.model.set('value', spec.value, true);
-	            } else {
-	                this.data.model.value = spec.value;
-	            }
-	            this.dom.attributes.value = spec.value;
-	        }
+        if (spec.value !== undefined) {
+            if (this.data && this.data.model && typeof this.data.model.set === 'function') {
+                this.data.model.set('value', spec.value, true);
+            } else {
+                this.data.model.value = spec.value;
+            }
+            this.dom.attributes.value = spec.value;
+        }
 
         this.dom.tagName = 'input';
         this.dom.attributes.type = 'text';
@@ -398,7 +376,7 @@ class Text_Input extends Control {
     activate() {
         if (!this.__active) {
             super.activate();
-            const {dom} = this;
+            const { dom } = this;
 
 
 

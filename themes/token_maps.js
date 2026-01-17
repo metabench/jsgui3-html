@@ -74,6 +74,42 @@ const SIZE_TOKENS = {
         medium: { '--panel-padding': '16px' },
         large: { '--panel-padding': '24px' },
         xlarge: { '--panel-padding': '40px' }
+    },
+
+    tab: {
+        small: {
+            '--tab-height': '28px',
+            '--tab-padding-x': '8px',
+            '--tab-font-size': '12px'
+        },
+        medium: {
+            '--tab-height': '36px',
+            '--tab-padding-x': '16px',
+            '--tab-font-size': '14px'
+        },
+        large: {
+            '--tab-height': '44px',
+            '--tab-padding-x': '24px',
+            '--tab-font-size': '16px'
+        }
+    },
+
+    menu: {
+        small: {
+            '--menu-item-height': '28px',
+            '--menu-item-padding-x': '8px',
+            '--menu-font-size': '12px'
+        },
+        medium: {
+            '--menu-item-height': '36px',
+            '--menu-item-padding-x': '12px',
+            '--menu-font-size': '14px'
+        },
+        large: {
+            '--menu-item-height': '44px',
+            '--menu-item-padding-x': '16px',
+            '--menu-font-size': '16px'
+        }
     }
 };
 

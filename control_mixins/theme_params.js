@@ -58,6 +58,65 @@ const param_schemas = {
         padding: ['none', 'small', 'medium', 'large', 'xlarge'],
         shadow: ['none', 'small', 'medium', 'large', 'inset'],
         radius: ['none', 'small', 'medium', 'large', 'full']
+    },
+    input: {
+        size: ['small', 'medium', 'large'],
+        label_position: ['top', 'left', 'right', 'floating', 'hidden'],
+        fill_style: ['outline', 'filled', 'underline', 'transparent'],
+        validation_style: ['inline', 'tooltip', 'popover', 'none'],
+        radius: ['none', 'small', 'medium', 'large', 'full']
+    },
+    text_input: {
+        size: ['small', 'medium', 'large'],
+        label_position: ['top', 'left', 'right', 'floating', 'hidden'],
+        fill_style: ['outline', 'filled', 'underline', 'transparent'],
+        validation_style: ['inline', 'tooltip', 'popover', 'none'],
+        radius: ['none', 'small', 'medium', 'large', 'full']
+    },
+    tabbed_panel: {
+        tab_position: ['top', 'bottom', 'left', 'right'],
+        indicator: ['underline', 'background', 'card', 'left-border', 'right-border', 'none'],
+        spacing: ['none', 'small', 'medium', 'large'],
+        size: ['small', 'medium', 'large'],
+        fill_style: ['none', 'filled'],
+        radius: ['none', 'small', 'medium', 'large', 'full', 'top']
+    },
+    menu: {
+        direction: ['horizontal', 'vertical'],
+        spacing: ['none', 'small', 'medium', 'large'],
+        indicator: ['none', 'underline', 'background', 'left-border', 'right-border'],
+        size: ['small', 'medium', 'large'],
+        radius: ['none', 'small', 'medium', 'large', 'full']
+    },
+    horizontal_menu: {
+        direction: ['horizontal', 'vertical'],
+        spacing: ['none', 'small', 'medium', 'large'],
+        indicator: ['none', 'underline', 'background', 'left-border', 'right-border'],
+        size: ['small', 'medium', 'large'],
+        radius: ['none', 'small', 'medium', 'large', 'full']
+    },
+    dropdown_menu: {
+        size: ['small', 'medium', 'large'],
+        fill_style: ['outline', 'filled', 'transparent'],
+        radius: ['none', 'small', 'medium', 'large', 'full'],
+        icon: ['chevron', 'triangle', 'none']
+    },
+    context_menu: {
+        size: ['small', 'medium', 'large'],
+        shadow: ['none', 'small', 'medium', 'large'],
+        radius: ['none', 'small', 'medium', 'large']
+    },
+    list: {
+        size: ['small', 'medium', 'large'],
+        spacing: ['none', 'small', 'medium', 'large'],
+        dividers: [true, false]
+    },
+    chart: {
+        size: ['small', 'medium', 'large'],
+        palette: ['categorical', 'monochrome', 'vibrant', 'dark'],
+        grid: [true, false],
+        legend: ['none', 'top', 'bottom', 'left', 'right'],
+        animation: [true, false]
     }
 };
 
@@ -102,6 +161,90 @@ const derive_hooks = (control_type, params) => {
         }
         if (params.border) {
             classes.push('bordered');
+        }
+    }
+
+    if (type_key === 'input' || type_key === 'text_input') {
+        if (params.fill_style) {
+            attrs['data-fill-style'] = params.fill_style;
+        }
+        if (params.label_position) {
+            attrs['data-label-position'] = params.label_position;
+        }
+        if (params.size && params.size !== 'medium') {
+            classes.push(`input-${params.size}`);
+        }
+        if (params.shape === 'pill') {
+            classes.push('input-pill');
+        }
+        if (params.clear_button) {
+            classes.push('has-clear-button');
+        }
+    }
+
+    if (type_key === 'tabbed_panel') {
+        if (params.tab_position) {
+            attrs['data-tab-position'] = params.tab_position;
+        }
+        if (params.indicator) {
+            attrs['data-indicator'] = params.indicator;
+        }
+        if (params.size && params.size !== 'medium') {
+            classes.push(`tabs-${params.size}`);
+        }
+        if (params.fill_style === 'filled') {
+            classes.push('tabs-filled');
+        }
+    }
+
+    if (type_key === 'menu' || type_key === 'horizontal_menu') {
+        if (params.direction) {
+            attrs['data-direction'] = params.direction;
+        }
+        if (params.indicator && params.indicator !== 'none') {
+            attrs['data-indicator'] = params.indicator;
+        }
+        if (params.size && params.size !== 'medium') {
+            classes.push(`menu-${params.size}`);
+        }
+        if (params.separator) {
+            classes.push('menu-divided');
+        }
+        if (params.icon_only) {
+            classes.push('menu-icon-only');
+        }
+    }
+
+    if (type_key === 'dropdown_menu') {
+        if (params.fill_style) {
+            attrs['data-fill-style'] = params.fill_style;
+        }
+        if (params.icon && params.icon !== 'chevron') {
+            attrs['data-icon'] = params.icon;
+        }
+        if (params.size && params.size !== 'medium') {
+            classes.push(`dropdown-${params.size}`);
+        }
+    }
+
+    if (type_key === 'context_menu') {
+        if (params.size && params.size !== 'medium') {
+            classes.push(`context-menu-${params.size}`);
+        }
+        if (params.theme === 'dark') {
+            classes.push('dark-theme');
+        }
+    }
+
+    if (type_key === 'list') {
+        if (params.size && params.size !== 'medium') {
+            classes.push(`list-${params.size}`);
+        }
+        if (params.dividers) {
+            classes.push('list-divided');
+        }
+        if (params.item_style === 'card') {
+            classes.push('list-cards');
         }
     }
 

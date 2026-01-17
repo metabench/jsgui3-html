@@ -1,24 +1,39 @@
 const jsgui = require('../../../../../html-core/html-core');
-var Menu_Node = require('./menu-node');
+const Menu_Node = require('./menu-node');
+const { each, tof } = jsgui;
+const Control = jsgui.Control;
+const { themeable } = require('../../../../../control_mixins/themeable');
+const { apply_token_map } = require('../../../../../themes/token_maps');
 
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
-var Control = jsgui.Control;
-
-// More advanced, but still comes as standard, basic in that way.
-
-// May benefit from some kind of model overlay over the main part of the doc.
-
-// ctrl.context_menu?
-// ctrl.context.menu(ctrl) ???
-//   later, work on easy specification of the context menu.
-
-
+/**
+ * Context Menu Control
+ * 
+ * A popup menu that appears on right-click or context trigger.
+ * 
+ * Supports variants: default, compact, dark
+ * 
+ * @example
+ * // Object-based menu
+ * new Context_Menu({ 
+ *     value: { 'Cut': fn, 'Copy': fn, 'Paste': fn } 
+ * });
+ * 
+ * // Array-based menu
+ * new Context_Menu({ 
+ *     value: [['Cut', fn], ['Copy', fn]] 
+ * });
+ */
 class Context_Menu extends Control {
 	constructor(spec, add, make) {
 		super(spec);
-
 		this.__type_name = 'context_menu';
-		//this.add_class('context menu');
+
+		// Apply themeable - resolves params and applies hooks
+		const params = themeable(this, 'context_menu', spec);
+
+		// Apply token mappings
+		apply_token_map(this, 'menu', params);
+
 		this.add_class('context menu');
 
 		//console.log('Context_Menu init spec.el', spec.el);
@@ -71,8 +86,8 @@ class Context_Menu extends Control {
 			}
 		}
 
-		this._features = this._features || []; // an array is cool but map is better for testing for specific ones.
-        each(['menu'], this._features.push);
+		this._features = this._features || [];
+		this._features.push('menu');
 
 	}
 	'activate'() {

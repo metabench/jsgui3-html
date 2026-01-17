@@ -22,23 +22,46 @@ const {
 	apply_label,
 	apply_role
 } = require('../../../../control_mixins/a11y');
+const { themeable } = require('../../../../control_mixins/themeable');
+const { apply_token_map } = require('../../../../themes/token_maps');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
 var group = jsgui.group;
 
+/**
+ * Horizontal Menu Control
+ * 
+ * A horizontal navigation menu bar.
+ * 
+ * Supports variants: default, vertical, compact, divided, pills, icon
+ * 
+ * @example
+ * // Default menu
+ * new Horizontal_Menu({ value: { File: {}, Edit: {}, View: {} } });
+ * 
+ * // Compact menu
+ * new Horizontal_Menu({ variant: 'compact', value: { Home: {}, About: {} } });
+ */
 class Horizontal_Menu extends Control {
 
 	// could have a title field.
 	//'fields': {
 	//	'title': String
-	//},
+	//}
 
 	// maybe add before make would be better. add will probably be used more.
 	constructor(spec, add, make) {
 		super(spec);
 		this.__type_name = 'horizontal_menu';
+
+		// Apply themeable - resolves params and applies hooks
+		const params = themeable(this, 'horizontal_menu', spec);
+
+		// Apply token mappings (size -> CSS variables)
+		apply_token_map(this, 'menu', params);
+
 		this.dom.attrs.class = 'horizontal menu';
 		this.aria_label = spec.aria_label;
 		apply_role(this, 'menubar');

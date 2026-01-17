@@ -79,9 +79,63 @@ export interface InputParams {
     /** Input size */
     size?: 'small' | 'medium' | 'large';
     /** Label position */
-    label_position?: 'top' | 'left' | 'floating';
+    label_position?: 'top' | 'left' | 'right' | 'floating' | 'hidden';
+    /** Fill style for input background */
+    fill_style?: 'outline' | 'filled' | 'underline' | 'transparent';
+    /** Validation feedback style */
+    validation_style?: 'inline' | 'tooltip' | 'popover' | 'none';
+    /** Border radius preset */
+    radius?: 'none' | 'small' | 'medium' | 'large' | 'full';
+    /** Input shape for special variants like search */
+    shape?: 'rectangle' | 'pill';
+    /** Show clear button */
+    clear_button?: boolean;
+    /** Show character count */
+    show_count?: boolean;
+    /** Show border only on focus */
+    border_on_focus?: boolean;
     /** Show validation icons */
     show_validation_icon?: boolean;
+}
+
+/**
+ * Tabbed Panel control composition parameters.
+ */
+export interface TabbedPanelParams {
+    /** Tab bar position */
+    tab_position?: 'top' | 'bottom' | 'left' | 'right';
+    /** Active tab indicator style */
+    indicator?: 'underline' | 'background' | 'card' | 'left-border' | 'right-border' | 'none';
+    /** Spacing between tabs */
+    spacing?: 'none' | 'small' | 'medium' | 'large';
+    /** Tab size */
+    size?: 'small' | 'medium' | 'large';
+    /** Fill style for tabs */
+    fill_style?: 'none' | 'filled';
+    /** Border radius preset */
+    radius?: 'none' | 'small' | 'medium' | 'large' | 'full' | 'top';
+    /** Show icons only */
+    icon_only?: boolean;
+}
+
+/**
+ * Menu control composition parameters.
+ */
+export interface MenuParams {
+    /** Menu direction */
+    direction?: 'horizontal' | 'vertical';
+    /** Spacing between items */
+    spacing?: 'none' | 'small' | 'medium' | 'large';
+    /** Active item indicator style */
+    indicator?: 'none' | 'underline' | 'background' | 'left-border' | 'right-border';
+    /** Menu item size */
+    size?: 'small' | 'medium' | 'large';
+    /** Border radius preset */
+    radius?: 'none' | 'small' | 'medium' | 'large' | 'full';
+    /** Show separator between items */
+    separator?: boolean;
+    /** Show icons only */
+    icon_only?: boolean;
 }
 
 /**
@@ -92,6 +146,8 @@ export interface ThemeParams {
     button?: ButtonParams;
     panel?: PanelParams;
     input?: InputParams;
+    tabbed_panel?: TabbedPanelParams;
+    menu?: MenuParams;
 }
 
 /**
@@ -144,9 +200,24 @@ export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'ghost' | 'dan
 export type PanelVariant = 'default' | 'card' | 'elevated' | 'flush' | 'well' | 'glass' | 'outline' | 'hero' | 'collapsible';
 
 /**
+ * Built-in input variants.
+ */
+export type InputVariant = 'default' | 'compact' | 'floating' | 'filled' | 'underline' | 'search' | 'inline';
+
+/**
+ * Built-in tabbed panel variants.
+ */
+export type TabbedPanelVariant = 'default' | 'pills' | 'card' | 'vertical' | 'vertical-right' | 'bottom' | 'icon' | 'compact';
+
+/**
+ * Built-in menu variants.
+ */
+export type MenuVariant = 'default' | 'vertical' | 'compact' | 'divided' | 'pills' | 'icon';
+
+/**
  * Theme preset names that can be used with spec.variant.
  */
-export type BuiltInVariant = WindowVariant | ButtonVariant | PanelVariant;
+export type BuiltInVariant = WindowVariant | ButtonVariant | PanelVariant | InputVariant | TabbedPanelVariant | MenuVariant;
 
 /**
  * Size presets available for controls.

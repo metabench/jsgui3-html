@@ -2,7 +2,7 @@
  * TypeScript declarations for themes/variants.js
  */
 
-import { WindowParams, ButtonParams, PanelParams } from '../types/theme';
+import { WindowParams, ButtonParams, PanelParams, InputParams } from '../types/theme';
 
 /**
  * Window variant parameters.
@@ -46,12 +46,27 @@ export declare const panel_variants: {
 };
 
 /**
+ * Input control variant parameters.
+ */
+export declare const input_variants: {
+    default: InputParams;
+    compact: InputParams;
+    floating: InputParams;
+    filled: InputParams;
+    underline: InputParams;
+    search: InputParams;
+    inline: InputParams;
+};
+
+/**
  * All variant registries.
  */
 export declare const variants: {
     window: typeof window_variants;
     button: typeof button_variants;
     panel: typeof panel_variants;
+    input: typeof input_variants;
+    text_input: typeof input_variants;
 };
 
 /**

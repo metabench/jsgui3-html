@@ -4,26 +4,55 @@
 
 const jsgui = require('../../../../../html-core/html-core');
 const Item = require('./item');
-const {each} = jsgui;
-const {prop} = require('lang-tools');
-const {field} = require('obext');
+const { each } = jsgui;
+const { prop } = require('lang-tools');
+const { field } = require('obext');
 const {
     normalize_items,
     find_item_by_value,
     filter_items
 } = require('../item_utils');
-const {Control, Control_Data, Control_View, Data_Object} = jsgui;
+const { Control, Control_Data, Control_View, Data_Object } = jsgui;
 const mx_selectable = require('../../../../../control_mixins/selectable');
 const keyboard_navigation = require('../../../../../control_mixins/keyboard_navigation');
 const {
     apply_focus_ring,
     apply_label
 } = require('../../../../../control_mixins/a11y');
+const { themeable } = require('../../../../../control_mixins/themeable');
+const { apply_token_map, SPACING_TOKENS } = require('../../../../../themes/token_maps');
+
+/**
+ * List Control
+ * 
+ * A list with selectable items, async loading, and typeahead filtering.
+ * 
+ * Supports variants: default, compact, divided, large, cards
+ * 
+ * @example
+ * // Basic list
+ * new List({ items: ['Apple', 'Banana', 'Cherry'] });
+ * 
+ * // Compact list
+ * new List({ variant: 'compact', items: ['A', 'B', 'C'] });
+ * 
+ * // List with dividers
+ * new List({ variant: 'divided', items: ['Item 1', 'Item 2'] });
+ */
 
 class List extends Control {
     constructor(spec = {}) {
         super(spec);
         this.__type_name = 'list';
+
+        // Apply themeable - resolves params and applies hooks
+        const params = themeable(this, 'list', spec);
+
+        // Apply spacing tokens if available
+        if (params.spacing && SPACING_TOKENS[params.spacing]) {
+            this.dom.attributes.style = this.dom.attributes.style || {};
+            Object.assign(this.dom.attributes.style, SPACING_TOKENS[params.spacing]);
+        }
 
         prop(this, 'ordered', spec.ordered || false);
         if (this.ordered) {
@@ -51,13 +80,13 @@ class List extends Control {
         this.construct_synchronised_data_and_view_models(spec);
 
         if (spec.items) {
-            this.set_items(spec.items, {from_model: true});
+            this.set_items(spec.items, { from_model: true });
         }
         if (spec.filter_text !== undefined) {
-            this.set_filter_text(spec.filter_text, {from_model: true});
+            this.set_filter_text(spec.filter_text, { from_model: true });
         }
         if (spec.selected_item !== undefined) {
-            this.set_selected_item(spec.selected_item, {from_model: true});
+            this.set_selected_item(spec.selected_item, { from_model: true });
         }
 
         if (this.focusable) {
@@ -78,54 +107,54 @@ class List extends Control {
     }
 
     construct_synchronised_data_and_view_models(spec) {
-        const {context} = this;
-        this.data = new Control_Data({context});
+        const { context } = this;
+        this.data = new Control_Data({ context });
         if (spec.data && spec.data.model) {
             this.data.model = spec.data.model;
         } else {
-            this.data.model = new Data_Object({context});
+            this.data.model = new Data_Object({ context });
         }
         field(this.data.model, 'items');
         field(this.data.model, 'selected_item');
         field(this.data.model, 'filter_text');
 
-        this.view = new Control_View({context});
+        this.view = new Control_View({ context });
         if (spec.view && spec.view.data && spec.view.data.model) {
             this.view.data.model = spec.view.data.model;
         } else {
-            this.view.data.model = new Data_Object({context});
+            this.view.data.model = new Data_Object({ context });
         }
         field(this.view.data.model, 'items');
         field(this.view.data.model, 'selected_item');
         field(this.view.data.model, 'filter_text');
 
         this.data.model.on('change', e => {
-            const {name, value, old} = e;
+            const { name, value, old } = e;
             if (value === old) return;
             if (name === 'items') {
                 this.view.data.model.items = value;
-                this.set_items(value, {from_model: true});
+                this.set_items(value, { from_model: true });
             } else if (name === 'selected_item') {
                 this.view.data.model.selected_item = value;
-                this.set_selected_item(value, {from_model: true});
+                this.set_selected_item(value, { from_model: true });
             } else if (name === 'filter_text') {
                 this.view.data.model.filter_text = value;
-                this.set_filter_text(value, {from_model: true});
+                this.set_filter_text(value, { from_model: true });
             }
         });
 
         this.view.data.model.on('change', e => {
-            const {name, value, old} = e;
+            const { name, value, old } = e;
             if (value === old) return;
             if (name === 'items') {
                 this.data.model.items = value;
-                this.set_items(value, {from_model: true});
+                this.set_items(value, { from_model: true });
             } else if (name === 'selected_item') {
                 this.data.model.selected_item = value;
-                this.set_selected_item(value, {from_model: true});
+                this.set_selected_item(value, { from_model: true });
             } else if (name === 'filter_text') {
                 this.data.model.filter_text = value;
-                this.set_filter_text(value, {from_model: true});
+                this.set_filter_text(value, { from_model: true });
             }
         });
     }
@@ -136,7 +165,7 @@ class List extends Control {
      * @param {Object} [options] - Optional settings.
      */
     set_items(items, options = {}) {
-        this.items = normalize_items(items, {id_prefix: this.item_id_prefix});
+        this.items = normalize_items(items, { id_prefix: this.item_id_prefix });
         this.filtered_items = filter_items(this.items, this.filter_text);
         if (!options.from_model) {
             this.set_model_value('items', items);
@@ -304,7 +333,7 @@ class List extends Control {
             ctrl_item.selectable = true;
             ctrl_item.on('change', e_change => {
                 if (e_change.name === 'selected' && e_change.value) {
-                    this.set_selected_item(item, {from_model: true});
+                    this.set_selected_item(item, { from_model: true });
                     this.raise('change', {
                         name: 'selected_item',
                         value: this.selected_item,
@@ -331,10 +360,10 @@ class List extends Control {
                     if (selected_ctrl && selected_ctrl._fields && selected_ctrl._fields.item_id) {
                         const item = this.items.find(entry => entry.id === selected_ctrl._fields.item_id);
                         if (item) {
-                            this.set_selected_item(item, {from_model: true});
+                            this.set_selected_item(item, { from_model: true });
                         }
                     } else {
-                        this.set_selected_item(null, {from_model: true});
+                        this.set_selected_item(null, { from_model: true });
                     }
                     this.raise('change', {
                         name: 'selected_item',
@@ -352,7 +381,7 @@ class List extends Control {
                     get_items: () => this.item_controls,
                     get_active_index: () => this.selected_index,
                     set_active_index: (index) => {
-                        this.set_active_index(index, {from_model: true, raise_change: true});
+                        this.set_active_index(index, { from_model: true, raise_change: true });
                     },
                     on_activate: () => {
                         if (this.selected_item) {
