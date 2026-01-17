@@ -1,0 +1,7 @@
+[
+    {
+        "label": "Instant Re-Open (Warm Boot Success)",
+        "value": "warm_boot_success",
+        "description": "The window appeared instantly."
+    }
+]

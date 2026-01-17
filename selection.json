@@ -1,0 +1,24 @@
+{
+  "success": true,
+  "selection": "styling",
+  "cancelled": false,
+  "option": {
+    "label": "Enhance UI Styling (Target: Dark Mode / jsgui3 Theme)",
+    "value": "styling",
+    "description": "Improve the visual design of the picker to match jsgui3 aesthetics.",
+    "icon": "🎨",
+    "emoji": "🎨"
+  },
+  "phase": null,
+  "raw": {
+    "selection": "styling",
+    "option": {
+      "label": "Enhance UI Styling (Target: Dark Mode / jsgui3 Theme)",
+      "value": "styling",
+      "description": "Improve the visual design of the picker to match jsgui3 aesthetics.",
+      "icon": "🎨",
+      "emoji": "🎨"
+    },
+    "phase": null
+  }
+}

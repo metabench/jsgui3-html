@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Control Demo - jsgui3-html</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-section h2 {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Matrix Control Styles (from design doc) */
+        .matrix {
+            position: relative;
+            overflow: auto;
+            border: 1px solid #ccc;
+            background: white;
+        }
+
+        .matrix table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .matrix th,
+        .matrix td {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+            text-align: left;
+        }
+
+        .matrix th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .matrix .cell:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .matrix .cell.selected {
+            background-color: #e3f2fd;
+            outline: 2px solid #2196f3;
+        }
+
+        /* Angled Headers Support */
+        .matrix .header-col.angled {
+            height: 100px;
+            vertical-align: bottom;
+            position: relative;
+        }
+
+        .matrix .header-col.angled .label {
+            transform: rotate(-45deg);
+            transform-origin: bottom left;
+            white-space: nowrap;
+            width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+        }
+
+        /* MatrixChrome (Wrapper) */
+        .matrix-chrome {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .matrix-chrome .toolbar {
+            background: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .matrix-chrome .toolbar input {
+            padding: 6px 10px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .matrix-chrome .toolbar button {
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .matrix-chrome .toolbar button:hover {
+            background: #e8e8e8;
+        }
+
+        .matrix-chrome .status-bar {
+            background: #f8f8f8;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: #666;
+            border-top: 1px solid #ccc;
+        }
+
+        /* Virtual Scrolling Preview */
+        .virtual-preview {
+            height: 200px;
+            overflow: auto;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
+        .virtual-preview .row {
+            position: absolute;
+            width: 100%;
+            height: 30px;
+            line-height: 30px;
+            padding: 0 10px;
+            border-bottom: 1px solid #eee;
+            background: white;
+        }
+
+        .virtual-preview .row:nth-child(odd) {
+            background: #fafafa;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Matrix Control - Visual Design Demo</h1>
+    <p style="color:#666; margin-bottom:20px;">Based on <code>JSGUI3_MATRIX_CONTROL_DESIGN.md</code></p>
+
+    <!-- Basic Table Mode -->
+    <div class="demo-section">
+        <h2>1. Table Mode (Small Dataset)</h2>
+        <div class="matrix">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="cell">1</td>
+                        <td class="cell">Alpha</td>
+                        <td class="cell">Active</td>
+                        <td class="cell">100</td>
+                    </tr>
+                    <tr>
+                        <td class="cell selected">2</td>
+                        <td class="cell selected">Beta</td>
+                        <td class="cell selected">Pending</td>
+                        <td class="cell selected">250</td>
+                    </tr>
+                    <tr>
+                        <td class="cell">3</td>
+                        <td class="cell">Gamma</td>
+                        <td class="cell">Inactive</td>
+                        <td class="cell">75</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Angled Headers -->
+    <div class="demo-section">
+        <h2>2. Angled Column Headers</h2>
+        <div class="matrix">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="header-col angled"><span class="label">Product Category</span></th>
+                        <th class="header-col angled"><span class="label">Quarterly Revenue</span></th>
+                        <th class="header-col angled"><span class="label">Year-over-Year Growth</span></th>
+                        <th class="header-col angled"><span class="label">Market Share %</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="cell">Electronics</td>
+                        <td class="cell">$1.2M</td>
+                        <td class="cell">+15%</td>
+                        <td class="cell">23%</td>
+                    </tr>
+                    <tr>
+                        <td class="cell">Software</td>
+                        <td class="cell">$850K</td>
+                        <td class="cell">+42%</td>
+                        <td class="cell">18%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- MatrixChrome (Wrapper) -->
+    <div class="demo-section">
+        <h2>3. MatrixChrome (with Toolbar)</h2>
+        <div class="matrix-chrome">
+            <div class="toolbar">
+                <input type="text" placeholder="Search...">
+                <button>Filter</button>
+                <button>Export</button>
+                <button>⚙️</button>
+            </div>
+            <div class="matrix">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="cell">001</td>
+                            <td class="cell">Widget A</td>
+                            <td class="cell">Tools</td>
+                            <td class="cell"><button style="padding:2px 8px;">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td class="cell">002</td>
+                            <td class="cell">Widget B</td>
+                            <td class="cell">Parts</td>
+                            <td class="cell"><button style="padding:2px 8px;">Edit</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="status-bar">
+                Showing 2 of 2 items | Last updated: 2026-01-09
+            </div>
+        </div>
+    </div>
+
+    <!-- Virtual Scrolling Preview -->
+    <div class="demo-section">
+        <h2>4. Virtual Scrolling (Large Dataset Preview)</h2>
+        <p style="margin-bottom:10px; color:#666;">For datasets > 1000 rows, virtual scrolling renders only visible
+            rows.</p>
+        <div class="virtual-preview" id="virtual-container">
+            <!-- Rows will be positioned absolutely -->
+        </div>
+        <script>
+            // Simulate 100 virtual rows
+            const container = document.getElementById('virtual-container');
+            container.style.height = '200px';
+
+            for (let i = 0; i < 100; i++) {
+                const row = document.createElement('div');
+                row.className = 'row';
+                row.style.top = (i * 30) + 'px';
+                row.textContent = `Row ${i + 1} - Data Item ${String.fromCharCode(65 + (i % 26))}`;
+                container.appendChild(row);
+            }
+
+            // Set container height for scrolling
+            container.style.position = 'relative';
+            container.querySelector('.row:last-child').style.position = 'absolute';
+        </script>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+[
+    {
+        "label": "Server Mode Working (Cold Boot)",
+        "value": "cold_boot_success",
+        "description": "The server spawned and showed this window."
+    },
+    {
+        "label": "Something Failed",
+        "value": "failed",
+        "description": "I had to manually restart or something is weird."
+    }
+]

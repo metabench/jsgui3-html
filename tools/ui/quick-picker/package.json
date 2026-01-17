@@ -1,0 +1,22 @@
+{
+  "name": "quick-picker",
+  "version": "1.0.0",
+  "description": "Electron-based quick selection tool for AI agents",
+  "main": "main.js",
+  "bin": {
+    "ui-pick-mcp": "./mcp-server.js"
+  },
+  "scripts": {
+    "start": "electron .",
+    "mcp": "node mcp-server.js",
+    "mcp-http": "node mcp-http-server.js"
+  },
+  "devDependencies": {
+    "electron": "^28.0.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "express": "^5.2.1",
+    "zod": "^4.3.5"
+  }
+}

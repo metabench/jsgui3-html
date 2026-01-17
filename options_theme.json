@@ -1,0 +1,12 @@
+[
+    {
+        "label": "Yes, WLILO Looks Good",
+        "value": "approved",
+        "description": "The Obsidian/Leather/Gold theme is working correctly."
+    },
+    {
+        "label": "No, Something is Off",
+        "value": "rejected",
+        "description": "I need adjustments to the dark mode theme."
+    }
+]

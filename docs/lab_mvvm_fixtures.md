@@ -95,6 +95,8 @@ class Text_Mvvm_Lab_Control extends jsgui.Control {
 ```
 node lab/experiment_runner.js list
 node lab/experiment_runner.js run text_mvvm_fixtures
+node lab/experiment_runner.js run mvvm_computed_watch
+node lab/experiment_runner.js run mvvm_two_way_binding
 node lab/experiment_runner.js run-all
 ```
 
@@ -104,8 +106,12 @@ node lab/experiment_runner.js run-all
 - `lab/fixtures/text_mvvm_cases.json`
 - `lab/fixtures/control_text_render_cases.json`
 
+## Additional MVVM Labs
+
+- `mvvm_computed_watch`
+- `mvvm_two_way_binding`
+
 ## Notes
 
 - Experiments should avoid jsgui3-server; rely on jsdom and MVVM utilities.
 - Store experiment results in `lab/results/` using the template.
-

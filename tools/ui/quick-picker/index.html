@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Quick Picker</title>
+  <style>
+    :root {
+      /* Advanced Luxury Defaults */
+      --bg-metal: repeating-linear-gradient(90deg, #2a2a2a 0px, #2f2f2f 1px, #2a2a2a 2px);
+      --panel-leather: #222 url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSIjMjIyMiIvPgo8cmVjdCB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSIjMzMzMyIvPgo8L3N2Zz4=');
+      --text: #e0e0e0;
+      --text-muted: #888888;
+      --border-gold: linear-gradient(135deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+      --accent-gold: #c9a962;
+      --selected-bg: linear-gradient(180deg, #3d3d3d, #2d2d2d);
+      --selected-text: #fcf6ba;
+      --hover-bg: rgba(255, 255, 255, 0.05);
+      --shadow-depth: 0 4px 12px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+      /* Base fonts */
+      --font-body: 'Segoe UI', sans-serif;
+      --font-header: 'Didot', 'Bodoni MT', 'Times New Roman', serif;
+    }
+
+    body.theme-wlilo {
+      /* Advanced WLILO: Industrial Luxury */
+      --bg: repeating-linear-gradient(0deg,
+          #1a1a1a 0px,
+          #1f1f1f 1px,
+          #1a1a1a 2px);
+      --panel-bg: #111;
+      --border: var(--border-gold);
+    }
+
+    body.theme-bright {
+      /* Bright: High Contrast, Visio-like */
+      --bg: #ffffff;
+      --panel-bg: #f0f0f0;
+      --text: #000000;
+      --text-muted: #555555;
+      --border: #68217a;
+      --accent-gold: #68217a;
+      --selected-bg: #68217a;
+      --selected-text: #ffffff;
+      --hover-bg: #e6e6e6;
+      --font-header: 'Segoe UI', Tahoma, sans-serif;
+      --border-gold: #68217a;
+      /* Flatten gold to purple for bright mode */
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 12px;
+      overflow: hidden;
+
+      /* Industrial Frame */
+      border: 1px solid transparent;
+      border-image: var(--border-gold);
+      border-image-slice: 1;
+
+      border-radius: 0;
+      display: flex;
+      flex-direction: column;
+      height: 95vh;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    h3 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-family: var(--font-header);
+      font-size: 18px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      -webkit-app-region: drag;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #444;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+
+      /* Metallic Gradient Text */
+      background: var(--border-gold);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: var(--accent-gold);
+      /* Fallback */
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+    }
+
+    /* Override gradient text for bright theme */
+    body.theme-bright h3 {
+      background: none;
+      -webkit-text-fill-color: var(--accent-gold);
+    }
+
+    #options-list {
+      list-style: none;
+      padding: 4px;
+      margin: 0;
+      overflow-y: auto;
+      flex-grow: 1;
+
+      /* Leather Panel Effect */
+      background: var(--panel-bg);
+      background-image: var(--panel-leather);
+      /* Only shows if defined */
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    body.theme-bright #options-list {
+      background: var(--panel-bg);
+      background-image: none;
+      box-shadow: none;
+      border: 1px solid #ccc;
+    }
+
+    .option-item {
+      padding: 12px 16px;
+      cursor: pointer;
+      margin-bottom: 4px;
+      transition: all 0.2s ease-out;
+      font-size: 14px;
+      position: relative;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .option-item:hover {
+      background: var(--hover-bg);
+      border-color: rgba(255, 255, 255, 0.1);
+      transform: translateX(2px);
+    }
+
+    .option-item.selected {
+      background: var(--selected-bg);
+      color: var(--selected-text);
+
+      /* Gold Border for Selection */
+      border: 1px solid;
+      border-image: var(--border-gold);
+      border-image-slice: 1;
+
+      box-shadow: var(--shadow-depth);
+      transform: scale(1.01);
+      z-index: 10;
+    }
+
+    body.theme-bright .option-item.selected {
+      border-image: none;
+      border: 1px solid var(--accent-gold);
+      box-shadow: none;
+      transform: none;
+    }
+
+    .option-item .description {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: normal;
+      font-style: italic;
+    }
+
+    .option-item .icon {
+      margin-right: 12px;
+      font-size: 18px;
+    }
+
+    .option-item.selected .description {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    body.theme-bright .option-item.selected .description {
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    #footer {
+      margin-top: 12px;
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: right;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-family: var(--font-body);
+    }
+  </style>
+</head>
+
+<body>
+  <h3>Select an Option</h3>
+  <ul id="options-list"></ul>
+  <div id="footer">Double-click to select • Esc to cancel</div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    const list = document.getElementById('options-list');
+    const footer = document.getElementById('footer');
+    const footerDefault = 'Double-click to select • Esc to cancel';
+    let footerTimer = null;
+    let currentOptions = [];
+    let selectedIndex = -1;
+
+    ipcRenderer.on('set-options', (event, options) => {
+      currentOptions = options;
+      renderOptions();
+    });
+
+    ipcRenderer.on('set-theme', (event, theme) => {
+      document.body.classList.remove('theme-wlilo', 'theme-bright');
+      if (theme === 'wlilo') {
+        document.body.classList.add('theme-wlilo');
+      } else if (theme === 'bright') {
+        document.body.classList.add('theme-bright');
+      }
+    });
+
+    function renderOptions() {
+      list.innerHTML = '';
+      currentOptions.forEach((opt, index) => {
+        const li = document.createElement('li');
+        li.className = 'option-item';
+        li.dataset.index = index;
+
+        // Handle string options or object options { label, description, value }
+        const label = typeof opt === 'string' ? opt : (opt.label || opt.value);
+        const description = typeof opt === 'object' ? opt.description : null;
+        const phase = typeof opt === 'object' ? opt.phase : null;
+        const phaseIcon = {
+          plan: '🧭',
+          explore: '🔍',
+          design: '🧭',
+          implement: '🛠️',
+          test: '🧪',
+          validate: '✅',
+          fix: '🛡️'
+        }[phase];
+        const icon = typeof opt === 'object' ? (opt.icon || opt.emoji || phaseIcon) : null;
+
+        let html = '';
+        if (icon) {
+          html += `<span class="icon">${icon}</span>`;
+        }
+        html += `<span class="label">${label}</span>`;
+        if (description) {
+          html += `<span class="description">${description}</span>`;
+        }
+        li.innerHTML = html;
+
+        li.addEventListener('click', () => {
+          selectItem(index);
+        });
+
+        li.addEventListener('dblclick', () => {
+          confirmSelection(index);
+        });
+
+        li.addEventListener('contextmenu', (event) => {
+          event.preventDefault();
+          selectItem(index);
+          ipcRenderer.send('context-menu', { option: opt });
+        });
+
+        list.appendChild(li);
+      });
+
+      // Select first by default
+      if (currentOptions.length > 0) {
+        selectItem(0);
+      }
+    }
+
+    ipcRenderer.on('context-action', (event, payload) => {
+      if (!payload || !payload.option) return;
+      const option = payload.option;
+      const action = payload.action;
+      const label = option.label || option.value;
+      const actionLabel = {
+        explore: '🔍 Explore',
+        test: '🧪 Test',
+        implement: '🛠️ Implement',
+        fix: '🛡️ Fix'
+      }[action] || action;
+      setFooter(`${actionLabel}: ${label}`);
+    });
+
+    function setFooter(message) {
+      footer.textContent = message;
+      if (footerTimer) {
+        clearTimeout(footerTimer);
+      }
+      footerTimer = setTimeout(() => {
+        footer.textContent = footerDefault;
+      }, 3000);
+    }
+
+    function selectItem(index) {
+      if (selectedIndex !== -1) {
+        list.children[selectedIndex].classList.remove('selected');
+      }
+      selectedIndex = index;
+      if (selectedIndex !== -1) {
+        const el = list.children[selectedIndex];
+        el.classList.add('selected');
+        el.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    function confirmSelection(index) {
+      if (index >= 0 && index < currentOptions.length) {
+        const opt = currentOptions[index];
+        const value = typeof opt === 'object' ? (opt.value || opt.label) : opt;
+        ipcRenderer.send('selection-made', { selection: value, option: opt, phase: opt.phase });
+      }
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        selectItem(Math.min(selectedIndex + 1, currentOptions.length - 1));
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        selectItem(Math.max(selectedIndex - 1, 0));
+      } else if (e.key === 'Enter') {
+        confirmSelection(selectedIndex);
+      } else if (e.key === 'Escape') {
+        ipcRenderer.send('cancel');
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,33 +1,62 @@
 var jsgui = require('./../../../../html-core/html-core');
 var Horizontal_Menu = require('./../../../organised/1-standard/5-ui/horizontal-menu');
 const Button = require('./../../../organised/0-core/0-basic/0-native-compositional/button');
-const {def, each} = jsgui;
+const { def, each } = jsgui;
 var Control = jsgui.Control;
 var fields = {
 	'title': String
 };
-const {dragable, resizable} = require('../../../../control_mixins/mx');
-const {get_window_manager} = require('./window_manager');
+const { dragable, resizable } = require('../../../../control_mixins/mx');
+const { get_window_manager } = require('./window_manager');
 const {
 	apply_focus_ring,
 	ensure_sr_text
 } = require('../../../../control_mixins/a11y');
+const { resolve_params, apply_hooks } = require('../../../../control_mixins/theme_params');
+
+/**
+ * Button style icons for different themes.
+ */
+const BUTTON_ICONS = {
+	'traffic-light': { minimize: '●', maximize: '●', close: '●' },
+	'icons': { minimize: '⊖', maximize: '⊕', close: '⊗' },
+	'text': { minimize: '_', maximize: '□', close: '×' },
+	'outlined': { minimize: '−', maximize: '□', close: '×' },
+	'minimal': { minimize: '−', maximize: '+', close: '×' },
+	'segoe': { minimize: '\uE921', maximize: '\uE922', close: '\uE8BB' }
+};
+
+/**
+ * Traffic light button colors.
+ */
+const TRAFFIC_LIGHT_COLORS = {
+	close: '#ff5f57',
+	minimize: '#ffbd2e',
+	maximize: '#28c840'
+};
+
 class Window extends Control {
 	constructor(spec, add, make) {
 		super(spec);
 		this.__type_name = 'window';
 		this.add_class('window');
-        const snap_enabled = spec.snap !== false;
-        this.snap_enabled = snap_enabled;
-        this.snap_threshold = def(spec.snap_threshold) ? spec.snap_threshold : undefined;
-        this.dock_sizes = spec.dock_sizes;
-        this.min_size = spec.min_size || [120, 80];
-        this.max_size = spec.max_size;
-        this.resize_bounds = spec.resize_bounds || spec.extent_bounds || null;
-        this.manager = spec.window_manager || spec.manager || null;
-		const show_buttons = def(spec.show_buttons) ? spec.show_buttons : true;
+
+		// Resolve theme params
+		const { params, hooks } = resolve_params('window', spec, this.context);
+		this._theme_params = params;
+		apply_hooks(this, hooks);
+
+		const snap_enabled = spec.snap !== false;
+		this.snap_enabled = snap_enabled;
+		this.snap_threshold = def(spec.snap_threshold) ? spec.snap_threshold : undefined;
+		this.dock_sizes = spec.dock_sizes;
+		this.min_size = spec.min_size || [120, 80];
+		this.max_size = spec.max_size;
+		this.resize_bounds = spec.resize_bounds || spec.extent_bounds || null;
+		this.manager = spec.window_manager || spec.manager || null;
+		const show_buttons = def(spec.show_buttons) ? spec.show_buttons : params.show_buttons !== false;
 		if (!spec.abstract && !spec.el) {
-			const {context} = this;
+			const { context } = this;
 			const div_relative = new Control({
 				context
 			});
@@ -47,38 +76,58 @@ class Window extends Control {
 			div_relative.add(title_bar);
 			let btn_minimize, btn_maximize, btn_close;
 			if (show_buttons) {
-				const right_button_group = new Control({
+				const button_group = new Control({
 					context
 				});
-				right_button_group.add_class('button-group');
-				right_button_group.add_class('right');
-				btn_minimize = new Button({
-					context
-				});
+				button_group.add_class('button-group');
+				// Apply position class from params (left or right)
+				button_group.add_class(params.button_position || 'right');
+
+				const button_style = params.button_style || 'icons';
+				const icons = BUTTON_ICONS[button_style] || BUTTON_ICONS.icons;
+				const button_order = params.button_order || ['minimize', 'maximize', 'close'];
+
 				const span = (text) => {
-					const res = new jsgui.controls.span({context});
+					const res = new jsgui.controls.span({ context });
 					res.add(text);
 					return res;
+				};
+
+				const sr_labels = {
+					minimize: 'Minimize window',
+					maximize: 'Maximize window',
+					close: 'Close window'
+				};
+
+				// Create buttons in the specified order
+				for (const btn_type of button_order) {
+					// Check visibility params
+					if (btn_type === 'minimize' && params.show_minimize === false) continue;
+					if (btn_type === 'maximize' && params.show_maximize === false) continue;
+					if (btn_type === 'close' && params.show_close === false) continue;
+
+					const btn = new Button({ context });
+					btn.add_class(btn_type);
+					btn.add(span(icons[btn_type] || ''));
+					apply_focus_ring(btn);
+					ensure_sr_text(btn, sr_labels[btn_type], { add_sr_only: false });
+
+					// Apply traffic light colors if using that style
+					if (button_style === 'traffic-light' && TRAFFIC_LIGHT_COLORS[btn_type]) {
+						btn.dom.attributes = btn.dom.attributes || {};
+						btn.dom.attributes.style = btn.dom.attributes.style || {};
+						btn.dom.attributes.style['--btn-color'] = TRAFFIC_LIGHT_COLORS[btn_type];
+					}
+
+					button_group.add(btn);
+
+					// Store button references
+					if (btn_type === 'minimize') btn_minimize = btn;
+					if (btn_type === 'maximize') btn_maximize = btn;
+					if (btn_type === 'close') btn_close = btn;
 				}
-				btn_minimize.add(span('⊖'));
-				apply_focus_ring(btn_minimize);
-				ensure_sr_text(btn_minimize, 'Minimize window', { add_sr_only: false });
-				right_button_group.add(btn_minimize);
-				btn_maximize = new Button({
-					context
-				});
-				btn_maximize.add(span('⊕'))
-				apply_focus_ring(btn_maximize);
-				ensure_sr_text(btn_maximize, 'Maximize window', { add_sr_only: false });
-				right_button_group.add(btn_maximize);
-				btn_close = new Button({
-					context
-				});
-				btn_close.add(span('⊗'))
-				apply_focus_ring(btn_close);
-				ensure_sr_text(btn_close, 'Close window', { add_sr_only: false });
-				right_button_group.add(btn_close);
-				title_bar.add(right_button_group);
+
+				title_bar.add(button_group);
 			}
 			const ctrl_inner = new Control({
 				context
@@ -103,57 +152,57 @@ class Window extends Control {
 		}
 	}
 	bring_to_front_z() {
-        if (this.manager && typeof this.manager.bring_to_front === 'function') {
-            this.manager.bring_to_front(this);
-            return;
-        }
-        let max_z = 0;
-        if (this.parent && this.parent.content) {
-            each(this.parent.content, (ctrl) => {
-                if (ctrl !== this) {
-                    const z = parseInt(ctrl.dom.attributes.style['z-index']);
-                    if (!isNaN(z) && z > max_z) max_z = z;
-                }
-            });
-        }
-        this.dom.attributes.style['z-index'] = parseInt(max_z) + 1;
+		if (this.manager && typeof this.manager.bring_to_front === 'function') {
+			this.manager.bring_to_front(this);
+			return;
+		}
+		let max_z = 0;
+		if (this.parent && this.parent.content) {
+			each(this.parent.content, (ctrl) => {
+				if (ctrl !== this) {
+					const z = parseInt(ctrl.dom.attributes.style['z-index']);
+					if (!isNaN(z) && z > max_z) max_z = z;
+				}
+			});
+		}
+		this.dom.attributes.style['z-index'] = parseInt(max_z) + 1;
 	}
-    /**
-     * Snap the window to nearby edges.
-     * @param {Object} [options] - Optional settings.
-     * @returns {boolean}
-     */
-    snap_to_bounds(options = {}) {
-        if (!this.manager) return false;
-        const snap_options = Object.assign({}, options);
-        if (this.snap_threshold !== undefined) {
-            snap_options.threshold = this.snap_threshold;
-        }
-        if (this.dock_sizes) {
-            snap_options.size = this.dock_sizes;
-        }
-        return this.manager.snap(this, snap_options);
-    }
-    /**
-     * Dock the window to a specific edge.
-     * @param {string} edge - Dock edge.
-     * @param {Object} [options] - Optional settings.
-     */
-    dock_to(edge, options = {}) {
-        if (this.manager && typeof this.manager.dock === 'function') {
-            const dock_options = Object.assign({}, options);
-            if (this.dock_sizes) dock_options.size = this.dock_sizes;
-            return this.manager.dock(this, edge, dock_options);
-        }
-    }
-    /**
-     * Undock the window and restore size/position.
-     */
-    undock() {
-        if (this.manager && typeof this.manager.undock === 'function') {
-            this.manager.undock(this);
-        }
-    }
+	/**
+	 * Snap the window to nearby edges.
+	 * @param {Object} [options] - Optional settings.
+	 * @returns {boolean}
+	 */
+	snap_to_bounds(options = {}) {
+		if (!this.manager) return false;
+		const snap_options = Object.assign({}, options);
+		if (this.snap_threshold !== undefined) {
+			snap_options.threshold = this.snap_threshold;
+		}
+		if (this.dock_sizes) {
+			snap_options.size = this.dock_sizes;
+		}
+		return this.manager.snap(this, snap_options);
+	}
+	/**
+	 * Dock the window to a specific edge.
+	 * @param {string} edge - Dock edge.
+	 * @param {Object} [options] - Optional settings.
+	 */
+	dock_to(edge, options = {}) {
+		if (this.manager && typeof this.manager.dock === 'function') {
+			const dock_options = Object.assign({}, options);
+			if (this.dock_sizes) dock_options.size = this.dock_sizes;
+			return this.manager.dock(this, edge, dock_options);
+		}
+	}
+	/**
+	 * Undock the window and restore size/position.
+	 */
+	undock() {
+		if (this.manager && typeof this.manager.undock === 'function') {
+			this.manager.undock(this);
+		}
+	}
 	glide_to_pos(pos) {
 		return new Promise((s, j) => {
 			const [my_new_left, my_new_top] = pos;
@@ -329,14 +378,14 @@ class Window extends Control {
 	}
 	'activate'() {
 		if (!this.__active) {
-            super.activate();
-            if (!this.manager) {
-                this.manager = get_window_manager(this.context);
-            }
-            if (this.manager && typeof this.manager.register === 'function') {
-                this.manager.register(this);
-            }
-			const {title_bar, btn_minimize, btn_maximize, btn_close} = this;
+			super.activate();
+			if (!this.manager) {
+				this.manager = get_window_manager(this.context);
+			}
+			if (this.manager && typeof this.manager.register === 'function') {
+				this.manager.register(this);
+			}
+			const { title_bar, btn_minimize, btn_maximize, btn_close } = this;
 			if (btn_close) {
 				btn_close.on('click', () => {
 					this.close();
@@ -397,21 +446,21 @@ class Window extends Control {
 				this.bring_to_front_z();
 			});
 			dragable(this, {
-                drag_mode: 'translate',
+				drag_mode: 'translate',
 				handle: this.title_bar,
 				bounds: this.parent
-            });
-            this.dragable = true;
+			});
+			this.dragable = true;
 			resizable(this, {
 				resize_mode: 'br_handle',
 				bounds: [this.min_size, this.max_size],
 				extent_bounds: this.resize_bounds || this.parent
 			});
-            if (this.snap_enabled) {
-                this.on('dragend', () => {
-                    this.snap_to_bounds();
-                });
-            }
+			if (this.snap_enabled) {
+				this.on('dragend', () => {
+					this.snap_to_bounds();
+				});
+			}
 			setInterval(() => {
 				if (this.has_class('minimized')) {
 					const extended_bcr = this.bcr().extend('left', 80);

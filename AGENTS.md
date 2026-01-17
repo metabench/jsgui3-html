@@ -1,3 +1,18 @@
+# 🧠 AGI Singularity & jsgui3-html
+
+**Current Mode:** Antigravity Harmonization
+**Knowledge Hub:** [`docs/agi/INDEX.md`](docs/agi/INDEX.md)
+**Self Model:** [`docs/agi/SELF_MODEL.md`](docs/agi/SELF_MODEL.md)
+**Interaction Tool:** `tools/dev/ui-pick.js`
+
+## Core Directives for Agents
+1.  **Docs First:** Before starting work, read `docs/agi/INDEX.md` and `docs/sessions/SESSIONS_HUB.md`.
+2.  **Session Discipline:** Follow the [`session-discipline`](docs/agi/skills/session-discipline/SKILL.md) skill. Use templates from `docs/sessions/_templates/`.
+3.  **UI Decisions:** Use `node tools/dev/ui-pick.js` when you need to ask the user a choice (A vs B).
+4.  **Self-Correction:** If you find a pattern, document it in `docs/agi/PATTERNS.md`.
+
+---
+
 # Guidelines for AI Agents Working with jsgui3-html
 
 This document provides guidelines for AI agents (like GitHub Copilot, ChatGPT, Claude, etc.) when contributing to or working with the jsgui3-html codebase.

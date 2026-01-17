@@ -24,6 +24,7 @@ const controls = {
     Accordion: require('./organised/1-standard/6-layout/accordion'),
     Badge: require('./organised/0-core/0-basic/1-compositional/badge'),
     Button: require('./organised/0-core/0-basic/0-native-compositional/button'),
+    Canvas: require('./organised/0-core/1-advanced/Canvas'),
     Breadcrumbs: require('./organised/1-standard/5-ui/breadcrumbs'),
     Cell: require('./organised/0-core/0-basic/1-compositional/Cell'),
     // Maybe more advanced?
@@ -77,6 +78,7 @@ const controls = {
     Month_View: require('./organised/0-core/0-basic/1-compositional/month-view'),
     //Multi_Document_Interface: require('./multi-document-interface'),
     Master_Detail: require('./organised/1-standard/6-layout/master_detail'),
+    Matrix: require('./matrix/Matrix'),
     Multi_Layout_Mode: require('./organised/1-standard/6-layout/app/multi-layout-mode'),
     //Object_Editor: require('./editor/object'),
     Number_Input: require('./organised/0-core/0-basic/0-native-compositional/number_input'),

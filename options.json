@@ -1,0 +1,20 @@
+[
+    {
+        "label": "Enhance UI Styling (Target: Dark Mode / jsgui3 Theme)",
+        "value": "styling",
+        "description": "Improve the visual design of the picker to match jsgui3 aesthetics.",
+        "emoji": "🎨"
+    },
+    {
+        "label": "Improve Tool Stability (Target: Retry Logic)",
+        "value": "stability",
+        "description": "Add logic to handle failures gracefully in the wrapper script.",
+        "emoji": "🛡️"
+    },
+    {
+        "label": "Add 'Phase' Support (Target: Workflow Steps)",
+        "value": "phase",
+        "description": "Formalize the 'phase' property to help track workflow progression.",
+        "emoji": "📈"
+    }
+]

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>jsgui3-html Theme Showcase</title>
+    <style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 24px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    color: #fff;
+}
+
+h2 {
+    margin: 0 0 16px 0;
+    font-weight: 600;
+    font-size: 18px;
+    color: #e0e0e0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 8px;
+}
+
+.section {
+    margin-bottom: 32px;
+}
+
+.button-grid, .size-grid, .icon-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* Button base styles - using CSS variables from theme tokens */
+.button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--btn-gap, 6px);
+    height: var(--btn-height, 36px);
+    padding: 0 var(--btn-padding-x, 16px);
+    font-size: var(--btn-font-size, 14px);
+    font-weight: 500;
+    border: none;
+    border-radius: var(--btn-border-radius, 6px);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+/* Button variants - targeting data-variant attribute */
+.button[data-variant="default"],
+.button[data-variant="secondary"] {
+    background: #3d3d5c;
+    color: #fff;
+}
+.button[data-variant="default"]:hover,
+.button[data-variant="secondary"]:hover {
+    background: #4a4a6a;
+}
+
+.button[data-variant="primary"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+.button[data-variant="primary"]:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+.button[data-variant="ghost"] {
+    background: transparent;
+    color: #a0a0c0;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+.button[data-variant="ghost"]:hover {
+    background: rgba(255,255,255,0.05);
+    border-color: rgba(255,255,255,0.25);
+}
+
+.button[data-variant="danger"] {
+    background: linear-gradient(135deg, #ff6b6b 0%, #c44569 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+}
+
+.button[data-variant="success"] {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    color: #fff;
+    box-shadow: 0 4px 15px rgba(56, 239, 125, 0.3);
+}
+
+.button[data-variant="outline"] {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+.button[data-variant="outline"]:hover {
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.button[data-variant="link"] {
+    background: transparent;
+    color: #667eea;
+    padding: 0;
+    height: auto;
+}
+.button[data-variant="link"]:hover {
+    text-decoration: underline;
+}
+
+/* Panel base styles - using CSS variables from theme tokens */
+.panel {
+    padding: var(--panel-padding, 16px);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius, 8px);
+    box-shadow: var(--shadow, none);
+    min-height: 120px;
+}
+
+.panel.bordered {
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.panel-header {
+    margin-bottom: 12px;
+}
+
+.panel-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.panel-content {
+    font-size: 13px;
+    color: #a0a0c0;
+    line-height: 1.5;
+}
+
+/* Panel variants via data attributes */
+.panel[data-variant="card"] {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.panel[data-variant="elevated"] {
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+}
+
+.panel[data-variant="well"] {
+    background: rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.panel[data-variant="glass"] {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.panel[data-variant="outline"] {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Icon styling */
+.button-icon {
+    font-size: var(--btn-icon-size, 16px);
+}
+
+.button-text {
+    /* Text styling */
+}
+
+/* Footer */
+.footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 12px;
+    color: #666;
+    text-align: center;
+}
+</style>
+</head>
+<body>
+    <div data-jsgui-id="control_0" data-jsgui-data-model-id="data_object_0" data-jsgui-type="control" class="theme-showcase" data-jsgui-data-model="data_object_0"><div data-jsgui-id="control_1" data-jsgui-data-model-id="data_object_1" data-jsgui-type="control" class="section" data-jsgui-data-model="data_object_1"><h2 data-jsgui-id="h2_0" data-jsgui-data-model-id="data_object_2" data-jsgui-type="h2" data-jsgui-data-model="data_object_2">Button Variants</h2><div data-jsgui-id="control_2" data-jsgui-data-model-id="data_object_3" data-jsgui-type="control" class="button-grid" data-jsgui-data-model="data_object_3"><button data-jsgui-id="button_0" data-jsgui-data-model-id="data_object_4" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_4" class="button btn-secondary" data-variant="default"><span data-jsgui-id="span_0" data-jsgui-data-model-id="data_object_5" data-jsgui-type="span" data-jsgui-data-model="data_object_5" class="button-text">Default</span></button><button data-jsgui-id="button_1" data-jsgui-data-model-id="data_object_6" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_6" class="button btn-primary" data-variant="primary"><span data-jsgui-id="span_1" data-jsgui-data-model-id="data_object_7" data-jsgui-type="span" data-jsgui-data-model="data_object_7" class="button-text">Primary</span></button><button data-jsgui-id="button_2" data-jsgui-data-model-id="data_object_8" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_8" class="button btn-secondary" data-variant="secondary"><span data-jsgui-id="span_2" data-jsgui-data-model-id="data_object_9" data-jsgui-type="span" data-jsgui-data-model="data_object_9" class="button-text">Secondary</span></button><button data-jsgui-id="button_3" data-jsgui-data-model-id="data_object_10" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_10" class="button btn-ghost" data-variant="ghost"><span data-jsgui-id="span_3" data-jsgui-data-model-id="data_object_11" data-jsgui-type="span" data-jsgui-data-model="data_object_11" class="button-text">Ghost</span></button><button data-jsgui-id="button_4" data-jsgui-data-model-id="data_object_12" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_12" class="button btn-danger" data-variant="danger"><span data-jsgui-id="span_4" data-jsgui-data-model-id="data_object_13" data-jsgui-type="span" data-jsgui-data-model="data_object_13" class="button-text">Danger</span></button><button data-jsgui-id="button_5" data-jsgui-data-model-id="data_object_14" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_14" class="button btn-success" data-variant="success"><span data-jsgui-id="span_5" data-jsgui-data-model-id="data_object_15" data-jsgui-type="span" data-jsgui-data-model="data_object_15" class="button-text">Success</span></button><button data-jsgui-id="button_6" data-jsgui-data-model-id="data_object_16" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_16" class="button btn-outline" data-variant="outline"><span data-jsgui-id="span_6" data-jsgui-data-model-id="data_object_17" data-jsgui-type="span" data-jsgui-data-model="data_object_17" class="button-text">Outline</span></button><button data-jsgui-id="button_7" data-jsgui-data-model-id="data_object_18" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_18" class="button btn-link" data-variant="link"><span data-jsgui-id="span_7" data-jsgui-data-model-id="data_object_19" data-jsgui-type="span" data-jsgui-data-model="data_object_19" class="button-text">Link</span></button></div></div><div data-jsgui-id="control_3" data-jsgui-data-model-id="data_object_20" data-jsgui-type="control" class="section" data-jsgui-data-model="data_object_20"><h2 data-jsgui-id="h2_1" data-jsgui-data-model-id="data_object_21" data-jsgui-type="h2" data-jsgui-data-model="data_object_21">Button Sizes</h2><div data-jsgui-id="control_4" data-jsgui-data-model-id="data_object_22" data-jsgui-type="control" class="size-grid" data-jsgui-data-model="data_object_22"><button data-jsgui-id="button_8" data-jsgui-data-model-id="data_object_23" data-jsgui-type="button" style="--btn-height:28px;--btn-padding-x:12px;--btn-font-size:12px;--btn-icon-size:14px;--btn-border-radius:4px;--btn-gap:4px" data-jsgui-data-model="data_object_23" class="button btn-primary btn-small" data-variant="primary"><span data-jsgui-id="span_8" data-jsgui-data-model-id="data_object_24" data-jsgui-type="span" data-jsgui-data-model="data_object_24" class="button-text">small</span></button><button data-jsgui-id="button_9" data-jsgui-data-model-id="data_object_25" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_25" class="button btn-primary" data-variant="primary"><span data-jsgui-id="span_9" data-jsgui-data-model-id="data_object_26" data-jsgui-type="span" data-jsgui-data-model="data_object_26" class="button-text">medium</span></button><button data-jsgui-id="button_10" data-jsgui-data-model-id="data_object_27" data-jsgui-type="button" style="--btn-height:44px;--btn-padding-x:20px;--btn-font-size:16px;--btn-icon-size:20px;--btn-border-radius:8px;--btn-gap:8px" data-jsgui-data-model="data_object_27" class="button btn-primary btn-large" data-variant="primary"><span data-jsgui-id="span_10" data-jsgui-data-model-id="data_object_28" data-jsgui-type="span" data-jsgui-data-model="data_object_28" class="button-text">large</span></button><button data-jsgui-id="button_11" data-jsgui-data-model-id="data_object_29" data-jsgui-type="button" style="--btn-height:56px;--btn-padding-x:28px;--btn-font-size:18px;--btn-icon-size:24px;--btn-border-radius:12px;--btn-gap:10px" data-jsgui-data-model="data_object_29" class="button btn-primary btn-xlarge" data-variant="primary"><span data-jsgui-id="span_11" data-jsgui-data-model-id="data_object_30" data-jsgui-type="span" data-jsgui-data-model="data_object_30" class="button-text">xlarge</span></button></div></div><div data-jsgui-id="control_5" data-jsgui-data-model-id="data_object_31" data-jsgui-type="control" class="section" data-jsgui-data-model="data_object_31"><h2 data-jsgui-id="h2_2" data-jsgui-data-model-id="data_object_32" data-jsgui-type="h2" data-jsgui-data-model="data_object_32">Panel Variants</h2><div data-jsgui-id="control_6" data-jsgui-data-model-id="data_object_33" data-jsgui-type="control" class="panel-grid" data-jsgui-data-model="data_object_33"><div data-jsgui-id="panel_0" data-jsgui-data-model-id="data_object_34" data-jsgui-type="panel" style="--panel-padding:16px;--shadow:none;--radius:0" data-jsgui-data-model="data_object_34" class="panel" data-variant="default" data-jsgui-ctrl-fields="{'header':'control_7','title':'control_8','content':'control_9'}">This is a default panel with themed styling.<div data-jsgui-id="control_7" data-jsgui-data-model-id="data_object_35" data-jsgui-type="control" class="panel-header" data-jsgui-data-model="data_object_35"><div data-jsgui-id="control_8" data-jsgui-data-model-id="data_object_36" data-jsgui-type="control" class="panel-title" data-jsgui-data-model="data_object_36">Default</div></div><div data-jsgui-id="control_9" data-jsgui-data-model-id="data_object_37" data-jsgui-type="control" class="panel-content" data-jsgui-data-model="data_object_37">This is a default panel with themed styling.</div></div><div data-jsgui-id="panel_1" data-jsgui-data-model-id="data_object_38" data-jsgui-type="panel" style="--panel-padding:16px;--shadow:0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);--radius:8px" data-jsgui-data-model="data_object_38" class="panel bordered" data-variant="card" data-jsgui-ctrl-fields="{'header':'control_10','title':'control_11','content':'control_12'}">This is a card panel with themed styling.<div data-jsgui-id="control_10" data-jsgui-data-model-id="data_object_39" data-jsgui-type="control" class="panel-header" data-jsgui-data-model="data_object_39"><div data-jsgui-id="control_11" data-jsgui-data-model-id="data_object_40" data-jsgui-type="control" class="panel-title" data-jsgui-data-model="data_object_40">Card</div></div><div data-jsgui-id="control_12" data-jsgui-data-model-id="data_object_41" data-jsgui-type="control" class="panel-content" data-jsgui-data-model="data_object_41">This is a card panel with themed styling.</div></div><div data-jsgui-id="panel_2" data-jsgui-data-model-id="data_object_42" data-jsgui-type="panel" style="--panel-padding:24px;--shadow:0 10px 20px rgba(0,0,0,0.15), 0 3px 6px rgba(0,0,0,0.1);--radius:12px" data-jsgui-data-model="data_object_42" class="panel padding-large" data-variant="elevated" data-jsgui-ctrl-fields="{'header':'control_13','title':'control_14','content':'control_15'}">This is a elevated panel with themed styling.<div data-jsgui-id="control_13" data-jsgui-data-model-id="data_object_43" data-jsgui-type="control" class="panel-header" data-jsgui-data-model="data_object_43"><div data-jsgui-id="control_14" data-jsgui-data-model-id="data_object_44" data-jsgui-type="control" class="panel-title" data-jsgui-data-model="data_object_44">Elevated</div></div><div data-jsgui-id="control_15" data-jsgui-data-model-id="data_object_45" data-jsgui-type="control" class="panel-content" data-jsgui-data-model="data_object_45">This is a elevated panel with themed styling.</div></div><div data-jsgui-id="panel_3" data-jsgui-data-model-id="data_object_46" data-jsgui-type="panel" style="--panel-padding:16px;--shadow:inset 0 2px 4px rgba(0,0,0,0.1);--radius:4px" data-jsgui-data-model="data_object_46" class="panel bordered" data-variant="well" data-jsgui-ctrl-fields="{'content':'control_16'}">This is a well panel with themed styling.<div data-jsgui-id="control_16" data-jsgui-data-model-id="data_object_47" data-jsgui-type="control" class="panel-content" data-jsgui-data-model="data_object_47">This is a well panel with themed styling.</div></div><div data-jsgui-id="panel_4" data-jsgui-data-model-id="data_object_48" data-jsgui-type="panel" style="--panel-padding:16px;--shadow:0 4px 6px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.06);--radius:12px" data-jsgui-data-model="data_object_48" class="panel bordered" data-variant="glass" data-jsgui-ctrl-fields="{'header':'control_17','title':'control_18','content':'control_19'}">This is a glass panel with themed styling.<div data-jsgui-id="control_17" data-jsgui-data-model-id="data_object_49" data-jsgui-type="control" class="panel-header" data-jsgui-data-model="data_object_49"><div data-jsgui-id="control_18" data-jsgui-data-model-id="data_object_50" data-jsgui-type="control" class="panel-title" data-jsgui-data-model="data_object_50">Glass</div></div><div data-jsgui-id="control_19" data-jsgui-data-model-id="data_object_51" data-jsgui-type="control" class="panel-content" data-jsgui-data-model="data_object_51">This is a glass panel with themed styling.</div></div><div data-jsgui-id="panel_5" data-jsgui-data-model-id="data_object_52" data-jsgui-type="panel" style="--panel-padding:16px;--shadow:none;--radius:8px" data-jsgui-data-model="data_object_52" class="panel bordered" data-variant="outline" data-jsgui-ctrl-fields="{'header':'control_20','title':'control_21','content':'control_22'}">This is a outline panel with themed styling.<div data-jsgui-id="control_20" data-jsgui-data-model-id="data_object_53" data-jsgui-type="control" class="panel-header" data-jsgui-data-model="data_object_53"><div data-jsgui-id="control_21" data-jsgui-data-model-id="data_object_54" data-jsgui-type="control" class="panel-title" data-jsgui-data-model="data_object_54">Outline</div></div><div data-jsgui-id="control_22" data-jsgui-data-model-id="data_object_55" data-jsgui-type="control" class="panel-content" data-jsgui-data-model="data_object_55">This is a outline panel with themed styling.</div></div></div></div><div data-jsgui-id="control_23" data-jsgui-data-model-id="data_object_56" data-jsgui-type="control" class="section" data-jsgui-data-model="data_object_56"><h2 data-jsgui-id="h2_3" data-jsgui-data-model-id="data_object_57" data-jsgui-type="h2" data-jsgui-data-model="data_object_57">Icon Buttons</h2><div data-jsgui-id="control_24" data-jsgui-data-model-id="data_object_58" data-jsgui-type="control" class="icon-grid" data-jsgui-data-model="data_object_58"><button data-jsgui-id="button_12" data-jsgui-data-model-id="data_object_59" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_59" class="button btn-primary" data-variant="primary"><span data-jsgui-id="span_12" data-jsgui-data-model-id="data_object_60" data-jsgui-type="span" data-jsgui-data-model="data_object_60" class="button-icon">💾</span><span data-jsgui-id="span_13" data-jsgui-data-model-id="data_object_61" data-jsgui-type="span" data-jsgui-data-model="data_object_61" class="button-text">Save</span></button><button data-jsgui-id="button_13" data-jsgui-data-model-id="data_object_62" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_62" class="button btn-danger" data-variant="danger"><span data-jsgui-id="span_14" data-jsgui-data-model-id="data_object_63" data-jsgui-type="span" data-jsgui-data-model="data_object_63" class="button-icon">🗑️</span><span data-jsgui-id="span_15" data-jsgui-data-model-id="data_object_64" data-jsgui-type="span" data-jsgui-data-model="data_object_64" class="button-text">Delete</span></button><button data-jsgui-id="button_14" data-jsgui-data-model-id="data_object_65" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_65" class="button btn-ghost" data-variant="ghost"><span data-jsgui-id="span_16" data-jsgui-data-model-id="data_object_66" data-jsgui-type="span" data-jsgui-data-model="data_object_66" class="button-icon">⚙️</span><span data-jsgui-id="span_17" data-jsgui-data-model-id="data_object_67" data-jsgui-type="span" data-jsgui-data-model="data_object_67" class="button-text">Settings</span></button><button data-jsgui-id="button_15" data-jsgui-data-model-id="data_object_68" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_68" class="button btn-primary" data-variant="primary"><span data-jsgui-id="span_19" data-jsgui-data-model-id="data_object_70" data-jsgui-type="span" data-jsgui-data-model="data_object_70" class="button-text">Next</span><span data-jsgui-id="span_18" data-jsgui-data-model-id="data_object_69" data-jsgui-type="span" data-jsgui-data-model="data_object_69" class="button-icon">→</span></button><button data-jsgui-id="button_16" data-jsgui-data-model-id="data_object_71" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_71" class="button btn-outline" data-variant="outline"><span data-jsgui-id="span_20" data-jsgui-data-model-id="data_object_72" data-jsgui-type="span" data-jsgui-data-model="data_object_72" class="button-icon">←</span><span data-jsgui-id="span_21" data-jsgui-data-model-id="data_object_73" data-jsgui-type="span" data-jsgui-data-model="data_object_73" class="button-text">Previous</span></button></div></div><div data-jsgui-id="control_25" data-jsgui-data-model-id="data_object_74" data-jsgui-type="control" class="section" data-jsgui-data-model="data_object_74"><h2 data-jsgui-id="h2_4" data-jsgui-data-model-id="data_object_75" data-jsgui-type="h2" data-jsgui-data-model="data_object_75">Mixed Controls</h2><div data-jsgui-id="panel_6" data-jsgui-data-model-id="data_object_76" data-jsgui-type="panel" style="--panel-padding:16px;--shadow:0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08);--radius:8px" data-jsgui-data-model="data_object_76" class="panel bordered" data-variant="card" data-jsgui-ctrl-fields="{'header':'control_26','title':'control_27','content':'control_28'}"><div data-jsgui-id="control_26" data-jsgui-data-model-id="data_object_77" data-jsgui-type="control" class="panel-header" data-jsgui-data-model="data_object_77"><div data-jsgui-id="control_27" data-jsgui-data-model-id="data_object_78" data-jsgui-type="control" class="panel-title" data-jsgui-data-model="data_object_78">Card with Buttons</div></div><div data-jsgui-id="control_28" data-jsgui-data-model-id="data_object_79" data-jsgui-type="control" class="panel-content" data-jsgui-data-model="data_object_79"><div data-jsgui-id="control_29" data-jsgui-data-model-id="data_object_80" data-jsgui-type="control" class="button-grid" data-jsgui-data-model="data_object_80"><button data-jsgui-id="button_17" data-jsgui-data-model-id="data_object_81" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_81" class="button btn-ghost" data-variant="ghost"><span data-jsgui-id="span_22" data-jsgui-data-model-id="data_object_82" data-jsgui-type="span" data-jsgui-data-model="data_object_82" class="button-text">Cancel</span></button><button data-jsgui-id="button_18" data-jsgui-data-model-id="data_object_83" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_83" class="button btn-outline" data-variant="outline"><span data-jsgui-id="span_23" data-jsgui-data-model-id="data_object_84" data-jsgui-type="span" data-jsgui-data-model="data_object_84" class="button-text">Save Draft</span></button><button data-jsgui-id="button_19" data-jsgui-data-model-id="data_object_85" data-jsgui-type="button" style="--btn-height:36px;--btn-padding-x:16px;--btn-font-size:14px;--btn-icon-size:16px;--btn-border-radius:6px;--btn-gap:6px" data-jsgui-data-model="data_object_85" class="button btn-primary" data-variant="primary"><span data-jsgui-id="span_24" data-jsgui-data-model-id="data_object_86" data-jsgui-type="span" data-jsgui-data-model="data_object_86" class="button-text">Publish</span></button></div></div></div></div></div>
+    <div class="footer">
+        jsgui3-html Theme System • Generated 2026-01-17T06:34:13.498Z
+    </div>
+</body>
+</html>

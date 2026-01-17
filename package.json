@@ -1,6 +1,19 @@
 {
   "name": "jsgui3-html",
   "main": "html.js",
+  "types": "html.d.ts",
+  "exports": {
+    ".": {
+      "require": "./html.js",
+      "types": "./html.d.ts"
+    },
+    "./types": {
+      "types": "./types/index.d.ts"
+    },
+    "./types/*": {
+      "types": "./types/*.d.ts"
+    }
+  },
   "scripts": {
     "lab:list": "node lab/experiment_runner.js list",
     "lab:run": "node lab/experiment_runner.js run",
@@ -45,5 +58,5 @@
     "jsdom": "^22.1.0",
     "jsgui3-server": "^0.0.143"
   },
-  "version": "0.0.177"
+  "version": "0.0.178"
 }

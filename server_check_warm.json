@@ -1,0 +1,11 @@
+{
+  "selection": "warm_boot_success",
+  "option": {
+    "label": "Instant Re-Open (Warm Boot Success)",
+    "value": "warm_boot_success",
+    "description": "The window appeared instantly."
+  },
+  "phase": null,
+  "success": true,
+  "cancelled": false
+}

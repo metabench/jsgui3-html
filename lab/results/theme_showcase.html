@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Showcase</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+        
+        h2 {
+            margin: 0 0 16px 0;
+            font-weight: 600;
+            color: #e0e0e0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 8px;
+        }
+        
+        .section {
+            margin-bottom: 32px;
+        }
+        
+        .button-grid, .size-grid, .icon-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .panel-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        
+        /* Button base styles */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--btn-gap, 6px);
+            height: var(--btn-height, 36px);
+            padding: 0 var(--btn-padding-x, 16px);
+            font-size: var(--btn-font-size, 14px);
+            font-weight: 500;
+            border: none;
+            border-radius: var(--btn-border-radius, 6px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        
+        /* Button variants */
+        .button[data-variant="default"],
+        .button[data-variant="secondary"] {
+            background: #3d3d5c;
+            color: #fff;
+        }
+        .button[data-variant="default"]:hover,
+        .button[data-variant="secondary"]:hover {
+            background: #4a4a6a;
+        }
+        
+        .button[data-variant="primary"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        .button[data-variant="primary"]:hover {
+            filter: brightness(1.1);
+        }
+        
+        .button[data-variant="ghost"] {
+            background: transparent;
+            color: #a0a0c0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .button[data-variant="ghost"]:hover {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .button[data-variant="danger"] {
+            background: linear-gradient(135deg, #ff6b6b 0%, #c44569 100%);
+            color: #fff;
+        }
+        
+        .button[data-variant="success"] {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: #fff;
+        }
+        
+        .button[data-variant="outline"] {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+        .button[data-variant="outline"]:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .button[data-variant="link"] {
+            background: transparent;
+            color: #667eea;
+            padding: 0;
+            height: auto;
+        }
+        .button[data-variant="link"]:hover {
+            text-decoration: underline;
+        }
+        
+        /* Panel base styles */
+        .panel {
+            padding: var(--panel-padding, 16px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius, 0);
+            box-shadow: var(--shadow, none);
+            min-height: 100px;
+        }
+        
+        .panel.bordered {
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .panel-header {
+            margin-bottom: 12px;
+        }
+        
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .panel-content {
+            font-size: 13px;
+            color: #a0a0c0;
+        }
+        
+        /* Panel variants via data attributes */
+        .panel[data-variant="card"] {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .panel[data-variant="elevated"] {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .panel[data-variant="well"] {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .panel[data-variant="glass"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .panel[data-variant="outline"] {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Icon styling */
+        .button-icon {
+            font-size: var(--btn-icon-size, 16px);
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-showcase" id="root"></div>
+    
+    <script>
+        // This will be hydrated by jsgui3 or we can generate static HTML
+    </script>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "success": true,
+  "selection": "rejected",
+  "cancelled": false,
+  "option": {
+    "label": "No, Something is Off",
+    "value": "rejected",
+    "description": "I need adjustments to the dark mode theme."
+  },
+  "phase": null,
+  "raw": {
+    "selection": "rejected",
+    "option": {
+      "label": "No, Something is Off",
+      "value": "rejected",
+      "description": "I need adjustments to the dark mode theme."
+    },
+    "phase": null
+  }
+}

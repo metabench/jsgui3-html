@@ -1,14 +1,21 @@
 /**
- * Created by James on 04/08/2014.
+ * Panel Control
+ * 
+ * A container control with theme support for padding, shadow, border, and styling.
+ * 
+ * Supports variants: default, card, elevated, flush, well, glass, outline, hero
+ * Supports padding: none, small, medium, large, xlarge
+ * Supports shadow: none, small, medium, large, inset
+ * Supports radius: none, small, medium, large, full
  */
 
-
 var jsgui = require('./../../../../html-core/html-core');
-//var Horizontal_Menu = require('./horizontal-menu');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, def = jsgui.is_defined;
 var Control = jsgui.Control;
-const {resizable} = require('../../../../control_mixins/mx');
+const { resizable } = require('../../../../control_mixins/mx');
+const { themeable } = require('../../../../control_mixins/themeable');
+const { apply_token_map } = require('../../../../themes/token_maps');
 
 const parse_px = value => {
     if (typeof value === 'number') return value;
@@ -38,53 +45,50 @@ const get_parent_size = ctrl => {
     return [0, 0];
 };
 
-// Titled_Panel would be useful.
-//  Would extend the panel, and also show it's name or title.
-
-// Want to keep panel simple. Could have Titled_Panel, maybe Resizable_Panel.
-//  If we want a panel with a lot of functionality, it would be the Flexi_Panel.
-
-// Panel_Grid possibly...
-//  Can load panels etc...
-
-// May make Showcase version.
-//  Or SuperPanel?
-//  Or ActivePanel?
-//   SmartPanel
-
-// A panel with something like 4 panels inside it...
-//  Should be a way of doing application layout.
-
-// Or just use a normal panel with a bunch of mixins?
-
-
-// Panel could have a text label as part of it (by default, easy to set, easy to move, easy to delete or not use)
-//   Though may want to get into making it really easy to add new controls in specific ways, such as binding it to the edge
-//     (and also probably reducing the size of the panel itself so that label (or div / span element) fits)
-
-
-
-
 class Panel extends Control {
-    // panel name?
-
-    // could have a title field.
-    //'fields': {
-    //    'name': String
-    //}
-    // maybe add before make would be better. add will probably be used more.
+    /**
+     * Create a new Panel.
+     * 
+     * @param {Object} spec - Panel specification
+     * @param {string} [spec.name] - Panel name/identifier
+     * @param {string} [spec.title] - Panel title (creates header)
+     * @param {string} [spec.variant] - Variant preset: default, card, elevated, flush, well, glass, outline, hero
+     * @param {Object} [spec.params] - Theme params
+     * @param {string} [spec.params.padding] - Padding: none, small, medium, large, xlarge
+     * @param {string} [spec.params.shadow] - Shadow: none, small, medium, large, inset
+     * @param {string} [spec.params.radius] - Border radius: none, small, medium, large, full
+     * @param {boolean} [spec.params.border] - Whether to show border
+     * @param {boolean} [spec.params.header] - Whether to show header (if title provided)
+     * @param {boolean} [spec.params.collapsible] - Whether panel can be collapsed
+     * @param {*} [spec.content] - Initial content to add
+     * @param {boolean} [spec.resizable] - Whether panel is resizable
+     * @param {Array} [spec.min_size] - Minimum size [width, height]
+     * @param {Array} [spec.max_size] - Maximum size [width, height]
+     */
     constructor(spec, add, make) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'panel';
         super(spec);
-        //this.__type_name = 'panel';
-        //this.add_class('panel');
         this.add_class('panel');
+
+        // Apply themeable - resolves params and applies hooks
+        const params = themeable(this, 'panel', spec);
+
+        // Apply token mappings (padding, shadow, radius)
+        apply_token_map(this, 'panel', params);
+
+        // Apply border class if specified
+        if (params.border) {
+            this.add_class('bordered');
+        }
+
         this.resizable_enabled = !!spec.resizable;
         this.min_size = spec.min_size || null;
         this.max_size = spec.max_size || null;
         this.resize_bounds = spec.resize_bounds || spec.extent_bounds || null;
         this.pending_dock_edge = spec.dock || spec.docked || null;
+        this._collapsible = params.collapsible || false;
+        this._collapsed = false;
 
         if (def(spec.name)) {
             this.name = spec.name;
@@ -94,50 +98,117 @@ class Panel extends Control {
             this.title = spec.title;
         }
 
-
-        // With name as a field, that field should get sent to the client...
         if (!spec.abstract && !spec.el) {
-            var l = 0;
-            //var ctrl_fields = {
-            //}
-
-            let n = this.name;
-            if (def(n)) {
-                let f = this._fields = this._fields || {};
-                f.name = n;
-            }
-
-            if (def(this.title)) {
-                const title_ctrl = new Control({
-                    context: this.context,
-                    class: 'panel-title'
-                });
-                title_ctrl.add(this.title);
-                this.add(title_ctrl);
-                this._ctrl_fields = this._ctrl_fields || {};
-                this._ctrl_fields.title = title_ctrl;
-            }
-
-            if (def(spec.content)) {
-                this.add(spec.content);
-            }
-
-
-            //var name = this.name;
-            //if (is_defined(name)) {
-                //this._fields = this._fields || {};
-                //this._fields['name'] = name;
-            //    this.name = name;
-            //}
+            this._compose(params, spec);
         }
     }
-    //'resizable': function() {
-    //},
+
+    /**
+     * Compose panel structure based on theme params.
+     * @param {Object} params - Resolved theme params
+     * @param {Object} spec - Original spec
+     */
+    _compose(params, spec) {
+        const { context } = this;
+
+        // Store name field
+        let n = this.name;
+        if (def(n)) {
+            let f = this._fields = this._fields || {};
+            f.name = n;
+        }
+
+        // Create header if title is set and header param allows it
+        const show_header = params.header !== false && def(this.title);
+        if (show_header) {
+            const header = new Control({
+                context,
+                class: 'panel-header'
+            });
+
+            const title_ctrl = new Control({
+                context,
+                class: 'panel-title'
+            });
+            title_ctrl.add(this.title);
+            header.add(title_ctrl);
+
+            // Add collapse toggle if collapsible
+            if (this._collapsible) {
+                const toggle = new Control({
+                    context,
+                    tag_name: 'button',
+                    class: 'panel-collapse-toggle'
+                });
+                toggle.add('▼');
+                header.add(toggle);
+            }
+
+            this.add(header);
+            this._ctrl_fields = this._ctrl_fields || {};
+            this._ctrl_fields.header = header;
+            this._ctrl_fields.title = title_ctrl;
+        }
+
+        // Create content container
+        const content_container = new Control({
+            context,
+            class: 'panel-content'
+        });
+        this.add(content_container);
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.content = content_container;
+        this.content_container = content_container;
+
+        // Add initial content
+        if (def(spec.content)) {
+            content_container.add(spec.content);
+        }
+    }
+
+    /**
+     * Add content to the panel.
+     * If a content container exists, adds to it instead of directly.
+     * @param {*} content - Content to add
+     */
+    add_content(content) {
+        if (this.content_container) {
+            this.content_container.add(content);
+        } else {
+            this.add(content);
+        }
+    }
+
+    /**
+     * Toggle collapsed state.
+     */
+    toggle_collapsed() {
+        this._collapsed = !this._collapsed;
+        if (this._collapsed) {
+            this.add_class('collapsed');
+        } else {
+            this.remove_class('collapsed');
+        }
+    }
+
+    /**
+     * Set collapsed state.
+     * @param {boolean} collapsed - Whether panel should be collapsed
+     */
+    set_collapsed(collapsed) {
+        this._collapsed = !!collapsed;
+        if (this._collapsed) {
+            this.add_class('collapsed');
+        } else {
+            this.remove_class('collapsed');
+        }
+    }
 
     /**
      * Dock the panel to a parent edge.
-     * @param {string} edge - Dock edge.
-     * @param {Object} [options] - Optional settings.
+     * @param {string} edge - Dock edge: left, right, top, bottom
+     * @param {Object} [options] - Optional settings
+     * @param {Array} [options.size] - Override size [width, height]
      */
     dock_to(edge, options = {}) {
         const parent_size = get_parent_size(this);
@@ -196,7 +267,16 @@ class Panel extends Control {
                 this.dock_to(this.pending_dock_edge);
                 this.pending_dock_edge = null;
             }
+
+            // Wire up collapse toggle if present
+            if (this._collapsible && this._ctrl_fields && this._ctrl_fields.header) {
+                const toggle = this._ctrl_fields.header.dom?.el?.querySelector('.panel-collapse-toggle');
+                if (toggle) {
+                    toggle.addEventListener('click', () => this.toggle_collapsed());
+                }
+            }
         }
     }
 }
+
 module.exports = Panel;

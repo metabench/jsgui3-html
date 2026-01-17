@@ -23,7 +23,10 @@ const mx = {
     drag_like_events: require('./drag_like_events'),
     press_events: require('./press-events'),
     press_outside: require('./press-outside'),
-    pressed_state: require('./pressed-state')
+    pressed_state: require('./pressed-state'),
+    theme: require('./theme'),
+    theme_params: require('./theme_params'),
+    themeable: require('./themeable')
 }
 
 module.exports = mx;
