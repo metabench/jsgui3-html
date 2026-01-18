@@ -38,8 +38,10 @@ class Resource_Pool extends Evented_Class {
 		// Items able to name themselves?
 
 		if (obj_name === undefined) {
-			console.log('obj', obj);
-			console.trace();
+			console.log('Resource_Pool.add error: obj_name is undefined for object:', obj);
+			try {
+				console.trace();
+			} catch (e) { }
 			throw 'Resource_Pool.add(undefined) error';
 		}
 		if (this.has_resource(obj_name)) {

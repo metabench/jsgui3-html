@@ -1,0 +1,167 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="inputFocusGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="successGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#11998e"/>
+      <stop offset="100%" style="stop-color:#38ef7d"/>
+    </linearGradient>
+    <linearGradient id="errorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#eb3349"/>
+      <stop offset="100%" style="stop-color:#f45c43"/>
+    </linearGradient>
+    <filter id="inputShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#667eea" flood-opacity="0.2"/>
+    </filter>
+    <filter id="softShadow">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="40" y="45" font-family="Inter, sans-serif" font-size="24" font-weight="600" fill="#1e293b">Input Field Designs</text>
+  <text x="40" y="70" font-family="Inter, sans-serif" font-size="14" fill="#64748b">Text inputs, selects, and form elements with various states</text>
+  
+  <!-- Basic Input States -->
+  <text x="40" y="115" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">INPUT STATES</text>
+  
+  <!-- Default -->
+  <g transform="translate(40, 130)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Default</text>
+    <rect y="10" width="220" height="44" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+    <text x="15" y="38" font-family="Inter, sans-serif" font-size="14" fill="#94a3b8">Enter your email...</text>
+  </g>
+  
+  <!-- Focused -->
+  <g transform="translate(290, 130)" filter="url(#inputShadow)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Focused</text>
+    <rect y="10" width="220" height="44" rx="8" fill="white" stroke="url(#inputFocusGradient)" stroke-width="2"/>
+    <text x="15" y="38" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">john@example.com</text>
+    <!-- Cursor -->
+    <rect x="145" y="22" width="2" height="20" fill="#667eea"/>
+  </g>
+  
+  <!-- Filled -->
+  <g transform="translate(540, 130)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Filled</text>
+    <rect y="10" width="220" height="44" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+    <text x="15" y="38" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">john@example.com</text>
+  </g>
+  
+  <!-- Validation States -->
+  <text x="40" y="225" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">VALIDATION STATES</text>
+  
+  <!-- Success -->
+  <g transform="translate(40, 240)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Success</text>
+    <rect y="10" width="220" height="44" rx="8" fill="white" stroke="#11998e" stroke-width="2" filter="url(#softShadow)"/>
+    <text x="15" y="38" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">john@example.com</text>
+    <!-- Check icon -->
+    <circle cx="198" cy="32" r="10" fill="#11998e"/>
+    <path d="M193 32 L196 35 L203 28" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="0" y="70" font-family="Inter, sans-serif" font-size="11" fill="#11998e">✓ Email is valid</text>
+  </g>
+  
+  <!-- Error -->
+  <g transform="translate(290, 240)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Error</text>
+    <rect y="10" width="220" height="44" rx="8" fill="#fef2f2" stroke="#eb3349" stroke-width="2"/>
+    <text x="15" y="38" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">invalid-email</text>
+    <!-- X icon -->
+    <circle cx="198" cy="32" r="10" fill="#eb3349"/>
+    <path d="M194 28 L202 36 M202 28 L194 36" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <text x="0" y="70" font-family="Inter, sans-serif" font-size="11" fill="#eb3349">✗ Please enter a valid email</text>
+  </g>
+  
+  <!-- Warning -->
+  <g transform="translate(540, 240)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Warning</text>
+    <rect y="10" width="220" height="44" rx="8" fill="#fffbeb" stroke="#f59e0b" stroke-width="2"/>
+    <text x="15" y="38" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">weak-password</text>
+    <!-- Warning icon -->
+    <circle cx="198" cy="32" r="10" fill="#f59e0b"/>
+    <text x="198" y="37" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="white" text-anchor="middle">!</text>
+    <text x="0" y="70" font-family="Inter, sans-serif" font-size="11" fill="#f59e0b">⚠ Password could be stronger</text>
+  </g>
+  
+  <!-- Enhanced Inputs -->
+  <text x="40" y="355" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">ENHANCED INPUTS</text>
+  
+  <!-- With Icon -->
+  <g transform="translate(40, 370)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">With Icon</text>
+    <rect y="10" width="220" height="44" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+    <!-- Search icon -->
+    <circle cx="28" cy="32" r="8" fill="none" stroke="#94a3b8" stroke-width="2"/>
+    <line x1="34" y1="38" x2="40" y2="44" stroke="#94a3b8" stroke-width="2" stroke-linecap="round"/>
+    <text x="50" y="38" font-family="Inter, sans-serif" font-size="14" fill="#94a3b8">Search...</text>
+  </g>
+  
+  <!-- With Label Float -->
+  <g transform="translate(290, 370)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Floating Label</text>
+    <rect y="10" width="220" height="44" rx="8" fill="white" stroke="url(#inputFocusGradient)" stroke-width="2" filter="url(#inputShadow)"/>
+    <!-- Floating label -->
+    <rect x="10" y="2" width="60" height="16" fill="#f8fafc"/>
+    <text x="15" y="14" font-family="Inter, sans-serif" font-size="10" font-weight="500" fill="#667eea">Password</text>
+    <text x="15" y="42" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">••••••••</text>
+    <!-- Eye icon -->
+    <ellipse cx="195" cy="32" rx="10" ry="7" fill="none" stroke="#94a3b8" stroke-width="1.5"/>
+    <circle cx="195" cy="32" r="3" fill="#94a3b8"/>
+  </g>
+  
+  <!-- With Prefix/Suffix -->
+  <g transform="translate(540, 370)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">With Prefix/Suffix</text>
+    <rect x="35" y="10" width="150" height="44" rx="0" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+    <rect y="10" width="35" height="44" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+    <rect x="185" y="10" width="35" height="44" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+    <!-- Corners fix -->
+    <rect y="10" width="40" height="44" fill="#f1f5f9"/>
+    <rect x="180" y="10" width="40" height="44" fill="#f1f5f9"/>
+    <rect y="10" width="220" height="44" rx="8" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+    <text x="17" y="38" font-family="Inter, sans-serif" font-size="14" fill="#64748b" text-anchor="middle">$</text>
+    <text x="50" y="38" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">99.00</text>
+    <text x="202" y="38" font-family="Inter, sans-serif" font-size="12" fill="#64748b" text-anchor="middle">USD</text>
+  </g>
+  
+  <!-- Textarea -->
+  <g transform="translate(40, 450)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Textarea</text>
+    <rect y="10" width="340" height="100" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+    <text x="15" y="35" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">This is a multi-line textarea</text>
+    <text x="15" y="55" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">with support for longer content...</text>
+    <!-- Character count -->
+    <text x="310" y="100" font-family="Inter, sans-serif" font-size="10" fill="#94a3b8">52/500</text>
+  </g>
+  
+  <!-- Select Dropdown -->
+  <g transform="translate(420, 450)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="500" fill="#475569">Select Dropdown</text>
+    <rect y="10" width="220" height="44" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5" filter="url(#softShadow)"/>
+    <text x="15" y="38" font-family="Inter, sans-serif" font-size="14" fill="#1e293b">United States</text>
+    <path d="M195 28 L202 35 L209 28" stroke="#64748b" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Dropdown options (expanded preview) -->
+    <rect y="58" width="220" height="100" rx="8" fill="white" stroke="#e2e8f0" filter="url(#softShadow)"/>
+    <rect x="5" y="68" width="210" height="28" rx="4" fill="#f1f5f9"/>
+    <text x="15" y="87" font-family="Inter, sans-serif" font-size="13" fill="#1e293b">🇺🇸 United States</text>
+    <text x="15" y="115" font-family="Inter, sans-serif" font-size="13" fill="#64748b">🇬🇧 United Kingdom</text>
+    <text x="15" y="143" font-family="Inter, sans-serif" font-size="13" fill="#64748b">🇨🇦 Canada</text>
+  </g>
+  
+  <!-- Design Notes -->
+  <rect x="660" y="130" width="120" height="160" rx="12" fill="#f1f5f9" stroke="#e2e8f0"/>
+  <text x="720" y="155" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">Design Notes</text>
+  <text x="670" y="180" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• 8px radius</text>
+  <text x="670" y="198" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• 44px height</text>
+  <text x="670" y="216" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Focus glow</text>
+  <text x="670" y="234" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• State colors</text>
+  <text x="670" y="252" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Icon support</text>
+  <text x="670" y="270" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Float labels</text>
+</svg>

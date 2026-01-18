@@ -88,6 +88,7 @@ const controls = {
     Pagination: require('./organised/1-standard/5-ui/pagination'),
     Plus_Minus_Toggle_Button: require('./organised/0-core/0-basic/1-compositional/plus-minus-toggle-button'),
     Property_Editor: require('./organised/1-standard/1-editor/property_editor'),
+    Property_Viewer: require('./organised/1-standard/0-viewer/Property_Viewer'),
     Progress_Bar: require('./organised/0-core/0-basic/0-native-compositional/progress_bar'),
     // More advanced functionality - may require more work to keep it with the right APIs.
     Popup_Menu_Button: require('./organised/0-core/1-advanced/popup-menu-button'),
@@ -96,6 +97,7 @@ const controls = {
     Radio_Button_Group: require('./organised/0-core/0-basic/1-compositional/radio-button-group'),
     //Resize_Handle: require('./organised/0-core/0-basic/_resize-handle'),
     Reorderable_List: require('./organised/1-standard/5-ui/reorderable_list'),
+    Resource_Viewer: require('./organised/1-standard/0-viewer/Resource_Viewer'),
     Rich_Text_Editor: require('./organised/1-standard/1-editor/Rich_Text_Editor'),
     Rich_Text_Toolbar: require('./organised/1-standard/1-editor/rich_text_toolbar'),
     Scroll_View: require('./organised/0-core/0-basic/1-compositional/scroll-view'),
@@ -129,6 +131,7 @@ const controls = {
     Tooltip: require('./organised/1-standard/5-ui/tooltip'),
     Tree: require('./organised/1-standard/5-ui/tree'),
     Tree_Node: require('./organised/1-standard/5-ui/tree-node'),
+    Tree_View: require('./organised/1-standard/4-data/Tree_View'),
     Tree_Table: require('./organised/1-standard/4-data/tree_table'),
     Url_Input: require('./organised/0-core/0-basic/0-native-compositional/url_input'),
     Vertical_Expander: require('./organised/1-standard/6-layout/vertical-expander'),

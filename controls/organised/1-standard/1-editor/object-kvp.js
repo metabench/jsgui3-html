@@ -10,10 +10,10 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 define(["../../../jsgui-html-enh", "../viewer/object-kvp", "./factory", "./basic/string"],
-	function(jsgui, Object_KVP_Viewer, factory, String_Editor) {
+    function(jsgui, Object_KVP_Viewer, factory, String_Editor) {
 */
 
-var jsgui = require('../../../../html-core/html-core');
+var jsgui = require('../../../_core');
 var Object_KVP_Viewer = require('../0-viewer/object-kvp');
 var factory = require('./factory');
 var String_Editor = require('./string');
@@ -65,11 +65,11 @@ class Object_KVP_Editor extends Object_KVP_Viewer {
 
     }
     'activate'() {
-      super.activate();
+        super.activate();
     }
 }
 module.exports = Object_KVP_Editor;
 
-		//return Object_KVP_Editor;
-	//}
+//return Object_KVP_Editor;
+//}
 //);

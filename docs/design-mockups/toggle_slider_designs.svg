@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="toggleOnGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="toggleSuccessGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#11998e"/>
+      <stop offset="100%" style="stop-color:#38ef7d"/>
+    </linearGradient>
+    <linearGradient id="sliderTrackGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="sliderRainbow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ff0000"/>
+      <stop offset="25%" style="stop-color:#ffff00"/>
+      <stop offset="50%" style="stop-color:#00ff00"/>
+      <stop offset="75%" style="stop-color:#00ffff"/>
+      <stop offset="100%" style="stop-color:#0000ff"/>
+    </linearGradient>
+    <filter id="thumbShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.3"/>
+    </filter>
+    <filter id="innerGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="40" y="45" font-family="Inter, sans-serif" font-size="24" font-weight="600" fill="#1e293b">Toggle &amp; Slider Designs</text>
+  <text x="40" y="70" font-family="Inter, sans-serif" font-size="14" fill="#64748b">Interactive controls with smooth transitions and modern aesthetics</text>
+  
+  <!-- Toggle Switches Section -->
+  <text x="40" y="120" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">TOGGLE SWITCHES</text>
+  
+  <!-- Toggle OFF -->
+  <g transform="translate(40, 140)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Off State</text>
+    <rect width="52" height="28" rx="14" fill="#e2e8f0"/>
+    <circle cx="14" cy="14" r="10" fill="white" filter="url(#thumbShadow)"/>
+  </g>
+  
+  <!-- Toggle ON (Primary) -->
+  <g transform="translate(120, 140)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">On (Primary)</text>
+    <rect width="52" height="28" rx="14" fill="url(#toggleOnGradient)"/>
+    <circle cx="38" cy="14" r="10" fill="white" filter="url(#thumbShadow)"/>
+  </g>
+  
+  <!-- Toggle ON (Success) -->
+  <g transform="translate(200, 140)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">On (Success)</text>
+    <rect width="52" height="28" rx="14" fill="url(#toggleSuccessGradient)"/>
+    <circle cx="38" cy="14" r="10" fill="white" filter="url(#thumbShadow)"/>
+  </g>
+  
+  <!-- Toggle with Label -->
+  <g transform="translate(300, 140)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">With Label</text>
+    <rect width="52" height="28" rx="14" fill="url(#toggleOnGradient)"/>
+    <circle cx="38" cy="14" r="10" fill="white" filter="url(#thumbShadow)"/>
+    <text x="62" y="19" font-family="Inter, sans-serif" font-size="14" font-weight="500" fill="#1e293b">Enabled</text>
+  </g>
+  
+  <!-- Large Toggle with Icons -->
+  <g transform="translate(450, 130)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Large with Icons</text>
+    <rect width="72" height="36" rx="18" fill="url(#toggleOnGradient)"/>
+    <!-- Sun icon (OFF side) -->
+    <circle cx="18" cy="18" r="5" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5"/>
+    <g stroke="rgba(255,255,255,0.4)" stroke-width="1.5">
+      <line x1="18" y1="8" x2="18" y2="10"/>
+      <line x1="18" y1="26" x2="18" y2="28"/>
+      <line x1="8" y1="18" x2="10" y2="18"/>
+      <line x1="26" y1="18" x2="28" y2="18"/>
+    </g>
+    <!-- Moon icon (ON side, active) -->
+    <path d="M50 13 A5 5 0 1 1 50 23 A4 4 0 0 0 50 13" fill="white"/>
+    <circle cx="54" cy="18" r="12" fill="white" filter="url(#thumbShadow)"/>
+  </g>
+  
+  <!-- Sliders Section -->
+  <text x="40" y="230" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">SLIDERS</text>
+  
+  <!-- Basic Slider -->
+  <g transform="translate(40, 250)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Basic (50%)</text>
+    <rect y="10" width="200" height="6" rx="3" fill="#e2e8f0"/>
+    <rect y="10" width="100" height="6" rx="3" fill="url(#sliderTrackGradient)"/>
+    <circle cx="100" cy="13" r="10" fill="white" stroke="url(#sliderTrackGradient)" stroke-width="3" filter="url(#thumbShadow)"/>
+  </g>
+  
+  <!-- Slider with Value -->
+  <g transform="translate(280, 250)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">With Value Label</text>
+    <rect y="10" width="200" height="6" rx="3" fill="#e2e8f0"/>
+    <rect y="10" width="140" height="6" rx="3" fill="url(#toggleSuccessGradient)"/>
+    <circle cx="140" cy="13" r="10" fill="white" stroke="#11998e" stroke-width="3" filter="url(#thumbShadow)"/>
+    <!-- Value tooltip -->
+    <g transform="translate(140, -8)">
+      <rect x="-18" y="-22" width="36" height="22" rx="4" fill="#1e293b"/>
+      <polygon points="-5,0 5,0 0,5" fill="#1e293b"/>
+      <text x="0" y="-8" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="white" text-anchor="middle">70%</text>
+    </g>
+  </g>
+  
+  <!-- Range Slider -->
+  <g transform="translate(40, 340)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Range Slider</text>
+    <rect y="10" width="200" height="6" rx="3" fill="#e2e8f0"/>
+    <rect x="60" y="10" width="80" height="6" rx="3" fill="url(#sliderTrackGradient)"/>
+    <circle cx="60" cy="13" r="10" fill="white" stroke="#667eea" stroke-width="3" filter="url(#thumbShadow)"/>
+    <circle cx="140" cy="13" r="10" fill="white" stroke="#667eea" stroke-width="3" filter="url(#thumbShadow)"/>
+    <text x="60" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">$200</text>
+    <text x="140" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">$800</text>
+  </g>
+  
+  <!-- Color Picker Slider -->
+  <g transform="translate(280, 340)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Color Picker</text>
+    <rect y="8" width="200" height="10" rx="5" fill="url(#sliderRainbow)"/>
+    <circle cx="100" cy="13" r="12" fill="none" stroke="white" stroke-width="3" filter="url(#thumbShadow)"/>
+    <circle cx="100" cy="13" r="8" fill="#00ff00"/>
+  </g>
+  
+  <!-- Step Slider -->
+  <g transform="translate(40, 420)">
+    <text x="0" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Step Slider (Discrete)</text>
+    <rect y="12" width="200" height="4" rx="2" fill="#e2e8f0"/>
+    <!-- Step markers -->
+    <circle cx="0" cy="14" r="4" fill="#667eea"/>
+    <circle cx="50" cy="14" r="4" fill="#667eea"/>
+    <circle cx="100" cy="14" r="4" fill="#667eea"/>
+    <circle cx="150" cy="14" r="4" fill="#e2e8f0" stroke="#667eea" stroke-width="1.5"/>
+    <circle cx="200" cy="14" r="4" fill="#e2e8f0" stroke="#667eea" stroke-width="1.5"/>
+    <!-- Thumb at step 3 -->
+    <circle cx="100" cy="14" r="10" fill="url(#sliderTrackGradient)" filter="url(#thumbShadow)"/>
+    <!-- Labels -->
+    <text x="0" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">0</text>
+    <text x="50" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">25</text>
+    <text x="100" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">50</text>
+    <text x="150" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">75</text>
+    <text x="200" y="40" font-family="Inter, sans-serif" font-size="10" fill="#64748b" text-anchor="middle">100</text>
+  </g>
+  
+  <!-- Vertical Slider -->
+  <g transform="translate(520, 250)">
+    <text x="15" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Vertical</text>
+    <rect x="10" width="6" height="150" rx="3" fill="#e2e8f0"/>
+    <rect x="10" y="90" width="6" height="60" rx="3" fill="url(#toggleSuccessGradient)"/>
+    <circle cx="13" cy="90" r="10" fill="white" stroke="#11998e" stroke-width="3" filter="url(#thumbShadow)"/>
+  </g>
+  
+  <!-- Volume Slider Style -->
+  <g transform="translate(580, 250)">
+    <text x="30" y="-5" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Volume Style</text>
+    <rect x="25" width="10" height="150" rx="5" fill="#e2e8f0"/>
+    <rect x="25" y="50" width="10" height="100" rx="5" fill="url(#sliderTrackGradient)"/>
+    <!-- Bars -->
+    <rect x="0" y="120" width="6" height="30" rx="2" fill="#667eea"/>
+    <rect x="12" y="100" width="6" height="50" rx="2" fill="#667eea"/>
+    <rect x="42" y="90" width="6" height="60" rx="2" fill="#667eea"/>
+    <rect x="54" y="70" width="6" height="80" rx="2" fill="#667eea"/>
+  </g>
+  
+  <!-- Design Notes -->
+  <rect x="650" y="140" width="130" height="180" rx="12" fill="#f1f5f9" stroke="#e2e8f0"/>
+  <text x="715" y="165" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">Design Notes</text>
+  <text x="660" y="190" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Gradient tracks</text>
+  <text x="660" y="210" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Soft shadows</text>
+  <text x="660" y="230" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Bordered thumbs</text>
+  <text x="660" y="250" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Value tooltips</text>
+  <text x="660" y="270" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Range support</text>
+  <text x="660" y="290" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Step markers</text>
+</svg>

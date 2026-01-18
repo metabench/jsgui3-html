@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="successProgress" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#11998e"/>
+      <stop offset="100%" style="stop-color:#38ef7d"/>
+    </linearGradient>
+    <linearGradient id="gaugeGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" style="stop-color:#eb3349"/>
+      <stop offset="50%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#38ef7d"/>
+    </linearGradient>
+    <linearGradient id="circleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="800" height="600" fill="#f8fafc"/>
+  
+  <!-- Title -->
+  <text x="40" y="45" font-family="Inter, sans-serif" font-size="24" font-weight="600" fill="#1e293b">Progress &amp; Gauge Designs</text>
+  <text x="40" y="70" font-family="Inter, sans-serif" font-size="14" fill="#64748b">Visual indicators for progress, loading, and metrics</text>
+  
+  <!-- Linear Progress Bars -->
+  <text x="40" y="115" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">LINEAR PROGRESS</text>
+  
+  <!-- Basic Progress -->
+  <g transform="translate(40, 135)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Basic (65%)</text>
+    <rect y="10" width="300" height="8" rx="4" fill="#e2e8f0"/>
+    <rect y="10" width="195" height="8" rx="4" fill="url(#progressGrad)"/>
+  </g>
+  
+  <!-- With Label -->
+  <g transform="translate(40, 185)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" fill="#64748b">With Label</text>
+    <text x="290" y="0" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#667eea">78%</text>
+    <rect y="10" width="300" height="8" rx="4" fill="#e2e8f0"/>
+    <rect y="10" width="234" height="8" rx="4" fill="url(#progressGrad)"/>
+  </g>
+  
+  <!-- Thick Progress -->
+  <g transform="translate(40, 235)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Thick Variant</text>
+    <rect y="10" width="300" height="16" rx="8" fill="#e2e8f0"/>
+    <rect y="10" width="210" height="16" rx="8" fill="url(#successProgress)"/>
+    <text x="150" y="23" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="white" text-anchor="middle">70%</text>
+  </g>
+  
+  <!-- Segmented Progress -->
+  <g transform="translate(40, 295)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Segmented (Steps)</text>
+    <rect y="10" width="68" height="8" rx="4" fill="url(#progressGrad)"/>
+    <rect x="76" y="10" width="68" height="8" rx="4" fill="url(#progressGrad)"/>
+    <rect x="152" y="10" width="68" height="8" rx="4" fill="url(#progressGrad)"/>
+    <rect x="228" y="10" width="68" height="8" rx="4" fill="#e2e8f0"/>
+    <text x="34" y="35" font-family="Inter, sans-serif" font-size="9" fill="#64748b" text-anchor="middle">Step 1</text>
+    <text x="110" y="35" font-family="Inter, sans-serif" font-size="9" fill="#64748b" text-anchor="middle">Step 2</text>
+    <text x="186" y="35" font-family="Inter, sans-serif" font-size="9" fill="#64748b" text-anchor="middle">Step 3</text>
+    <text x="262" y="35" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Step 4</text>
+  </g>
+  
+  <!-- Circular Progress -->
+  <text x="400" y="115" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">CIRCULAR PROGRESS</text>
+  
+  <!-- Basic Circle -->
+  <g transform="translate(440, 190)">
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+    <circle cx="0" cy="0" r="50" fill="none" stroke="url(#circleGrad)" stroke-width="8" 
+            stroke-dasharray="236" stroke-dashoffset="59" stroke-linecap="round"
+            transform="rotate(-90)"/>
+    <text x="0" y="7" font-family="Inter, sans-serif" font-size="20" font-weight="700" fill="#1e293b" text-anchor="middle">75%</text>
+  </g>
+  
+  <!-- With Icon -->
+  <g transform="translate(570, 190)">
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#e2e8f0" stroke-width="8"/>
+    <circle cx="0" cy="0" r="50" fill="none" stroke="url(#successProgress)" stroke-width="8" 
+            stroke-dasharray="314" stroke-dashoffset="0" stroke-linecap="round"
+            transform="rotate(-90)"/>
+    <path d="M-12 0 L-4 8 L12 -8" stroke="#11998e" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  
+  <!-- Small Circles -->
+  <g transform="translate(700, 190)">
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#e2e8f0" stroke-width="5"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="#eb3349" stroke-width="5" 
+            stroke-dasharray="188" stroke-dashoffset="141" stroke-linecap="round"
+            transform="rotate(-90)"/>
+    <text x="0" y="5" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#eb3349" text-anchor="middle">25%</text>
+  </g>
+  
+  <!-- Gauges -->
+  <text x="40" y="365" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">GAUGES</text>
+  
+  <!-- Semi-circle Gauge -->
+  <g transform="translate(140, 500)">
+    <path d="M-80 0 A80 80 0 0 1 80 0" fill="none" stroke="#e2e8f0" stroke-width="12" stroke-linecap="round"/>
+    <path d="M-80 0 A80 80 0 0 1 50 -62" fill="none" stroke="url(#progressGrad)" stroke-width="12" stroke-linecap="round"/>
+    <!-- Needle -->
+    <line x1="0" y1="0" x2="35" y2="-55" stroke="#1e293b" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="0" cy="0" r="8" fill="#1e293b"/>
+    <text x="0" y="-20" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">72</text>
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Score</text>
+    <text x="-75" y="25" font-family="Inter, sans-serif" font-size="10" fill="#94a3b8">0</text>
+    <text x="75" y="25" font-family="Inter, sans-serif" font-size="10" fill="#94a3b8">100</text>
+  </g>
+  
+  <!-- Colored Segments Gauge -->
+  <g transform="translate(360, 500)">
+    <!-- Background segments -->
+    <path d="M-80 0 A80 80 0 0 1 -56 -56" fill="none" stroke="#eb3349" stroke-width="12" stroke-linecap="round"/>
+    <path d="M-56 -56 A80 80 0 0 1 56 -56" fill="none" stroke="#f59e0b" stroke-width="12"/>
+    <path d="M56 -56 A80 80 0 0 1 80 0" fill="none" stroke="#38ef7d" stroke-width="12" stroke-linecap="round"/>
+    <!-- Current indicator -->
+    <circle cx="56" cy="-56" r="12" fill="white" stroke="#f59e0b" stroke-width="3"/>
+    <text x="0" y="-20" font-family="Inter, sans-serif" font-size="24" font-weight="700" fill="#1e293b" text-anchor="middle">68</text>
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" fill="#64748b" text-anchor="middle">Performance</text>
+    <text x="-75" y="25" font-family="Inter, sans-serif" font-size="9" fill="#eb3349">Poor</text>
+    <text x="0" y="-85" font-family="Inter, sans-serif" font-size="9" fill="#f59e0b" text-anchor="middle">Fair</text>
+    <text x="75" y="25" font-family="Inter, sans-serif" font-size="9" fill="#38ef7d">Good</text>
+  </g>
+  
+  <!-- Vertical Gauge -->
+  <g transform="translate(520, 395)">
+    <text x="0" y="0" font-family="Inter, sans-serif" font-size="11" fill="#64748b">Vertical</text>
+    <rect x="0" y="15" width="30" height="120" rx="4" fill="#e2e8f0"/>
+    <rect x="0" y="55" width="30" height="80" rx="4" fill="url(#gaugeGrad)"/>
+    <!-- Markers -->
+    <line x1="35" y1="15" x2="45" y2="15" stroke="#94a3b8"/>
+    <text x="50" y="20" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8">100</text>
+    <line x1="35" y1="75" x2="45" y2="75" stroke="#94a3b8"/>
+    <text x="50" y="80" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8">50</text>
+    <line x1="35" y1="135" x2="45" y2="135" stroke="#94a3b8"/>
+    <text x="50" y="140" font-family="Inter, sans-serif" font-size="9" fill="#94a3b8">0</text>
+  </g>
+  
+  <!-- Spinner Loading -->
+  <text x="620" y="365" font-family="Inter, sans-serif" font-size="12" font-weight="500" fill="#94a3b8" letter-spacing="1">SPINNERS</text>
+  
+  <g transform="translate(640, 420)">
+    <circle cx="0" cy="0" r="20" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+    <path d="M0 -20 A20 20 0 0 1 20 0" fill="none" stroke="url(#progressGrad)" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  
+  <g transform="translate(700, 420)">
+    <circle cx="0" cy="0" r="15" fill="none" stroke="url(#progressGrad)" stroke-width="3" stroke-dasharray="20 10" stroke-linecap="round"/>
+  </g>
+  
+  <g transform="translate(750, 420)">
+    <circle cx="-15" cy="0" r="4" fill="#667eea" opacity="0.3"/>
+    <circle cx="-8" cy="-10" r="4" fill="#667eea" opacity="0.5"/>
+    <circle cx="8" cy="-10" r="4" fill="#667eea" opacity="0.7"/>
+    <circle cx="15" cy="0" r="4" fill="#667eea" opacity="0.9"/>
+    <circle cx="8" cy="10" r="4" fill="#667eea"/>
+    <circle cx="-8" cy="10" r="4" fill="#667eea" opacity="0.2"/>
+  </g>
+  
+  <!-- Design Notes -->
+  <rect x="620" y="470" width="160" height="110" rx="12" fill="#f1f5f9" stroke="#e2e8f0"/>
+  <text x="700" y="495" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">Design Notes</text>
+  <text x="630" y="520" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Gradient fills</text>
+  <text x="630" y="538" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Round caps</text>
+  <text x="630" y="556" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Semantic colors</text>
+  <text x="630" y="574" font-family="Inter, sans-serif" font-size="10" fill="#64748b">• Smooth animations</text>
+</svg>

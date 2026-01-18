@@ -17,6 +17,10 @@ Reusable capability packs for agents working on `jsgui3-html`.
 | session-discipline | session start, session end, continuity, notes | `skills/session-discipline/SKILL.md` |
 | lab-experimentation | lab, experiment, prove, hypothesis, behavior | `skills/lab-experimentation/SKILL.md` |
 | autonomous-ui-inspection | screenshot, inspect UI, visual, layout metrics | `skills/autonomous-ui-inspection/SKILL.md` |
+| theme-system-integration | theme, variant, themeable, params | `skills/theme-system-integration/SKILL.md` |
+| typescript-types | d.ts, declarations, types | `skills/typescript-types/SKILL.md` |
+| inheritance-debugging | super(), NaN, undefined, constructor order | `skills/inheritance-debugging/SKILL.md` |
+| browser-verification | demo server, visual verify, screenshot, DOM | `skills/browser-verification/SKILL.md` |
 
 ## Adding a Skill
 
