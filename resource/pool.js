@@ -103,7 +103,8 @@ class Resource_Pool extends Evented_Class {
 	'start'(callback) {
 		var arr_resources_meeting_requirements = [];
 		this.resources.each(function (v, i) {
-			var mr = v.meets_requirements();
+			// If meets_requirements doesn't exist, assume the resource is ready
+			var mr = (typeof v.meets_requirements === 'function') ? v.meets_requirements() : true;
 			if (mr) {
 				arr_resources_meeting_requirements.push(v);
 			}
@@ -114,6 +115,13 @@ class Resource_Pool extends Evented_Class {
 			var num_to_start = arr_resources_meeting_requirements.length;
 			var num_starting = 0,
 				num_started = 0;
+			
+			// Handle case where there are no resources to start
+			if (num_to_start === 0) {
+				if (callback) callback(null, true);
+				return;
+			}
+			
 			var cb = function (err, start_res) {
 				num_starting--;
 				num_started++;
@@ -125,7 +133,12 @@ class Resource_Pool extends Evented_Class {
 				}
 			}
 			each(arr_resources_meeting_requirements, resource_ready_to_start => {
-				resource_ready_to_start.start(cb);
+				// If start doesn't exist, just call the callback immediately
+				if (typeof resource_ready_to_start.start === 'function') {
+					resource_ready_to_start.start(cb);
+				} else {
+					cb(null, true);
+				}
 				num_starting++;
 			});
 		}

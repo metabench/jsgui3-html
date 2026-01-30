@@ -44,7 +44,8 @@ const desc = (ctrl, callback) => {
 		if (content) {
 			var t_content = typeof content;
 			if (t_content === 'string' || t_content === 'number') {} else {
-				var arr = content._arr;
+				var arr = content._arr || content;
+				if (!arr || !arr.length) return;
 				var c, l = arr.length;
 				var item, t_item;
 				for (c = 0; c < l; c++) {
@@ -867,14 +868,18 @@ class Control extends Control_Core {
 										});
 									}
 									if (!found) {
-										content._arr.push(cctrl);
+										// Only push to _arr if content is a Collection
+										// Don't use content.add() as fallback - it triggers DOM operations
+										if (content._arr) {
+											content._arr.push(cctrl);
+										}
 									}
 									cctrl.parent = this;
 								}
 							}
 							if (nt === 3) {
 								const i_sibling = c;
-								const corresponding_ctrl = content._arr[i_sibling];
+								const corresponding_ctrl = content._arr ? content._arr[i_sibling] : undefined;
 								if (corresponding_ctrl) {
 									if (corresponding_ctrl.text === cn.nodeValue) {
 										corresponding_ctrl.dom.el = cn;

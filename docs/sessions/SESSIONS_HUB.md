@@ -5,6 +5,7 @@
 ---
 
 ## 🟢 Current Session (Short-term Memory)
+- [2026-01-29-visual-editor-controls-implementation](./2026-01-29-visual-editor-controls-implementation/PLAN.md)
 - [2026-01-17-theme-system](./2026-01-17-theme-system/PLAN.md)
 
 ## 🟡 Recent Sessions (Medium-term Memory)

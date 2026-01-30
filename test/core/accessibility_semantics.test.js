@@ -65,7 +65,12 @@ describe('Accessibility and Semantics', () => {
         });
 
         tabbed_panel.register_this_and_subcontrols();
-        document.body.innerHTML = tabbed_panel.html;
+        
+        // Clear body first, then use insertAdjacentHTML to avoid HierarchyRequestError
+        while (document.body.firstChild) {
+            document.body.removeChild(document.body.firstChild);
+        }
+        document.body.insertAdjacentHTML('beforeend', tabbed_panel.html);
 
         jsgui.pre_activate(context);
         jsgui.activate(context);

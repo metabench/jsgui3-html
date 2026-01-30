@@ -1,0 +1,96 @@
+:root {
+    --date-picker-bg: var(--panel-bg, #ffffff);
+    --date-picker-border: var(--border-color, #d0d0d0);
+    --date-picker-text: var(--text-primary, #222222);
+    --date-picker-muted: var(--text-secondary, #666666);
+    --date-picker-accent: var(--accent-color, #3b82f6);
+    --date-picker-hover: var(--hover-bg, #f2f4f7);
+    --date-picker-focus: var(--focus-ring, #3b82f6);
+    --date-picker-shadow: var(--shadow-medium, 0 6px 18px rgba(0, 0, 0, 0.12));
+}
+
+.date-picker-progressive {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    border: 1px solid var(--date-picker-border);
+    border-radius: 6px;
+    background: var(--date-picker-bg);
+    color: var(--date-picker-text);
+    position: relative;
+}
+
+.date-picker-native {
+    border: none;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    outline: none;
+}
+
+.date-picker-toggle {
+    border: 1px solid var(--date-picker-border);
+    background: var(--date-picker-bg);
+    color: var(--date-picker-text);
+    border-radius: 4px;
+    padding: 2px 6px;
+    cursor: pointer;
+}
+
+.date-picker-toggle:hover {
+    background: var(--date-picker-hover);
+}
+
+.date-picker-toggle:focus {
+    outline: 2px solid var(--date-picker-focus);
+    outline-offset: 2px;
+}
+
+.date-picker-calendar {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 20;
+    background: var(--date-picker-bg);
+    border: 1px solid var(--date-picker-border);
+    border-radius: 8px;
+    box-shadow: var(--date-picker-shadow);
+}
+
+.date-picker-open .date-picker-calendar {
+    display: block;
+}
+
+.date-picker-inline .date-picker-calendar {
+    position: static;
+    box-shadow: none;
+}
+
+.date-picker-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.date-picker-invalid {
+    border-color: var(--danger-color, #ef4444);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --date-picker-bg: #1f2328;
+        --date-picker-border: #2f353d;
+        --date-picker-text: #e5e7eb;
+        --date-picker-muted: #9aa4b2;
+        --date-picker-hover: #2a3138;
+        --date-picker-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+    }
+}
+
+.dark-theme .date-picker-progressive {
+    --date-picker-bg: #1f2328;
+    --date-picker-border: #2f353d;
+    --date-picker-text: #e5e7eb;
+    --date-picker-muted: #9aa4b2;
+    --date-picker-hover: #2a3138;
+}

@@ -25,7 +25,13 @@ const size_to_css = value => {
 class Split_Pane extends Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'split_pane';
-        super(spec);
+        // Extract Split_Pane-specific size properties before super() to avoid collision
+        // with Control.size which expects [width, height] array
+        const pane_size = spec.size;
+        const pane_min_size = spec.min_size;
+        const pane_max_size = spec.max_size;
+        const { size, min_size, max_size, ...super_spec } = spec;
+        super(super_spec);
         this.add_class('split-pane');
         this.dom.tagName = 'div';
 
@@ -34,9 +40,9 @@ class Split_Pane extends Control {
 
         this.set_orientation(spec.orientation);
         this.set_primary(spec.primary);
-        this.set_min_size(is_defined(spec.min_size) ? spec.min_size : null);
-        this.set_max_size(is_defined(spec.max_size) ? spec.max_size : null);
-        this.set_size(is_defined(spec.size) ? spec.size : spec.initial_size);
+        this.set_min_size(is_defined(pane_min_size) ? pane_min_size : null);
+        this.set_max_size(is_defined(pane_max_size) ? pane_max_size : null);
+        this.set_size(is_defined(pane_size) ? pane_size : spec.initial_size);
         this.handle_size = is_defined(spec.handle_size) ? Number(spec.handle_size) : 6;
 
         if (!spec.el) {
@@ -59,13 +65,13 @@ class Split_Pane extends Control {
                 this.primary = normalize_primary(value);
             }
             if (name === 'size') {
-                this.size = normalize_size(value);
+                this._pane_size = normalize_size(value);
             }
             if (name === 'min_size') {
-                this.min_size = is_defined(value) ? Number(value) : null;
+                this._pane_min_size = is_defined(value) ? Number(value) : null;
             }
             if (name === 'max_size') {
-                this.max_size = is_defined(value) ? Number(value) : null;
+                this._pane_max_size = is_defined(value) ? Number(value) : null;
             }
             if (
                 name === 'orientation' ||
@@ -114,7 +120,7 @@ class Split_Pane extends Control {
     set_size(size) {
         const next = normalize_size(size);
         this.set_model_value('size', next);
-        this.size = next;
+        this._pane_size = next;
         this.update_layout();
     }
 
@@ -123,7 +129,7 @@ class Split_Pane extends Control {
      * @returns {number|string}
      */
     get_size() {
-        return this.size;
+        return this._pane_size;
     }
 
     /**
@@ -133,7 +139,7 @@ class Split_Pane extends Control {
     set_min_size(min_size) {
         const next = is_defined(min_size) ? Number(min_size) : null;
         this.set_model_value('min_size', next);
-        this.min_size = Number.isFinite(next) ? next : null;
+        this._pane_min_size = Number.isFinite(next) ? next : null;
     }
 
     /**
@@ -143,7 +149,7 @@ class Split_Pane extends Control {
     set_max_size(max_size) {
         const next = is_defined(max_size) ? Number(max_size) : null;
         this.set_model_value('max_size', next);
-        this.max_size = Number.isFinite(next) ? next : null;
+        this._pane_max_size = Number.isFinite(next) ? next : null;
     }
 
     compose_split_pane(spec = {}) {
@@ -215,7 +221,7 @@ class Split_Pane extends Control {
 
         const primary_pane = this.get_primary_pane();
         const secondary_pane = this.get_secondary_pane();
-        const size_value = size_to_css(this.size);
+        const size_value = size_to_css(this._pane_size);
 
         first_pane.remove_class('split-pane-pane-primary');
         first_pane.remove_class('split-pane-pane-secondary');
@@ -245,7 +251,7 @@ class Split_Pane extends Control {
     }
 
     resolve_size_px() {
-        const size = this.size;
+        const size = this._pane_size;
         if (typeof size === 'number') return size;
         if (typeof size === 'string') {
             const trimmed = size.trim();
@@ -263,11 +269,11 @@ class Split_Pane extends Control {
 
     clamp_size(next_size) {
         let size = next_size;
-        if (Number.isFinite(this.min_size)) {
-            size = Math.max(this.min_size, size);
+        if (Number.isFinite(this._pane_min_size)) {
+            size = Math.max(this._pane_min_size, size);
         }
-        if (Number.isFinite(this.max_size)) {
-            size = Math.min(this.max_size, size);
+        if (Number.isFinite(this._pane_max_size)) {
+            size = Math.min(this._pane_max_size, size);
         }
         return size;
     }
@@ -295,7 +301,7 @@ class Split_Pane extends Control {
                 dragging = false;
                 document.removeEventListener('mousemove', on_move);
                 document.removeEventListener('mouseup', on_up);
-                this.raise('resize', { size: this.size });
+                this.raise('resize', { size: this._pane_size });
             };
 
             handle.add_dom_event_listener('mousedown', e_down => {

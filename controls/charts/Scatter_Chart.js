@@ -72,6 +72,13 @@ class Scatter_Chart extends Chart_Base {
                     y: p.y,
                     label: p.label
                 }));
+            } else if (s.values && Array.isArray(s.values)) {
+                // Handle standard adapter output where points are in 'values'
+                points = s.values.map(p => ({
+                    x: p.x,
+                    y: p.y,
+                    label: p.label
+                }));
             } else if (s.x && s.y && Array.isArray(s.x) && Array.isArray(s.y)) {
                 // Separate x/y arrays
                 const len = Math.min(s.x.length, s.y.length);

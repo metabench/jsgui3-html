@@ -10,6 +10,8 @@ const Pie_Chart = require('./Pie_Chart');
 const Area_Chart = require('./Area_Chart');
 const Scatter_Chart = require('./Scatter_Chart');
 const Function_Graph = require('./Function_Graph');
+const Flexi_Chart = require('./Flexi_Chart');
+const data_adapters = require('./data_adapters');
 
 module.exports = {
     Chart_Base,
@@ -18,11 +20,14 @@ module.exports = {
     Area_Chart,
     Scatter_Chart,
     Function_Graph,
+    Flexi_Chart,
+    data_adapters,
 
     // Aliases
     BarChart: Bar_Chart,
     PieChart: Pie_Chart,
     AreaChart: Area_Chart,
     ScatterChart: Scatter_Chart,
-    FunctionGraph: Function_Graph
+    FunctionGraph: Function_Graph,
+    FlexiChart: Flexi_Chart
 };
