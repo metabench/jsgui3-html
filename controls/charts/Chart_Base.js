@@ -49,7 +49,7 @@ class Chart_Base extends Control {
      * @param {Object} [spec.data] - Chart data with labels and series
      * @param {string[]} [spec.data.labels] - Category labels
      * @param {Object[]} [spec.data.series] - Data series array
-     * @param {string} [spec.variant] - Theme variant name
+     * @param {string} [spec.variant] - Theme variant name ('dark', 'compact')
      * @param {Object} [spec.params] - Theme parameters
      */
     constructor(spec = {}) {
@@ -63,16 +63,24 @@ class Chart_Base extends Control {
         // Resolve size from params or spec
         const size_preset = params.size || 'medium';
         const size_config = CHART_SIZES[size_preset] || CHART_SIZES.medium;
-        this._chart_width = spec.width || size_config.width;
-        this._chart_height = spec.height || size_config.height;
 
-        // Resolve palette
-        const palette_name = params.palette || 'categorical';
+        // Handle "auto" sizing
+        this._auto_size = spec.width === 'auto' || spec.height === 'auto';
+        this._chart_width = spec.width === 'auto' ? size_config.width : (spec.width || size_config.width);
+        this._chart_height = spec.height === 'auto' ? size_config.height : (spec.height || size_config.height);
+
+        // Resolve palette based on variant
+        const variant = spec.variant || 'default';
+        let default_palette = 'categorical';
+        if (variant === 'dark') default_palette = 'dark';
+
+        const palette_name = params.palette || default_palette;
         this._palette = CHART_PALETTES[palette_name] || CHART_PALETTES.categorical;
 
         // Chart configuration
         this._show_grid = params.grid !== false;
-        // Support legend: true as shorthand for 'bottom'
+
+        // Legend configuration (top, bottom, left, right, none)
         const legend_param = params.legend;
         if (legend_param === true) {
             this._show_legend = 'bottom';
@@ -81,12 +89,20 @@ class Chart_Base extends Control {
         } else {
             this._show_legend = legend_param || 'bottom';
         }
+
         this._animate = params.animation !== false;
 
-        // Margins
+        // Track hidden series (toggled via legend)
+        this._hidden_series = new Set();
+
+        // Margins - adjustable by variant
         this._margin = spec.margin || { top: 20, right: 20, bottom: 40, left: 50 };
+        if (spec.variant === 'compact') {
+            this._margin = { top: 10, right: 10, bottom: 20, left: 30 };
+        }
 
         this.add_class('chart');
+        if (spec.variant) this.add_class(`variant-${spec.variant}`);
 
         // Setup data binding
         this._setup_data_binding(spec);
@@ -161,7 +177,11 @@ class Chart_Base extends Control {
     _on_data_change(name, value) {
         // Re-render chart on data change (only client-side)
         if (typeof window !== 'undefined' && this.__active) {
-            this.render_chart();
+            // Apply updates
+            if (name === 'labels') this._labels = value;
+            if (name === 'series') this._series = this._normalize_series(value);
+
+            this.render_chart_content();
         }
     }
 
@@ -222,22 +242,33 @@ class Chart_Base extends Control {
     }
 
     /**
-     * Get min/max values from all series.
+     * Get active (visible) series.
+     */
+    get_active_series() {
+        if (!this._series) return [];
+        return this._series.filter(s => !this._hidden_series.has(s.name));
+    }
+
+    /**
+     * Get min/max values from active series.
      */
     get_value_range() {
-        if (!this._series || !this._series.length) {
+        const series = this.get_active_series();
+        if (!series || !series.length) {
             return { min: 0, max: 100 };
         }
 
         let min = Infinity;
         let max = -Infinity;
 
-        for (const series of this._series) {
-            for (const val of series.values) {
+        for (const s of series) {
+            for (const val of s.values) {
                 if (val < min) min = val;
                 if (val > max) max = val;
             }
         }
+
+        if (min === Infinity) return { min: 0, max: 100 };
 
         // Add padding
         const range = max - min;
@@ -246,6 +277,11 @@ class Chart_Base extends Control {
 
         // Ensure 0 is included if close
         if (min > 0 && min < max * 0.2) min = 0;
+
+        // Handle flat line case
+        if (min === max) {
+            max = min + 10;
+        }
 
         return { min, max };
     }
@@ -256,7 +292,8 @@ class Chart_Base extends Control {
     value_to_y(value) {
         const { min, max } = this.get_value_range();
         const area = this.get_chart_area();
-        const scale = area.height / (max - min);
+        const range = max - min || 1;
+        const scale = area.height / range;
         return area.y + area.height - (value - min) * scale;
     }
 
@@ -279,12 +316,20 @@ class Chart_Base extends Control {
             tag_name: 'svg'
         });
 
-        svg.dom.attributes.width = this._chart_width;
-        svg.dom.attributes.height = this._chart_height;
-        svg.dom.attributes.viewBox = `0 0 ${this._chart_width} ${this._chart_height}`;
+        this._update_svg_attribs(svg);
         svg.add_class('chart-svg');
 
         return svg;
+    }
+
+    /**
+     * Update SVG dimensions
+     */
+    _update_svg_attribs(svg = this._svg) {
+        if (!svg) return;
+        svg.dom.attributes.width = this._chart_width;
+        svg.dom.attributes.height = this._chart_height;
+        svg.dom.attributes.viewBox = `0 0 ${this._chart_width} ${this._chart_height}`;
     }
 
     /**
@@ -317,17 +362,45 @@ class Chart_Base extends Control {
         // Clear existing content
         this.clear();
 
+        // Add CSS class for layout
+        this.add_class(`layout-${this._show_legend}`);
+
+        // Create main container for layout if needed, but for now 
+        // we use flexbox on the chart control itself via CSS.
+
+        // Legend before chart if top/left
+        if (this._show_legend === 'top' || this._show_legend === 'left') {
+            this.render_legend();
+        }
+
         // Create SVG container
         this._svg = this.create_svg();
         this.add(this._svg);
 
         // Render chart content
-        this.render_chart();
+        this.render_chart_content();
 
-        // Add legend if configured
-        if (this._show_legend !== 'none') {
+        // Legend after chart if bottom/right
+        if (this._show_legend === 'bottom' || this._show_legend === 'right') {
             this.render_legend();
         }
+    }
+
+    /**
+     * Central rendering method to refresh just the chart part.
+     */
+    render_chart_content() {
+        if (!this._svg) return;
+        this._svg.clear();
+
+        // Check for empty data
+        if (!this._series || this._series.length === 0) {
+            this.render_empty();
+            return;
+        }
+
+        // Base implementation - override in subclasses
+        this.render_chart();
     }
 
     /**
@@ -339,6 +412,23 @@ class Chart_Base extends Control {
         if (this._show_grid) {
             this.render_grid();
         }
+    }
+
+    /**
+     * Render empty state.
+     */
+    render_empty() {
+        const area = this.get_chart_area();
+        const text = this.svg_element('text', {
+            x: this._chart_width / 2,
+            y: this._chart_height / 2,
+            'text-anchor': 'middle',
+            'dominant-baseline': 'middle',
+            fill: '#999',
+            'font-size': 14
+        });
+        text.add('No Data');
+        this._svg.add(text);
     }
 
     /**
@@ -354,7 +444,8 @@ class Chart_Base extends Control {
 
         // Horizontal grid lines
         const steps = 5;
-        const step = (max - min) / steps;
+        const range = max - min;
+        const step = range > 0 ? range / steps : 1;
 
         for (let i = 0; i <= steps; i++) {
             const value = min + i * step;
@@ -365,7 +456,7 @@ class Chart_Base extends Control {
                 'y1': y,
                 'x2': area.x + area.width,
                 'y2': y,
-                'stroke': '#e0e0e0',
+                'stroke': 'var(--chart-grid-color, #e0e0e0)',
                 'stroke-width': 1
             });
             grid.add(line);
@@ -376,8 +467,9 @@ class Chart_Base extends Control {
                 'y': y + 4,
                 'text-anchor': 'end',
                 'font-size': 11,
-                'fill': '#666'
+                'fill': 'var(--chart-text-color, #666)'
             });
+            // Format number?
             label.add(Math.round(value).toString());
             grid.add(label);
         }
@@ -385,10 +477,6 @@ class Chart_Base extends Control {
         this._svg.add(grid);
     }
 
-    /**
-     * Render the legend.
-     * @protected
-     */
     /**
      * Get legend items. Override in subclasses like Pie_Chart
      * to customize legend content.
@@ -398,7 +486,8 @@ class Chart_Base extends Control {
         if (!this._series || !this._series.length) return [];
         return this._series.map(s => ({
             name: s.name,
-            color: s.color
+            color: s.color,
+            visible: !this._hidden_series.has(s.name)
         }));
     }
 
@@ -406,16 +495,23 @@ class Chart_Base extends Control {
      * Render the legend component.
      */
     render_legend() {
+        // Remove existing legend if any
+        if (this._legend_ctrl) {
+            this.remove(this._legend_ctrl);
+        }
+
         const items = this.get_legend_items();
         if (!items || !items.length) return;
 
         const legend = new Control({ context: this.context });
         legend.add_class('chart-legend');
         legend.add_class(`legend-${this._show_legend}`);
+        this._legend_ctrl = legend;
 
         items.forEach((item) => {
             const itemEl = new Control({ context: this.context });
             itemEl.add_class('legend-item');
+            if (!item.visible) itemEl.add_class('hidden');
 
             const swatch = new Control({ context: this.context });
             swatch.add_class('legend-swatch');
@@ -426,6 +522,10 @@ class Chart_Base extends Control {
             label.add_class('legend-label');
             label.add(item.name);
             itemEl.add(label);
+
+            // Client-side click handler setup handled in activate() via delegated event or specific bind?
+            // Since we re-render on server, we can add data-attribute for client to pick up
+            itemEl.dom.attributes['data-series'] = item.name;
 
             legend.add(itemEl);
         });
@@ -440,24 +540,158 @@ class Chart_Base extends Control {
         if (!this.__active) {
             super.activate();
 
-            // Re-render if we have data
-            if (this._series && this._series.length) {
-                this.render_chart();
+            // Responsive sizing
+            if (this._auto_size && typeof ResizeObserver !== 'undefined') {
+                this._setup_resize_observer();
+            }
+
+            // Legend interactions
+            this._setup_legend_interactions();
+
+            // Initial Render (if empty SVG)
+            if (this._series && this._series.length && (!this._svg || this._svg.content.length === 0)) {
+                this.render_chart_content();
             }
         }
+    }
+
+    _setup_resize_observer() {
+        const el = this.dom.el;
+        if (!el) return;
+
+        let resize_timeout;
+        const observer = new ResizeObserver(entries => {
+            for (const entry of entries) {
+                if (entry.contentRect) {
+                    const { width, height } = entry.contentRect;
+
+                    // Throttle resize
+                    if (resize_timeout) clearTimeout(resize_timeout);
+                    resize_timeout = setTimeout(() => {
+                        this._resize(width, height);
+                    }, 100);
+                }
+            }
+        });
+
+        observer.observe(el);
+        this._resize_observer = observer;
+    }
+
+    _resize(width, height) {
+        // Adjust for legend if it takes space (not overlay)
+        // This handles simple resizing of the graph area within container
+        // Actually, improved approach:
+        // If 'auto', we read the container size.
+        // We need to account for legend taking up space.
+
+        const el = this.dom.el;
+
+        // Simple heuristic: if we are resizing, update internal dims and redraw
+        // But need to subtract legend size if fixed
+        let chart_w = width;
+        let chart_h = height;
+
+        // If legend is side-by-side, it's tricky without sophisticated layout engine.
+        // For now, assume chart takes 100% of available space in container (which includes legend).
+        // If legend is outside SVG, SVG needs to shrink.
+
+        const svg_el = el.querySelector('svg');
+        const legend_el = el.querySelector('.chart-legend');
+
+        if (legend_el && (this._show_legend === 'top' || this._show_legend === 'bottom')) {
+            chart_h -= legend_el.offsetHeight;
+        }
+        if (legend_el && (this._show_legend === 'left' || this._show_legend === 'right')) {
+            chart_w -= legend_el.offsetWidth;
+        }
+
+        if (chart_w !== this._chart_width || chart_h !== this._chart_height) {
+            this._chart_width = chart_w;
+            this._chart_height = chart_h;
+
+            this._update_svg_attribs();
+            this.render_chart_content();
+        }
+    }
+
+    _setup_legend_interactions() {
+        const el = this.dom.el;
+        if (!el) return;
+
+        // Delegated click
+        el.addEventListener('click', (e) => {
+            const item = e.target.closest('.legend-item');
+            if (item) {
+                const seriesName = item.getAttribute('data-series');
+                this._toggle_series(seriesName);
+            }
+        });
+    }
+
+    _toggle_series(name) {
+        if (this._hidden_series.has(name)) {
+            this._hidden_series.delete(name);
+        } else {
+            this._hidden_series.add(name);
+        }
+
+        // Re-render legend to update visuals (opacity)
+        // And re-render chart
+
+        // Update DOM classes directly for legend to avoid full re-render flickering
+        const el = this.dom.el;
+        const item = el.querySelector(`.legend-item[data-series="${name}"]`);
+        if (item) {
+            if (this._hidden_series.has(name)) {
+                item.classList.add('hidden');
+            } else {
+                item.classList.remove('hidden');
+            }
+        }
+
+        this.render_chart_content();
+    }
+
+    /**
+     * Raise a unified point event.
+     * @param {string} type - 'point-click' or 'point-hover'
+     * @param {Object} payload
+     */
+    raise_event(type, payload) {
+        this.raise(type, {
+            ...payload,
+            event: type,
+            target: this
+        });
     }
 }
 
 // Static CSS
 Chart_Base.css = `
 .chart {
-    display: inline-block;
+    display: flex;
     position: relative;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    user-select: none;
+    --chart-text-color: #666;
+    --chart-grid-color: #e0e0e0;
 }
+
+.chart.variant-dark {
+    background-color: #222;
+    --chart-text-color: #aaa;
+    --chart-grid-color: #444;
+}
+
+.chart.layout-bottom { flex-direction: column; }
+.chart.layout-top { flex-direction: column-reverse; }
+.chart.layout-left { flex-direction: row-reverse; }
+.chart.layout-right { flex-direction: row; }
 
 .chart-svg {
     display: block;
+    flex-grow: 1;
 }
 
 .chart-grid line {
@@ -470,33 +704,14 @@ Chart_Base.css = `
     gap: 16px;
     padding: 8px;
     flex-wrap: wrap;
+    align-items: center;
 }
 
-.chart-legend.legend-top {
-    order: -1;
-    margin-bottom: 8px;
-}
-
-.chart-legend.legend-bottom {
-    margin-top: 8px;
-}
-
-.chart-legend.legend-left {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
+.chart.layout-left .chart-legend,
+.chart.layout-right .chart-legend {
     flex-direction: column;
     align-items: flex-start;
-}
-
-.chart-legend.legend-right {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    flex-direction: column;
-    align-items: flex-start;
+    justify-content: center;
 }
 
 .legend-item {
@@ -504,13 +719,18 @@ Chart_Base.css = `
     align-items: center;
     gap: 6px;
     font-size: 12px;
-    color: #666;
+    color: var(--chart-text-color);
     cursor: pointer;
     transition: opacity 0.2s;
 }
 
 .legend-item:hover {
     opacity: 0.8;
+}
+
+.legend-item.hidden {
+    opacity: 0.4;
+    text-decoration: line-through;
 }
 
 .legend-swatch {
@@ -521,7 +741,7 @@ Chart_Base.css = `
 }
 `;
 
-// Export palettes and sizes for use in other chart types
+// Export palettes and sizes
 Chart_Base.PALETTES = CHART_PALETTES;
 Chart_Base.SIZES = CHART_SIZES;
 

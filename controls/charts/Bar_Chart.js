@@ -81,13 +81,8 @@ class Bar_Chart extends Chart_Base {
     render_chart() {
         if (!this._svg) return;
 
-        // Clear existing chart content (keep SVG)
-        this._svg.clear();
-
-        // Render grid first
-        if (this._show_grid) {
-            this.render_grid();
-        }
+        // Grid and Axes handled by separate calls but we can override if needed
+        // Chart_Base calls render_grid, then we add axes and bars
 
         // Render axes
         this.render_axes();
@@ -112,7 +107,7 @@ class Bar_Chart extends Chart_Base {
             'y1': area.y,
             'x2': area.x,
             'y2': area.y + area.height,
-            'stroke': '#333',
+            'stroke': 'var(--chart-grid-color, #333)',
             'stroke-width': 1
         });
         axes.add(y_axis);
@@ -123,7 +118,7 @@ class Bar_Chart extends Chart_Base {
             'y1': area.y + area.height,
             'x2': area.x + area.width,
             'y2': area.y + area.height,
-            'stroke': '#333',
+            'stroke': 'var(--chart-grid-color, #333)',
             'stroke-width': 1
         });
         axes.add(x_axis);
@@ -142,7 +137,7 @@ class Bar_Chart extends Chart_Base {
                     'y': y,
                     'text-anchor': 'middle',
                     'font-size': 11,
-                    'fill': '#666'
+                    'fill': 'var(--chart-text-color, #666)'
                 });
                 text.add(label);
                 axes.add(text);
@@ -156,7 +151,8 @@ class Bar_Chart extends Chart_Base {
      * Render the bars.
      */
     render_bars() {
-        if (!this._series || !this._series.length) return;
+        const active_series = this.get_active_series();
+        if (!active_series || !active_series.length) return;
         if (!this._labels || !this._labels.length) return;
 
         const area = this.get_chart_area();
@@ -164,7 +160,7 @@ class Bar_Chart extends Chart_Base {
         const range = max - min;
 
         const num_categories = this._labels.length;
-        const num_series = this._series.length;
+        const num_series = active_series.length;
 
         // Use defaults if properties not yet set (during initial compose_chart from super())
         const bar_gap = this._bar_gap !== undefined ? this._bar_gap : 0.1;
@@ -189,9 +185,9 @@ class Bar_Chart extends Chart_Base {
         const bars_group = this.svg_element('g', { 'class': 'chart-bars' });
 
         if (this._mode === 'grouped') {
-            this._render_grouped_bars(bars_group, area, min, range, category_width, group_padding, bar_width, num_series);
+            this._render_grouped_bars(bars_group, area, min, range, category_width, group_padding, bar_width, active_series);
         } else {
-            this._render_stacked_bars(bars_group, area, min, range, category_width, group_padding, bar_width);
+            this._render_stacked_bars(bars_group, area, min, range, category_width, group_padding, bar_width, active_series);
         }
 
         this._svg.add(bars_group);
@@ -201,8 +197,8 @@ class Bar_Chart extends Chart_Base {
      * Render grouped bars.
      * @private
      */
-    _render_grouped_bars(group, area, min, range, category_width, group_padding, bar_width, num_series) {
-        this._series.forEach((series, series_index) => {
+    _render_grouped_bars(group, area, min, range, category_width, group_padding, bar_width, active_series) {
+        active_series.forEach((series, series_index) => {
             series.values.forEach((value, cat_index) => {
                 const bar_height = ((value - min) / range) * area.height;
                 const x = area.x +
@@ -233,14 +229,14 @@ class Bar_Chart extends Chart_Base {
      * Render stacked bars.
      * @private
      */
-    _render_stacked_bars(group, area, min, range, category_width, group_padding, bar_width) {
+    _render_stacked_bars(group, area, min, range, category_width, group_padding, bar_width, active_series) {
         const num_categories = this._labels.length;
 
         for (let cat_index = 0; cat_index < num_categories; cat_index++) {
             let cumulative_height = 0;
             const x = area.x + cat_index * category_width + group_padding + (category_width - group_padding * 2 - bar_width) / 2;
 
-            this._series.forEach((series, series_index) => {
+            active_series.forEach((series, series_index) => {
                 const value = series.values[cat_index] || 0;
                 const bar_height = ((value - min) / range) * area.height;
                 const y = area.y + area.height - cumulative_height - bar_height;
@@ -284,29 +280,46 @@ class Bar_Chart extends Chart_Base {
         const el = this.dom.el;
         if (!el) return;
 
-        const bars = el.querySelectorAll('.bar');
+        // Delegated listener for better performance with many bars
+        const barsGroup = el.querySelector('.chart-bars');
+        if (!barsGroup) return;
 
-        bars.forEach(bar => {
-            bar.addEventListener('mouseenter', () => {
-                bar.style.opacity = '0.8';
-            });
+        barsGroup.addEventListener('mouseover', (e) => {
+            if (e.target.classList.contains('bar')) {
+                e.target.style.opacity = '0.8';
 
-            bar.addEventListener('mouseleave', () => {
-                bar.style.opacity = '1';
-            });
+                const series = e.target.getAttribute('data-series');
+                const category = e.target.getAttribute('data-category');
+                const value = e.target.getAttribute('data-value');
 
-            bar.addEventListener('click', (e) => {
-                const series = bar.getAttribute('data-series');
-                const category = bar.getAttribute('data-category');
-                const value = bar.getAttribute('data-value');
-
-                this.raise('bar-click', {
+                this.raise_event('point-hover', {
                     series,
                     category,
                     value: parseFloat(value),
-                    element: bar
+                    element: e.target
                 });
-            });
+            }
+        });
+
+        barsGroup.addEventListener('mouseout', (e) => {
+            if (e.target.classList.contains('bar')) {
+                e.target.style.opacity = '1';
+            }
+        });
+
+        barsGroup.addEventListener('click', (e) => {
+            if (e.target.classList.contains('bar')) {
+                const series = e.target.getAttribute('data-series');
+                const category = e.target.getAttribute('data-category');
+                const value = e.target.getAttribute('data-value');
+
+                this.raise_event('point-click', {
+                    series,
+                    category,
+                    value: parseFloat(value),
+                    element: e.target
+                });
+            }
         });
     }
 }
@@ -316,10 +329,6 @@ Bar_Chart.css = `
 .bar-chart .bar {
     transition: opacity 0.15s ease;
     cursor: pointer;
-}
-
-.bar-chart .bar:hover {
-    opacity: 0.8;
 }
 `;
 

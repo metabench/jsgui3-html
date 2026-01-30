@@ -81,10 +81,15 @@ class Pie_Chart extends Chart_Base {
     }
 
     /**
-     * Get total of all values.
+     * Get total of all values (excluding hidden ones).
      */
     get_total() {
-        return this.get_values().reduce((sum, val) => sum + val, 0);
+        const values = this.get_values();
+        return values.reduce((sum, val, index) => {
+            const label = this._labels && this._labels[index] ? this._labels[index] : `Segment ${index + 1}`;
+            if (this._hidden_series.has(label)) return sum;
+            return sum + val;
+        }, 0);
     }
 
     /**
@@ -96,10 +101,14 @@ class Pie_Chart extends Chart_Base {
         const values = this.get_values();
         if (!values.length) return [];
 
-        return values.map((value, index) => ({
-            name: this._labels && this._labels[index] ? this._labels[index] : `Segment ${index + 1}`,
-            color: this._palette[index % this._palette.length]
-        }));
+        return values.map((value, index) => {
+            const name = this._labels && this._labels[index] ? this._labels[index] : `Segment ${index + 1}`;
+            return {
+                name: name,
+                color: this._palette[index % this._palette.length],
+                visible: !this._hidden_series.has(name)
+            };
+        });
     }
 
     /**
@@ -108,8 +117,9 @@ class Pie_Chart extends Chart_Base {
     render_chart() {
         if (!this._svg) return;
 
-        // Clear existing chart content
-        this._svg.clear();
+        // Clear existing chart content (kept by base or manual clear)
+        // Chart_Base.render_chart_content calls this, but it clears SVG before calling.
+        // So we are working on a clean SVG.
 
         // Render pie segments
         this.render_segments();
@@ -119,6 +129,8 @@ class Pie_Chart extends Chart_Base {
         if (mode === 'donut') {
             this.render_center_label();
         }
+
+        // No grid/axes for pie chart usually
     }
 
     /**
@@ -141,6 +153,11 @@ class Pie_Chart extends Chart_Base {
         let current_angle = start_angle;
 
         values.forEach((value, index) => {
+            const label = this._labels ? this._labels[index] : `Segment ${index + 1}`;
+
+            // Skip if hidden
+            if (this._hidden_series.has(label)) return;
+
             const percentage = (value / total) * 100;
             const angle = (value / total) * 360;
 
@@ -152,7 +169,6 @@ class Pie_Chart extends Chart_Base {
             );
 
             const color = this._palette[index % this._palette.length];
-            const label = this._labels ? this._labels[index] : `Segment ${index + 1}`;
 
             const segment = this.svg_element('path', {
                 'd': path,
@@ -202,6 +218,11 @@ class Pie_Chart extends Chart_Base {
      * @private
      */
     _create_arc_path(cx, cy, outer_r, inner_r, start_angle, end_angle) {
+        // Handle full circle
+        if (end_angle - start_angle >= 360) {
+            end_angle = start_angle + 359.99;
+        }
+
         const start_rad = start_angle * Math.PI / 180;
         const end_rad = end_angle * Math.PI / 180;
 
@@ -233,6 +254,9 @@ class Pie_Chart extends Chart_Base {
         const { center_x, center_y } = this.get_pie_dimensions();
         const total = this.get_total();
 
+        // Round if needed
+        const displayTotal = Math.round(total * 100) / 100;
+
         const label = this.svg_element('text', {
             'x': center_x,
             'y': center_y,
@@ -240,11 +264,11 @@ class Pie_Chart extends Chart_Base {
             'dominant-baseline': 'middle',
             'font-size': 24,
             'font-weight': 'bold',
-            'fill': '#333',
+            'fill': 'var(--chart-text-color, #333)',
             'class': 'center-label'
         });
 
-        label.add(total.toString());
+        label.add(displayTotal.toString());
         this._svg.add(label);
     }
 
@@ -266,32 +290,49 @@ class Pie_Chart extends Chart_Base {
         const el = this.dom.el;
         if (!el) return;
 
-        const segments = el.querySelectorAll('.segment');
+        // Delegated listener
+        const segmentsGroup = el.querySelector('.chart-segments');
+        if (!segmentsGroup) return;
 
-        segments.forEach(segment => {
-            segment.addEventListener('mouseenter', () => {
-                segment.style.transform = 'scale(1.02)';
-                segment.style.transformOrigin = 'center';
-            });
+        segmentsGroup.addEventListener('mouseover', (e) => {
+            if (e.target.classList.contains('segment')) {
+                e.target.style.transform = 'scale(1.02)';
+                e.target.style.transformOrigin = 'center';
 
-            segment.addEventListener('mouseleave', () => {
-                segment.style.transform = 'scale(1)';
-            });
+                const label = e.target.getAttribute('data-label');
+                const value = e.target.getAttribute('data-value');
 
-            segment.addEventListener('click', (e) => {
-                const index = parseInt(segment.getAttribute('data-index'));
-                const label = segment.getAttribute('data-label');
-                const value = parseFloat(segment.getAttribute('data-value'));
-                const percentage = parseFloat(segment.getAttribute('data-percentage'));
-
-                this.raise('segment-click', {
-                    index,
-                    label,
-                    value,
-                    percentage,
-                    element: segment
+                this.raise_event('point-hover', {
+                    series: label, // For pie, series name often maps to category label
+                    category: label,
+                    value: parseFloat(value),
+                    element: e.target
                 });
-            });
+            }
+        });
+
+        segmentsGroup.addEventListener('mouseout', (e) => {
+            if (e.target.classList.contains('segment')) {
+                e.target.style.transform = 'scale(1)';
+            }
+        });
+
+        segmentsGroup.addEventListener('click', (e) => {
+            if (e.target.classList.contains('segment')) {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                const label = e.target.getAttribute('data-label');
+                const value = parseFloat(e.target.getAttribute('data-value'));
+                const percentage = parseFloat(e.target.getAttribute('data-percentage'));
+
+                this.raise_event('point-click', {
+                    series: label,
+                    category: label,
+                    value: value,
+                    index: index,
+                    percentage: percentage,
+                    element: e.target
+                });
+            }
         });
     }
 }
@@ -301,6 +342,7 @@ Pie_Chart.css = `
 .pie-chart .segment {
     transition: transform 0.15s ease;
     cursor: pointer;
+    transform-box: fill-box;
 }
 
 .pie-chart .segment-label {

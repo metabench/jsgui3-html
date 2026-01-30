@@ -325,7 +325,8 @@ class Area_Chart extends Chart_Base {
                     'stroke-width': 2,
                     'class': 'point',
                     'data-series': series.name,
-                    'data-value': value
+                    'data-value': value,
+                    'data-index': i
                 });
                 points_group.add(circle);
             });
@@ -340,29 +341,77 @@ class Area_Chart extends Chart_Base {
     activate() {
         if (!this.__active) {
             super.activate();
-            this._setup_area_interactions();
+            this._setup_interactions();
         }
     }
 
     /**
-     * Setup area hover interactions.
+     * Setup interactions (areas and points).
      * @private
      */
-    _setup_area_interactions() {
+    _setup_interactions() {
         const el = this.dom.el;
         if (!el) return;
 
+        // Area hover effects
         const areas = el.querySelectorAll('.area');
-
         areas.forEach(area => {
             area.addEventListener('mouseenter', () => {
                 area.style.fillOpacity = '0.8';
             });
-
             area.addEventListener('mouseleave', () => {
                 area.style.fillOpacity = '';
             });
         });
+
+        // Delegated point interactions
+        const pointsGroup = el.querySelector('.chart-points');
+        if (pointsGroup) {
+            pointsGroup.addEventListener('mouseover', (e) => {
+                if (e.target.classList.contains('point')) {
+                    e.target.setAttribute('r', '6');
+
+                    const seriesName = e.target.getAttribute('data-series');
+                    const value = parseFloat(e.target.getAttribute('data-value'));
+                    const index = parseInt(e.target.getAttribute('data-index'));
+
+                    // Reconstruct payload
+                    // Note: raw data might need to be resolved from client-side model if available
+                    // For now we send standard payload
+
+                    this.raise_event('point-hover', {
+                        series: seriesName,
+                        value: value,
+                        index: index,
+                        category: this._labels ? this._labels[index] : index,
+                        element: e.target
+                    });
+                }
+            });
+
+            pointsGroup.addEventListener('mouseout', (e) => {
+                if (e.target.classList.contains('point')) {
+                    e.target.setAttribute('r', '4');
+                    // We could raise point-unhover here if needed
+                }
+            });
+
+            pointsGroup.addEventListener('click', (e) => {
+                if (e.target.classList.contains('point')) {
+                    const seriesName = e.target.getAttribute('data-series');
+                    const value = parseFloat(e.target.getAttribute('data-value'));
+                    const index = parseInt(e.target.getAttribute('data-index'));
+
+                    this.raise_event('point-click', {
+                        series: seriesName,
+                        value: value,
+                        index: index,
+                        category: this._labels ? this._labels[index] : index,
+                        element: e.target
+                    });
+                }
+            });
+        }
     }
 }
 

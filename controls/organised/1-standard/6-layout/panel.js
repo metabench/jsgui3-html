@@ -157,7 +157,8 @@ class Panel extends Control {
         });
         this.add(content_container);
         this._ctrl_fields = this._ctrl_fields || {};
-        this._ctrl_fields.content = content_container;
+        // Use 'body' instead of 'content' to avoid overwriting the Collection property
+        this._ctrl_fields.body = content_container;
         this.content_container = content_container;
 
         // Add initial content
