@@ -69,6 +69,7 @@ class List extends Control {
         this.selected_index = -1;
         this.multi_select = !!spec.multi_select;
         this.select_toggle = !!spec.select_toggle;
+        this.drag_select = !!spec.drag_select;
         this.aria_label = spec.aria_label;
         this.focusable = spec.focusable !== false;
         this.enable_keyboard = spec.enable_keyboard !== false;
@@ -328,7 +329,8 @@ class List extends Control {
 
             mx_selectable(ctrl_item, null, {
                 multi: this.multi_select,
-                toggle: this.select_toggle
+                toggle: this.select_toggle,
+                drag: this.drag_select
             });
             ctrl_item.selectable = true;
             ctrl_item.on('change', e_change => {
@@ -394,7 +396,65 @@ class List extends Control {
                     }
                 });
             }
+
+            // Drag selection: listen for drag events on items and select ranges
+            if (this.drag_select) {
+                let drag_start_index = null;
+                this.item_controls.forEach((ctrl, idx) => {
+                    ctrl.on('drag-select-start', () => {
+                        drag_start_index = idx;
+                    });
+                    ctrl.on('drag-select-move', (e) => {
+                        if (drag_start_index === null) return;
+                        const evt = e.event || e;
+                        const el_under = document.elementFromPoint(
+                            evt.clientX, evt.clientY
+                        );
+                        if (!el_under) return;
+                        const end_idx = this._find_item_index_from_el(el_under);
+                        if (end_idx !== null) {
+                            this._select_item_range(drag_start_index, end_idx);
+                        }
+                    });
+                    ctrl.on('drag-select-end', () => {
+                        if (drag_start_index !== null) {
+                            this.raise('drag-selection-change', {
+                                indices: this._get_selected_indices()
+                            });
+                        }
+                        drag_start_index = null;
+                    });
+                });
+            }
         }
+    }
+    '_find_item_index_from_el'(el) {
+        let current = el;
+        while (current && current !== this.dom.el) {
+            for (let i = 0; i < this.item_controls.length; i++) {
+                const ctrl = this.item_controls[i];
+                const ctrl_el = (ctrl.dom && ctrl.dom.el) || ctrl.el;
+                if (ctrl_el && (ctrl_el === current || ctrl_el.contains(current))) {
+                    return i;
+                }
+            }
+            current = current.parentElement;
+        }
+        return null;
+    }
+    '_select_item_range'(start_idx, end_idx) {
+        const lo = Math.min(start_idx, end_idx);
+        const hi = Math.max(start_idx, end_idx);
+        this.item_controls.forEach((ctrl, i) => {
+            ctrl.selected = (i >= lo && i <= hi);
+        });
+    }
+    '_get_selected_indices'() {
+        const indices = [];
+        this.item_controls.forEach((ctrl, i) => {
+            if (ctrl.selected) indices.push(i);
+        });
+        return indices;
     }
 }
 

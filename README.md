@@ -310,46 +310,104 @@ class RegistrationForm extends Data_Model_View_Model_Control {
 
 ## Mixins System
 
-Mixins provide reusable functionality that can be applied to any control:
+Mixins are composable functions that enhance controls with reusable behavior. Each mixin is a function `(ctrl, options?) => void|cleanup` that adds properties, events, and DOM behaviors to any control. The framework ships with **39 mixins** organized into 7 categories.
 
-### Available Mixins
-
-| Mixin | Purpose |
-|-------|---------|
-| `selectable` | Adds selection state and UI behavior |
-| `dragable` | Enables drag and drop functionality |
-| `press_events` | Handles press/touch events with timing |
-| `pressed_state` | Visual feedback for press interactions |
+> **📘 Detailed docs**: [control_mixins/README.md](./control_mixins/README.md) for the full catalog and API tables, or [docs/mixins-book.md](./docs/mixins-book.md) for the comprehensive deep-dive reference.
 
 ### Using Mixins
-```javascript
-const mx_selectable = require('./control_mixins/selectable');
 
-class ListItem extends Control {
+```javascript
+const selectable = require('./control_mixins/selectable');
+const collapsible = require('./control_mixins/collapsible');
+
+class TreeNode extends Control {
     constructor(spec) {
         super(spec);
-        mx_selectable(this); // Adds selection capability
+        selectable(this, null, { multi: true });
+        collapsible(this, { trigger: '.header', content: '.children' });
     }
 }
 ```
 
-### Creating Custom Mixins
+### Mixin Categories
+
+#### Interaction
+| Mixin | Purpose |
+|---|---|
+| `press-events` | Unified mouse/touch press handling with timing, drag detection, and hold |
+| `pressed-state` | Visual `pressed` CSS class feedback on press (disposable) |
+| `dragable` | Full drag-and-drop with axis locking and bounds |
+| `selectable` | Click-to-select with multi-select (Shift/Ctrl) |
+| `selection-box-host` | Marquee/lasso drag-selection |
+| `resizable` | Element resizing via drag handles |
+| `keyboard_navigation` | Arrow key navigation with roving tabindex (ARIA) |
+| `collapsible` | Expand/collapse with `aria-expanded` and CSS classes |
+| `press-outside` | Click-away detection |
+| `fast-touch-click` | Eliminates 300ms touch delay |
+
+#### Input
+| Mixin | Purpose |
+|---|---|
+| `input_base` | Core `get_value()` / `set_value()` / `focus()` / `blur()` |
+| `input_validation` | Pluggable validators, async support, built-in email/number/range |
+| `input_mask` | Real-time formatting for phone, date, currency |
+| `input_api` | High-level wiring: base + validation + mask |
+| `field_status` | Dirty/pristine/touched state tracking |
+
+#### Layout & Display
+`display-modes`, `display`, `popup`, `bind`, `coverable`, `virtual_window`, `collapsible` — size modes, popup positioning, spatial binding, virtual scrolling, expand/collapse.
+
+#### Theme
+`theme`, `themeable`, `theme_params` — CSS variable tokens, size/variant parameters, theme resolution.
+
+#### Lifecycle
+`activation`, `hydration`, `swap_registry`, `auto_enhance`, `mx` — progressive enhancement, SSR hydration, mutation-observer auto-activation, mixin directory.
+
+#### Infrastructure
+`mixin_cleanup`, `mixin_registry` — disposable mixin support, formal dependency/conflict metadata.
+
+#### Accessibility & Data
+`a11y`, `link-hovers`, `deletable`, `selected-deletable`, `selected-resizable` — ARIA helpers, delete/resize on selected items.
+
+### The Mixin Pattern
+
 ```javascript
+const { create_mixin_cleanup } = require('./control_mixins/mixin_cleanup');
+
 const my_mixin = (ctrl, options = {}) => {
-    // Add properties
-    ctrl.custom_property = options.value || 'default';
+    // 1. Guard against double-apply
+    ctrl.__mx = ctrl.__mx || {};
+    if (ctrl.__mx.my_mixin) return ctrl.__mx.my_mixin;
     
-    // Add event handlers
-    ctrl.on('custom_event', () => {
-        // Handle event
-    });
+    // 2. Create disposable cleanup handle
+    const cleanup = create_mixin_cleanup(ctrl, 'my_mixin');
+    ctrl.__mx.my_mixin = cleanup;
     
-    // Setup isomorphic behavior
-    ctrl.on('server-pre-render', () => {
-        ctrl._fields = ctrl._fields || {};
-        ctrl._fields.custom_property = ctrl.custom_property;
-    });
+    // 3. Add behavior
+    const handler = (e) => { /* ... */ };
+    ctrl.on('click', handler);
+    cleanup.track_listener(ctrl, 'click', handler);
+    
+    return cleanup; // caller can later call cleanup.dispose()
 };
+```
+
+### Feature Detection
+
+```javascript
+const mx = require('./control_mixins/mx');
+
+mx.has_feature(ctrl, 'selectable');  // true/false
+mx.list_features(ctrl);             // ['selectable', 'press_events', ...]
+```
+
+### Dependency Resolution
+
+Mixins auto-resolve dependencies — you never need to worry about application order:
+```javascript
+// pressed-state automatically applies press-events if missing
+// selectable automatically applies press-events if missing
+// selection-box-host automatically applies selectable + press-events
 ```
 
 ## Rendering and DOM Management

@@ -10,7 +10,7 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined 
 
 
 const mx_selectable = require('../../../../../control_mixins/selectable');
-const {field} = require('obext');
+const { field } = require('obext');
 var Control = jsgui.Control;
 
 // Possible archetypes for control. Ie declarative definitions of what the control is and does. So a cell would have a similar
@@ -30,7 +30,7 @@ class Cell extends Control {
         if (!spec.el) {
             this.compose_grid_cell();
         }
-        mx_selectable(this);
+        mx_selectable(this, null, { drag: !!spec.drag_select });
     }
     compose_grid_cell() {
         let o = {

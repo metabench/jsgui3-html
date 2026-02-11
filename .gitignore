@@ -5,6 +5,14 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Agent / CI temporary output (NEVER commit these)
+test_output*.txt
+diag_output*.txt
+server_output*.txt
+server_output*.log
+server_error*.log
+debug_*.js
+
 # Runtime data
 pids
 *.pid

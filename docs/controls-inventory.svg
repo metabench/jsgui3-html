@@ -1,0 +1,356 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2200" font-family="Inter, Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="100%" stop-color="#1e293b"/></linearGradient>
+    <linearGradient id="hdr" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6366f1"/><stop offset="100%" stop-color="#8b5cf6"/></linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>
+      .title { font-size: 28px; font-weight: 700; fill: #e2e8f0; }
+      .subtitle { font-size: 14px; fill: #94a3b8; }
+      .cat-title { font-size: 16px; font-weight: 700; fill: #fff; }
+      .item { font-size: 11px; fill: #cbd5e1; }
+      .item-new { font-size: 11px; fill: #fbbf24; font-style: italic; }
+      .item-gap { font-size: 11px; fill: #f87171; }
+      .legend-label { font-size: 12px; fill: #94a3b8; }
+      .count { font-size: 12px; fill: #a5b4fc; font-weight: 600; }
+      .section-label { font-size: 18px; font-weight: 700; fill: #a5b4fc; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="2200" fill="url(#bg)" rx="16"/>
+
+  <!-- Title -->
+  <text x="800" y="50" text-anchor="middle" class="title" filter="url(#glow)">jsgui3-html — Controls Inventory &amp; Roadmap</text>
+  <text x="800" y="72" text-anchor="middle" class="subtitle">✅ Existing · 🟡 Proposed New · 🔴 Gap / Missing</text>
+
+  <!-- Legend -->
+  <rect x="520" y="85" width="14" height="14" rx="3" fill="#22c55e" opacity=".8"/>
+  <text x="540" y="97" class="legend-label">Implemented</text>
+  <rect x="660" y="85" width="14" height="14" rx="3" fill="#fbbf24" opacity=".8"/>
+  <text x="680" y="97" class="legend-label">Proposed</text>
+  <rect x="790" y="85" width="14" height="14" rx="3" fill="#f87171" opacity=".8"/>
+  <text x="810" y="97" class="legend-label">Gap</text>
+  <rect x="890" y="85" width="14" height="14" rx="3" fill="#38bdf8" opacity=".8"/>
+  <text x="910" y="97" class="legend-label">Recently Added</text>
+
+  <!-- ═══════════ SECTION 1: EXISTING ═══════════ -->
+  <text x="40" y="140" class="section-label">▸ EXISTING CONTROLS (113+)</text>
+  <line x1="40" y1="148" x2="1560" y2="148" stroke="#334155" stroke-width="1"/>
+
+  <!-- ── Category 1: Core / Native Input ── -->
+  <rect x="30" y="165" width="360" height="310" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="30" y="165" width="360" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="30" y="187" width="360" height="10" fill="url(#hdr)"/>
+  <text x="210" y="187" text-anchor="middle" class="cat-title">Core · Native Input (18)</text>
+  <g transform="translate(45,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Button</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Text_Input</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Checkbox</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Radio_Button</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Select_Options</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Number_Input</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Range_Input / Slider</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Textarea</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">File_Upload</text>
+  </g>
+  <g transform="translate(210,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Date_Picker</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Email_Input</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Password_Input</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Tel_Input</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">URL_Input</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Meter</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Progress_Bar</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Icon</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Dropdown_List</text>
+  </g>
+
+  <!-- ── Category 2: Core / Compositional ── -->
+  <rect x="410" y="165" width="380" height="310" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="410" y="165" width="380" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="410" y="187" width="380" height="10" fill="url(#hdr)"/>
+  <text x="600" y="187" text-anchor="middle" class="cat-title">Core · Compositional (29)</text>
+  <g transform="translate(425,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">List</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Grid</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">ComboBox</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Month_View (Calendar)</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Color_Grid + Palette</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Dropdown_Menu</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Context_Menu</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Toggle_Button + Switch</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Number_Stepper</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Stepped_Slider</text>
+    <rect x="-4" y="170" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="180" class="item">Item + Text_Item</text>
+  </g>
+  <g transform="translate(610,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Item_Selector</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Radio_Button_Group</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Scroll_View + Scrollbar</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Menu_Node</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Plus_Minus_Toggle</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Badge</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Indicator / Status</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Validation_Status</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Text_Field</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Cell</text>
+    <rect x="-4" y="170" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="180" class="item">Timespan_Selector</text>
+  </g>
+
+  <!-- ── Category 3: Data Controls ── -->
+  <rect x="810" y="165" width="360" height="310" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="810" y="165" width="360" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="810" y="187" width="360" height="10" fill="url(#hdr)"/>
+  <text x="990" y="187" text-anchor="middle" class="cat-title">Data &amp; Viewers (20)</text>
+  <g transform="translate(825,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Data_Table</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Tree_View</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Tree_Table</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Virtual_Grid</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Virtual_List</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Property_Viewer</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Resource_Viewer</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Object_Viewer / KVP</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Data_Grid (connected)</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Matrix + VirtualMatrix</text>
+  </g>
+  <g transform="translate(1000,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Array_Viewer</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">String_Viewer</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Number_Viewer</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Data_Row / Data_Item</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Data_Filter</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Viewer_Factory</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Line_Chart</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Canvas</text>
+  </g>
+
+  <!-- ── Category 4: Editors ── -->
+  <rect x="1190" y="165" width="380" height="310" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="1190" y="165" width="380" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="1190" y="187" width="380" height="10" fill="url(#hdr)"/>
+  <text x="1380" y="187" text-anchor="middle" class="cat-title">Editors &amp; Forms (25+)</text>
+  <g transform="translate(1205,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="0" class="item" fill="#38bdf8">Property_Grid ★ NEW</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>    <text x="14" y="18" class="item" fill="#38bdf8">Value_Editor_Registry ★</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>   <text x="14" y="36" class="item" fill="#38bdf8">Text_Value_Editor ★</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>   <text x="14" y="54" class="item" fill="#38bdf8">Number_Value_Editor ★</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>   <text x="14" y="72" class="item" fill="#38bdf8">Boolean_Value_Editor ★</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>   <text x="14" y="90" class="item" fill="#38bdf8">Enum_Value_Editor ★</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>   <text x="14" y="108" class="item" fill="#38bdf8">Date_Value_Editor ★</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="126" class="item" fill="#38bdf8">Color_Value_Editor ★</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Rich_Text_Editor</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Tag_Input</text>
+  </g>
+  <g transform="translate(1380,212)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Form_Container</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Form_Field</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Inline_Validation_Msg</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Property_Editor</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Object_Editor / KVP</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Array_Editor</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">String_Editor</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Number_Editor</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Editor_Factory</text>
+  </g>
+
+  <!-- ── Category 5: UI Controls ── -->
+  <rect x="30" y="495" width="500" height="260" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="30" y="495" width="500" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="30" y="517" width="500" height="10" fill="url(#hdr)"/>
+  <text x="280" y="517" text-anchor="middle" class="cat-title">UI Controls (22)</text>
+  <g transform="translate(45,542)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Toolbar</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Breadcrumbs</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Search_Bar</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Pagination</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Toast</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Tooltip</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Pop_Over</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Alert_Banner</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Horizontal_Menu</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Start_Stop_Toggle</text>
+    <rect x="-4" y="170" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="180" class="item">Reorderable_List</text>
+  </g>
+  <g transform="translate(260,542)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Horizontal_Slider</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Media_Scrubber</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Audio_Player + Volume</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Tree + Tree_Node</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">File_Tree + Node</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Active_HTML_Document</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Toolbox</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Left_Right_Arrows</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Up_Down_Arrows</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Login Form</text>
+    <rect x="-4" y="170" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="180" class="item">Popup_Menu_Button</text>
+  </g>
+
+  <!-- ── Category 6: Layout ── -->
+  <rect x="550" y="495" width="500" height="260" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="550" y="495" width="500" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="550" y="517" width="500" height="10" fill="url(#hdr)"/>
+  <text x="800" y="517" text-anchor="middle" class="cat-title">Layout (21)</text>
+  <g transform="translate(565,542)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Tabbed_Panel</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Split_Pane</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Accordion</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Panel + Titled_Panel</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Drawer</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Modal</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Window + Manager</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Stepper (Wizard)</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">Master_Detail</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Stack</text>
+  </g>
+  <g transform="translate(780,542)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Center</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>    <text x="14" y="18" class="item">Cluster</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="36" class="item">Grid_Gap</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="54" class="item">Single_Line</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="72" class="item">Title_Bar</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="90" class="item">Vertical_Expander</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="108" class="item">Radio_Button_Tab</text>
+    <rect x="-4" y="116" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="126" class="item">Tile_Slide</text>
+    <rect x="-4" y="134" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="144" class="item">App Layout</text>
+    <rect x="-4" y="152" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="162" class="item">Web Pages (std/msg)</text>
+  </g>
+
+  <!-- ── Category 7: Vector / SVG ── -->
+  <rect x="1070" y="495" width="240" height="200" rx="10" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+  <rect x="1070" y="495" width="240" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="1070" y="517" width="240" height="10" fill="url(#hdr)"/>
+  <text x="1190" y="517" text-anchor="middle" class="cat-title">Vector / SVG (8)</text>
+  <g transform="translate(1085,542)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/> <text x="14" y="0" class="item">Arrow_Button</text>
+    <rect x="-4" y="8" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="18" class="item">Circle</text>
+    <rect x="-4" y="26" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="36" class="item">Ellipse</text>
+    <rect x="-4" y="44" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="54" class="item">Rectangle / Square</text>
+    <rect x="-4" y="62" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="72" class="item">Triangle</text>
+    <rect x="-4" y="80" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="90" class="item">Polygon</text>
+    <rect x="-4" y="98" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="108" class="item">String_Span (adv)</text>
+  </g>
+
+  <!-- ═══════════ SECTION 2: GAPS &amp; PROPOSED ═══════════ -->
+  <text x="40" y="810" class="section-label">▸ GAPS &amp; PROPOSED NEW CONTROLS</text>
+  <line x1="40" y1="818" x2="1560" y2="818" stroke="#334155" stroke-width="1"/>
+
+  <!-- ── Charts &amp; Data Viz ── -->
+  <rect x="30" y="835" width="370" height="340" rx="10" fill="#1e293b" stroke="#22c55e" stroke-width="1.5"/>
+  <rect x="30" y="835" width="370" height="32" rx="10" fill="url(#hdr)"/>
+  <rect x="30" y="857" width="370" height="10" fill="url(#hdr)"/>
+  <text x="215" y="857" text-anchor="middle" class="cat-title">Charts &amp; Data Viz (7 ✅)</text>
+  <text x="45" y="882" class="subtitle">Full chart suite in controls/charts/. Ideas below.</text>
+  <g transform="translate(45,898)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="0" class="item">Chart_Base (shared)</text>
+    <rect x="-4" y="16" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="26" class="item">Line_Chart</text>
+    <rect x="-4" y="34" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="44" class="item">Bar_Chart ✅</text>
+    <rect x="-4" y="52" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="62" class="item">Pie_Chart ✅</text>
+    <rect x="-4" y="70" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="80" class="item">Area_Chart ✅</text>
+    <rect x="-4" y="88" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>   <text x="14" y="98" class="item">Scatter_Chart ✅</text>
+    <rect x="-4" y="106" width="12" height="12" rx="2" fill="#22c55e" opacity=".7"/>  <text x="14" y="116" class="item">Function_Graph ✅</text>
+    <rect x="-4" y="132" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="142" class="item-new">Sparkline (mini inline)</text>
+    <rect x="-4" y="150" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="160" class="item-new">Gauge / Dial</text>
+    <rect x="-4" y="168" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="178" class="item-new">Heatmap</text>
+    <rect x="-4" y="186" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="196" class="item-new">Stacked_Bar</text>
+    <rect x="-4" y="204" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="214" class="item-new">KPI_Card (stat + trend)</text>
+    <rect x="-4" y="222" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="232" class="item-new">Timeline_Chart</text>
+  </g>
+
+  <!-- ── Gap 2: Advanced Pickers ── -->
+  <rect x="420" y="835" width="370" height="340" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <rect x="420" y="835" width="370" height="32" rx="10" fill="#92400e"/>
+  <rect x="420" y="857" width="370" height="10" fill="#92400e"/>
+  <text x="605" y="857" text-anchor="middle" class="cat-title">🟡 Advanced Pickers &amp; Inputs</text>
+  <text x="435" y="882" class="subtitle">Richer input experiences beyond basic types.</text>
+  <g transform="translate(435,898)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="0" class="item" fill="#38bdf8">Date_Range_Picker (from–to) ★ DONE</text>
+    <rect x="-4" y="16" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="26" class="item" fill="#38bdf8">Time_Picker (HH:MM:SS) ★ DONE</text>
+    <rect x="-4" y="34" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="44" class="item" fill="#38bdf8">DateTime_Picker (date+time) ★ DONE</text>
+    <rect x="-4" y="52" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="62" class="item" fill="#38bdf8">Color_Picker (HSL wheel) ★ DONE</text>
+    <rect x="-4" y="70" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="80" class="item-new">Multi_Select (checkboxes)</text>
+    <rect x="-4" y="88" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="98" class="item-new">Auto_Complete / Typeahead</text>
+    <rect x="-4" y="106" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="116" class="item" fill="#38bdf8">Rating_Stars ★ DONE</text>
+    <rect x="-4" y="124" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="134" class="item-new">Dual_Range_Slider (min–max)</text>
+    <rect x="-4" y="142" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="152" class="item-new">Masked_Input (phone, CC#)</text>
+    <rect x="-4" y="160" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="170" class="item-new">PIN_Input (4-6 digit)</text>
+    <rect x="-4" y="178" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="188" class="item-new">Code_Editor (syntax)</text>
+    <rect x="-4" y="196" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="206" class="item-new">Markdown_Editor</text>
+    <rect x="-4" y="214" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="224" class="item-new">Image_Cropper</text>
+  </g>
+
+  <!-- ── Gap 3: Navigation &amp; Feedback ── -->
+  <rect x="810" y="835" width="370" height="340" rx="10" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <rect x="810" y="835" width="370" height="32" rx="10" fill="#92400e"/>
+  <rect x="810" y="857" width="370" height="10" fill="#92400e"/>
+  <text x="995" y="857" text-anchor="middle" class="cat-title">🟡 Navigation &amp; Feedback</text>
+  <text x="825" y="882" class="subtitle">Navigation patterns and user feedback loops.</text>
+  <g transform="translate(825,898)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="0" class="item-new">Sidebar_Nav (vertical menu)</text>
+    <rect x="-4" y="16" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="26" class="item-new">Command_Palette (⌘K)</text>
+    <rect x="-4" y="34" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="44" class="item-new">Bottom_Sheet (mobile)</text>
+    <rect x="-4" y="52" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="62" class="item-new">Notification_Center</text>
+    <rect x="-4" y="70" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="80" class="item-new">Progress_Steps (workflow)</text>
+    <rect x="-4" y="88" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>   <text x="14" y="98" class="item" fill="#38bdf8">Skeleton_Loader ★ DONE</text>
+    <rect x="-4" y="106" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="116" class="item" fill="#38bdf8">Spinner / Loading_Indicator ★ DONE</text>
+    <rect x="-4" y="124" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="134" class="item-new">Confirmation_Dialog</text>
+    <rect x="-4" y="142" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="152" class="item-new">Empty_State (placeholder)</text>
+    <rect x="-4" y="160" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="170" class="item" fill="#38bdf8">Avatar / User_Badge ★ DONE</text>
+    <rect x="-4" y="178" width="12" height="12" rx="2" fill="#38bdf8" opacity=".8"/>  <text x="14" y="188" class="item" fill="#38bdf8">Chip / Pill ★ DONE</text>
+    <rect x="-4" y="196" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="206" class="item-new">Ribbon_Bar (Office-style)</text>
+    <rect x="-4" y="214" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="224" class="item-new">Status_Bar (footer info)</text>
+  </g>
+
+  <!-- ── Gap 4: Drag, Scheduling, Media ── -->
+  <rect x="1200" y="835" width="370" height="340" rx="10" fill="#1e293b" stroke="#f87171" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <rect x="1200" y="835" width="370" height="32" rx="10" fill="#991b1b"/>
+  <rect x="1200" y="857" width="370" height="10" fill="#991b1b"/>
+  <text x="1385" y="857" text-anchor="middle" class="cat-title">🔴 DnD, Scheduling, Media</text>
+  <text x="1215" y="882" class="subtitle">Complex interaction patterns not yet covered.</text>
+  <g transform="translate(1215,898)">
+    <rect x="-4" y="-10" width="12" height="12" rx="2" fill="#f87171" opacity=".8"/>  <text x="14" y="0" class="item-gap">Drag_Drop_Zone</text>
+    <rect x="-4" y="16" width="12" height="12" rx="2" fill="#f87171" opacity=".8"/>   <text x="14" y="26" class="item-gap">Kanban_Board</text>
+    <rect x="-4" y="34" width="12" height="12" rx="2" fill="#f87171" opacity=".8"/>   <text x="14" y="44" class="item-gap">Calendar_Scheduler</text>
+    <rect x="-4" y="52" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="62" class="item-new">Gantt_Chart</text>
+    <rect x="-4" y="70" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="80" class="item-new">Sortable_List (drag handles)</text>
+    <rect x="-4" y="88" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>   <text x="14" y="98" class="item-new">Video_Player</text>
+    <rect x="-4" y="106" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="116" class="item-new">Image_Gallery / Carousel</text>
+    <rect x="-4" y="124" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="134" class="item-new">Map_View (Leaflet/OSM)</text>
+    <rect x="-4" y="142" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="152" class="item-new">Signature_Pad</text>
+    <rect x="-4" y="160" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="170" class="item-new">Flow_Diagram / Node_Editor</text>
+    <rect x="-4" y="178" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="188" class="item-new">Chat_Widget</text>
+    <rect x="-4" y="196" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="206" class="item-new">File_Manager</text>
+    <rect x="-4" y="214" width="12" height="12" rx="2" fill="#fbbf24" opacity=".8"/>  <text x="14" y="224" class="item-new">Diff_Viewer</text>
+  </g>
+
+  <!-- ═══════════ SECTION 3: SUMMARY STATS ═══════════ -->
+  <text x="40" y="1230" class="section-label">▸ SUMMARY</text>
+  <line x1="40" y1="1238" x2="1560" y2="1238" stroke="#334155" stroke-width="1"/>
+
+  <!-- Stats boxes -->
+  <rect x="30" y="1255" width="250" height="90" rx="10" fill="#14532d" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="155" y="1285" text-anchor="middle" font-size="32" font-weight="700" fill="#4ade80">113+</text>
+  <text x="155" y="1325" text-anchor="middle" class="legend-label" fill="#86efac">Existing Controls</text>
+
+  <rect x="310" y="1255" width="250" height="90" rx="10" fill="#422006" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="435" y="1285" text-anchor="middle" font-size="32" font-weight="700" fill="#fbbf24">45+</text>
+  <text x="435" y="1325" text-anchor="middle" class="legend-label" fill="#fde68a">Proposed New</text>
+
+  <rect x="590" y="1255" width="250" height="90" rx="10" fill="#450a0a" stroke="#f87171" stroke-width="1.5"/>
+  <text x="715" y="1285" text-anchor="middle" font-size="32" font-weight="700" fill="#f87171">3</text>
+  <text x="715" y="1325" text-anchor="middle" class="legend-label" fill="#fca5a5">Critical Gaps</text>
+
+  <rect x="870" y="1255" width="250" height="90" rx="10" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="995" y="1285" text-anchor="middle" font-size="32" font-weight="700" fill="#38bdf8">17</text>
+  <text x="995" y="1325" text-anchor="middle" class="legend-label" fill="#7dd3fc">Recently Added ★</text>
+
+  <!-- Priority order -->
+  <rect x="1150" y="1255" width="420" height="90" rx="10" fill="#1e293b" stroke="#6366f1" stroke-width="1.5"/>
+  <text x="1360" y="1280" text-anchor="middle" font-size="13" font-weight="700" fill="#a5b4fc">RECOMMENDED BUILD ORDER</text>
+  <text x="1170" y="1300" font-size="11" fill="#cbd5e1">1. ✅ Date_Range_Picker · 2. Auto_Complete / Typeahead</text>
+  <text x="1170" y="1316" font-size="11" fill="#cbd5e1">3. Command_Palette · 4. ✅ Skeleton_Loader · 5. ✅ Spinner</text>
+  <text x="1170" y="1332" font-size="11" fill="#cbd5e1">6. Drag_Drop_Zone · 7. Kanban · 8. Calendar_Scheduler</text>
+
+  <!-- Footer -->
+  <text x="800" y="1385" text-anchor="middle" font-size="11" fill="#475569">jsgui3-html Controls Inventory · February 2026 · Generated from codebase analysis</text>
+</svg>

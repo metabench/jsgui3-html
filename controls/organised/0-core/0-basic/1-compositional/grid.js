@@ -28,6 +28,7 @@ class Grid extends Control {
         if (spec.cell_selection) {
             this.cell_selection = spec.cell_selection;
         }
+        this.drag_selection = !!spec.drag_selection;
         this.add_class('grid');
         var spec_data = spec.data;
         this._arr_rows = [];
@@ -76,7 +77,7 @@ class Grid extends Control {
                 let max_x = -1;
                 let y, x, ly, lx, arr = spec.data,
                     arr_row;
-                ly = arr.length; 
+                ly = arr.length;
                 for (y = 0; y < ly; y++) {
                     arr_row = arr[y];
                     lx = arr_row.length;
@@ -234,7 +235,7 @@ class Grid extends Control {
             var x, y;
             if (this.column_headers) {
                 let header_row = new Control({
-                    context: this.context 
+                    context: this.context
                 });
                 header_row.add_class('header');
                 header_row.add_class('row');
@@ -248,7 +249,7 @@ class Grid extends Control {
                 if (this.row_headers) {
                     var cell = new Control({
                         context: this.context,
-                        __type_name: 'grid_cell', 
+                        __type_name: 'grid_cell',
                     });
                     cell.add_class('grid-header');
                     cell.add_class('cell');
@@ -262,7 +263,7 @@ class Grid extends Control {
                 for (x = 0; x < num_columns; x++) {
                     var cell = new Control({
                         context: this.context,
-                        __type_name: 'grid_cell', 
+                        __type_name: 'grid_cell',
                     });
                     cell.add_class('column-header');
                     cell.add_class('cell');
@@ -272,7 +273,7 @@ class Grid extends Control {
             }
             for (y = 0; y < num_rows; y++) {
                 var row_container = new Control({
-                    context: this.context 
+                    context: this.context
                 });
                 if (row_height) {
                     row_container.style('height', row_height);
@@ -286,7 +287,7 @@ class Grid extends Control {
                 if (this.row_headers) {
                     var cell = new Control({
                         context: this.context,
-                        __type_name: 'grid_cell', 
+                        __type_name: 'grid_cell',
                     });
                     cell.add_class('row-header');
                     cell.add_class('cell');
@@ -305,6 +306,9 @@ class Grid extends Control {
                     }
                     if (data) {
                         o.data = data[y][x];
+                    }
+                    if (this.drag_selection) {
+                        o.drag_select = true;
                     }
                     var cell = new Grid_Cell(o);
                     cell.selectable = true;
@@ -378,14 +382,74 @@ class Grid extends Control {
                 });
             };
 
-            /*
-            this.each_cell(cell => {
-                cell.activate();
-            });
-            */
-
-
+            // Drag selection: listen for drag events on cells and select ranges
+            if (this.drag_selection) {
+                let drag_start_cell = null;
+                this.each_cell((cell) => {
+                    cell.on('drag-select-start', (e) => {
+                        drag_start_cell = cell;
+                    });
+                    cell.on('drag-select-move', (e) => {
+                        if (!drag_start_cell) return;
+                        const evt = e.event || e;
+                        const el_under = document.elementFromPoint(
+                            evt.clientX, evt.clientY
+                        );
+                        if (!el_under) return;
+                        const end_cell = this._find_cell_from_el(el_under);
+                        if (end_cell) {
+                            this._select_cell_range(drag_start_cell, end_cell);
+                        }
+                    });
+                    cell.on('drag-select-end', (e) => {
+                        if (drag_start_cell) {
+                            this.raise('drag-selection-change', {
+                                cells: this._get_selected_cells()
+                            });
+                        }
+                        drag_start_cell = null;
+                    });
+                });
+            }
         }
+    }
+    '_find_cell_from_el'(el) {
+        let current = el;
+        while (current && current !== this.dom.el) {
+            // Check each cell to see if its DOM element matches
+            let found = null;
+            this.each_cell((cell) => {
+                if (found) return;
+                const cell_el = (cell.dom && cell.dom.el) || cell.el;
+                if (cell_el && (cell_el === current || cell_el.contains(current))) {
+                    found = cell;
+                }
+            });
+            if (found) return found;
+            current = current.parentElement;
+        }
+        return null;
+    }
+    '_select_cell_range'(start, end) {
+        const x1 = Math.min(start.x, end.x), x2 = Math.max(start.x, end.x);
+        const y1 = Math.min(start.y, end.y), y2 = Math.max(start.y, end.y);
+        this.each_cell((cell, pos) => {
+            const [cx, cy] = pos;
+            if (cx >= x1 && cx <= x2 && cy >= y1 && cy <= y2) {
+                cell.selected = true;
+            } else {
+                cell.selected = false;
+            }
+        });
+    }
+    '_get_selected_cells'() {
+        const selected = [];
+        this.each_cell((cell, pos) => {
+            if (cell.selected) {
+                selected.push({ cell, x: pos[0], y: pos[1] });
+            }
+        });
+        return selected;
     }
 }
 Grid.css = `

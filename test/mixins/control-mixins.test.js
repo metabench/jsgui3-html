@@ -10,18 +10,18 @@ const jsgui = require('../../html-core/html-core');
 
 describe('Control Mixin Tests', () => {
     let context;
-    
+
     beforeEach(() => {
         context = createTestContext();
     });
-    
+
     afterEach(() => {
         cleanup();
     });
-    
+
     describe('Selectable Mixin', () => {
         let Selectable;
-        
+
         before(() => {
             try {
                 Selectable = require('../../control_mixins/selectable');
@@ -29,63 +29,151 @@ describe('Control Mixin Tests', () => {
                 console.warn('Selectable mixin not found, skipping tests');
             }
         });
-        
-        it('should make control selectable', function() {
+
+        it('should make control selectable', function () {
             if (!Selectable) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
             control.dom.el = document.createElement('div');
-            
+
             // Apply mixin
             Selectable(control);
             control.selectable = true;
-            
+
             expect(typeof control.select).to.equal('function');
             expect(typeof control.deselect).to.equal('function');
         });
-        
-        it('should select and deselect control', function() {
+
+        it('should select and deselect control', function () {
             if (!Selectable) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
             control.dom.el = document.createElement('div');
-            
+
             Selectable(control);
             control.selectable = true;
-            
+
             control.action_select_only();
             expect(control.has_class('selected')).to.equal(true);
-            
+
             control.selected = false;
             expect(!!control.has_class('selected')).to.equal(false);
         });
-        
-        it('should emit selection events', function(done) {
+
+        it('should emit selection events', function (done) {
             if (!Selectable) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
             control.dom.el = document.createElement('div');
-            
+
             Selectable(control);
             control.selectable = true;
-            
+
             control.on('select', () => done());
             control.select();
         });
+
+        it('should not enable drag selection by default', function () {
+            if (!Selectable) this.skip();
+
+            const control = new jsgui.Control({
+                context,
+                tagName: 'div'
+            });
+            control.dom.el = document.createElement('div');
+
+            Selectable(control);
+            control.selectable = true;
+
+            expect(!!control._drag_select_applied).to.equal(false);
+        });
+
+        it('should set drag flag when opts.drag is true', function (done) {
+            if (!Selectable) this.skip();
+
+            const control = new jsgui.Control({
+                context,
+                tagName: 'div'
+            });
+            control.dom.el = document.createElement('div');
+
+            // Set active before applying mixin so once_active resolves
+            control.__active = true;
+
+            Selectable(control, null, { drag: true });
+            control.selectable = true;
+
+            // once_active resolves via promise microtask, need to yield
+            setTimeout(() => {
+                try {
+                    expect(control._drag_select_applied).to.equal(true);
+                    done();
+                } catch (err) {
+                    done(err);
+                }
+            }, 10);
+        });
+
+        it('should raise drag-select events on simulated drag', function (done) {
+            if (!Selectable) this.skip();
+
+            const control = new jsgui.Control({
+                context,
+                tagName: 'div'
+            });
+            const el = document.createElement('div');
+            control.dom.el = el;
+
+            // Set active before applying mixin so once_active resolves
+            control.__active = true;
+
+            Selectable(control, null, { drag: true });
+            control.selectable = true;
+
+            // Helper to create mouse events with pageX/pageY (jsdom ignores them in constructor)
+            const createMouseEvent = (type, x, y) => {
+                const e = new Event(type, { bubbles: true, cancelable: true });
+                e.pageX = x;
+                e.pageY = y;
+                e.preventDefault = e.preventDefault || (() => { });
+                return e;
+            };
+
+            let events_received = [];
+            control.on('drag-select-start', () => events_received.push('start'));
+            control.on('drag-select-move', () => events_received.push('move'));
+            control.on('drag-select-end', () => {
+                events_received.push('end');
+                try {
+                    expect(events_received).to.deep.equal(['start', 'move', 'end']);
+                    done();
+                } catch (err) {
+                    done(err);
+                }
+            });
+
+            // Wait for once_active microtask to resolve before dispatching events
+            setTimeout(() => {
+                el.dispatchEvent(createMouseEvent('mousedown', 100, 100));
+                document.dispatchEvent(createMouseEvent('mousemove', 110, 110));
+                document.dispatchEvent(createMouseEvent('mousemove', 120, 120));
+                document.dispatchEvent(createMouseEvent('mouseup', 120, 120));
+            }, 10);
+        });
     });
-    
+
     describe('Draggable Mixin', () => {
         let Draggable;
-        
+
         before(() => {
             try {
                 Draggable = require('../../control_mixins/dragable');
@@ -93,24 +181,24 @@ describe('Control Mixin Tests', () => {
                 console.warn('Draggable mixin not found, skipping tests');
             }
         });
-        
-        it('should make control draggable', function() {
+
+        it('should make control draggable', function () {
             if (!Draggable) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
-            
+
             Draggable(control);
-            
+
             expect('dragable' in control).to.equal(true);
         });
     });
-    
+
     describe('Resizable Mixin', () => {
         let Resizable;
-        
+
         before(() => {
             try {
                 Resizable = require('../../control_mixins/resizable');
@@ -118,10 +206,10 @@ describe('Control Mixin Tests', () => {
                 console.warn('Resizable mixin not found, skipping tests');
             }
         });
-        
-        it('should make control resizable', function() {
+
+        it('should make control resizable', function () {
             if (!Resizable) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
@@ -133,10 +221,10 @@ describe('Control Mixin Tests', () => {
             expect(control.ctrl_br_resize_handle).to.exist;
         });
     });
-    
+
     describe('Popup Mixin', () => {
         let Popup;
-        
+
         before(() => {
             try {
                 Popup = require('../../control_mixins/popup');
@@ -144,24 +232,24 @@ describe('Control Mixin Tests', () => {
                 console.warn('Popup mixin not found, skipping tests');
             }
         });
-        
-        it('should create popup control', function() {
+
+        it('should create popup control', function () {
             if (!Popup) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
-            
+
             Popup(control);
-            
+
             expect(typeof control.popup).to.equal('function');
         });
     });
-    
+
     describe('Pressed State Mixin', () => {
         let PressedState;
-        
+
         before(() => {
             try {
                 PressedState = require('../../control_mixins/pressed-state');
@@ -169,54 +257,54 @@ describe('Control Mixin Tests', () => {
                 console.warn('Pressed state mixin not found, skipping tests');
             }
         });
-        
-        it('should track pressed state', function() {
+
+        it('should track pressed state', function () {
             if (!PressedState) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'button'
             });
-            
+
             PressedState(control);
-            
+
             control.trigger('press-start');
             expect(control.view.data.model.state).to.equal('pressed');
         });
-        
-        it('should add pressed class on mousedown', function() {
+
+        it('should add pressed class on mousedown', function () {
             if (!PressedState) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'button'
             });
-            
+
             PressedState(control);
             control.trigger('press-start');
-            
+
             expect(control.has_class('pressed')).to.be.true;
         });
-        
-        it('should remove pressed class on mouseup', function() {
+
+        it('should remove pressed class on mouseup', function () {
             if (!PressedState) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'button'
             });
-            
+
             PressedState(control);
             control.trigger('press-start');
             control.trigger('press-end');
-            
+
             expect(!!control.has_class('pressed')).to.equal(false);
         });
     });
-    
+
     describe('Display Modes Mixin', () => {
         let DisplayModes;
-        
+
         before(() => {
             try {
                 DisplayModes = require('../../control_mixins/display-modes');
@@ -224,24 +312,24 @@ describe('Control Mixin Tests', () => {
                 console.warn('Display modes mixin not found, skipping tests');
             }
         });
-        
-        it('should set display mode', function() {
+
+        it('should set display mode', function () {
             if (!DisplayModes) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
-            
+
             DisplayModes(control);
-            
+
             expect(control).to.exist;
         });
     });
-    
+
     describe('Bind Mixin', () => {
         let Bind;
-        
+
         before(() => {
             try {
                 Bind = require('../../control_mixins/bind');
@@ -249,24 +337,24 @@ describe('Control Mixin Tests', () => {
                 console.warn('Bind mixin not found, skipping tests');
             }
         });
-        
-        it('should provide bind functionality', function() {
+
+        it('should provide bind functionality', function () {
             if (!Bind) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
-            
+
             Bind(control);
-            
+
             expect(typeof control.bind).to.equal('function');
         });
     });
-    
+
     describe('Coverable Mixin', () => {
         let Coverable;
-        
+
         before(() => {
             try {
                 Coverable = require('../../control_mixins/coverable');
@@ -274,29 +362,29 @@ describe('Control Mixin Tests', () => {
                 console.warn('Coverable mixin not found, skipping tests');
             }
         });
-        
-        it('should add cover functionality', function() {
+
+        it('should add cover functionality', function () {
             if (!Coverable) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
-            
+
             Coverable(control);
-            
+
             expect(typeof control.cover).to.equal('function');
             expect(typeof control.uncover).to.equal('function');
         });
-        
-        it('should cover and uncover control', function() {
+
+        it('should cover and uncover control', function () {
             if (!Coverable) this.skip();
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
             });
-            
+
             Coverable(control);
 
             const content_ctrl = new jsgui.Control({
@@ -314,18 +402,18 @@ describe('Control Mixin Tests', () => {
             expect(control.content._arr).to.not.include(cover_ctrl);
         });
     });
-    
+
     describe('Multiple Mixins', () => {
-        it('should combine multiple mixins on same control', function() {
+        it('should combine multiple mixins on same control', function () {
             let Selectable, Draggable;
-            
+
             try {
                 Selectable = require('../../control_mixins/selectable');
                 Draggable = require('../../control_mixins/dragable');
             } catch (e) {
                 this.skip();
             }
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'div'
@@ -336,37 +424,37 @@ describe('Control Mixin Tests', () => {
             control.dom.el = null;
             Draggable(control);
             control.selectable = true;
-            
+
             expect(typeof control.action_select_only).to.equal('function');
             // Both mixins should work together
         });
-        
-        it('should not conflict when combining mixins', function() {
+
+        it('should not conflict when combining mixins', function () {
             let Selectable, PressedState;
-            
+
             try {
                 Selectable = require('../../control_mixins/selectable');
                 PressedState = require('../../control_mixins/pressed-state');
             } catch (e) {
                 this.skip();
             }
-            
+
             const control = new jsgui.Control({
                 context,
                 tagName: 'button'
             });
             control.dom.el = document.createElement('button');
-            
+
             Selectable(control);
             PressedState(control);
             control.selectable = true;
-            
+
             control.action_select_only();
             expect(control.has_class('selected')).to.equal(true);
-            
+
             // Pressed state should still work
             control.trigger('press-start');
-            
+
             // Both classes should be present
             expect(control.has_class('selected')).to.equal(true);
             expect(control.has_class('pressed')).to.equal(true);

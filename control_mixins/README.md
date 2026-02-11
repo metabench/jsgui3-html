@@ -1,355 +1,211 @@
-Mixins allow for composition of Control functionality.
-Enables functionality to be made in a way that will apply to controls in general
+# Control Mixins
 
-Specific mixins? That require a specific API?
-Only works on input elements for example?
+Mixins are composable functions that enhance jsgui3 controls with reusable behavior. Each mixin is a function `(ctrl, options?) => void|cleanup` that attaches properties, event handlers, and DOM behaviors to any control.
 
-.view seems apparrent as an ovbious property name now.
-.model also seems like it could be of use.
-Now only .controller seems as though it my be excessive, with the control itself being the controller.
+> **📘 Full reference**: See [docs/mixins-book.md](../docs/mixins-book.md) for comprehensive API documentation, composition patterns, and deep-dive guides.
 
-.model holding (and sometimes acting like) .value.
-Would still have a .value property, or allow for one. Could become more standard.
-ctrl.value may be a useful property in many or most cases.
-  Too complicated to be useful or efficient in some cases? Or it would correspond with .model.
-  Maybe it could be iterable or something efficient.
+---
 
+## Quick Start
 
-// ctrl.view.size.mode = 'mid-icon'.
-// or when writing the control, write code that operates specific to the view's size mode.
+```js
+const selectable = require('./selectable');
+const press_events = require('./press-events');
 
-// and single (horizontal) line size mode. May be very relevant for text input, eg input a directory name.
+class MyList extends Control {
+    constructor(spec) {
+        super(spec);
+        selectable(this, null, { multi: true });
+        // Now: ctrl.selected, click-to-select, Ctrl+click for multi
+    }
+}
+```
 
-// view.rounding = '4px'. view.box.rounding perhaps?
+## How Mixins Work
 
-// The model and view distinction will help with situations such as different rendering on mobile and desktop, but
-//   where the data being edited is and must be the same format.
-//   Would help to make it clearer what functionality gets swapped.
+### The Core Pattern
 
-// Need to incrementally add these features.
-//   The base implementation can be added, then controls made to make use of them.
+Every mixin follows this structure:
 
-// view.size.mode = 
+```js
+const my_mixin = (ctrl, options = {}) => {
+    // 1. Register on the mixin tracker
+    ctrl.__mx = ctrl.__mx || {};
+    if (ctrl.__mx.my_mixin) return; // guard against double-apply
+    ctrl.__mx.my_mixin = true;
 
+    // 2. Record in isomorphic model (survives SSR → client hydration)
+    ctrl.view.data.model.mixins.push({ name: 'my-mixin' });
 
+    // 3. Add properties and methods to the control
+    ctrl.my_method = () => { /* ... */ };
 
-Or size modes are variable depending on what the control displays anyway?
-Don't want some very info-sparse things to become full screen too readily (like windows 8 in places)
-Allow the programmer to have easy control over them
-Then give the programmer the components to give the application user easy control over them
+    // 4. Attach event listeners (often in once_active for DOM readiness)
+    ctrl.once_active(() => {
+        ctrl.on('click', handler);
+    });
+};
+```
 
-Can have different UI tools available such as minimise to list.
+### Key Conventions
 
+| Convention | Description |
+|---|---|
+| `ctrl.__mx.name = true` | Mixin registration — prevents double-apply, aids serialization |
+| `ctrl.once_active(fn)` | Defer DOM-dependent setup until the control is activated |
+| `ctrl.view.data.model.mixins.push(…)` | Isomorphic registration — survives SSR round-trip |
+| Dependency auto-resolution | Mixins pull in their own deps: `if (!ctrl.__mx.press_events) press_events(ctrl)` |
 
+### Disposable Mixins (NEW)
 
+Mixins can now return a cleanup handle for clean removal:
 
+```js
+const { create_mixin_cleanup } = require('./mixin_cleanup');
 
-Different size modes here?
-0 - 0,0 hidden
-1 - 1,1 1 pixel square ?? unnecessary ?? or the tinyiest, maybe make as 0,0 anyway
-2 - defaults as very small eg 12x12
-    but could show as 16x16? even 32x32 on high-res?
-3 - mini eg 24x24
-4 - small-mid icon size eg 32x32, 64x64
-5 - mid icon size 128x128
-6 - large thumbnail / large icon 256x256 / small picture
-7 - business card size eg 512x512, 512x1024 (or mini app size?)
-8 - mid app window eg 980x1400 iPhone screen
-9 - large app window eg a tablet?
-10 - full screen (or maximised app window, almost full screen??)
-11 - multi screen / appears in multiple browser windows for size
+const my_mixin = (ctrl) => {
+    const cleanup = create_mixin_cleanup(ctrl, 'my_mixin');
+    ctrl.__mx.my_mixin = cleanup;
 
+    const handler = () => { /* ... */ };
+    ctrl.on('click', handler);
+    cleanup.track_listener(ctrl, 'click', handler);
 
-or:
+    return cleanup; // caller can later call cleanup.dispose()
+};
+```
 
-0: hidden
-1: minimised (such as an icon, or item in a list (popup list that shows the minimised items maybe))
-2: small / showing
-     (if too small to use, preview or very restricted info)
-3: mid
-    could expect maybe 1/4 or even 1/2 of a large screen. decent sized panel.
-4: large
-    could be full screen or full size of browser window
-      may need some flexibility and functionality to determine exactly how it is operating.
+### Feature Detection
 
+```js
+const mx = require('./mx');
 
-// Mode 0 probably needs no definition in the Control code.
-// Mode 1: mini(mised)
-// Mode 2: small
-// Mode 3: medium
-// Mode 4: large
+mx.has_feature(ctrl, 'selectable');  // true/false
+mx.list_features(ctrl);             // ['selectable', 'press_events', ...]
+mx.apply_feature_detection(ctrl);   // adds ctrl.has_feature() and ctrl.list_features()
+```
 
-// Mobile first would be a focus on mode 2.
+---
 
-// Mode 4 maybe won't need much definition or any at all.
-//  Could be some automatic differences from mode 3
-//    Such as nav panel on the left visible rather than requires press to make popup show the nav.
+## Mixin Catalog
 
-// Mode 3 could show 2 (or even 3) mode 2 views side-by-side
-// Then mode 4 could show 2 mode 3s above and below.
+### Interaction (10 mixins)
 
-// They can act as guidelines for how much functionality can be made to fit into a currently vaguely defined area of UI.
-//   Could make a more precise definition, such as 'small' has to fit on some specific iPhone, such as iPhone SE.
-//     And could have options / sensible defaults about how things get displayed in slightly larger areas, but still essentially
-//       the same layout.
+| File | Purpose | Key API |
+|---|---|---|
+| `press-events.js` | Unified press/touch handling | Events: `press-start`, `press-move`, `press-end`, `press-hold`, `press-drag-start` |
+| `press-outside.js` | Click-away detection | Event: `press-outside` |
+| `pressed-state.js` | Visual feedback on press | CSS class `pressed`, dispodable |
+| `dragable.js` | Element dragging | Events: `drag-start`, `drag-move`, `drag-end` |
+| `drag_like_events.js` | Low-level drag math | Bounds checking, position confinement |
+| `selectable.js` | Item selection | `ctrl.selected`, multi-select with Shift/Ctrl |
+| `selection-box-host.js` | Marquee/lasso selection | Events: `drag-select-start/move/end` |
+| `resizable.js` | Element resizing | `ctrl.resizable`, resize handle |
+| `keyboard_navigation.js` | Arrow key nav (ARIA) | Roving tabindex, Home/End keys |
+| `fast-touch-click.js` | Zero-delay tap | Eliminates 300ms touch delay |
+
+### Input (5 mixins)
 
+| File | Purpose | Key API |
+|---|---|---|
+| `input_base.js` | Core input behavior | `get_value()`, `set_value()`, `focus()`, `blur()` |
+| `input_validation.js` | Validation framework | `add_validator()`, `validate()`, built-in validators |
+| `input_mask.js` | Input formatting | Phone, date, currency masks; `get_raw_value()` |
+| `input_api.js` | High-level input wiring | Combines base + validation + mask |
+| `field_status.js` | Field state management | Dirty/pristine/touched states |
 
+### Layout & Display (7 mixins)
 
+| File | Purpose | Key API |
+|---|---|---|
+| `display.js` | Multi-mode display system | `ctrl.display.mode`, size modes 0-4 |
+| `display-modes.js` | Simple display mode switching | `ctrl.display_mode = 'small'` |
+| `popup.js` | Popup positioning | `ctrl.popup()`, `ctrl.restore()` |
+| `bind.js` | Spatial binding | Position relative to anchors |
+| `coverable.js` | Overlay covers | `ctrl.cover()`, `ctrl.uncover()` |
+| `virtual_window.js` | Virtual scrolling math | `get_virtual_window_range()` |
+| `collapsible.js` | Expand/collapse (NEW) | `ctrl.expand()`, `ctrl.collapse()`, `ctrl.toggle_collapse()` |
 
+### Theme (3 mixins)
 
+| File | Purpose | Key API |
+|---|---|---|
+| `theme.js` | Token application | `apply_theme()`, `apply_theme_tokens()` |
+| `themeable.js` | Parameter resolution | `is_themed()`, `get_param()` |
+| `theme_params.js` | Param resolution engine | Merges defaults → variants → overrides |
 
-Could even make a Small_Calendar Control perhaps?
-  With a built in restriction that it only works in 'small' mode, or if it is used in a larger mode it either just shows small
-  or enlarged but not customised for the larger display area.
-  Essentially Small_Calendar would not be dense with information, it could display well on a big screen at a conference.
-    Could display well on a mobile phone screen.
+### Lifecycle (5 mixins)
 
-Large_Calendar could use the same code elements (controls?) as the Medium or Mid_Calendar
+| File | Purpose | Key API |
+|---|---|---|
+| `activation.js` | Progressive enhancement | `Activation_Manager.activate(container)` |
+| `hydration.js` | SSR → client hydration | `hydrate(container)` |
+| `swap_registry.js` | Control registration | Selector → control class mapping |
+| `auto_enhance.js` | MutationObserver auto-activate | `enable_auto_enhancement()` |
+| `mx.js` | Mixin directory + feature detection | `has_feature()`, `list_features()` |
 
-// S_Calendar?
-// Calendar_S perhaps?
+### Data (3 mixins)
 
-Calendar seems like a very good fairly general purpose UI control to really focus on.
-Not all that complex, but somewhat complex.
-Very useful
-Could potentially contain somewhat complex data, flexibility on how it gets displayed.
+| File | Purpose | Key API |
+|---|---|---|
+| `deletable.js` | Remove controls | `ctrl.delete()`, event: `delete` |
+| `selected-deletable.js` | Delete selected items | Combines selectable + deletable |
+| `selected-resizable.js` | Resize selected items | Combines selectable + resizable |
 
-Data Connector as well?
-We can have the data model definition. Then the data itself gets obtained from / synced with some external source.
+### Accessibility (2 mixins)
 
-Model.data could make sense....
-Even model.data.value
-     model.data.connection makes sense.
+| File | Purpose | Key API |
+|---|---|---|
+| `a11y.js` | ARIA helpers | `apply_role()`, `apply_label()`, `apply_focus_ring()` |
+| `link-hovers.js` | Link hover effects | Hover state management |
 
-Not all controls would need a defined model, or data.
-.data would automaticaly apply to .model I think.
+### Infrastructure (2 modules)
 
-Type definitions looks like it's within Grammar.
-Want to be able to represent the types in different ways, but the most efficient and lowest level ways seems great to have, possibly as a default.
-IO as JSON of course would be of use.
-  Could use JSON string hexes for the sake of coding simplicity if we do use binary data at a lower level.
-    Maybe 24 and 32 bit integers for representing colors rgb and rgba in various places.
+| File | Purpose | Key API |
+|---|---|---|
+| `mixin_cleanup.js` | Disposable mixin support | `create_mixin_cleanup()`, `dispose_all_mixins()` |
+| `mixin_registry.js` | Formal metadata registry | `register_mixin()`, `check_dependencies()`, `check_conflicts()` |
 
-Some of this possibly goes in lang-mini or lang-tools?
-Or another lang lib?
+---
 
-jsgui3-mvc perhaps?
-Seems more like it't the next part of html.
-It's kind of a layer on top of the existing core.
-It may also be a replacement for some of the existing core. Possibly functionality will be put in place with mixins.
-Maybe activation will be done through a mixin. Not sure....?
+## Composition Patterns
 
-Definitions of what controls do specifically to data
-Then can get into details of how they do it.
+### Layered Dependencies
 
-Control interface? Control data interface? Data model data schema?
-Simply expressing what type of data a control works with makes sense.
-However want this to be extensible when appropriate... will find a way to do that of course.
+Mixins auto-resolve dependencies:
 
-Many current mixins are (only) to do with the view.
-The date mixin is to do with the model.
+```
+pressed-state → press-events (auto-applied)
+selectable → press-events (auto-applied)
+selection-box-host → selectable + press-events
+```
 
-Will be better to set up the control so that it knows what data type it's interacting with.
+### Multi-Mixin Composition
 
-Possibly jsgui3-model does make a lot of sense to start.
-It's the data model. It's the class that represents / is the data model (rules).
-Then it's the data itself.
+```js
+const mx = require('./mx');
 
-Then a schema API....?
-  Want it to be flexible.
-  A few options to base it on
+// Build a rich interactive list item
+mx.press_events(ctrl);
+mx.selectable(ctrl, null, { multi: true });
+mx.dragable(ctrl);
+mx.collapsible(ctrl, { trigger: '.header', content: '.body' });
+```
 
-A number
-A binary sequence (even length in bits???)
-  Length in bits could make sense for UI to do with components of larger values.
-A string
-Some JSON
-  With that JSON following some rules...?
+### Dispose Pattern
 
-A validate function being enough?
-A normalise function too? As in it takes a value expressed somehow, parses / corrects it if possible (and checks its valid too)?
+```js
+const collapsible = require('./collapsible');
+const cleanup = collapsible(ctrl, { initial: 'collapsed' });
 
-Want a fairly consistent API.
-.validate
-.parse (could be used even when input is expected to be in the right format)
+// Later: clean removal
+cleanup.dispose();
+// All event listeners removed, methods deleted, CSS classes cleared
+```
 
-Always use observables for these functions?
-Could work better with remote execution (of parts), easy integration of remote execution, or processing in other threads.
+---
 
+## Further Reading
 
-
-
-
-
-
-
-
-
-model.schema?
-model.value?
-
-
-
-
-
-
-
-
-
-
-
-
-
-May have some shortcuts.
-Or could make then once the coding conventions / boilerplate that emerges becomes clearer.
-
-
-
-
-
-
-
-
-So 5 overall size modes could be enough.
-May be worth doing more work on specifically editing online values and maybe text.
-Could be a nice focus. Having components that do it in a nice way, and specified so that less code needs to be changed to change the 
-way the UI works, easy to add to or modify standard UI options.
-
-Construction / amendment / composition functions.
-External calling of controls' composition functions would work here.
-  So to extend a color palette or calendar control, there are already functions to compose it that can be used (or not used) by subclasses.
-    Could make them available at the module / constructor level ie Control.composition_functions or whatever.
-
-
-
-
-
-
-
-The size mode could influence display modes of inner components?
-
-
-// icon, small, mid, large, max
-//  possible display modes.
-
-// Not just size display mode options
-//  Horizontal or vertical option for some things.
-//   Like menus.
-
-// When defining the display modes:
-//  Declare / define the supported display modes
-//   with names?
-//  The display modes don't need to be mutually exclusive
-//  Though display mode sets would be exclusive.
-//  Display mode option sets?
-//   Meaning exclusive horizontal or vertical.
-//   Exclusive small or large, but can be small horizontal etc.
-
-// Display modes may become a kind of 'core' functionality for every control.
-//  Or the more complex controls at least.
-//  Still makes sense to have some controls not using them.
-
-
-
-
-
-
-// Could have various different approximate display shapes too
-
-// Item control
-// item.data property
-//  and it renders that data.
-//   options for how it renders the data
-//    and that can depend on various display mode settings.
-
-// Display_Mode class?
-//  So it's the overall characteristics of how a Control gets displayed.
-//   May be better applied as a mixin.
-//   Mixin could use a Control_Display_Mode class. Or Control_Display_Modes possibly...?
-//    Control_Display_Mode_Environment ???
-//     So that control itself has a Display_Mode_Environment ???
-//      And then when a Display_Mode is used, it's an Active Display_Mode.
-
-// Display_Modes mixin
-//  Would add the Control_Display_Modes class instance to the Control instance
-//   Then specific display mode settings would be used
-
-// Better to start simply?
-//  Use various size presets?
-//  Set up the size presets?
-
-// Display modes for both size and style / other appearance properties?
-//  Perhaps.
-
-// Display modes config...
-//  Could have to do with the available interactions, so more than just show and hide and size which can be done through CSS.
-
-// A programmatic description of how things get displayed.
-//  And in general terms.
-
-// Applying some general principles
-//  Determining the layout from the content and available space.
-
-// Upgradability of existing controls would be useful too.
-//  eg Color_Palette serves as a core for color palette functionality.
-//  Subclasses would be able to add / swap components.
-//   Or a different display mode setup can hook into such changes?
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// square
-// rect
-//  4:3, 3:4
-//  16:10, 10:16
-// full size in one direction
-// full size in both x and y directions
-// extended (popup) full size
-
-
-
-
-// notdisplayed
-// 1pixel?
-// vsmall icon
-// small icon
-// smallmid icon
-// mid icon
-// large icon
-// businesscard / smallapp / smallphoneapp?
-// midapp
-// largeapp
-// fullscreen
-// multiscreen
-
-// fulllargescreen
-
-// A Control could work out what needs to be displayed depending on its size.
-// Could be displayed / rendered very differently depending on its size.
-
-// Popup / popout / popover resizing would be useful for interacting with smaller components. Editing near same place too.
-
-// How can the Control be represented at all of these different sizes?
-// Could consider news stories being presented... headlines, abbreviated headlines, headline and thumbnail, headline and intro, headline and some of the story, headline and full story.
-
-// Mid icon with enough room for text? Would be wider so it can contain a name.
-//  Could make some examples with info on cities... info on planets...
-
-
-
-
-
-
-
+- **[The Mixins Book](../docs/mixins-book.md)** — Full API reference, 10 proposed future mixins, Drag_Drop_Zone deep-dive
+- **[Test Suite](../test/mixins/)** — Unit tests for all mixins

@@ -24,7 +24,7 @@ const Control = jsgui.Control;
 
 
 const Left_Right_Arrows_Selector = require('../../1-standard/2-misc/left-right-arrows-selector');
-const Month_View = require('./month-view');
+const Month_View = require('./1-compositional/month-view');
 
 // Be able to display as the standard HTML date picker control, bearing in mind its relatively recent.
 //  Should be available on all platforms this will be used on. ??
@@ -53,7 +53,10 @@ Being able to select dates (including times) in a nice user-friendly way is goin
 
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022];
+// Dynamic year range: 10 years before and after current year
+const _current_year = new Date().getFullYear();
+const years = [];
+for (let y = _current_year - 10; y <= _current_year + 10; y++) years.push(y);
 
 const mx_date = require('../../../../control_mixins/typed_data/date');
 
@@ -75,7 +78,7 @@ class Year_Picker extends Left_Right_Arrows_Selector {
     constructor(spec) {
         Object.assign(spec, {
             'items': years,
-            'item_index': 4,
+            'item_index': 10,
             'loop': false
         });
         super(spec);
@@ -87,7 +90,7 @@ class Month_Picker extends Left_Right_Arrows_Selector {
     constructor(spec) {
         Object.assign(spec, {
             'items': months,
-            'item_index': 7,
+            'item_index': new Date().getMonth(),
             'loop': true
         });
         super(spec);
@@ -187,9 +190,16 @@ class Date_Picker extends Control {
                 context: this.context
             })
         })
+        // Today button
+        const today_btn = new Control({ context: this.context, __type_name: 'button', tag_name: 'button' });
+        today_btn.add_class('today-btn');
+        today_btn.add('Today');
+        this.today_btn = today_btn;
+
         this.add(this.year_picker);
         this.add(this.month_picker);
         this.add(this.month_view);
+        this.add(today_btn);
     }
     activate() {
         if (!this.__active) {
@@ -273,9 +283,33 @@ class Date_Picker extends Control {
 
             this.finish_date_picker();
 
+            // Today button handler
+            if (this.today_btn) {
+                this.today_btn.on('click', () => {
+                    const now = new Date();
+                    const yi = years.indexOf(now.getFullYear());
+                    if (yi >= 0) this.year_picker.set_item_index(yi);
+                    this.month_picker.set_item_index(now.getMonth());
+                    this.month_view.year = now.getFullYear();
+                    this.month_view.month = now.getMonth();
+                    this.month_view.day = now.getDate();
+                    this.month_view.refresh_month_view();
+                });
+            }
+
             // month view change date...
         }
     }
 }
+
+Date_Picker.css = `
+.date-picker .today-btn {
+    display: block; margin: 4px auto; padding: 2px 14px;
+    font-size: 12px; cursor: pointer; border: 1px solid #cbd5e1;
+    border-radius: 4px; background: #f8fafc; color: #2563eb;
+    font-weight: 500;
+}
+.date-picker .today-btn:hover { background: #eff6ff; }
+`;
 
 module.exports = Date_Picker;

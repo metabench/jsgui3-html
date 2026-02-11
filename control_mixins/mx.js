@@ -1,10 +1,8 @@
-// More directory features here?
-//  Be able to mix in multiple at once?
-
-
+// Mixin directory and feature detection helpers.
 
 const mx = {
     coverable: require('./coverable'),
+    collapsible: require('./collapsible'),
     date: require('./typed_data/date'),
     display: require('./display'),
     display_modes: require('./display-modes'),
@@ -26,7 +24,47 @@ const mx = {
     pressed_state: require('./pressed-state'),
     theme: require('./theme'),
     theme_params: require('./theme_params'),
-    themeable: require('./themeable')
+    themeable: require('./themeable'),
+
+    // Infrastructure
+    cleanup: require('./mixin_cleanup'),
+    registry: require('./mixin_registry')
+};
+
+/**
+ * Check if a control has a specific mixin/feature applied.
+ * Cleaner alternative to `ctrl.__mx && ctrl.__mx.name`.
+ * @param {Object} ctrl - Control instance.
+ * @param {string} name - Mixin/feature name.
+ * @returns {boolean}
+ */
+function has_feature(ctrl, name) {
+    return !!(ctrl && ctrl.__mx && ctrl.__mx[name]);
 }
+
+/**
+ * List all mixin/feature names applied to a control.
+ * @param {Object} ctrl - Control instance.
+ * @returns {string[]}
+ */
+function list_features(ctrl) {
+    return (ctrl && ctrl.__mx) ? Object.keys(ctrl.__mx) : [];
+}
+
+/**
+ * Apply has_feature and list_features as methods on a control.
+ * Called once per control to attach the convenience API.
+ * @param {Object} ctrl - Control instance.
+ */
+function apply_feature_detection(ctrl) {
+    if (ctrl._has_feature_api) return;
+    ctrl._has_feature_api = true;
+    ctrl.has_feature = (name) => has_feature(ctrl, name);
+    ctrl.list_features = () => list_features(ctrl);
+}
+
+mx.has_feature = has_feature;
+mx.list_features = list_features;
+mx.apply_feature_detection = apply_feature_detection;
 
 module.exports = mx;

@@ -7,15 +7,20 @@ Stability notes:
 
 - `docs/controls/alert_banner.md`
 - `docs/controls/accordion.md`
+- `docs/controls/avatar.md` ★
 - `docs/controls/badge.md`
 - `docs/controls/breadcrumbs.md`
 - `docs/controls/checkbox.md`
 - `docs/controls/center.md`
+- `docs/controls/chip.md` ★
+- `docs/controls/color_picker.md` ★
 - `docs/controls/cluster.md`
 - `docs/controls/combo_box.md`
 - `docs/controls/data_grid.md`
 - `docs/controls/data_table.md`
 - `docs/controls/date_picker.md`
+- `docs/controls/date_range_picker.md` ★
+- `docs/controls/datetime_picker.md` ★
 - `docs/controls/drawer.md`
 - `docs/controls/email_input.md`
 - `docs/controls/file_tree.md`
@@ -34,12 +39,15 @@ Stability notes:
 - `docs/controls/pop_over.md`
 - `docs/controls/progress_bar.md`
 - `docs/controls/range_input.md`
+- `docs/controls/rating_stars.md` ★
 - `docs/controls/rich_text_editor.md`
 - `docs/controls/rich_text_toolbar.md`
 - `docs/controls/reorderable_list.md`
 - `docs/controls/scroll_view.md`
 - `docs/controls/scrollbar.md`
 - `docs/controls/select_options.md`
+- `docs/controls/skeleton_loader.md` ★
+- `docs/controls/spinner.md` ★
 - `docs/controls/split_pane.md`
 - `docs/controls/stack.md`
 - `docs/controls/stepper.md`
@@ -47,6 +55,7 @@ Stability notes:
 - `docs/controls/tag_input.md`
 - `docs/controls/tabbed_panel.md`
 - `docs/controls/tel_input.md`
+- `docs/controls/time_picker.md` ★
 - `docs/controls/textarea.md`
 - `docs/controls/toast.md`
 - `docs/controls/toggle_switch.md`

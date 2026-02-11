@@ -56,7 +56,8 @@
   "devDependencies": {
     "esbuild": "^0.27.1",
     "jsdom": "^22.1.0",
-    "jsgui3-server": "^0.0.143"
+    "jsgui3-server": "^0.0.143",
+    "puppeteer": "^24.37.2"
   },
-  "version": "0.0.180"
+  "version": "0.0.181"
 }

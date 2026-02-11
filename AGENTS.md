@@ -311,6 +311,40 @@ Each example should have:
 ❌ Missing `super(spec)` call  
 ✅ Always call `super(spec)` first in constructor
 
+## Workspace Hygiene
+
+### Temporary & Diagnostic Files
+
+**NEVER dump temporary files into the repo root.** This includes:
+- Test output captures (`test_output*.txt`)
+- Server/process logs (`server_output.log`, `server_error.log`)
+- Diagnostic dumps (`diag_output.txt`, `debug_*.js`)
+- Any file created solely for debugging or CI inspection
+
+**Where to put them instead:**
+1. **Prefer in-memory** — pipe output through `Select-String` or `grep` directly rather than writing to disk
+2. **If you must write to disk**, use the OS temp directory (`$env:TEMP` on Windows, `/tmp` on Unix)
+3. **Always clean up** — delete any temp files you create before finishing your task
+4. **Use `.gitignore`** — if a new temp file pattern emerges, add it to `.gitignore` immediately
+
+### Examples
+
+```powershell
+# ✅ CORRECT — filter output inline, no temp file
+npx jest test/e2e/my.test.js --verbose 2>&1 | Select-String "FAIL|PASS|Tests:"
+
+# ✅ CORRECT — write to OS temp dir if capture needed
+npx jest test/e2e/my.test.js 2>&1 | Out-File "$env:TEMP\test_output.txt"
+
+# ❌ WRONG — dumps into repo root
+npx jest test/e2e/my.test.js 2>&1 | Out-File "test_output.txt"
+```
+
+### Debug Logging in Source
+
+- Add `console.log` debug lines sparingly and **always remove them** before finishing the task
+- Never leave `[DEBUG ...]` log prefixes in committed code
+
 ## Development Workflow
 
 ### Creating New Controls

@@ -21,24 +21,21 @@ class Color_Grid extends Grid {
         // Will mainly be the 'view' model.
 
         prop(this, 'palette', spec.palette);
-        //prop(this, 'grid_size', spec.grid_size || [12, 12]);
 
-
+        // Apply colors directly to the inherited Grid cells (no nested grid).
         if (!spec.abstract && !spec.el) {
-            this.compose_color_palette_grid();
+            this.add_grid_cells();
         }
         this.on('resize', (e_resize) => {
-            if (this.grid) {
-                var _2_padding = 12;
-                var new_grid_size = v_subtract(e_resize.value, [_2_padding, _2_padding]);
-                this.grid.size = new_grid_size;
-            }
+            var _2_padding = 12;
+            var new_grid_size = v_subtract(e_resize.value, [_2_padding, _2_padding]);
+            this.size = new_grid_size;
         });
     }
     activate() {
         if (!this.__active) {
             super.activate();
-            this.grid.selection_scope.on('change', e => {
+            this.selection_scope.on('change', e => {
                 const {
                     name,
                     value
@@ -53,19 +50,13 @@ class Color_Grid extends Grid {
                     }
                 }
             });
-            const old_make_grid_cells_selectable = () => {
-                this.grid.each_cell(cell => {
-                })
-            }
         }
-    }
-    each_cell(cb) {
-        return this.grid.each_cell(cb);
     }
     add_grid_cells() {
         if (this.palette) {
             let c = 0;
-            this.grid.each_cell((cell) => {
+            // Use the inherited each_cell from Grid — these are the actual rendered cells
+            super.each_cell((cell) => {
                 var item = this.palette[c++];
                 if (item) {
                     if (item.hex) {
@@ -78,21 +69,6 @@ class Color_Grid extends Grid {
                 }
             });
         }
-    }
-    compose_color_palette_grid() {
-        var padding = 6;
-        const grid = this.grid = new Grid({
-            'context': this.context,
-            'grid_size': this.grid_size,
-            'size': this.size,
-            'cell_selection': 'single'
-        });
-        grid.each_cell((cell, [x, y]) => {
-        });
-        this.add(grid);
-        this.add_grid_cells();
-        this._ctrl_fields = this._ctrl_fields || {};
-		this._ctrl_fields.grid = grid;
     }
 }
 if (require.main === module) {
