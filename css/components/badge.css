@@ -1,0 +1,203 @@
+/*
+ * Badge Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-badge
+ * Colour variants: default, primary, success, warning, danger, info
+ * Shape variants: pill (default), dot, square
+ * Features: pulse animation, max-value (99+), positioning helper, sizes
+ *
+ * Reference: docs/control-design-book/visual-advancement/13-completing-core-form.md §Badge
+ */
+
+/* ── Base ── */
+.jsgui-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    font-family: var(--j-font-sans);
+    font-size: 11px;
+    font-weight: var(--j-font-weight-semibold);
+    line-height: 1;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    border-radius: var(--j-radius-full);
+    background: var(--badge-bg, var(--j-bg-muted));
+    color: var(--badge-fg, var(--j-fg-muted));
+    vertical-align: middle;
+    box-sizing: border-box;
+    transition:
+        background var(--j-duration-fast) var(--j-ease-out),
+        transform var(--j-duration-fast) var(--j-ease-spring);
+}
+
+/* ══════════════════════════════════════════
+   Colour Variants
+   ══════════════════════════════════════════ */
+
+.jsgui-badge[data-variant="primary"] {
+    --badge-bg: var(--j-primary);
+    --badge-fg: var(--j-primary-fg);
+}
+
+.jsgui-badge[data-variant="success"] {
+    --badge-bg: var(--j-success);
+    --badge-fg: #fff;
+}
+
+.jsgui-badge[data-variant="warning"] {
+    --badge-bg: var(--j-warning);
+    --badge-fg: #1a1a2e;
+}
+
+.jsgui-badge[data-variant="danger"] {
+    --badge-bg: var(--j-danger);
+    --badge-fg: #fff;
+}
+
+.jsgui-badge[data-variant="info"] {
+    --badge-bg: var(--j-info);
+    --badge-fg: #fff;
+}
+
+/* Subtle / outline variants */
+.jsgui-badge[data-variant="primary-subtle"] {
+    --badge-bg: color-mix(in srgb, var(--j-primary) 14%, transparent);
+    --badge-fg: var(--j-primary);
+}
+
+.jsgui-badge[data-variant="success-subtle"] {
+    --badge-bg: color-mix(in srgb, var(--j-success) 14%, transparent);
+    --badge-fg: var(--j-success);
+}
+
+.jsgui-badge[data-variant="warning-subtle"] {
+    --badge-bg: color-mix(in srgb, var(--j-warning) 14%, transparent);
+    --badge-fg: var(--j-warning-hover);
+}
+
+.jsgui-badge[data-variant="danger-subtle"] {
+    --badge-bg: color-mix(in srgb, var(--j-danger) 14%, transparent);
+    --badge-fg: var(--j-danger);
+}
+
+.jsgui-badge[data-variant="info-subtle"] {
+    --badge-bg: color-mix(in srgb, var(--j-info) 14%, transparent);
+    --badge-fg: var(--j-info);
+}
+
+/* ══════════════════════════════════════════
+   Sizes
+   ══════════════════════════════════════════ */
+
+.jsgui-badge[data-size="sm"] {
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    font-size: 10px;
+}
+
+.jsgui-badge[data-size="lg"] {
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    font-size: 13px;
+}
+
+/* ══════════════════════════════════════════
+   Dot-only Badge (no text)
+   ══════════════════════════════════════════ */
+
+.jsgui-badge.dot {
+    min-width: 8px;
+    width: 8px;
+    height: 8px;
+    padding: 0;
+    font-size: 0;
+    border-radius: 50%;
+}
+
+.jsgui-badge.dot[data-size="sm"] {
+    min-width: 6px;
+    width: 6px;
+    height: 6px;
+}
+
+.jsgui-badge.dot[data-size="lg"] {
+    min-width: 12px;
+    width: 12px;
+    height: 12px;
+}
+
+/* ══════════════════════════════════════════
+   Square Badge
+   ══════════════════════════════════════════ */
+
+.jsgui-badge.square {
+    border-radius: var(--j-radius-sm);
+}
+
+/* ══════════════════════════════════════════
+   Pulse Animation
+   ══════════════════════════════════════════ */
+
+.jsgui-badge.pulse {
+    position: relative;
+}
+
+.jsgui-badge.pulse::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    opacity: 0.6;
+    animation: jsgui-badge-pulse 1.5s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes jsgui-badge-pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: scale(2.2);
+        opacity: 0;
+    }
+}
+
+/* ══════════════════════════════════════════
+   Positioned Badge (overlay on parent)
+   Used when badge is a child of a relative container
+   ══════════════════════════════════════════ */
+
+.jsgui-badge-anchor {
+    position: relative;
+    display: inline-flex;
+}
+
+.jsgui-badge-anchor>.jsgui-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(40%, -40%);
+    z-index: 1;
+    box-shadow: 0 0 0 2px var(--j-bg);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-badge,
+    .jsgui-badge.pulse::after {
+        transition: none;
+        animation: none;
+    }
+}

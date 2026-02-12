@@ -1,0 +1,234 @@
+/*
+ * Progress Bar Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-progress
+ * Colour variants: primary (default), success, warning, danger, info
+ * Features: indeterminate, striped, animated-stripes, label, sizes
+ *
+ * Structure: .jsgui-progress > .jsgui-progress-track > .jsgui-progress-fill
+ *                             + .jsgui-progress-label (optional)
+ */
+
+/* ── Track (outer container) ── */
+.jsgui-progress {
+    position: relative;
+    width: 100%;
+    height: var(--progress-height, 8px);
+    background: var(--j-bg-muted);
+    border-radius: var(--j-radius-full);
+    overflow: hidden;
+    font-family: var(--j-font-sans);
+}
+
+/* ── Fill bar ── */
+.jsgui-progress-fill {
+    height: 100%;
+    min-width: 0;
+    border-radius: inherit;
+    background: var(--progress-fill, var(--j-primary));
+    transition: width var(--j-duration-slow) var(--j-ease-out);
+}
+
+/* ══════════════════════════════════════════
+   Colour Variants
+   ══════════════════════════════════════════ */
+
+.jsgui-progress[data-variant="success"] {
+    --progress-fill: var(--j-success);
+}
+
+.jsgui-progress[data-variant="warning"] {
+    --progress-fill: var(--j-warning);
+}
+
+.jsgui-progress[data-variant="danger"] {
+    --progress-fill: var(--j-danger);
+}
+
+.jsgui-progress[data-variant="info"] {
+    --progress-fill: var(--j-info);
+}
+
+/* ══════════════════════════════════════════
+   Sizes
+   ══════════════════════════════════════════ */
+
+.jsgui-progress[data-size="xs"] {
+    --progress-height: 4px;
+}
+
+.jsgui-progress[data-size="sm"] {
+    --progress-height: 6px;
+}
+
+.jsgui-progress[data-size="lg"] {
+    --progress-height: 12px;
+}
+
+.jsgui-progress[data-size="xl"] {
+    --progress-height: 20px;
+}
+
+/* ══════════════════════════════════════════
+   Label (text inside bar for xl size)
+   ══════════════════════════════════════════ */
+
+.jsgui-progress-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--j-text-xs);
+    font-weight: var(--j-font-weight-semibold);
+    color: var(--j-fg);
+    pointer-events: none;
+    line-height: 1;
+}
+
+/* ══════════════════════════════════════════
+   Striped
+   ══════════════════════════════════════════ */
+
+.jsgui-progress.striped .jsgui-progress-fill {
+    background-image: linear-gradient(45deg,
+            rgba(255, 255, 255, 0.15) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, 0.15) 50%,
+            rgba(255, 255, 255, 0.15) 75%,
+            transparent 75%,
+            transparent);
+    background-size: 24px 24px;
+}
+
+/* ── Animated stripes ── */
+.jsgui-progress.striped.animated .jsgui-progress-fill {
+    animation: jsgui-progress-stripe 1s linear infinite;
+}
+
+@keyframes jsgui-progress-stripe {
+    from {
+        background-position: 24px 0;
+    }
+
+    to {
+        background-position: 0 0;
+    }
+}
+
+/* ══════════════════════════════════════════
+   Indeterminate
+   ══════════════════════════════════════════ */
+
+.jsgui-progress.indeterminate .jsgui-progress-fill {
+    width: 40% !important;
+    animation: jsgui-progress-indeterminate 1.5s ease-in-out infinite;
+}
+
+@keyframes jsgui-progress-indeterminate {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(350%);
+    }
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-progress-fill {
+        transition: none;
+    }
+
+    .jsgui-progress.striped.animated .jsgui-progress-fill,
+    .jsgui-progress.indeterminate .jsgui-progress-fill {
+        animation: none;
+    }
+
+    .jsgui-progress.indeterminate .jsgui-progress-fill {
+        width: 100% !important;
+        transform: none;
+    }
+}
+
+/* ══════════════════════════════════════════
+   Gradient Fills (progress-bar-polish)
+   ══════════════════════════════════════════ */
+
+.jsgui-progress[data-gradient="primary"] .jsgui-progress-fill {
+    background: linear-gradient(90deg, var(--j-primary), var(--j-info));
+}
+
+.jsgui-progress[data-gradient="success"] .jsgui-progress-fill {
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.jsgui-progress[data-gradient="warm"] .jsgui-progress-fill {
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+
+.jsgui-progress[data-gradient="rainbow"] .jsgui-progress-fill {
+    background: linear-gradient(90deg,
+            #ef4444, #f59e0b, #10b981, #3b82f6, #8b5cf6);
+}
+
+/* ── Label on fill (inside the bar) ── */
+.jsgui-progress.label-on-fill .jsgui-progress-label {
+    position: absolute;
+    left: auto;
+    right: 6px;
+    justify-content: flex-end;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Rounded thick variant ── */
+.jsgui-progress[data-size="thick"] {
+    --progress-height: 24px;
+    border-radius: var(--j-radius-lg);
+}
+
+.jsgui-progress[data-size="thick"] .jsgui-progress-label {
+    font-size: var(--j-text-sm);
+    font-weight: var(--j-font-weight-bold);
+}
+
+/* ── Step Progress ── */
+.jsgui-step-progress {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    width: 100%;
+}
+
+.jsgui-step-progress-segment {
+    flex: 1;
+    height: 4px;
+    background: var(--j-bg-muted);
+    transition: background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-step-progress-segment:first-child {
+    border-radius: var(--j-radius-full) 0 0 var(--j-radius-full);
+}
+
+.jsgui-step-progress-segment:last-child {
+    border-radius: 0 var(--j-radius-full) var(--j-radius-full) 0;
+}
+
+.jsgui-step-progress-segment+.jsgui-step-progress-segment {
+    margin-left: 2px;
+}
+
+.jsgui-step-progress-segment.is-complete {
+    background: var(--j-primary);
+}
+
+.jsgui-step-progress-segment.is-active {
+    background: color-mix(in srgb, var(--j-primary) 50%, transparent);
+}

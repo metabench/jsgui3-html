@@ -1002,10 +1002,12 @@ class Control extends Control_Core {
 		const {
 			context
 		} = this;
-		context.map_controls_being_removed_in_frame = context.map_controls_being_removed_in_frame || {};
-		each(this.descendents, ctrl => {
-			if (ctrl._id) context.map_controls_being_removed_in_frame[ctrl._id()] = ctrl;
-		});
+		if (context) {
+			context.map_controls_being_removed_in_frame = context.map_controls_being_removed_in_frame || {};
+			each(this.descendents, ctrl => {
+				if (ctrl._id) context.map_controls_being_removed_in_frame[ctrl._id()] = ctrl;
+			});
+		}
 		super.clear();
 	}
 };

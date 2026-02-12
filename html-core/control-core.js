@@ -1,7 +1,7 @@
 const jsgui = require('lang-tools');
 const oext = require('obext');
 const { Base_Data_Object } = require('./lang_tools_compat');
-const {Data_Model, Collection, tof, stringify, get_a_sig, each, Evented_Class } = jsgui;
+const { Data_Model, Collection, tof, stringify, get_a_sig, each, Evented_Class } = jsgui;
 const Text_Node = require('./text-node');
 const {
 	prop,
@@ -154,7 +154,7 @@ class Control_Background extends Evented_Class {
 			configurable: true
 		});
 	}
-	set(val) {}
+	set(val) { }
 }
 class Control_Core extends Base_Data_Object {
 	constructor(spec = {}, fields) {
@@ -242,7 +242,7 @@ class Control_Core extends Base_Data_Object {
 		var context = this.context || spec.context;
 		if (context) {
 			if (context.register_control) context.register_control(this);
-		} else {}
+		} else { }
 		if (spec['class']) {
 			this.add_class(spec['class']);
 		}
@@ -308,7 +308,7 @@ class Control_Core extends Base_Data_Object {
 	set internal_relative_div(value) {
 		var old_value = this._internal_relative_div;
 		this._internal_relative_div = value;
-		if (value === true) {}
+		if (value === true) { }
 	}
 	get color() {
 		return this.background.color;
@@ -399,7 +399,7 @@ class Control_Core extends Base_Data_Object {
 					}
 					const smx = JSON.stringify(mx);
 					smxs += smx;
-					
+
 				});
 				smxs += ']';
 				smxs = smxs.replace(/"/g, "'");
@@ -407,10 +407,10 @@ class Control_Core extends Base_Data_Object {
 					dom_attrs['data-jsgui-mixins'] = smxs;
 				}
 			}
-			
-			
-			
-			
+
+
+
+
 
 			// is this.
 
@@ -445,69 +445,69 @@ class Control_Core extends Base_Data_Object {
 			}
 			var dom_attrs_keys = Object.keys(dom_attrs);
 			var key, item;
-				for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
-					key = dom_attrs_keys[c];
-					if (key == '_bound_events') {} else if (key === 'style') {
-						item = dom_attrs[key];
-						if (typeof item !== 'function') {
-							if (typeof item === 'object') {
-								if (key === 'style') {
-									const sprops = [];
-									each(item, (v, k) => {
-										const tval = typeof v;
-										if (tval !== 'function') {
-											if (k !== '__empty') {
-												const sprop = k + ':' + v;
-												sprops.push(sprop);
-											}
-										}
-									});
-									if (sprops.length > 0) arr.push(' ', key, '="', sprops.join(';'), '"');
-								} else {
-									let s_obj;
-									try {
-										s_obj = stringify(item);
-									} catch (e) {
-										if (item && item.toString) {
-											s_obj = item.toString();
-										} else {
-											s_obj = '';
+			for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
+				key = dom_attrs_keys[c];
+				if (key == '_bound_events') { } else if (key === 'style') {
+					item = dom_attrs[key];
+					if (typeof item !== 'function') {
+						if (typeof item === 'object') {
+							if (key === 'style') {
+								const sprops = [];
+								each(item, (v, k) => {
+									const tval = typeof v;
+									if (tval !== 'function') {
+										if (k !== '__empty') {
+											const sprop = k + ':' + v;
+											sprops.push(sprop);
 										}
 									}
-									if (s_obj && s_obj.length > 0) {
-										s_obj = s_obj.replace(/\"/g, "'")
-										arr.push(' ', key, '="', s_obj, '"');
-									}
-								}
+								});
+								if (sprops.length > 0) arr.push(' ', key, '="', sprops.join(';'), '"');
 							} else {
-								let is = item.toString();
-								if (!item.__empty && is.length > 0) {
-									arr.push(' ', key, '="', is, '"');
-							}
-						}
-					}
-					} else {
-						item = dom_attrs[key];
-						if (item && item.toString) {
-							if (typeof item === 'object' && item !== null) {
 								let s_obj;
 								try {
 									s_obj = stringify(item);
 								} catch (e) {
-									s_obj = item.toString();
+									if (item && item.toString) {
+										s_obj = item.toString();
+									} else {
+										s_obj = '';
+									}
 								}
 								if (s_obj && s_obj.length > 0) {
 									s_obj = s_obj.replace(/\"/g, "'")
 									arr.push(' ', key, '="', s_obj, '"');
 								}
-							} else {
-								arr.push(' ', key, '="', item.toString(), '"');
+							}
+						} else {
+							let is = item.toString();
+							if (!item.__empty && is.length > 0) {
+								arr.push(' ', key, '="', is, '"');
 							}
 						}
 					}
+				} else {
+					item = dom_attrs[key];
+					if (item && item.toString) {
+						if (typeof item === 'object' && item !== null) {
+							let s_obj;
+							try {
+								s_obj = stringify(item);
+							} catch (e) {
+								s_obj = item.toString();
+							}
+							if (s_obj && s_obj.length > 0) {
+								s_obj = s_obj.replace(/\"/g, "'")
+								arr.push(' ', key, '="', s_obj, '"');
+							}
+						} else {
+							arr.push(' ', key, '="', item.toString(), '"');
+						}
+					}
 				}
-				return arr.join('');
 			}
+			return arr.join('');
+		}
 	}
 	'renderBeginTagToHtml'() {
 		const tagName = this.dom.tagName;
@@ -558,7 +558,7 @@ class Control_Core extends Base_Data_Object {
 		if (typeof content !== 'string') {
 			content.each(v => {
 				tv = tof(v);
-				if (tv == 'string') {} else if (tv == 'data_value') {} else {
+				if (tv == 'string') { } else if (tv == 'data_value') { } else {
 					if (v && v.iterate_this_and_subcontrols) {
 						v.iterate_this_and_subcontrols(ctrl_callback);
 					}
@@ -600,93 +600,93 @@ class Control_Core extends Base_Data_Object {
 			}
 		}
 	}
-		'render_content'() {
-			var content = this.content;
-			if (tof(content) === 'string') {
-				return content;
-			} else {
-				var contentLength = content.length();
-				var res = new Array(contentLength);
-				var tn, output;
-				var arr = content._arr;
-				var c, l = arr.length,
-					n;
-				for (c = 0; c < l; c++) {
-					n = arr[c];
-					if (n === null || typeof n === 'undefined') {
-						res.push('');
-						continue;
-					}
-					tn = tof(n);
-					if (tn === 'string') {
-						const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
-						if (string_processor) {
-							res.push(string_processor(n));
-						} else {
-							res.push(new Text_Node(n).all_html_render());
-						}
-					} else if (tn === 'data_value') {
-						let dv_val;
-						if (typeof n.value !== 'undefined') {
-							dv_val = n.value;
-						} else if (typeof n._ !== 'undefined') {
-							dv_val = n._;
-						} else {
-							dv_val = n.toString();
-						}
-						if (dv_val === null || typeof dv_val === 'undefined') dv_val = '';
-						res.push('' + dv_val);
-					} else if (tn === 'data_model' || tn === 'data_object') {
-						let s_val;
-						try {
-							s_val = stringify(n);
-						} catch (e) {
-							s_val = '' + n;
-						}
-						if (typeof s_val === 'string' && s_val.length >= 2 && s_val[0] === '\"' && s_val[s_val.length - 1] === '\"') {
-							s_val = s_val.slice(1, -1);
-						}
-						const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
-						if (string_processor) {
-							res.push(string_processor(s_val));
-						} else {
-							res.push(new Text_Node(s_val).all_html_render());
-						}
-					} else if (tn === 'number' || tn === 'boolean') {
-						res.push('' + n);
-					} else if (n && typeof n.all_html_render === 'function') {
-						res.push(n.all_html_render());
+	'render_content'() {
+		var content = this.content;
+		if (tof(content) === 'string') {
+			return content;
+		} else {
+			var contentLength = content.length();
+			var res = new Array(contentLength);
+			var tn, output;
+			var arr = content._arr;
+			var c, l = arr.length,
+				n;
+			for (c = 0; c < l; c++) {
+				n = arr[c];
+				if (n === null || typeof n === 'undefined') {
+					res.push('');
+					continue;
+				}
+				tn = tof(n);
+				if (tn === 'string') {
+					const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
+					if (string_processor) {
+						res.push(string_processor(n));
 					} else {
-						const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
-						const fallback = '' + n;
-						if (string_processor) {
-							res.push(string_processor(fallback));
-						} else {
-							res.push(new Text_Node(fallback).all_html_render());
-						}
+						res.push(new Text_Node(n).all_html_render());
+					}
+				} else if (tn === 'data_value') {
+					let dv_val;
+					if (typeof n.value !== 'undefined') {
+						dv_val = n.value;
+					} else if (typeof n._ !== 'undefined') {
+						dv_val = n._;
+					} else {
+						dv_val = n.toString();
+					}
+					if (dv_val === null || typeof dv_val === 'undefined') dv_val = '';
+					res.push('' + dv_val);
+				} else if (tn === 'data_model' || tn === 'data_object') {
+					let s_val;
+					try {
+						s_val = stringify(n);
+					} catch (e) {
+						s_val = '' + n;
+					}
+					if (typeof s_val === 'string' && s_val.length >= 2 && s_val[0] === '\"' && s_val[s_val.length - 1] === '\"') {
+						s_val = s_val.slice(1, -1);
+					}
+					const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
+					if (string_processor) {
+						res.push(string_processor(s_val));
+					} else {
+						res.push(new Text_Node(s_val).all_html_render());
+					}
+				} else if (tn === 'number' || tn === 'boolean') {
+					res.push('' + n);
+				} else if (n && typeof n.all_html_render === 'function') {
+					res.push(n.all_html_render());
+				} else {
+					const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
+					const fallback = '' + n;
+					if (string_processor) {
+						res.push(string_processor(fallback));
+					} else {
+						res.push(new Text_Node(fallback).all_html_render());
 					}
 				}
-				return res.join('');
 			}
+			return res.join('');
 		}
+	}
 	'all_html_render_internal_controls'() {
 		return this.render_content();
 	}
 	'render'() {
-		return this.all_html_render(); 
+		return this.all_html_render();
 	}
 	'pre_all_html_render'() {
 		// if on the server side...
 		//   not sure to what extent this fn call on every render will slow it down, raising an event on the server too.
 
-		
+
 
 		if (typeof document === 'undefined') {
 			this.raise('server-pre-render');
 		}
 
 	}
-	'compose'() {}
+	'compose'() { }
 	'visible'(callback) {
 		this.style('display', 'block', callback);
 	}
@@ -763,7 +763,7 @@ class Control_Core extends Base_Data_Object {
 					'name': 'style',
 					'value': da.style + ''
 				});
-			} else {}
+			} else { }
 		}
 		if (sig == '[o]') {
 			each(a[0], (v, i) => {
@@ -771,7 +771,7 @@ class Control_Core extends Base_Data_Object {
 			});
 		}
 	}
-	'active'() {}
+	'active'() { }
 	'find_selection_scope'() {
 		var res = this.selection_scope;
 		if (res) return res;
@@ -890,7 +890,7 @@ class Control_Core extends Base_Data_Object {
 				}
 			}
 		} else {
-			if (t_target === 'control') {}
+			if (t_target === 'control') { }
 		}
 	}
 	'find_selected_ancestor_in_scope'() {
@@ -907,7 +907,7 @@ class Control_Core extends Base_Data_Object {
 	}
 	'closest'(match) {
 		let tmatch = tof(match);
-		if (tmatch === 'string') {}
+		if (tmatch === 'string') { }
 		if (tmatch === 'function') {
 			let search = (ctrl) => {
 				if (match(ctrl)) {
@@ -922,8 +922,8 @@ class Control_Core extends Base_Data_Object {
 			}
 			return search(this);
 		}
-		}
-		'shallow_copy'() {
+	}
+	'shallow_copy'() {
 		var res = new Control({
 			'context': this.context
 		});
@@ -944,14 +944,14 @@ class Control_Core extends Base_Data_Object {
 			}
 		})
 		return res;
-		}
-		'matches_selector'(selector) {
-			return this.$match(selector);
-		}
-		'find'(selector) { 
-			const res = [];
-			const desc = (node, callback) => {
-				if (node.$match(selector)) {
+	}
+	'matches_selector'(selector) {
+		return this.$match(selector);
+	}
+	'find'(selector) {
+		const res = [];
+		const desc = (node, callback) => {
+			if (node.$match(selector)) {
 				callback(node);
 			}
 			node.content.each(child => {
@@ -960,86 +960,86 @@ class Control_Core extends Base_Data_Object {
 		}
 		desc(this, (node => res.push(node)));
 		return res;
-		}
-		'$match'(selector) {
-			if (typeof selector === 'function') {
-				return selector(this);
-			} else {
-				const str_selector = String(selector || '').trim();
-				if (str_selector === '') return false;
+	}
+	'$match'(selector) {
+		if (typeof selector === 'function') {
+			return selector(this);
+		} else {
+			const str_selector = String(selector || '').trim();
+			if (str_selector === '') return false;
 
-				const parse_part = (part) => {
-					const str_part = String(part || '').trim();
-					if (str_part === '' || str_part === '*') return () => true;
+			const parse_part = (part) => {
+				const str_part = String(part || '').trim();
+				if (str_part === '' || str_part === '*') return () => true;
 
-					if (str_part[0] === '.') {
-						const cls = str_part.substr(1);
-						return (node) => node && typeof node.has_class === 'function' && node.has_class(cls);
-					}
+				if (str_part[0] === '.') {
+					const cls = str_part.substr(1);
+					return (node) => node && typeof node.has_class === 'function' && node.has_class(cls);
+				}
 
-					if (str_part[0] === ':') {
-						const type_name = str_part.substr(1);
-						return (node) => node && node.__type_name === type_name;
-					}
+				if (str_part[0] === ':') {
+					const type_name = str_part.substr(1);
+					return (node) => node && node.__type_name === type_name;
+				}
 
-					if (str_part[0] === '#') {
-						const id = str_part.substr(1);
-						return (node) => node && (node.dom?.attributes?.id === id || node._id?.() === id);
-					}
+				if (str_part[0] === '#') {
+					const id = str_part.substr(1);
+					return (node) => node && (node.dom?.attributes?.id === id || node._id?.() === id);
+				}
 
-					if (str_part[0] === '[' && str_part[str_part.length - 1] === ']') {
-						const inner = str_part.substring(1, str_part.length - 1).trim();
-						const eq_pos = inner.indexOf('=');
-						if (eq_pos === -1) {
-							const prop_name = inner;
-							return (node) => {
-								if (!node) return false;
-								const v = node[prop_name];
-								return typeof v !== 'undefined' && v !== null && v !== false;
-							};
-						}
-						const prop_name = inner.substring(0, eq_pos).trim();
-						let expected = inner.substring(eq_pos + 1).trim();
-						if (
-							(expected[0] === '"' && expected[expected.length - 1] === '"') ||
-							(expected[0] === "'" && expected[expected.length - 1] === "'")
-						) {
-							expected = expected.substring(1, expected.length - 1);
-						}
+				if (str_part[0] === '[' && str_part[str_part.length - 1] === ']') {
+					const inner = str_part.substring(1, str_part.length - 1).trim();
+					const eq_pos = inner.indexOf('=');
+					if (eq_pos === -1) {
+						const prop_name = inner;
 						return (node) => {
 							if (!node) return false;
-							const actual = node[prop_name];
-							return String(actual) === expected;
+							const v = node[prop_name];
+							return typeof v !== 'undefined' && v !== null && v !== false;
 						};
 					}
-
-					return (node) => node && node.__type_name === str_part;
-				};
-
-				const parts = str_selector.split(/\s+/).filter(part => part.length > 0);
-				if (parts.length === 0) return false;
-
-				const match_fns = parts.map(parse_part);
-
-				if (match_fns.length === 1) {
-					return match_fns[0](this);
-				}
-
-				let node = this;
-				let idx = match_fns.length - 1;
-				if (!match_fns[idx](node)) return false;
-
-				for (idx = idx - 1; idx >= 0; idx--) {
-					node = node.parent;
-					while (node && !match_fns[idx](node)) {
-						node = node.parent;
+					const prop_name = inner.substring(0, eq_pos).trim();
+					let expected = inner.substring(eq_pos + 1).trim();
+					if (
+						(expected[0] === '"' && expected[expected.length - 1] === '"') ||
+						(expected[0] === "'" && expected[expected.length - 1] === "'")
+					) {
+						expected = expected.substring(1, expected.length - 1);
 					}
-					if (!node) return false;
+					return (node) => {
+						if (!node) return false;
+						const actual = node[prop_name];
+						return String(actual) === expected;
+					};
 				}
 
-				return true;
+				return (node) => node && node.__type_name === str_part;
+			};
+
+			const parts = str_selector.split(/\s+/).filter(part => part.length > 0);
+			if (parts.length === 0) return false;
+
+			const match_fns = parts.map(parse_part);
+
+			if (match_fns.length === 1) {
+				return match_fns[0](this);
 			}
+
+			let node = this;
+			let idx = match_fns.length - 1;
+			if (!match_fns[idx](node)) return false;
+
+			for (idx = idx - 1; idx >= 0; idx--) {
+				node = node.parent;
+				while (node && !match_fns[idx](node)) {
+					node = node.parent;
+				}
+				if (!node) return false;
+			}
+
+			return true;
 		}
+	}
 	'$'(selector, handler) {
 		let match = this.$match(selector);
 		let res = [];
@@ -1058,7 +1058,11 @@ class Control_Core extends Base_Data_Object {
 	'clear'() {
 		this.content.clear();
 	}
-	'activate'() {}
+	'recompose'() {
+		this.clear();
+		this.compose();
+	}
+	'activate'() { }
 	get this_and_descendents() {
 		const res = [];
 		this.iterate_this_and_subcontrols(ctrl => res.push(ctrl));
@@ -1084,8 +1088,8 @@ var p = Control_Core.prototype;
 p.connect_fields = true;
 const customInspectSymbol = Symbol.for('nodejs.util.inspect.custom');
 if (jsgui.custom_rendering === 'very-simple') {
-	p[customInspectSymbol] = function(depth, inspectOptions, inspect) {
-		return '< ' + this.dom.tagName + ' ' + this.__type_name +  ' >'
+	p[customInspectSymbol] = function (depth, inspectOptions, inspect) {
+		return '< ' + this.dom.tagName + ' ' + this.__type_name + ' >'
 	};
 }
 module.exports = Control_Core;
@@ -1152,7 +1156,7 @@ if (require.main === module) {
 			failed
 		};
 	}
-	console.log(test_svg()); 
+	console.log(test_svg());
 	const test_background_color = () => {
 		const expectedColor = '#ff0000';
 		const passed = [];

@@ -1,0 +1,105 @@
+/*
+ * Tree View Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-tree
+ * Features: expand/collapse, indent, icons, selection, hover
+ */
+
+/* ── Container ── */
+.jsgui-tree {
+    font-family: var(--j-font-sans);
+    font-size: var(--j-text-sm);
+    color: var(--j-fg);
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* ── Tree node ── */
+.jsgui-tree .tree-node {
+    display: flex;
+    flex-direction: column;
+}
+
+.jsgui-tree .tree-node-row {
+    display: flex;
+    align-items: center;
+    gap: var(--j-space-1, 4px);
+    padding: var(--j-space-1, 3px) var(--j-space-2, 6px);
+    border-radius: var(--j-radius-sm, 3px);
+    cursor: pointer;
+    transition: background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-tree .tree-node-row:hover {
+    background: var(--j-bg-subtle, #f8fafc);
+}
+
+.jsgui-tree .tree-node-row.is-selected {
+    background: color-mix(in srgb, var(--j-primary) 10%, transparent);
+    color: var(--j-primary);
+}
+
+/* ── Toggle arrow ── */
+.jsgui-tree .tree-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    font-size: 10px;
+    color: var(--j-fg-muted);
+    transition: transform var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-tree .tree-toggle.is-open {
+    transform: rotate(90deg);
+}
+
+.jsgui-tree .tree-toggle.is-leaf {
+    visibility: hidden;
+}
+
+/* ── Node icon ── */
+.jsgui-tree .tree-icon {
+    display: inline-flex;
+    font-size: 1em;
+    margin-right: var(--j-space-1, 2px);
+}
+
+/* ── Node label ── */
+.jsgui-tree .tree-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+/* ── Indentation ── */
+.jsgui-tree .tree-children {
+    padding-left: var(--j-space-4, 16px);
+}
+
+.jsgui-tree .tree-children.is-collapsed {
+    display: none;
+}
+
+/* ── Focus ── */
+.jsgui-tree .tree-node-row:focus-visible {
+    outline: 2px solid var(--j-primary);
+    outline-offset: -2px;
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-tree .tree-node-row,
+    .jsgui-tree .tree-toggle {
+        transition: none;
+    }
+}

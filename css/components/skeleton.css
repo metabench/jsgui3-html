@@ -1,0 +1,113 @@
+/*
+ * Skeleton Loader Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-skeleton
+ * Variants: text, circle, rect, card
+ * Features: shimmer animation, multi-line text, no-animate mode
+ */
+
+/* ── Base container ── */
+.jsgui-skeleton {
+    display: flex;
+    flex-direction: column;
+    gap: var(--j-space-2, 8px);
+}
+
+/* ── Bone (single placeholder element) ── */
+.jsgui-skeleton .skeleton-bone,
+.jsgui-skeleton .skeleton-line {
+    display: block;
+    background: linear-gradient(90deg,
+            var(--j-bg-muted, #e2e8f0) 25%,
+            var(--j-bg-subtle, #f1f5f9) 50%,
+            var(--j-bg-muted, #e2e8f0) 75%);
+    background-size: 200% 100%;
+    animation: jsgui-skeleton-shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--j-radius-sm, 4px);
+}
+
+/* ── No animation ── */
+.jsgui-skeleton.no-animate .skeleton-bone,
+.jsgui-skeleton.no-animate .skeleton-line {
+    animation: none;
+    background: var(--j-bg-muted, #e2e8f0);
+}
+
+/* ══════════════════════════════════════════
+   Text variant
+   ══════════════════════════════════════════ */
+
+.jsgui-skeleton[data-variant="text"] .skeleton-line,
+.jsgui-skeleton[data-variant="text"] .skeleton-bone {
+    height: 14px;
+    width: 100%;
+}
+
+.jsgui-skeleton[data-variant="text"] .skeleton-line-last {
+    width: 60%;
+}
+
+/* ══════════════════════════════════════════
+   Circle variant
+   ══════════════════════════════════════════ */
+
+.jsgui-skeleton[data-variant="circle"] .skeleton-bone {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* ══════════════════════════════════════════
+   Rect variant
+   ══════════════════════════════════════════ */
+
+.jsgui-skeleton[data-variant="rect"] .skeleton-bone {
+    width: 100%;
+    height: 100px;
+    border-radius: var(--j-radius, 6px);
+}
+
+/* ══════════════════════════════════════════
+   Card variant
+   ══════════════════════════════════════════ */
+
+.jsgui-skeleton[data-variant="card"] {
+    padding: var(--j-space-4, 16px);
+    border: 1px solid var(--j-border, #e2e8f0);
+    border-radius: var(--j-radius-lg, 8px);
+    background: var(--j-bg, #fff);
+}
+
+.jsgui-skeleton[data-variant="card"] .skeleton-bone {
+    height: 120px;
+    width: 100%;
+    border-radius: var(--j-radius, 6px);
+    margin-bottom: var(--j-space-3, 12px);
+}
+
+/* ══════════════════════════════════════════
+   Shimmer animation
+   ══════════════════════════════════════════ */
+
+@keyframes jsgui-skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-skeleton .skeleton-bone,
+    .jsgui-skeleton .skeleton-line {
+        animation: none;
+        background: var(--j-bg-muted, #e2e8f0);
+    }
+}

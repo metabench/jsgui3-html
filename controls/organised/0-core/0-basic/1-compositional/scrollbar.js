@@ -22,11 +22,11 @@ class Scrollbar extends Control {
         this.page_ratio = 0;
 
         if (!spec.el) {
-            this.compose_scrollbar();
+            this.compose();
         }
     }
 
-    compose_scrollbar() {
+    compose() {
         const input_ctrl = new Control({
             context: this.context
         });

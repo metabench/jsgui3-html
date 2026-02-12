@@ -26,11 +26,11 @@ class Property_Viewer extends Control {
         });
 
         if (!spec.abstract && !spec.el) {
-            this.compose_viewer();
+            this.compose();
         }
     }
 
-    compose_viewer() {
+    compose() {
         this.add_class('property-viewer');
         this.refresh_view();
     }

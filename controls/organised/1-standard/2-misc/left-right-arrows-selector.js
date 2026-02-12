@@ -107,10 +107,10 @@ class Left_Right_Arrows_Selector extends Control {
             this.loop = spec.loop;
         }
         if (!spec.el) {
-            this.compose_lras();
+            this.compose();
         }
     }
-    compose_lras() {
+    compose() {
 
         // left, item, right
         let context = this.context;

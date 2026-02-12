@@ -1,0 +1,162 @@
+/*
+ * Data Table Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-data-table
+ * Features: striped rows, hover, sticky header, sorting indicators, borders
+ */
+
+/* ── Base table ── */
+.jsgui-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--j-font-sans);
+    font-size: var(--j-text-sm);
+    color: var(--j-fg);
+    background: var(--j-bg);
+}
+
+/* ── Header ── */
+.jsgui-data-table .data-table-header {
+    text-align: left;
+    font-weight: var(--j-font-weight-semibold);
+    font-size: var(--j-text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--j-fg-muted);
+    padding: var(--j-space-3, 10px) var(--j-space-3, 12px);
+    border-bottom: 2px solid var(--j-border);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: var(--j-bg);
+    z-index: 1;
+}
+
+.jsgui-data-table .data-table-header.is-sortable {
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: color var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-data-table .data-table-header.is-sortable:hover {
+    color: var(--j-fg);
+}
+
+/* Sort indicator */
+.jsgui-data-table .data-table-header.is-sorted-asc::after,
+.jsgui-data-table .data-table-header.is-sorted-desc::after {
+    display: inline-block;
+    margin-left: var(--j-space-1, 4px);
+    font-size: 0.75em;
+}
+
+.jsgui-data-table .data-table-header.is-sorted-asc::after {
+    content: '▲';
+}
+
+.jsgui-data-table .data-table-header.is-sorted-desc::after {
+    content: '▼';
+}
+
+/* ── Rows ── */
+.jsgui-data-table .data-table-row {
+    border-bottom: 1px solid var(--j-border, #f1f5f9);
+    transition: background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-data-table .data-table-row:hover {
+    background: var(--j-bg-subtle, #f8fafc);
+}
+
+/* Striped */
+.jsgui-data-table[data-variant="striped"] .data-table-row:nth-child(even) {
+    background: var(--j-bg-subtle, #f8fafc);
+}
+
+.jsgui-data-table[data-variant="striped"] .data-table-row:nth-child(even):hover {
+    background: var(--j-bg-muted, #f1f5f9);
+}
+
+/* ── Cells ── */
+.jsgui-data-table .data-table-cell {
+    padding: var(--j-space-3, 10px) var(--j-space-3, 12px);
+    vertical-align: middle;
+}
+
+/* ── Bordered variant ── */
+.jsgui-data-table[data-variant="bordered"] {
+    border: 1px solid var(--j-border);
+}
+
+.jsgui-data-table[data-variant="bordered"] .data-table-header,
+.jsgui-data-table[data-variant="bordered"] .data-table-cell {
+    border: 1px solid var(--j-border);
+}
+
+/* ── Compact variant ── */
+.jsgui-data-table[data-variant="compact"] .data-table-header,
+.jsgui-data-table[data-variant="compact"] .data-table-cell {
+    padding: var(--j-space-1, 4px) var(--j-space-2, 8px);
+    font-size: var(--j-text-xs);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-data-table .data-table-row,
+    .jsgui-data-table .data-table-header {
+        transition: none;
+    }
+}
+
+/* ══════════════════════════════════════════
+   Dark Mode
+   ══════════════════════════════════════════ */
+
+.jsgui-dark-mode .jsgui-data-table {
+    color: var(--j-fg, #e2e8f0);
+    background: var(--j-bg, #0f172a);
+}
+
+.jsgui-dark-mode .jsgui-data-table .data-table-header {
+    color: var(--j-fg-muted, #94a3b8);
+    border-bottom-color: var(--j-border, #334155);
+    background: var(--j-bg, #0f172a);
+}
+
+.jsgui-dark-mode .jsgui-data-table .data-table-row {
+    border-bottom-color: var(--j-border, #1e293b);
+}
+
+.jsgui-dark-mode .jsgui-data-table .data-table-row:hover {
+    background: var(--j-bg-subtle, #1e293b);
+}
+
+.jsgui-dark-mode .jsgui-data-table[data-variant="striped"] .data-table-row:nth-child(even) {
+    background: var(--j-bg-subtle, #1e293b);
+}
+
+/* ── Row selection ── */
+.jsgui-data-table .data-table-row.is-selected {
+    background: var(--j-primary-bg, #eff6ff);
+}
+
+.jsgui-data-table .data-table-row.is-selected:hover {
+    background: var(--j-primary-bg-hover, #dbeafe);
+}
+
+.jsgui-dark-mode .jsgui-data-table .data-table-row.is-selected {
+    background: var(--j-primary-bg, #1e3a5f);
+}
+
+/* ── Empty state ── */
+.jsgui-data-table .data-table-empty {
+    text-align: center;
+    padding: var(--j-space-8, 40px) var(--j-space-4, 16px);
+    color: var(--j-fg-muted);
+    font-style: italic;
+}

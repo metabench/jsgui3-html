@@ -62,10 +62,10 @@ class Horizontal_Slider extends Control {
 		field(this, 'max', spec.max || 100);
 
 		if (!spec.el) {
-			this.compose_horizontal_slider();
+			this.compose();
 		}
 	}
-	'compose_horizontal_slider'() {
+	'compose'() {
 		let h_bar, v_bar;
 		const context = this.context;
 
@@ -74,6 +74,7 @@ class Horizontal_Slider extends Control {
 			'context': context
 		}));
 		this.add_class('horizontal slider');
+		this.add_class('jsgui-slider');
 
 		// Then we add the bar over the width.
 		(h_bar = new Control({
@@ -184,7 +185,7 @@ class Horizontal_Slider extends Control {
 				//console.log('this.value', this.value);
 
 				this.bar_value = this._.value;
-            });
+			});
 
 
 
@@ -247,7 +248,7 @@ class Horizontal_Slider extends Control {
 			var v_bar_center_pos_when_pressed;
 			*/
 
-			
+
 		}
 
 
@@ -281,7 +282,7 @@ class Horizontal_Slider extends Control {
 
 		//console.log('v_bar.pos', v_bar.pos);
 		if (v_bar.pos) {
-			
+
 
 			//console.log('v_bar.pos', v_bar.pos);
 			//console.log('v_bar.pos[1]', v_bar.pos[1]);
@@ -292,7 +293,7 @@ class Horizontal_Slider extends Control {
 
 		//
 
-		
+
 
 		//console.log('set bar_value', value);
 		//console.trace();

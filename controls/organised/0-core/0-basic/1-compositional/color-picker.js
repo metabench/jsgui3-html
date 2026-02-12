@@ -139,7 +139,7 @@ class Color_Picker extends Control {
         this._prev_hex = this._current_hex();
 
         if (!spec.el) {
-            this._compose();
+            this.compose();
         }
     }
 
@@ -214,7 +214,7 @@ class Color_Picker extends Control {
         }
     }
 
-    _compose() {
+    compose() {
         const { context } = this;
         const cfg = this._cfg;
 
@@ -420,7 +420,7 @@ class Color_Picker extends Control {
         }
     }
 
-    // ── Reconnect DOM refs for hydration (when _compose was skipped) ──
+    // ── Reconnect DOM refs for hydration (when compose was skipped) ──
     _reconnect_from_dom() {
         const el = this.dom.el;
         if (!el) return;
@@ -766,164 +766,14 @@ Color_Picker.css = `
 .color-picker {
     display: inline-flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 12px;
-    background: #1e293b;
-    border-radius: 10px;
-    font-family: 'Inter', system-ui, sans-serif;
-    font-size: 12px;
-    color: #e2e8f0;
-    min-width: 200px;
 }
 .cp-layout-horizontal { flex-direction: row; flex-wrap: wrap; }
-.cp-layout-compact { gap: 6px; padding: 8px; min-width: 180px; }
-
-/* Wheel */
-.cp-wheel-wrap {
-    position: relative;
-    width: 180px;
-    height: 180px;
-    margin: 0 auto;
-}
+.cp-wheel-wrap { position: relative; width: 180px; height: 180px; margin: 0 auto; }
 .cp-wheel-canvas { position: absolute; top: 0; left: 0; cursor: crosshair; }
-.cp-sl-canvas {
-    position: absolute;
-    top: 40px; left: 40px;
-    width: 100px; height: 100px;
-    cursor: crosshair;
-    border-radius: 2px;
-}
-.cp-hue-dot, .cp-sl-dot {
-    position: absolute;
-    width: 12px; height: 12px;
-    border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0 0 3px rgba(0,0,0,0.5);
-    pointer-events: none;
-}
-.cp-hue-dot { background: transparent; }
-.cp-sl-dot { background: transparent; }
-
-/* Sliders */
-.cp-sliders { display: flex; flex-direction: column; gap: 4px; }
-.cp-slider-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.cp-slider-label {
-    width: 14px;
-    font-weight: 600;
-    color: #94a3b8;
-    text-align: center;
-}
-.cp-slider {
-    flex: 1;
-    height: 6px;
-    -webkit-appearance: none;
-    appearance: none;
-    background: #334155;
-    border-radius: 3px;
-    outline: none;
-    cursor: pointer;
-}
-.cp-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: #3b82f6;
-    border: 2px solid #fff;
-    cursor: grab;
-}
-.cp-slider-value {
-    width: 28px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-    color: #94a3b8;
-}
-
-/* Hex row */
-.cp-hex-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.cp-hex-label { font-weight: 600; color: #94a3b8; }
-.cp-hex-input {
-    flex: 1;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 4px;
-    color: #e2e8f0;
-    padding: 4px 8px;
-    font-family: monospace;
-    font-size: 12px;
-    text-transform: uppercase;
-}
-.cp-hex-input:focus { border-color: #3b82f6; outline: none; }
-
-/* RGB / HSL rows */
-.cp-rgb-row, .cp-hsl-row {
-    display: flex;
-    gap: 6px;
-}
-.cp-num-field {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    flex: 1;
-}
-.cp-num-field span {
-    font-size: 10px;
-    font-weight: 600;
-    color: #64748b;
-    text-transform: uppercase;
-}
-.cp-num-field input {
-    width: 100%;
-    background: #0f172a;
-    border: 1px solid #334155;
-    border-radius: 4px;
-    color: #e2e8f0;
-    padding: 3px 4px;
-    font-size: 11px;
-    text-align: center;
-    box-sizing: border-box;
-}
-.cp-num-field input:focus { border-color: #3b82f6; outline: none; }
-
-/* Palette */
-.cp-palette {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 3px;
-}
-.cp-palette-cell {
-    width: 18px; height: 18px;
-    border-radius: 3px;
-    cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.1);
-    transition: transform 0.1s;
-}
-.cp-palette-cell:hover {
-    transform: scale(1.3);
-    z-index: 1;
-    border-color: #fff;
-}
-
-/* Preview */
-.cp-preview {
-    display: flex;
-    border-radius: 6px;
-    overflow: hidden;
-    height: 32px;
-}
-.cp-preview-prev, .cp-preview-new {
-    flex: 1;
-}
-.cp-preview-prev { opacity: 0.6; }
+.cp-sl-canvas { position: absolute; top: 40px; left: 40px; width: 100px; height: 100px; cursor: crosshair; }
+.cp-hue-dot, .cp-sl-dot { position: absolute; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; pointer-events: none; }
 `;
+
 
 // Export utilities for testing
 Color_Picker.hsl_to_rgb = hsl_to_rgb;

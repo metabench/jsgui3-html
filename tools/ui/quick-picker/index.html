@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quick Picker</title>
   <style>
     :root {
@@ -78,6 +79,7 @@
       text-transform: uppercase;
       letter-spacing: 2px;
       -webkit-app-region: drag;
+      app-region: drag;
       padding-bottom: 8px;
       border-bottom: 1px solid #444;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -85,6 +87,7 @@
       /* Metallic Gradient Text */
       background: var(--border-gold);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       color: var(--accent-gold);
       /* Fallback */
@@ -188,6 +191,101 @@
       letter-spacing: 1.5px;
       font-family: var(--font-body);
     }
+
+    /* Agent Card Styles */
+    .agent-card {
+      padding: 14px 16px;
+      cursor: pointer;
+      margin-bottom: 6px;
+      transition: all 0.2s ease-out;
+      position: relative;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+
+    .agent-card:hover {
+      background: var(--hover-bg);
+      border-color: rgba(255, 255, 255, 0.1);
+      transform: translateX(2px);
+    }
+
+    .agent-card.selected {
+      background: var(--selected-bg);
+      color: var(--selected-text);
+      border: 1px solid;
+      border-image: var(--border-gold);
+      border-image-slice: 1;
+      box-shadow: var(--shadow-depth);
+      transform: scale(1.01);
+      z-index: 10;
+    }
+
+    body.theme-bright .agent-card.selected {
+      border-image: none;
+      border: 1px solid var(--accent-gold);
+      box-shadow: none;
+      transform: none;
+    }
+
+    .agent-card .agent-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .agent-card .agent-emoji {
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .agent-card .agent-title {
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--font-body);
+    }
+
+    .agent-card .agent-purpose {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.4;
+      font-style: italic;
+    }
+
+    .agent-card.selected .agent-purpose {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .agent-card .agent-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 8px;
+    }
+
+    .agent-card .tag-pill {
+      font-size: 9px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(201, 169, 98, 0.15);
+      color: var(--accent-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(201, 169, 98, 0.3);
+    }
+
+    body.theme-bright .agent-card .tag-pill {
+      background: rgba(104, 33, 122, 0.1);
+      color: var(--accent-gold);
+      border-color: rgba(104, 33, 122, 0.3);
+    }
+
+    .agent-card.selected .tag-pill {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--selected-text);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
   </style>
 </head>
 
@@ -207,7 +305,13 @@
     let selectedIndex = -1;
 
     ipcRenderer.on('set-options', (event, options) => {
+      // Reset agent mode if switching back from agent picker
+      if (agentMode) {
+        agentMode = false;
+        document.querySelector('h3').textContent = 'Select an Option';
+      }
       currentOptions = options;
+      selectedIndex = -1;
       renderOptions();
     });
 
@@ -315,7 +419,8 @@
       if (index >= 0 && index < currentOptions.length) {
         const opt = currentOptions[index];
         const value = typeof opt === 'object' ? (opt.value || opt.label) : opt;
-        ipcRenderer.send('selection-made', { selection: value, option: opt, phase: opt.phase });
+        const phase = (typeof opt === 'object' && opt.phase) ? opt.phase : undefined;
+        ipcRenderer.send('selection-made', { selection: value, option: opt, phase });
       }
     }
 
@@ -333,6 +438,62 @@
         ipcRenderer.send('cancel');
       }
     });
+
+    // ─── Agent Picker Mode ───
+    let agentMode = false;
+    let currentAgents = [];
+
+    ipcRenderer.on('set-agents', (event, agents) => {
+      agentMode = true;
+      currentAgents = agents;
+      currentOptions = agents; // share selection state
+      selectedIndex = -1;
+      document.querySelector('h3').textContent = 'Adopt Agent Role';
+      renderAgents();
+    });
+
+
+
+    function renderAgents() {
+      list.innerHTML = '';
+      currentAgents.forEach((agent, index) => {
+        const li = document.createElement('li');
+        li.className = 'agent-card';
+        li.dataset.index = index;
+
+        const emoji = agent.emoji || '🤖';
+        // Strip emoji from label for clean display
+        const cleanLabel = agent.label.replace(/^[^\w\s]+\s*/, '').replace(/\s*[^\w\s]+$/, '').trim() || agent.label;
+
+        let html = '<div class="agent-header">';
+        html += `<span class="agent-emoji">${emoji}</span>`;
+        html += `<span class="agent-title">${cleanLabel}</span>`;
+        html += '</div>';
+
+        if (agent.purpose || agent.description) {
+          html += `<span class="agent-purpose">${agent.purpose || agent.description}</span>`;
+        }
+
+        if (agent.tags && agent.tags.length > 0) {
+          html += '<div class="agent-tags">';
+          agent.tags.slice(0, 5).forEach(tag => {
+            html += `<span class="tag-pill">${tag}</span>`;
+          });
+          html += '</div>';
+        }
+
+        li.innerHTML = html;
+
+        li.addEventListener('click', () => selectItem(index));
+        li.addEventListener('dblclick', () => confirmSelection(index));
+
+        list.appendChild(li);
+      });
+
+      if (currentAgents.length > 0) {
+        selectItem(0);
+      }
+    }
   </script>
 </body>
 

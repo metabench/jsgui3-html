@@ -31,6 +31,7 @@ class Accordion extends Control {
         spec.__type_name = spec.__type_name || 'accordion';
         super(spec);
         this.add_class('accordion');
+        this.add_class('jsgui-accordion');
         this.dom.tagName = 'div';
 
         ensure_control_models(this, spec);
@@ -48,7 +49,7 @@ class Accordion extends Control {
         }
 
         if (!spec.el) {
-            this.compose_accordion();
+            this.compose();
         }
 
         this.bind_model();
@@ -125,7 +126,7 @@ class Accordion extends Control {
         this.raise('toggle', { open_ids });
     }
 
-    compose_accordion() {
+    compose() {
         this.render_sections();
     }
 
@@ -175,17 +176,25 @@ class Accordion extends Control {
 
     sync_open_state() {
         const open_ids = this.get_open_ids();
-        (this.section_controls || []).forEach(section => {
-            const is_open = open_ids.includes(section.id);
-            if (section.header) {
+        (this.section_controls || []).forEach(sc => {
+            const is_open = open_ids.includes(sc.id);
+            // Toggle on the section wrapper — CSS targets .accordion-section.is-open
+            if (sc.section) {
                 if (is_open) {
-                    section.header.add_class('is-open');
+                    sc.section.add_class('is-open');
                 } else {
-                    section.header.remove_class('is-open');
+                    sc.section.remove_class('is-open');
                 }
             }
-            if (section.expander) {
-                section.expander.state = is_open ? 'open' : 'closed';
+            if (sc.header) {
+                if (is_open) {
+                    sc.header.add_class('is-open');
+                } else {
+                    sc.header.remove_class('is-open');
+                }
+            }
+            if (sc.expander) {
+                sc.expander.state = is_open ? 'open' : 'closed';
             }
         });
     }
@@ -196,11 +205,18 @@ class Accordion extends Control {
             if (!this.dom.el) return;
 
             this.add_dom_event_listener('click', e_click => {
-                const target = e_click.target;
-                if (!target || !target.getAttribute) return;
-                const section_id = target.getAttribute('data-section-id');
-                if (!is_defined(section_id)) return;
-                this.toggle_section(section_id);
+                // Walk up from the click target to find the accordion-header
+                let target = e_click.target;
+                while (target && target !== this.dom.el) {
+                    if (target.classList && target.classList.contains('accordion-header')) {
+                        const section_id = target.getAttribute('data-section-id');
+                        if (is_defined(section_id)) {
+                            this.toggle_section(section_id);
+                        }
+                        return;
+                    }
+                    target = target.parentNode;
+                }
             });
         }
     }
@@ -210,27 +226,41 @@ Accordion.css = `
 .accordion {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-}
-.accordion-section {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    overflow: hidden;
 }
 .accordion-header {
+    display: flex;
+    align-items: center;
     width: 100%;
-    text-align: left;
-    padding: 8px 12px;
-    background: #f2f2f2;
+    padding: 10px 14px;
+    background: none;
     border: none;
+    border-bottom: 1px solid #e2e8f0;
     cursor: pointer;
+    font: inherit;
+    font-weight: 500;
+    text-align: left;
+    color: inherit;
+    transition: background 0.15s;
 }
-.accordion-header.is-open {
-    background: #e6e6e6;
+.accordion-header:hover {
+    background: #f1f5f9;
+}
+.accordion-header::before {
+    content: '\\25B6';
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 0.7em;
+    transition: transform 0.2s;
+}
+.accordion-section.is-open > .accordion-header::before {
+    transform: rotate(90deg);
 }
 .accordion-content {
-    padding: 10px 12px;
-    background: #fff;
+    display: none;
+    padding: 12px 14px;
+}
+.accordion-section.is-open .accordion-content {
+    display: block;
 }
 `;
 

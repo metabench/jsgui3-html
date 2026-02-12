@@ -1,0 +1,721 @@
+<svg viewBox="0 0 1100 950" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Aero glass title bar -->
+        <linearGradient id="aeroTitleBar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#B8D6F0"/>
+            <stop offset="15%" stop-color="#8CBAE8"/>
+            <stop offset="50%" stop-color="#6AA4DD"/>
+            <stop offset="85%" stop-color="#82B4E4"/>
+            <stop offset="100%" stop-color="#A0CCF0"/>
+        </linearGradient>
+        <linearGradient id="aeroTitleBarInactive" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E8E8E8"/>
+            <stop offset="50%" stop-color="#D0D0D0"/>
+            <stop offset="100%" stop-color="#DCDCDC"/>
+        </linearGradient>
+        <!-- Aero window close button -->
+        <linearGradient id="aeroClose" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F08080"/>
+            <stop offset="45%" stop-color="#E03030"/>
+            <stop offset="55%" stop-color="#C82020"/>
+            <stop offset="100%" stop-color="#D04040"/>
+        </linearGradient>
+        <linearGradient id="aeroCloseHover" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FF9090"/>
+            <stop offset="45%" stop-color="#F04040"/>
+            <stop offset="55%" stop-color="#D82828"/>
+            <stop offset="100%" stop-color="#E05050"/>
+        </linearGradient>
+        <!-- Aero caption buttons -->
+        <linearGradient id="aeroCaptionBtn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
+            <stop offset="50%" stop-color="rgba(200,220,240,0.35)"/>
+            <stop offset="100%" stop-color="rgba(180,210,240,0.25)"/>
+        </linearGradient>
+        <!-- XP-upgraded button gradient -->
+        <linearGradient id="premiumBtn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="8%" stop-color="#E4EFF8"/>
+            <stop offset="47%" stop-color="#C6DAEE"/>
+            <stop offset="53%" stop-color="#93BEE0"/>
+            <stop offset="95%" stop-color="#A8CBEC"/>
+            <stop offset="100%" stop-color="#B8D4F0"/>
+        </linearGradient>
+        <linearGradient id="premiumBtnHover" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="8%" stop-color="#FFE8C0"/>
+            <stop offset="47%" stop-color="#FFD080"/>
+            <stop offset="53%" stop-color="#FFAA30"/>
+            <stop offset="95%" stop-color="#FFC060"/>
+            <stop offset="100%" stop-color="#FFD080"/>
+        </linearGradient>
+        <linearGradient id="premiumBtnDefault" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="8%" stop-color="#D0E8FF"/>
+            <stop offset="47%" stop-color="#80B8F0"/>
+            <stop offset="53%" stop-color="#4090D8"/>
+            <stop offset="95%" stop-color="#60A8E8"/>
+            <stop offset="100%" stop-color="#78B8F0"/>
+        </linearGradient>
+        <!-- Menubar gradient -->
+        <linearGradient id="menubar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FAFAFA"/>
+            <stop offset="100%" stop-color="#E8E4DA"/>
+        </linearGradient>
+        <!-- Toolbar gradient -->
+        <linearGradient id="toolbar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F4F2EC"/>
+            <stop offset="50%" stop-color="#ECEADF"/>
+            <stop offset="100%" stop-color="#E4E0D4"/>
+        </linearGradient>
+        <!-- Toolbar button hover -->
+        <linearGradient id="tbBtnHover" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFF0D0"/>
+            <stop offset="50%" stop-color="#FFD890"/>
+            <stop offset="100%" stop-color="#FFC060"/>
+        </linearGradient>
+        <!-- Sidebar gradient -->
+        <linearGradient id="sidebar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6BA0D6"/>
+            <stop offset="100%" stop-color="#4080C0"/>
+        </linearGradient>
+        <!-- Scrollbar thumb -->
+        <linearGradient id="scrollThumb" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#F0F0F0"/>
+            <stop offset="30%" stop-color="#E8E8E8"/>
+            <stop offset="70%" stop-color="#E0E0E0"/>
+            <stop offset="100%" stop-color="#D8D8D8"/>
+        </linearGradient>
+        <!-- Shadow filter -->
+        <filter id="winShadow" x="-5%" y="-3%" width="115%" height="115%">
+            <feDropShadow dx="3" dy="3" stdDeviation="5" flood-color="rgba(0,0,0,0.3)"/>
+        </filter>
+        <filter id="innerGlow" x="-5%" y="-5%" width="110%" height="110%">
+            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <!-- Status bar gradient -->
+        <linearGradient id="statusbar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ECE9D8"/>
+            <stop offset="100%" stop-color="#D4D0C8"/>
+        </linearGradient>
+        <!-- Field inset -->
+        <linearGradient id="fieldShadow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ACA899"/>
+            <stop offset="3%" stop-color="#fff"/>
+            <stop offset="100%" stop-color="#fff"/>
+        </linearGradient>
+        <!-- Tree branch line pattern -->
+        <pattern id="treeDash" width="4" height="4" patternUnits="userSpaceOnUse">
+            <rect width="1" height="1" fill="#ACA899"/>
+        </pattern>
+        <!-- Aero glass panel helper -->
+        <linearGradient id="glassPanel" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(220,235,248,0.9)"/>
+            <stop offset="50%" stop-color="rgba(200,225,245,0.6)"/>
+            <stop offset="100%" stop-color="rgba(210,230,248,0.75)"/>
+        </linearGradient>
+    </defs>
+    
+    <style>
+        text { font-family: 'Segoe UI', Tahoma, sans-serif; }
+    </style>
+    
+    <!-- Desktop -->
+    <rect width="1100" height="950" fill="#3A6EA5"/>
+    <!-- Desktop wallpaper feel (gradient sky) -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1A3A6A"/>
+        <stop offset="100%" stop-color="#5A8EC0"/>
+    </linearGradient>
+    <rect width="1100" height="950" fill="url(#sky)"/>
+    
+    <!-- Title header at top -->
+    <text x="550" y="25" text-anchor="middle" font-size="14" font-weight="bold" fill="rgba(255,255,255,0.9)">
+        jsgui3-html — Aero-Grade Full Application Window Mockup
+    </text>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- MAIN WINDOW (File Manager Style) -->
+    <!-- ════════════════════════════════════════════ -->
+    <g transform="translate(30, 40)" filter="url(#winShadow)">
+        <!-- Window frame (glass border) -->
+        <rect width="700" height="560" rx="6" fill="rgba(100,160,220,0.35)" stroke="rgba(50,100,170,0.5)" stroke-width="1"/>
+        <!-- Inner glass border -->
+        <rect x="1" y="1" width="698" height="558" rx="5" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        
+        <!-- ──── Title Bar ──── -->
+        <rect x="2" y="2" width="696" height="30" rx="4" fill="url(#aeroTitleBar)"/>
+        <rect x="3" y="3" width="694" height="12" rx="3" fill="rgba(255,255,255,0.3)"/>
+        <!-- Window icon -->
+        <rect x="10" y="8" width="16" height="16" rx="2" fill="#FFE050" stroke="#C0A030" stroke-width="0.5"/>
+        <text x="14" y="20" font-size="10" fill="#805000">📁</text>
+        <!-- Title text -->
+        <text x="34" y="22" font-size="12" fill="#1A1A2E" font-weight="600">Documents - File Explorer</text>
+        
+        <!-- Caption buttons (minimize, maximize, close) -->
+        <g transform="translate(605, 3)">
+            <!-- Minimize -->
+            <rect width="30" height="22" rx="2" fill="url(#aeroCaptionBtn)" stroke="rgba(100,140,180,0.4)" stroke-width="0.5"/>
+            <line x1="8" y1="14" x2="22" y2="14" stroke="#1A3060" stroke-width="1.5"/>
+        </g>
+        <g transform="translate(636, 3)">
+            <!-- Maximize -->
+            <rect width="30" height="22" rx="2" fill="url(#aeroCaptionBtn)" stroke="rgba(100,140,180,0.4)" stroke-width="0.5"/>
+            <rect x="8" y="6" width="14" height="12" rx="1" fill="none" stroke="#1A3060" stroke-width="1.5"/>
+        </g>
+        <g transform="translate(667, 3)">
+            <!-- Close -->
+            <rect width="30" height="22" rx="2" fill="url(#aeroClose)"/>
+            <line x1="10" y1="6" x2="22" y2="17" stroke="#fff" stroke-width="2"/>
+            <line x1="22" y1="6" x2="10" y2="17" stroke="#fff" stroke-width="2"/>
+        </g>
+        
+        <!-- ──── Menu Bar ──── -->
+        <rect x="2" y="32" width="696" height="22" fill="url(#menubar)"/>
+        <text x="12" y="47" font-size="11" fill="#333">File</text>
+        <text x="42" y="47" font-size="11" fill="#333">Edit</text>
+        <text x="72" y="47" font-size="11" fill="#333">View</text>
+        <text x="108" y="47" font-size="11" fill="#333">Tools</text>
+        <text x="146" y="47" font-size="11" fill="#333">Help</text>
+        <!-- Highlight on "Edit" -->
+        <rect x="34" y="33" width="32" height="20" rx="2" fill="url(#tbBtnHover)" stroke="#E8C060" stroke-width="0.5"/>
+        <text x="42" y="47" font-size="11" fill="#333" font-weight="bold">Edit</text>
+        <line x1="2" y1="54" x2="698" y2="54" stroke="#D4D0C8" stroke-width="1"/>
+        
+        <!-- ──── Toolbar ──── -->
+        <rect x="2" y="55" width="696" height="34" fill="url(#toolbar)"/>
+        <!-- Back button -->
+        <g transform="translate(8, 58)">
+            <rect width="50" height="28" rx="3" fill="url(#premiumBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+            <rect x="1" y="1" width="48" height="12" rx="2" fill="rgba(255,255,255,0.35)"/>
+            <text x="14" y="18" font-size="13" fill="#003399">◀</text>
+            <text x="28" y="18" font-size="10" fill="#333">Back</text>
+        </g>
+        <!-- Forward button (disabled) -->
+        <g transform="translate(62, 58)">
+            <rect width="28" height="28" rx="3" fill="rgba(0,0,0,0.02)" stroke="#D4D0C8" stroke-width="0.5"/>
+            <text x="10" y="18" font-size="13" fill="#C0C0C0">▶</text>
+        </g>
+        <!-- Up button -->
+        <g transform="translate(98, 58)">
+            <rect width="28" height="28" rx="3" fill="url(#premiumBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+            <rect x="1" y="1" width="26" height="12" rx="2" fill="rgba(255,255,255,0.35)"/>
+            <text x="9" y="19" font-size="13" fill="#003399">▲</text>
+        </g>
+        <!-- Separator -->
+        <line x1="134" y1="60" x2="134" y2="84" stroke="#ACA899" stroke-width="1"/>
+        <line x1="135" y1="60" x2="135" y2="84" stroke="#fff" stroke-width="1"/>
+        <!-- Search field in toolbar -->
+        <g transform="translate(145, 60)">
+            <rect width="180" height="24" fill="#7F9DB9" rx="12"/>
+            <rect x="1" y="1" width="178" height="22" fill="#fff" rx="11"/>
+            <text x="12" y="16" font-size="10" fill="#888">🔍 Search Documents...</text>
+        </g>
+        <!-- Separator -->
+        <line x1="340" y1="60" x2="340" y2="84" stroke="#ACA899" stroke-width="1"/>
+        <line x1="341" y1="60" x2="341" y2="84" stroke="#fff" stroke-width="1"/>
+        <!-- View buttons -->
+        <g transform="translate(350, 58)">
+            <rect width="28" height="28" rx="3" fill="url(#tbBtnHover)" stroke="#E8C060" stroke-width="0.5"/>
+            <text x="6" y="19" font-size="13">⊞</text>
+        </g>
+        <g transform="translate(382, 58)">
+            <rect width="28" height="28" rx="3" fill="url(#premiumBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+            <rect x="1" y="1" width="26" height="12" rx="2" fill="rgba(255,255,255,0.35)"/>
+            <text x="7" y="19" font-size="13">≡</text>
+        </g>
+        <line x1="2" y1="89" x2="698" y2="89" stroke="#D4D0C8" stroke-width="1"/>
+        
+        <!-- ──── Address Bar ──── -->
+        <rect x="2" y="90" width="696" height="24" fill="#F0EDE4"/>
+        <text x="10" y="105" font-size="10" fill="#888">Address:</text>
+        <rect x="65" y="92" width="550" height="20" fill="#7F9DB9" rx="2"/>
+        <rect x="66" y="93" width="548" height="18" fill="#fff" rx="1"/>
+        <text x="72" y="106" font-size="10" fill="#333">📁 C:\Users\James\Documents</text>
+        <!-- Go button -->
+        <rect x="620" y="92" width="40" height="20" rx="3" fill="url(#premiumBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <text x="633" y="106" font-size="10" fill="#003399">Go</text>
+        <line x1="2" y1="114" x2="698" y2="114" stroke="#D4D0C8" stroke-width="1"/>
+        
+        <!-- ──── Main Content Area ──── -->
+        <!-- Left sidebar (tree view) -->
+        <rect x="2" y="115" width="170" height="415" fill="url(#sidebar)"/>
+        <!-- Sidebar header -->
+        <rect x="3" y="116" width="168" height="24" fill="rgba(255,255,255,0.15)"/>
+        <text x="12" y="132" font-size="11" font-weight="bold" fill="#fff">Folders</text>
+        <!-- Expand arrow -->
+        <text x="152" y="132" font-size="10" fill="rgba(255,255,255,0.7)">▾</text>
+        
+        <!-- Tree items -->
+        <g transform="translate(10, 148)">
+            <text x="0" y="0" font-size="10" fill="#fff">▾ 📁 Desktop</text>
+            <text x="16" y="18" font-size="10" fill="rgba(255,255,255,0.85)">📁 Projects</text>
+            <text x="16" y="36" font-size="10" fill="rgba(255,255,255,0.85)">📁 Screenshots</text>
+            <text x="0" y="58" font-size="10" fill="#fff">▾ 📁 Documents</text>
+            <!-- Selected item -->
+            <rect x="-4" y="64" width="155" height="16" rx="2" fill="rgba(255,255,255,0.25)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+            <text x="16" y="76" font-size="10" fill="#fff" font-weight="bold">📁 Work</text>
+            <text x="16" y="94" font-size="10" fill="rgba(255,255,255,0.85)">📁 Personal</text>
+            <text x="16" y="112" font-size="10" fill="rgba(255,255,255,0.85)">📁 Archive</text>
+            <text x="0" y="134" font-size="10" fill="#fff">▸ 📁 Downloads</text>
+            <text x="0" y="152" font-size="10" fill="#fff">▸ 📁 Music</text>
+            <text x="0" y="170" font-size="10" fill="#fff">▸ 📁 Pictures</text>
+            <text x="0" y="188" font-size="10" fill="#fff">▸ 📁 Videos</text>
+        </g>
+        <!-- Quick access links -->
+        <rect x="3" y="380" width="168" height="1" fill="rgba(255,255,255,0.2)"/>
+        <g transform="translate(10, 394)">
+            <text x="0" y="0" font-size="9" fill="rgba(255,255,255,0.75)">Other Places</text>
+            <text x="6" y="18" font-size="10" fill="#C8E0FF">My Computer</text>
+            <text x="6" y="36" font-size="10" fill="#C8E0FF">My Network</text>
+            <text x="6" y="54" font-size="10" fill="#C8E0FF">Control Panel</text>
+        </g>
+        
+        <!-- Right content panel -->
+        <rect x="172" y="115" width="526" height="415" fill="#fff"/>
+        
+        <!-- Column headers -->
+        <rect x="173" y="116" width="524" height="20" fill="url(#menubar)" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="182" y="130" font-size="10" font-weight="bold" fill="#333">Name</text>
+        <line x1="380" y1="117" x2="380" y2="135" stroke="#D4D0C8"/>
+        <text x="390" y="130" font-size="10" font-weight="bold" fill="#333">Date Modified</text>
+        <line x1="510" y1="117" x2="510" y2="135" stroke="#D4D0C8"/>
+        <text x="520" y="130" font-size="10" font-weight="bold" fill="#333">Type</text>
+        <line x1="610" y1="117" x2="610" y2="135" stroke="#D4D0C8"/>
+        <text x="620" y="130" font-size="10" font-weight="bold" fill="#333">Size</text>
+        
+        <!-- File list rows -->
+        <!-- Row 1 (folder) -->
+        <g transform="translate(173, 137)">
+            <text x="9" y="13" font-size="12">📁</text>
+            <text x="28" y="13" font-size="10" fill="#000">Meeting Notes</text>
+            <text x="217" y="13" font-size="10" fill="#666">11/02/2026 09:34</text>
+            <text x="347" y="13" font-size="10" fill="#666">File Folder</text>
+        </g>
+        
+        <!-- Row 2 (selected file) -->
+        <rect x="173" y="153" width="524" height="17" fill="#316AC5"/>
+        <g transform="translate(173, 153)">
+            <text x="9" y="13" font-size="12">📄</text>
+            <text x="28" y="13" font-size="10" fill="#fff" font-weight="bold">Project Plan.docx</text>
+            <text x="217" y="13" font-size="10" fill="rgba(255,255,255,0.85)">10/02/2026 15:22</text>
+            <text x="347" y="13" font-size="10" fill="rgba(255,255,255,0.85)">Word Doc</text>
+            <text x="447" y="13" font-size="10" fill="rgba(255,255,255,0.85)">2.4 MB</text>
+        </g>
+        
+        <!-- Row 3 -->
+        <g transform="translate(173, 171)">
+            <text x="9" y="13" font-size="12">📊</text>
+            <text x="28" y="13" font-size="10" fill="#000">Budget 2026.xlsx</text>
+            <text x="217" y="13" font-size="10" fill="#666">09/02/2026 11:08</text>
+            <text x="347" y="13" font-size="10" fill="#666">Excel Sheet</text>
+            <text x="447" y="13" font-size="10" fill="#666">890 KB</text>
+        </g>
+        
+        <!-- Row 4 (folder) -->
+        <g transform="translate(173, 189)">
+            <text x="9" y="13" font-size="12">📁</text>
+            <text x="28" y="13" font-size="10" fill="#000">Client Presentations</text>
+            <text x="217" y="13" font-size="10" fill="#666">08/02/2026 16:45</text>
+            <text x="347" y="13" font-size="10" fill="#666">File Folder</text>
+        </g>
+        
+        <!-- Row 5 -->
+        <g transform="translate(173, 207)">
+            <text x="9" y="13" font-size="12">📝</text>
+            <text x="28" y="13" font-size="10" fill="#000">TODO.txt</text>
+            <text x="217" y="13" font-size="10" fill="#666">07/02/2026 08:15</text>
+            <text x="347" y="13" font-size="10" fill="#666">Text File</text>
+            <text x="447" y="13" font-size="10" fill="#666">4 KB</text>
+        </g>
+        
+        <!-- Row 6 -->
+        <g transform="translate(173, 225)">
+            <text x="9" y="13" font-size="12">🖼️</text>
+            <text x="28" y="13" font-size="10" fill="#000">Screenshot_2026.png</text>
+            <text x="217" y="13" font-size="10" fill="#666">06/02/2026 20:30</text>
+            <text x="347" y="13" font-size="10" fill="#666">PNG Image</text>
+            <text x="447" y="13" font-size="10" fill="#666">1.2 MB</text>
+        </g>
+        
+        <!-- Row 7 -->
+        <g transform="translate(173, 243)">
+            <text x="9" y="13" font-size="12">📄</text>
+            <text x="28" y="13" font-size="10" fill="#000">Invoice #2847.pdf</text>
+            <text x="217" y="13" font-size="10" fill="#666">05/02/2026 14:12</text>
+            <text x="347" y="13" font-size="10" fill="#666">PDF File</text>
+            <text x="447" y="13" font-size="10" fill="#666">340 KB</text>
+        </g>
+        
+        <!-- Row 8 -->
+        <g transform="translate(173, 261)">
+            <text x="9" y="13" font-size="12">📁</text>
+            <text x="28" y="13" font-size="10" fill="#000">Code Samples</text>
+            <text x="217" y="13" font-size="10" fill="#666">04/02/2026 09:50</text>
+            <text x="347" y="13" font-size="10" fill="#666">File Folder</text>
+        </g>
+        
+        <!-- Row 9 -->
+        <g transform="translate(173, 279)">
+            <text x="9" y="13" font-size="12">🎵</text>
+            <text x="28" y="13" font-size="10" fill="#000">Meeting Recording.mp3</text>
+            <text x="217" y="13" font-size="10" fill="#666">03/02/2026 16:30</text>
+            <text x="347" y="13" font-size="10" fill="#666">MP3 Audio</text>
+            <text x="447" y="13" font-size="10" fill="#666">45.2 MB</text>
+        </g>
+        
+        <!-- Scrollbar -->
+        <rect x="682" y="137" width="14" height="392" fill="#F0F0F0" stroke="#D4D0C8" stroke-width="0.5"/>
+        <!-- Up arrow -->
+        <rect x="682" y="137" width="14" height="14" fill="url(#premiumBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <polygon points="685,148 693,148 689,141" fill="#003C74"/>
+        <!-- Thumb -->
+        <rect x="683" y="156" width="12" height="50" rx="1" fill="url(#scrollThumb)" stroke="#ACA899" stroke-width="0.5"/>
+        <!-- Grip lines on thumb -->
+        <line x1="686" y1="176" x2="692" y2="176" stroke="#ACA899" stroke-width="0.5"/>
+        <line x1="686" y1="179" x2="692" y2="179" stroke="#ACA899" stroke-width="0.5"/>
+        <line x1="686" y1="182" x2="692" y2="182" stroke="#ACA899" stroke-width="0.5"/>
+        <!-- Down arrow -->
+        <rect x="682" y="515" width="14" height="14" fill="url(#premiumBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <polygon points="685,519 693,519 689,526" fill="#003C74"/>
+        
+        <!-- ──── Status Bar ──── -->
+        <rect x="2" y="530" width="696" height="28" rx="0 0 4 4" fill="url(#statusbar)" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="12" y="548" font-size="10" fill="#333">8 items</text>
+        <line x1="80" y1="533" x2="80" y2="555" stroke="#ACA899"/>
+        <text x="92" y="548" font-size="10" fill="#333">1 item selected — 2.4 MB</text>
+        <line x1="260" y1="533" x2="260" y2="555" stroke="#ACA899"/>
+        <text x="272" y="548" font-size="10" fill="#333">📁 My Documents</text>
+        <!-- Grip -->
+        <g transform="translate(682, 546)">
+            <line x1="0" y1="8" x2="8" y2="0" stroke="#ACA899"/>
+            <line x1="3" y1="8" x2="8" y2="3" stroke="#ACA899"/>
+            <line x1="6" y1="8" x2="8" y2="6" stroke="#ACA899"/>
+            <line x1="1" y1="8" x2="8" y2="1" stroke="#fff"/>
+            <line x1="4" y1="8" x2="8" y2="4" stroke="#fff"/>
+        </g>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- DIALOG WINDOW (Properties style) -->
+    <!-- ════════════════════════════════════════════ -->
+    <g transform="translate(760, 40)" filter="url(#winShadow)">
+        <rect width="310" height="440" rx="6" fill="rgba(100,160,220,0.35)" stroke="rgba(50,100,170,0.5)" stroke-width="1"/>
+        <rect x="1" y="1" width="308" height="438" rx="5" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+        
+        <!-- Title bar -->
+        <rect x="2" y="2" width="306" height="26" rx="4" fill="url(#aeroTitleBar)"/>
+        <rect x="3" y="3" width="304" height="10" rx="3" fill="rgba(255,255,255,0.3)"/>
+        <text x="12" y="20" font-size="11" fill="#1A1A2E" font-weight="600">⚙ System Properties</text>
+        <!-- Close button -->
+        <g transform="translate(277, 3)">
+            <rect width="28" height="20" rx="2" fill="url(#aeroClose)"/>
+            <line x1="9" y1="5" x2="20" y2="15" stroke="#fff" stroke-width="1.5"/>
+            <line x1="20" y1="5" x2="9" y2="15" stroke="#fff" stroke-width="1.5"/>
+        </g>
+        
+        <!-- Content area -->
+        <rect x="2" y="28" width="306" height="412" rx="0 0 4 4" fill="#ECE9D8"/>
+        
+        <!-- Tabs at top -->
+        <g transform="translate(8, 35)">
+            <!-- Active tab -->
+            <path d="M0,22 L0,4 Q0,0 4,0 L66,0 Q70,0 70,4 L70,22" fill="#ECE9D8" stroke="#ACA899" stroke-width="1"/>
+            <line x1="0" y1="22" x2="70" y2="22" stroke="#ECE9D8" stroke-width="2"/>
+            <text x="35" y="15" text-anchor="middle" font-size="10" font-weight="bold" fill="#003399">General</text>
+            
+            <!-- Inactive tabs -->
+            <path d="M72,22 L72,6 Q72,2 76,2 L130,2 Q134,2 134,6 L134,22" fill="url(#tabInactive)" stroke="#ACA899" stroke-width="1"/>
+            <text x="103" y="15" text-anchor="middle" font-size="10" fill="#333">Network</text>
+            
+            <path d="M136,22 L136,6 Q136,2 140,2 L200,2 Q204,2 204,6 L204,22" fill="url(#tabInactive)" stroke="#ACA899" stroke-width="1"/>
+            <text x="170" y="15" text-anchor="middle" font-size="10" fill="#333">Hardware</text>
+            
+            <path d="M206,22 L206,6 Q206,2 210,2 L276,2 Q280,2 280,6 L280,22" fill="url(#tabInactive)" stroke="#ACA899" stroke-width="1"/>
+            <text x="243" y="15" text-anchor="middle" font-size="10" fill="#333">Advanced</text>
+        </g>
+        
+        <!-- Tab content panel -->
+        <rect x="8" y="57" width="294" height="345" fill="#ECE9D8" stroke="#ACA899" stroke-width="1"/>
+        
+        <!-- Group box 1 -->
+        <rect x="16" y="68" width="278" height="95" fill="none" stroke="#ACA899" stroke-width="1" rx="3"/>
+        <rect x="24" y="61" width="90" height="14" fill="#ECE9D8"/>
+        <text x="28" y="72" font-size="10" font-weight="bold" fill="#333">Computer Info</text>
+        
+        <!-- Content in group box -->
+        <text x="28" y="92" font-size="10" fill="#333">Computer name:</text>
+        <text x="130" y="92" font-size="10" fill="#000" font-weight="bold">JAMES-DESKTOP</text>
+        <text x="28" y="110" font-size="10" fill="#333">Operating System:</text>
+        <text x="130" y="110" font-size="10" fill="#000">Windows XP Professional</text>
+        <text x="28" y="128" font-size="10" fill="#333">Service Pack:</text>
+        <text x="130" y="128" font-size="10" fill="#000">Service Pack 3</text>
+        <text x="28" y="146" font-size="10" fill="#333">System type:</text>
+        <text x="130" y="146" font-size="10" fill="#000">32-bit Operating System</text>
+        
+        <!-- Group box 2 -->
+        <rect x="16" y="175" width="278" height="130" fill="none" stroke="#ACA899" stroke-width="1" rx="3"/>
+        <rect x="24" y="168" width="110" height="14" fill="#ECE9D8"/>
+        <text x="28" y="179" font-size="10" font-weight="bold" fill="#333">Performance Settings</text>
+        
+        <!-- Slider control inside group -->
+        <text x="28" y="200" font-size="10" fill="#333">Visual Effects:</text>
+        <rect x="28" y="208" width="250" height="6" rx="3" fill="#D4D0C8" stroke="#7F9DB9" stroke-width="0.5"/>
+        <rect x="28" y="208" width="170" height="6" rx="3" fill="url(#premiumBtnDefault)"/>
+        <rect x="190" y="202" width="14" height="18" rx="2" fill="url(#premiumBtn)" stroke="#003C74" stroke-width="0.5"/>
+        <rect x="191" y="203" width="12" height="7" rx="1" fill="rgba(255,255,255,0.4)"/>
+        <text x="28" y="234" font-size="9" fill="#666">Best Appearance</text>
+        <text x="230" y="234" font-size="9" fill="#666">Best Performance</text>
+        
+        <!-- Checkbox inside group -->
+        <rect x="28" y="248" width="13" height="13" fill="#7F9DB9" rx="1"/>
+        <rect x="29" y="249" width="11" height="11" fill="#fff"/>
+        <polyline points="31,255 33.5,258 38,252" fill="none" stroke="#21A121" stroke-width="2"/>
+        <text x="46" y="259" font-size="10" fill="#000">Enable smooth scrolling</text>
+        
+        <rect x="28" y="268" width="13" height="13" fill="#7F9DB9" rx="1"/>
+        <rect x="29" y="269" width="11" height="11" fill="#fff"/>
+        <polyline points="31,275 33.5,278 38,272" fill="none" stroke="#21A121" stroke-width="2"/>
+        <text x="46" y="279" font-size="10" fill="#000">Animate windows when minimizing</text>
+        
+        <rect x="28" y="288" width="13" height="13" fill="#7F9DB9" rx="1"/>
+        <rect x="29" y="289" width="11" height="11" fill="#fff"/>
+        <text x="46" y="299" font-size="10" fill="#000">Use font smoothing</text>
+        
+        <!-- Group box 3 -->
+        <rect x="16" y="315" width="278" height="75" fill="none" stroke="#ACA899" stroke-width="1" rx="3"/>
+        <rect x="24" y="308" width="75" height="14" fill="#ECE9D8"/>
+        <text x="28" y="319" font-size="10" font-weight="bold" fill="#333">Disk Space</text>
+        
+        <text x="28" y="340" font-size="10" fill="#333">C: Drive — 65% used</text>
+        <!-- Progress bar -->
+        <rect x="28" y="346" width="250" height="14" fill="#D4D0C8" stroke="#ACA899" stroke-width="0.5"/>
+        <rect x="29" y="347" width="248" height="12" fill="#fff"/>
+        <!-- Blue fill -->
+        <defs>
+            <linearGradient id="diskBlue" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#5090D0"/>
+                <stop offset="100%" stop-color="#3070B0"/>
+            </linearGradient>
+        </defs>
+        <rect x="29" y="347" width="162" height="12" fill="url(#diskBlue)"/>
+        <text x="28" y="375" font-size="9" fill="#666">120 GB free of 320 GB</text>
+        
+        <!-- Bottom buttons -->
+        <g transform="translate(78, 410)">
+            <rect width="70" height="24" rx="3" fill="url(#premiumBtnDefault)" stroke="#003C74" stroke-width="1"/>
+            <rect x="1" y="1" width="68" height="10" rx="2" fill="rgba(255,255,255,0.4)"/>
+            <text x="35" y="16" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">OK</text>
+        </g>
+        <g transform="translate(155, 410)">
+            <rect width="70" height="24" rx="3" fill="url(#premiumBtn)" stroke="#003C74" stroke-width="1"/>
+            <rect x="1" y="1" width="68" height="10" rx="2" fill="rgba(255,255,255,0.35)"/>
+            <text x="35" y="16" text-anchor="middle" font-size="10" fill="#003399">Cancel</text>
+        </g>
+        <g transform="translate(232, 410)">
+            <rect width="70" height="24" rx="3" fill="url(#premiumBtn)" stroke="#003C74" stroke-width="1"/>
+            <rect x="1" y="1" width="68" height="10" rx="2" fill="rgba(255,255,255,0.35)"/>
+            <text x="35" y="16" text-anchor="middle" font-size="10" fill="#003399">Apply</text>
+        </g>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- CONTEXT MENU (floating) -->
+    <!-- ════════════════════════════════════════════ -->
+    <g transform="translate(440, 390)" filter="url(#winShadow)">
+        <rect width="180" height="195" fill="#fff" stroke="#ACA899" stroke-width="1" rx="2"/>
+        <!-- Icon column background -->
+        <rect x="1" y="1" width="24" height="193" fill="#F0EDE4" rx="1"/>
+        
+        <!-- Menu items -->
+        <text x="32" y="20" font-size="10" fill="#000">Open</text>
+        <text x="140" y="20" font-size="9" fill="#666">Enter</text>
+        
+        <text x="32" y="38" font-size="10" font-weight="bold" fill="#000">Open With...</text>
+        <text x="168" y="38" font-size="10" fill="#666">▸</text>
+        
+        <line x1="1" y1="46" x2="179" y2="46" stroke="#E4E0D4"/>
+        
+        <text x="32" y="62" font-size="10" fill="#000">Cut</text>
+        <text x="140" y="62" font-size="9" fill="#666">Ctrl+X</text>
+        
+        <text x="32" y="80" font-size="10" fill="#000">Copy</text>
+        <text x="140" y="80" font-size="9" fill="#666">Ctrl+C</text>
+        
+        <text x="32" y="98" font-size="10" fill="#ACA899">Paste</text>
+        <text x="140" y="98" font-size="9" fill="#D4D0C8">Ctrl+V</text>
+        
+        <line x1="1" y1="106" x2="179" y2="106" stroke="#E4E0D4"/>
+        
+        <!-- Highlighted item -->
+        <rect x="1" y="108" width="178" height="18" fill="#316AC5"/>
+        <text x="32" y="122" font-size="10" fill="#fff">Delete</text>
+        <text x="140" y="122" font-size="9" fill="rgba(255,255,255,0.7)">Del</text>
+        
+        <text x="32" y="140" font-size="10" fill="#000">Rename</text>
+        <text x="140" y="140" font-size="9" fill="#666">F2</text>
+        
+        <line x1="1" y1="148" x2="179" y2="148" stroke="#E4E0D4"/>
+        
+        <text x="32" y="164" font-size="10" fill="#000">Send To</text>
+        <text x="168" y="164" font-size="10" fill="#666">▸</text>
+        
+        <line x1="1" y1="172" x2="179" y2="172" stroke="#E4E0D4"/>
+        
+        <text x="32" y="188" font-size="10" fill="#000">Properties</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- TASKBAR -->
+    <!-- ════════════════════════════════════════════ -->
+    <g transform="translate(0, 620)">
+        <defs>
+            <linearGradient id="taskbarGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3168D5"/>
+                <stop offset="3%" stop-color="#4488E8"/>
+                <stop offset="50%" stop-color="#245ED6"/>
+                <stop offset="97%" stop-color="#1849B2"/>
+                <stop offset="100%" stop-color="#1941A5"/>
+            </linearGradient>
+        </defs>
+        <rect width="1100" height="40" fill="url(#taskbarGrad)"/>
+        <!-- Highlight line at top -->
+        <line x1="0" y1="0" x2="1100" y2="0" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+        
+        <!-- Start button -->
+        <defs>
+            <linearGradient id="startBtn" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#5AD038"/>
+                <stop offset="20%" stop-color="#3FBC22"/>
+                <stop offset="50%" stop-color="#30A818"/>
+                <stop offset="80%" stop-color="#259010"/>
+                <stop offset="100%" stop-color="#38A820"/>
+            </linearGradient>
+        </defs>
+        <g transform="translate(2, 3)">
+            <rect width="105" height="34" rx="4" fill="url(#startBtn)" stroke="#1A6B12" stroke-width="1"/>
+            <rect x="1" y="1" width="103" height="14" rx="3" fill="rgba(255,255,255,0.25)"/>
+            <!-- Windows flag -->
+            <g transform="translate(8, 6)">
+                <rect width="9" height="9" rx="1.5" fill="#FF0000" opacity="0.9"/>
+                <rect x="11" y="0" width="9" height="9" rx="1.5" fill="#00AA00" opacity="0.9"/>
+                <rect x="0" y="11" width="9" height="9" rx="1.5" fill="#0055DD" opacity="0.9"/>
+                <rect x="11" y="11" width="9" height="9" rx="1.5" fill="#FFBB00" opacity="0.9"/>
+            </g>
+            <text x="38" y="24" font-size="14" fill="#fff" font-weight="bold" font-style="italic">start</text>
+        </g>
+        
+        <!-- Quick launch separator -->
+        <line x1="115" y1="5" x2="115" y2="35" stroke="rgba(0,0,0,0.3)"/>
+        <line x1="116" y1="5" x2="116" y2="35" stroke="rgba(255,255,255,0.2)"/>
+        
+        <!-- Task buttons -->
+        <defs>
+            <linearGradient id="taskActive" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3C82D0"/>
+                <stop offset="50%" stop-color="#2060B0"/>
+                <stop offset="100%" stop-color="#2870C0"/>
+            </linearGradient>
+            <linearGradient id="taskInactive" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#4080D0"/>
+                <stop offset="50%" stop-color="#3070C0"/>
+                <stop offset="100%" stop-color="#3878C8"/>
+            </linearGradient>
+        </defs>
+        <!-- Active task button (pressed) -->
+        <rect x="125" y="5" width="165" height="30" rx="3" fill="url(#taskActive)" stroke="rgba(0,0,0,0.3)" stroke-width="1"/>
+        <text x="135" y="24" font-size="10" fill="#fff" font-weight="bold">📁 Documents - File Explorer</text>
+        
+        <!-- Inactive task button -->
+        <rect x="295" y="5" width="155" height="30" rx="3" fill="url(#taskInactive)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+        <rect x="296" y="6" width="153" height="12" rx="2" fill="rgba(255,255,255,0.1)"/>
+        <text x="305" y="24" font-size="10" fill="rgba(255,255,255,0.9)">⚙ System Properties</text>
+        
+        <!-- System tray separator -->
+        <line x1="930" y1="5" x2="930" y2="35" stroke="rgba(0,0,0,0.3)"/>
+        <line x1="931" y1="5" x2="931" y2="35" stroke="rgba(255,255,255,0.2)"/>
+        
+        <!-- System tray area -->
+        <rect x="935" y="3" width="160" height="34" rx="3" fill="rgba(0,0,30,0.15)"/>
+        <text x="945" y="23" font-size="12" fill="rgba(255,255,255,0.8)">🔊</text>
+        <text x="963" y="23" font-size="12" fill="rgba(255,255,255,0.8)">🛡️</text>
+        <text x="981" y="23" font-size="12" fill="rgba(255,255,255,0.8)">📶</text>
+        <!-- Clock -->
+        <text x="1010" y="24" font-size="12" fill="#fff" font-weight="bold">10:53 AM</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- TOOLTIP -->
+    <!-- ════════════════════════════════════════════ -->
+    <g transform="translate(620, 310)" filter="url(#winShadow)">
+        <rect width="150" height="38" rx="3" fill="#FFFFE1" stroke="#000" stroke-width="0.5"/>
+        <text x="8" y="16" font-size="10" fill="#000">Project Plan.docx</text>
+        <text x="8" y="30" font-size="9" fill="#666">Size: 2.4 MB — Word Document</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- NOTIFICATION POPUP (System Tray) -->
+    <!-- ════════════════════════════════════════════ -->
+    <g transform="translate(800, 500)" filter="url(#winShadow)">
+        <rect width="260" height="80" rx="6" fill="url(#glassPanel)" stroke="rgba(50,100,170,0.5)" stroke-width="1"/>
+        <rect x="1" y="1" width="258" height="78" rx="5" fill="rgba(255,255,255,0.4)" stroke="rgba(255,255,255,0.6)" stroke-width="0.5"/>
+        
+        <!-- Close X -->
+        <text x="242" y="18" font-size="12" fill="#666" cursor="pointer">×</text>
+        
+        <!-- Notification icon -->
+        <circle cx="28" cy="34" r="16" fill="#F0F8FF" stroke="#7F9DB9" stroke-width="1"/>
+        <text x="22" y="40" font-size="16">ℹ️</text>
+        
+        <!-- Text -->
+        <text x="52" y="24" font-size="11" font-weight="bold" fill="#003399">Windows Security</text>
+        <text x="52" y="40" font-size="10" fill="#333">Your computer is protected.</text>
+        <text x="52" y="55" font-size="10" fill="#333">Firewall: On • Updates: Current</text>
+        
+        <!-- Link -->
+        <text x="52" y="72" font-size="10" fill="#0066CC" text-decoration="underline">View security settings</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- Bottom design notes -->
+    <!-- ════════════════════════════════════════════ -->
+    <rect x="20" y="680" width="1060" height="260" rx="6" fill="rgba(0,0,0,0.4)"/>
+    <rect x="21" y="681" width="1058" height="258" rx="5" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+    
+    <text x="40" y="705" font-size="14" font-weight="bold" fill="rgba(255,255,255,0.95)">Design Notes: The Aero-Luna Premium Visual Language</text>
+    
+    <text x="40" y="730" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Title bars use translucent glass gradient (rgba colors with blur hint)
+    </text>
+    <text x="40" y="750" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Buttons have the XP "split gradient" — white highlight top, color below, with a distinct midpoint seam
+    </text>
+    <text x="40" y="770" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Hover state uses warm orange glow (not just darkening) — feels alive and responsive
+    </text>
+    <text x="40" y="790" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Close button is always red with a white ✕ — high contrast, instantly recognizable
+    </text>
+    <text x="40" y="810" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Sidebar uses blue gradient on white text — the "task pane" from XP/7 Explorer
+    </text>
+    <text x="40" y="830" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Selected items in lists use deep blue (#316AC5) — the classic Windows selection color
+    </text>
+    <text x="40" y="850" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Menu has an icon gutter (left column) and keyboard shortcut column (right-aligned)
+    </text>
+    <text x="40" y="870" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Taskbar uses the deep blue gradient with green Start button and translucent system tray
+    </text>
+    <text x="40" y="890" font-size="11" fill="rgba(255,255,255,0.8)">
+        ● Scrollbars have beveled arrows, a thumb with grip lines, and a subtle track gradient
+    </text>
+    <text x="40" y="915" font-size="12" fill="rgba(200,220,255,0.9)" font-style="italic">
+        This visual language celebrates depth, warmth, and tactile interaction — neither flat nor excessive, but polished and inviting.
+    </text>
+</svg>

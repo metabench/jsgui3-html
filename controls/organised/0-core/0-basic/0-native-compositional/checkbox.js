@@ -9,6 +9,8 @@ var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined 
 var Control = jsgui.Control;
 var group = jsgui.group;
 const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
+const { themeable } = require('../../../../../control_mixins/themeable');
+const { apply_token_map } = require('../../../../../themes/token_maps');
 
 
 var fields = {
@@ -31,6 +33,11 @@ class Checkbox extends Control {
         this.__type_name = 'checkbox';
 
         this.add_class('checkbox');
+        this.add_class('jsgui-checkbox');
+
+        // Apply theming
+        const params = themeable(this, 'checkbox', spec);
+
         const context = this.context;
         const enhance_only = !!spec.enhance_only && !!spec.el;
         const has_checked = is_defined(spec.checked);
@@ -59,6 +66,37 @@ class Checkbox extends Control {
                 html_check.dom.attributes.checked = 'checked';
             }
             html_check.dom.attributes['aria-checked'] = initial_checked ? 'true' : 'false';
+            html_check.add_class('jsgui-checkbox-input');
+
+            // Custom checkbox box with SVG checkmark
+            const checkbox_box = new Control({ context });
+            checkbox_box.dom.tagName = 'div';
+            checkbox_box.add_class('jsgui-checkbox-box');
+
+            // SVG check mark (stroke-dashoffset animation via CSS)
+            const svg = new Control({ context });
+            svg.dom.tagName = 'svg';
+            svg.add_class('jsgui-checkbox-mark');
+            svg.dom.attributes.viewBox = '0 0 16 16';
+            svg.dom.attributes.fill = 'none';
+            svg.dom.attributes.xmlns = 'http://www.w3.org/2000/svg';
+
+            const path = new Control({ context });
+            path.dom.tagName = 'path';
+            path.dom.attributes.d = 'M3 8l3.5 3.5L13 5';
+            path.dom.attributes.stroke = 'currentColor';
+            path.dom.attributes['stroke-width'] = '2';
+            path.dom.attributes['stroke-linecap'] = 'round';
+            path.dom.attributes['stroke-linejoin'] = 'round';
+
+            svg.add(path);
+            checkbox_box.add(svg);
+
+            // Indeterminate dash element
+            const dash = new Control({ context });
+            dash.dom.tagName = 'span';
+            dash.add_class('jsgui-checkbox-dash');
+            checkbox_box.add(dash);
 
             //html_check.set('dom.tagName', 'input');
             //html_check.set('dom.attributes.type', 'checkbox');
@@ -67,7 +105,7 @@ class Checkbox extends Control {
 
             var html_label = new Control({
                 'context': context,
-                
+
             });
             html_label.dom.tagName = 'label';
 
@@ -76,7 +114,7 @@ class Checkbox extends Control {
             } else {
                 if (is_defined(spec.label?.text)) html_label.add(spec.label.text);
             }
-            
+
 
             //html_label.set('dom.tagName', 'label');
             //console.log('that._', that._);
@@ -84,11 +122,12 @@ class Checkbox extends Control {
 
             //var text_value = this.get('text').value();
 
-            
+
             html_label.dom.attributes.for = html_check._id();
-            //html_label.set('dom.attributes.for', html_check._id());
+            html_label.add_class('jsgui-checkbox-label');
 
             this.add(html_check);
+            this.add(checkbox_box);
             this.add(html_label);
 
 
@@ -106,13 +145,13 @@ class Checkbox extends Control {
             this._input_base_el = html_check;
 
             // ._fields perhaps....
-            
+
             /*
             this.set('dom.attributes.data-jsgui-fields', stringify({
                 'value': this.value
             }).replace(/"/g, "[DBL_QT]").replace(/'/g, "[SNG_QT]"));
 
-            */ 
+            */
 
             this._fields = this._fields || {};
 

@@ -1,0 +1,128 @@
+/*
+ * Tooltip Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-tooltip
+ * Placements: top, bottom, left, right (with arrows)
+ * Features: slide-in animation, max-width, rich content, collision flip
+ */
+
+/* ── Base ── */
+.jsgui-tooltip {
+    position: absolute;
+    z-index: 9999;
+    padding: 6px 10px;
+    border-radius: var(--j-radius, 6px);
+    background: var(--j-tooltip-bg, #1f2937);
+    color: var(--j-tooltip-fg, #f9fafb);
+    font-family: var(--j-font-sans);
+    font-size: var(--j-text-xs);
+    font-weight: var(--j-font-weight-medium);
+    line-height: 1.4;
+    max-width: 280px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    pointer-events: none;
+    box-shadow: var(--j-shadow-md, 0 4px 6px rgba(0, 0, 0, 0.12));
+
+    /* Hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.96);
+    transition:
+        opacity var(--j-duration-fast, 0.15s) var(--j-ease-out, ease),
+        transform var(--j-duration-fast, 0.15s) var(--j-ease-out, ease),
+        visibility var(--j-duration-fast, 0.15s) var(--j-ease-out, ease);
+}
+
+/* ── Visible state ── */
+.jsgui-tooltip.is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+/* ── Slide direction per placement ── */
+.jsgui-tooltip--top {
+    transform: translateY(4px) scale(0.96);
+}
+
+.jsgui-tooltip--bottom {
+    transform: translateY(-4px) scale(0.96);
+}
+
+.jsgui-tooltip--left {
+    transform: translateX(4px) scale(0.96);
+}
+
+.jsgui-tooltip--right {
+    transform: translateX(-4px) scale(0.96);
+}
+
+.jsgui-tooltip--top.is-visible,
+.jsgui-tooltip--bottom.is-visible,
+.jsgui-tooltip--left.is-visible,
+.jsgui-tooltip--right.is-visible {
+    transform: translateY(0) translateX(0) scale(1);
+}
+
+/* ══════════════════════════════════════════
+   Arrow
+   ══════════════════════════════════════════ */
+
+.jsgui-tooltip::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+}
+
+.jsgui-tooltip--top::after {
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-top-color: var(--j-tooltip-bg, #1f2937);
+}
+
+.jsgui-tooltip--bottom::after {
+    bottom: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-bottom-color: var(--j-tooltip-bg, #1f2937);
+}
+
+.jsgui-tooltip--left::after {
+    left: 100%;
+    top: 50%;
+    margin-top: -6px;
+    border-left-color: var(--j-tooltip-bg, #1f2937);
+}
+
+.jsgui-tooltip--right::after {
+    right: 100%;
+    top: 50%;
+    margin-top: -6px;
+    border-right-color: var(--j-tooltip-bg, #1f2937);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-tooltip {
+        transition: none;
+    }
+
+    .jsgui-tooltip--top,
+    .jsgui-tooltip--bottom,
+    .jsgui-tooltip--left,
+    .jsgui-tooltip--right {
+        transform: scale(0.96);
+    }
+
+    .jsgui-tooltip.is-visible {
+        transform: scale(1);
+    }
+}

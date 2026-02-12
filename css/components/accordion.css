@@ -1,0 +1,119 @@
+/*
+ * Accordion Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-accordion
+ * Features: bordered sections, chevron indicator, open state, flush variant
+ */
+
+/* ── Base container ── */
+.jsgui-accordion {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--j-font-sans);
+}
+
+/* ── Default: separated sections ── */
+.jsgui-accordion .accordion-section {
+    border: 1px solid var(--j-border, #e2e8f0);
+    border-radius: var(--j-radius, 6px);
+    overflow: hidden;
+    margin-bottom: var(--j-space-2, 8px);
+    transition: box-shadow var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-accordion .accordion-section:last-child {
+    margin-bottom: 0;
+}
+
+/* ── Header button ── */
+.jsgui-accordion .accordion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--j-space-3, 12px) var(--j-space-4, 16px);
+    border: none;
+    background: var(--j-bg-subtle, #f8fafc);
+    color: var(--j-fg);
+    font: inherit;
+    font-size: var(--j-text-sm);
+    font-weight: var(--j-font-weight-medium);
+    text-align: left;
+    cursor: pointer;
+    outline: none;
+    transition: background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-accordion .accordion-header:hover {
+    background: var(--j-bg-muted, #f1f5f9);
+}
+
+.jsgui-accordion .accordion-header:focus-visible {
+    box-shadow: 0 0 0 2px var(--j-primary) inset;
+}
+
+/* Chevron indicator */
+.jsgui-accordion .accordion-header::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid var(--j-fg-muted);
+    border-bottom: 2px solid var(--j-fg-muted);
+    transform: rotate(-45deg);
+    flex-shrink: 0;
+    margin-left: var(--j-space-3, 12px);
+    transition: transform var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-accordion .accordion-header.is-open::after {
+    transform: rotate(45deg);
+}
+
+.jsgui-accordion .accordion-header.is-open {
+    background: var(--j-bg-muted, #f1f5f9);
+}
+
+/* ── Content ── */
+.jsgui-accordion .accordion-content {
+    padding: var(--j-space-3, 12px) var(--j-space-4, 16px);
+    font-size: var(--j-text-sm);
+    color: var(--j-fg);
+    line-height: 1.6;
+    background: var(--j-bg, #fff);
+}
+
+/* ══════════════════════════════════════════
+   Flush variant (no borders, no gaps)
+   ══════════════════════════════════════════ */
+
+.jsgui-accordion[data-variant="flush"] .accordion-section {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid var(--j-border, #e2e8f0);
+    margin-bottom: 0;
+}
+
+.jsgui-accordion[data-variant="flush"] .accordion-header {
+    background: transparent;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.jsgui-accordion[data-variant="flush"] .accordion-content {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-accordion .accordion-section,
+    .jsgui-accordion .accordion-header,
+    .jsgui-accordion .accordion-header::after {
+        transition: none;
+    }
+}

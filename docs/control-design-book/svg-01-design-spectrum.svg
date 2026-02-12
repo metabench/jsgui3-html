@@ -1,0 +1,149 @@
+<svg viewBox="0 0 900 400" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        text { font-family: Inter, 'Segoe UI', sans-serif; }
+    </style>
+    
+    <!-- Title -->
+    <text x="450" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#667eea">
+        The Visual Design Spectrum
+    </text>
+    <text x="450" y="50" text-anchor="middle" font-size="12" fill="#94a3b8">
+        From physical mimicry to pure geometry
+    </text>
+    
+    <!-- Gradient bar -->
+    <defs>
+        <linearGradient id="spectrum" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#8B7355"/>
+            <stop offset="25%" stop-color="#667eea"/>
+            <stop offset="50%" stop-color="#22c55e"/>
+            <stop offset="75%" stop-color="#3b82f6"/>
+            <stop offset="100%" stop-color="#1e293b"/>
+        </linearGradient>
+    </defs>
+    <rect x="50" y="70" width="800" height="12" rx="6" fill="url(#spectrum)"/>
+    
+    <!-- Labels along spectrum -->
+    <text x="50" y="62" font-size="10" fill="#a0a0a0">SKEUOMORPHIC</text>
+    <text x="850" y="62" text-anchor="end" font-size="10" fill="#a0a0a0">FLAT / MINIMAL</text>
+    
+    <!-- Tick marks and labels -->
+    <!-- Win32 -->
+    <line x1="90" y1="82" x2="90" y2="100" stroke="#808080" stroke-width="1"/>
+    <text x="90" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#D4D0C8" stroke="#333" stroke-width="0.3">Win32</text>
+    <text x="90" y="128" text-anchor="middle" font-size="9" fill="#808080">Classic</text>
+    <!-- Win32 sample button -->
+    <rect x="62" y="140" width="56" height="22" fill="#D4D0C8"/>
+    <rect x="62" y="140" width="56" height="1" fill="#fff"/>
+    <rect x="62" y="140" width="1" height="22" fill="#fff"/>
+    <rect x="117" y="140" width="1" height="22" fill="#404040"/>
+    <rect x="62" y="161" width="56" height="1" fill="#404040"/>
+    <text x="90" y="155" text-anchor="middle" font-size="10" font-family="Tahoma" fill="#000">OK</text>
+    
+    <!-- Aqua -->
+    <line x1="210" y1="82" x2="210" y2="100" stroke="#808080" stroke-width="1"/>
+    <text x="210" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#3498db">Aqua</text>
+    <text x="210" y="128" text-anchor="middle" font-size="9" fill="#808080">Mac OS X</text>
+    <!-- Aqua sample button -->
+    <defs>
+        <linearGradient id="aqua" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6CB4FF"/>
+            <stop offset="50%" stop-color="#0066CC"/>
+            <stop offset="51%" stop-color="#0055AA"/>
+            <stop offset="100%" stop-color="#4A9EEE"/>
+        </linearGradient>
+    </defs>
+    <rect x="182" y="140" width="56" height="22" rx="11" fill="url(#aqua)"/>
+    <text x="210" y="155" text-anchor="middle" font-size="10" fill="#fff">OK</text>
+    
+    <!-- Material -->
+    <line x1="410" y1="82" x2="410" y2="100" stroke="#808080" stroke-width="1"/>
+    <text x="410" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#22c55e">Material</text>
+    <text x="410" y="128" text-anchor="middle" font-size="9" fill="#808080">Design</text>
+    <!-- Material sample button -->
+    <rect x="382" y="140" width="56" height="22" rx="4" fill="#1976D2"/>
+    <text x="410" y="155" text-anchor="middle" font-size="10" fill="#fff" letter-spacing="0.5">OK</text>
+    
+    <!-- Fluent -->
+    <line x1="550" y1="82" x2="550" y2="100" stroke="#808080" stroke-width="1"/>
+    <text x="550" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#3b82f6">Fluent</text>
+    <text x="550" y="128" text-anchor="middle" font-size="9" fill="#808080">Design</text>
+    <!-- Fluent sample button -->
+    <rect x="522" y="140" width="56" height="22" rx="4" fill="#0078D4"/>
+    <text x="550" y="155" text-anchor="middle" font-size="10" fill="#fff">OK</text>
+    
+    <!-- Flat -->
+    <line x1="750" y1="82" x2="750" y2="100" stroke="#808080" stroke-width="1"/>
+    <text x="750" y="115" text-anchor="middle" font-size="11" font-weight="600" fill="#94a3b8">Flat</text>
+    <text x="750" y="128" text-anchor="middle" font-size="9" fill="#808080">Modern</text>
+    <!-- Flat sample button -->
+    <rect x="722" y="140" width="56" height="22" rx="0" fill="#1e293b"/>
+    <text x="750" y="155" text-anchor="middle" font-size="10" fill="#f1f5f9">OK</text>
+    
+    <!-- Additional row: Neumorphism and Glass -->
+    <text x="50" y="200" font-size="13" font-weight="600" fill="#667eea">Modern Variants</text>
+    
+    <!-- Neumorphism -->
+    <rect x="50" y="215" width="180" height="130" rx="16" fill="#e0e5ec"/>
+    <text x="140" y="235" text-anchor="middle" font-size="11" font-weight="600" fill="#6b7280">Neumorphism</text>
+    <rect x="85" y="248" width="110" height="36" rx="12" fill="#e0e5ec"/>
+    <!-- Simulated neumorphic shadows via lighter/darker rects -->
+    <rect x="84" y="247" width="110" height="36" rx="12" fill="none" stroke="#d1d5db" stroke-width="1"/>
+    <text x="140" y="270" text-anchor="middle" font-size="11" fill="#6b7280">Button</text>
+    <rect x="85" y="300" width="110" height="30" rx="10" fill="#e0e5ec"/>
+    <rect x="86" y="301" width="108" height="28" rx="9" fill="none" stroke="#d1d5db" stroke-width="1"/>
+    <text x="140" y="319" text-anchor="middle" font-size="10" fill="#9ca3af">Input field...</text>
+    
+    <!-- Glassmorphism -->
+    <defs>
+        <linearGradient id="glassbg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#667eea"/>
+            <stop offset="100%" stop-color="#764ba2"/>
+        </linearGradient>
+    </defs>
+    <rect x="260" y="215" width="180" height="130" rx="16" fill="url(#glassbg)"/>
+    <text x="350" y="235" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Glassmorphism</text>
+    <rect x="285" y="248" width="130" height="80" rx="12" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="1"/>
+    <text x="350" y="270" text-anchor="middle" font-size="10" fill="rgba(255,255,255,0.9)">Frosted panel</text>
+    <rect x="300" y="280" width="100" height="24" rx="6" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+    <text x="350" y="296" text-anchor="middle" font-size="10" fill="#fff">Click me</text>
+    
+    <!-- Enterprise -->
+    <rect x="470" y="215" width="180" height="130" rx="4" fill="#f8fafc" stroke="#d1d5db" stroke-width="1"/>
+    <text x="560" y="235" text-anchor="middle" font-size="11" font-weight="600" fill="#374151">Enterprise</text>
+    <!-- Data-dense grid sample -->
+    <rect x="485" y="248" width="150" height="14" fill="#f1f5f9" stroke="#e5e7eb" stroke-width="0.5"/>
+    <text x="490" y="258" font-size="8" fill="#374151">Name</text>
+    <text x="545" y="258" font-size="8" fill="#374151">Value</text>
+    <text x="600" y="258" font-size="8" fill="#374151">Type</text>
+    <rect x="485" y="262" width="150" height="12" fill="#fff" stroke="#e5e7eb" stroke-width="0.5"/>
+    <text x="490" y="271" font-size="7" fill="#6b7280">host</text>
+    <text x="545" y="271" font-size="7" fill="#6b7280">10.0.0.1</text>
+    <text x="600" y="271" font-size="7" fill="#6b7280">string</text>
+    <rect x="485" y="274" width="150" height="12" fill="#f8fafc" stroke="#e5e7eb" stroke-width="0.5"/>
+    <text x="490" y="283" font-size="7" fill="#6b7280">port</text>
+    <text x="545" y="283" font-size="7" fill="#6b7280">8080</text>
+    <text x="600" y="283" font-size="7" fill="#6b7280">number</text>
+    <rect x="485" y="286" width="150" height="12" fill="#fff" stroke="#e5e7eb" stroke-width="0.5"/>
+    <text x="490" y="295" font-size="7" fill="#6b7280">debug</text>
+    <text x="545" y="295" font-size="7" fill="#6b7280">true</text>
+    <text x="600" y="295" font-size="7" fill="#6b7280">bool</text>
+    
+    <!-- jsgui3 position callout -->
+    <rect x="680" y="215" width="180" height="130" rx="8" fill="#0f172a" stroke="#667eea" stroke-width="2"/>
+    <text x="770" y="237" text-anchor="middle" font-size="12" font-weight="700" fill="#667eea">jsgui3-html</text>
+    <text x="770" y="255" text-anchor="middle" font-size="9" fill="#94a3b8">Supports ALL modes</text>
+    <text x="770" y="270" text-anchor="middle" font-size="9" fill="#94a3b8">from a single control set</text>
+    <!-- Small icons for each mode -->
+    <text x="710" y="300" font-size="9" fill="#D4D0C8">■ Win32</text>
+    <text x="710" y="315" font-size="9" fill="#667eea">■ Modern</text>
+    <text x="710" y="330" font-size="9" fill="#764ba2">■ Glass</text>
+    <text x="780" y="300" font-size="9" fill="#b8bec7">■ Neumorphic</text>
+    <text x="780" y="315" font-size="9" fill="#374151">■ Enterprise</text>
+    <text x="780" y="330" font-size="9" fill="#22c55e">■ Custom</text>
+    
+    <!-- Footer -->
+    <text x="450" y="380" text-anchor="middle" font-size="10" fill="#64748b">
+        jsgui3-html Control Design Book — Chapter 1 Reference
+    </text>
+</svg>

@@ -8,17 +8,18 @@ class Breadcrumbs extends Control {
         spec.__type_name = spec.__type_name || 'breadcrumbs';
         super(spec);
         this.add_class('breadcrumbs');
+        this.add_class('jsgui-breadcrumbs');
         this.dom.tagName = 'nav';
         this.dom.attributes['aria-label'] = 'Breadcrumb';
 
         this.items = Array.isArray(spec.items) ? spec.items.slice() : [];
 
         if (!spec.el) {
-            this.compose_breadcrumbs();
+            this.compose();
         }
     }
 
-    compose_breadcrumbs() {
+    compose() {
         const { context } = this;
         const list_ctrl = new Control({ context });
         list_ctrl.dom.tagName = 'ol';

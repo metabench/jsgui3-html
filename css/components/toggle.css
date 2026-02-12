@@ -1,0 +1,87 @@
+/*
+ * Toggle Switch Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-toggle
+ * States: on/off, hover, focus, disabled
+ * Animation: spring ease for thumb movement
+ *
+ * Reference: docs/control-design-book/visual-advancement/04-control-specs.md §4.4
+ */
+
+.jsgui-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--j-space-2);
+    cursor: pointer;
+}
+
+.jsgui-toggle-track {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    border-radius: var(--j-radius-full);
+    background: var(--j-bg-muted);
+    border: 2px solid var(--j-border);
+    transition:
+        background var(--j-duration-normal) var(--j-ease-out),
+        border-color var(--j-duration-normal) var(--j-ease-out);
+}
+
+.jsgui-toggle-thumb {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: var(--j-shadow-sm);
+    transition: transform 250ms var(--j-ease-spring);
+}
+
+/* Hidden native input for accessibility */
+.jsgui-toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* ── ON state ── */
+.jsgui-toggle-input:checked~.jsgui-toggle-track {
+    background: var(--j-primary);
+    border-color: var(--j-primary);
+}
+
+.jsgui-toggle-input:checked~.jsgui-toggle-track .jsgui-toggle-thumb {
+    transform: translateX(20px);
+}
+
+/* ── Hover ── */
+.jsgui-toggle:hover .jsgui-toggle-track {
+    border-color: var(--j-border-strong);
+}
+
+.jsgui-toggle:hover .jsgui-toggle-input:checked~.jsgui-toggle-track {
+    background: var(--j-primary-hover);
+    border-color: var(--j-primary-hover);
+}
+
+/* ── Focus ── */
+.jsgui-toggle-input:focus-visible~.jsgui-toggle-track {
+    box-shadow: var(--j-focus-ring);
+}
+
+/* ── Disabled ── */
+.jsgui-toggle[aria-disabled="true"],
+.jsgui-toggle.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── Label ── */
+.jsgui-toggle-label {
+    font: var(--j-font-weight-normal) var(--j-text-sm)/1.4 var(--j-font-sans);
+    color: var(--j-fg);
+}

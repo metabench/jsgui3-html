@@ -16,11 +16,11 @@ class Pagination extends Control {
         this.page_size = is_defined(spec.page_size) ? Number(spec.page_size) : undefined;
 
         if (!spec.el) {
-            this.compose_pagination();
+            this.compose();
         }
     }
 
-    compose_pagination() {
+    compose() {
         const { context } = this;
         const list_ctrl = new Control({ context });
         list_ctrl.dom.tagName = 'ul';

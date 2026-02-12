@@ -5,7 +5,10 @@ const http = require('http');
 
 let mainWindow;
 let server;
-let pendingResponse = null; // Holds the res object for the active long-poll
+let pendingResponse = null;
+
+// Parse --cli flag early at module scope
+const cliMode = process.argv.includes('--cli');
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -23,24 +26,27 @@ function createWindow() {
 
   mainWindow.loadFile('index.html');
 
-  // Parse args to find options file
-  // Electron args are weird, they include the binary and script
-  // We look for --options-file=<path>
+  // Parse args — Electron args include binary and script path
   const argv = process.argv;
   let optionsFilePath = null;
+  let agentsFilePath = null;
   let theme = null;
 
   for (const arg of argv) {
     if (arg.startsWith('--options-file=')) {
       optionsFilePath = arg.split('=')[1];
+    } else if (arg.startsWith('--agents-file=')) {
+      agentsFilePath = arg.split('=')[1];
     } else if (arg.startsWith('--theme=')) {
       theme = arg.split('=')[1];
+    } else if (arg === '--cli') {
+      // handled at module scope
     }
   }
 
-  // Default theme
   if (!theme) theme = 'wlilo';
 
+  // Load options from file (prompt mode)
   if (optionsFilePath) {
     try {
       const content = fs.readFileSync(optionsFilePath, 'utf8');
@@ -52,6 +58,22 @@ function createWindow() {
       });
     } catch (e) {
       console.error('Failed to read options file:', e);
+      app.quit();
+    }
+  }
+
+  // Load agents from file (adopt mode)
+  if (agentsFilePath) {
+    try {
+      const content = fs.readFileSync(agentsFilePath, 'utf8');
+      const agents = JSON.parse(content);
+
+      mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.send('set-agents', agents);
+        mainWindow.webContents.send('set-theme', theme);
+      });
+    } catch (e) {
+      console.error('Failed to read agents file:', e);
       app.quit();
     }
   }
@@ -71,10 +93,14 @@ function createWindow() {
       pendingResponse.end(JSON.stringify(responseData));
       pendingResponse = null;
     } else {
-      console.log(JSON.stringify(responseData)); // Fallback if no HTTP request
+      console.log(JSON.stringify(responseData));
     }
 
-    mainWindow.hide(); // Hide instead of quit
+    if (cliMode) {
+      app.quit();
+    } else {
+      mainWindow.hide();
+    }
   });
 
   // Handle close/cancel
@@ -89,7 +115,11 @@ function createWindow() {
       console.log(JSON.stringify(responseData));
     }
 
-    mainWindow.hide();
+    if (cliMode) {
+      app.quit();
+    } else {
+      mainWindow.hide();
+    }
   });
 
   // Context menu per option
@@ -166,6 +196,36 @@ function startServer() {
       return;
     }
 
+    if (req.url === '/adopt' && req.method === 'POST') {
+      let body = '';
+      req.on('data', chunk => { body += chunk.toString(); });
+      req.on('end', () => {
+        try {
+          const payload = JSON.parse(body);
+
+          if (pendingResponse) {
+            pendingResponse.writeHead(409, { 'Content-Type': 'application/json' });
+            pendingResponse.end(JSON.stringify({ error: 'New prompt took over' }));
+          }
+
+          pendingResponse = res;
+
+          if (mainWindow) {
+            mainWindow.show();
+            mainWindow.focus();
+            mainWindow.webContents.send('set-agents', payload.agents || []);
+            if (payload.theme) {
+              mainWindow.webContents.send('set-theme', payload.theme);
+            }
+          }
+        } catch (e) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON' }));
+        }
+      });
+      return;
+    }
+
     res.writeHead(404);
     res.end();
   });
@@ -176,7 +236,10 @@ function startServer() {
 }
 
 app.whenReady().then(() => {
-  startServer();
+  // In CLI mode, skip HTTP server — we exit after one selection
+  if (!cliMode) {
+    startServer();
+  }
   createWindow();
 
   app.on('activate', function () {

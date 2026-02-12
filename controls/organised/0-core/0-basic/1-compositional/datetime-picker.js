@@ -73,7 +73,7 @@ class DateTime_Picker extends Control {
         }
 
         if (!spec.el) {
-            this._compose();
+            this.compose();
         }
     }
 
@@ -130,7 +130,7 @@ class DateTime_Picker extends Control {
 
     // ── Composition ──
 
-    _compose() {
+    compose() {
         const { context } = this;
         const cfg = this._cfg;
 
@@ -229,7 +229,7 @@ class DateTime_Picker extends Control {
         });
     }
 
-    // ── Reconnect DOM refs for hydration (when _compose was skipped) ──
+    // ── Reconnect DOM refs for hydration (when compose was skipped) ──
     _reconnect_from_dom() {
         const el = this.dom.el;
         if (!el) return;

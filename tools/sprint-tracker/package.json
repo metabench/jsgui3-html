@@ -1,0 +1,14 @@
+{
+    "name": "jsgui3-sprint-tracker",
+    "version": "1.0.0",
+    "description": "Sprint progress tracker for jsgui3-html control suite development",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "server": "node tracker_server.js"
+    },
+    "private": true,
+    "devDependencies": {
+        "electron": "^35.1.5"
+    }
+}

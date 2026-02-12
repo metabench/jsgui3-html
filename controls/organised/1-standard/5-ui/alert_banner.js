@@ -1,7 +1,36 @@
+/**
+ * Alert_Banner — Status alert with icon, message, and optional dismiss.
+ *
+ * Displays a prominent alert bar with a leading status icon, message text,
+ * and optional close button. Integrates with the Admin_Theme system.
+ *
+ * Options:
+ *   status      — 'info' (default), 'success', 'warn'/'warning', 'error'
+ *   message     — Alert message text (also accepts 'text')
+ *   dismissible — Show close button (default: false)
+ *   icon        — Custom icon override (otherwise auto from status)
+ *   theme       — Admin theme name
+ *
+ * API:
+ *   set_message(msg)   — Update message text
+ *   set_status(status) — Change alert status/color
+ *   dismiss()          — Dismiss with animation
+ *
+ * Events:
+ *   'dismiss' — Fired when the banner is dismissed
+ */
 const jsgui = require('../../../../html-core/html-core');
 
 const { Control } = jsgui;
 const { is_defined } = jsgui;
+
+const STATUS_ICONS = {
+    info: 'ℹ',
+    success: '✓',
+    warn: '⚠',
+    warning: '⚠',
+    error: '✕'
+};
 
 const get_status_class = status => status ? `alert-banner-${status}` : '';
 
@@ -10,43 +39,57 @@ class Alert_Banner extends Control {
         spec.__type_name = spec.__type_name || 'alert_banner';
         super(spec);
         this.add_class('alert-banner');
+        this.add_class('jsgui-alert-banner');
         this.dom.tagName = 'div';
         this.dom.attributes.role = 'alert';
 
-        this.status = is_defined(spec.status) ? String(spec.status) : '';
+        this.status = is_defined(spec.status) ? String(spec.status) : 'info';
         this.message = is_defined(spec.message)
             ? String(spec.message)
             : (is_defined(spec.text) ? String(spec.text) : '');
         this.dismissible = !!spec.dismissible;
+        this._custom_icon = spec.icon || '';
+
+        if (spec.theme) {
+            this.dom.attributes['data-admin-theme'] = spec.theme;
+        }
 
         if (this.status) {
             this.add_class(get_status_class(this.status));
         }
 
         if (!spec.el) {
-            this.compose_alert();
+            this.compose();
         }
     }
 
-    compose_alert() {
-        const message_ctrl = new Control({ context: this.context });
-        message_ctrl.dom.tagName = 'span';
+    compose() {
+        this._ctrl_fields = this._ctrl_fields || {};
+
+        // Status icon
+        const icon_text = this._custom_icon || STATUS_ICONS[this.status] || STATUS_ICONS.info;
+        const icon_ctrl = new Control({ context: this.context, tag_name: 'span' });
+        icon_ctrl.add_class('alert-banner-icon');
+        icon_ctrl.add(icon_text);
+        this._ctrl_fields.icon = icon_ctrl;
+        this.add(icon_ctrl);
+
+        // Message
+        const message_ctrl = new Control({ context: this.context, tag_name: 'span' });
         message_ctrl.add_class('alert-banner-message');
         if (this.message) {
             message_ctrl.add(this.message);
         }
-
-        this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.message = message_ctrl;
-
         this.add(message_ctrl);
 
+        // Dismiss button
         if (this.dismissible) {
-            const dismiss_ctrl = new Control({ context: this.context });
-            dismiss_ctrl.dom.tagName = 'button';
+            const dismiss_ctrl = new Control({ context: this.context, tag_name: 'button' });
             dismiss_ctrl.dom.attributes.type = 'button';
             dismiss_ctrl.add_class('alert-banner-dismiss');
-            dismiss_ctrl.add('x');
+            dismiss_ctrl.dom.attributes['aria-label'] = 'Dismiss';
+            dismiss_ctrl.add('×');
             this._ctrl_fields.dismiss = dismiss_ctrl;
             this.add(dismiss_ctrl);
         }
@@ -79,15 +122,33 @@ class Alert_Banner extends Control {
         if (this.status) {
             this.add_class(get_status_class(this.status));
         }
+        // Update icon
+        const icon_ctrl = this._ctrl_fields && this._ctrl_fields.icon;
+        if (icon_ctrl && !this._custom_icon) {
+            icon_ctrl.clear();
+            icon_ctrl.add(STATUS_ICONS[this.status] || STATUS_ICONS.info);
+        }
     }
 
     /**
-     * Dismiss the alert banner.
+     * Dismiss the alert banner with animation.
      */
     dismiss() {
-        this.add_class('alert-banner-hidden');
-        if (this.dom.el) {
-            this.dom.el.style.display = 'none';
+        const el = this.dom.el;
+        if (el) {
+            el.style.transition = 'opacity 0.25s, transform 0.25s, max-height 0.3s';
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-8px)';
+            el.style.maxHeight = '0';
+            el.style.overflow = 'hidden';
+            el.style.padding = '0 12px';
+            el.style.marginBottom = '0';
+            setTimeout(() => {
+                this.add_class('alert-banner-hidden');
+                el.style.display = 'none';
+            }, 300);
+        } else {
+            this.add_class('alert-banner-hidden');
         }
         this.raise('dismiss');
     }
@@ -95,10 +156,19 @@ class Alert_Banner extends Control {
     activate() {
         if (!this.__active) {
             super.activate();
-            const dismiss_ctrl = this._ctrl_fields && this._ctrl_fields.dismiss;
-            if (!dismiss_ctrl || !dismiss_ctrl.dom.el) return;
+            if (!this.dom.el) return;
 
-            dismiss_ctrl.on('click', () => this.dismiss());
+            // Dismiss button click
+            this.add_dom_event_listener('click', e => {
+                let target = e.target;
+                while (target && target !== this.dom.el) {
+                    if (target.classList && target.classList.contains('alert-banner-dismiss')) {
+                        this.dismiss();
+                        return;
+                    }
+                    target = target.parentNode;
+                }
+            });
         }
     }
 }
@@ -107,35 +177,80 @@ Alert_Banner.css = `
 .alert-banner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    padding: 8px 12px;
-    border-radius: 6px;
-    background: #f0f0f0;
-    color: #333;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: var(--admin-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+    background: var(--admin-card-bg, #f0f4f8);
+    color: var(--admin-text, #334155);
+    border: 1px solid var(--admin-border, #e2e8f0);
+    transition: opacity 0.25s, transform 0.25s;
 }
-.alert-banner-info {
-    background: #e3f2fd;
-    color: #0d47a1;
+.alert-banner-icon {
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(0,0,0,0.08);
+    color: inherit;
 }
-.alert-banner-success {
-    background: #e8f5e9;
-    color: #1b5e20;
-}
-.alert-banner-warn {
-    background: #fff8e1;
-    color: #ff6f00;
-}
-.alert-banner-error {
-    background: #ffebee;
-    color: #b71c1c;
+.alert-banner-message {
+    flex: 1;
+    line-height: 1.4;
 }
 .alert-banner-dismiss {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
     border: none;
+    border-radius: 4px;
     background: transparent;
     cursor: pointer;
     color: inherit;
+    opacity: 0.5;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.15s, background 0.15s;
 }
+.alert-banner-dismiss:hover {
+    opacity: 1;
+    background: rgba(0,0,0,0.08);
+}
+/* Status variants */
+.alert-banner-info {
+    background: #eff6ff;
+    color: #1e40af;
+    border-color: #93c5fd;
+}
+.alert-banner-info .alert-banner-icon { background: #dbeafe; color: #1e40af; }
+.alert-banner-success {
+    background: #f0fdf4;
+    color: #166534;
+    border-color: #86efac;
+}
+.alert-banner-success .alert-banner-icon { background: #dcfce7; color: #166534; }
+.alert-banner-warn,
+.alert-banner-warning {
+    background: #fffbeb;
+    color: #92400e;
+    border-color: #fcd34d;
+}
+.alert-banner-warn .alert-banner-icon,
+.alert-banner-warning .alert-banner-icon { background: #fef3c7; color: #92400e; }
+.alert-banner-error {
+    background: #fef2f2;
+    color: #991b1b;
+    border-color: #fca5a5;
+}
+.alert-banner-error .alert-banner-icon { background: #fee2e2; color: #991b1b; }
 .alert-banner-hidden {
     display: none;
 }

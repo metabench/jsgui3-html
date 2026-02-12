@@ -27,6 +27,7 @@ class Split_Pane extends Control {
         spec.__type_name = spec.__type_name || 'split_pane';
         super(spec);
         this.add_class('split-pane');
+        this.add_class('jsgui-split-pane');
         this.dom.tagName = 'div';
 
         ensure_control_models(this, spec);

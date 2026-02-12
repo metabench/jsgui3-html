@@ -20,12 +20,21 @@ class Rating_Stars extends Control {
         spec.__type_name = spec.__type_name || 'rating_stars';
         super(spec);
         this.add_class('rating-stars');
+        this.add_class('jsgui-rating');
 
         // Config
         this._max = is_defined(spec.max) ? Math.max(1, Math.floor(spec.max)) : 5;
         this._half = !!spec.half;
         this._readonly = !!spec.readonly;
         this._star_size = is_defined(spec.star_size) ? spec.star_size : 24;
+
+        // Data attributes for CSS
+        if (spec.size && spec.size !== 'md') {
+            this.dom.attributes['data-size'] = spec.size;
+        }
+        if (spec.variant) {
+            this.dom.attributes['data-variant'] = spec.variant;
+        }
 
         // State
         this._value = 0;
@@ -38,7 +47,7 @@ class Rating_Stars extends Control {
         this.dom.style = this.dom.style || {};
 
         if (!spec.el) {
-            this._compose_stars();
+            this.compose();
         }
 
         // Set initial value after compose so stars exist
@@ -73,7 +82,7 @@ class Rating_Stars extends Control {
 
     // ---- Internal ----
 
-    _compose_stars() {
+    compose() {
         const { context } = this;
 
         for (let i = 0; i < this._max; i++) {
@@ -202,37 +211,12 @@ Rating_Stars.css = `
 .rating-stars {
     display: inline-flex;
     align-items: center;
-    gap: 2px;
     user-select: none;
     -webkit-user-select: none;
 }
 .rating-stars .star {
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    line-height: 1;
     cursor: pointer;
-    color: #d1d5db;
-    transition: color 0.15s ease, transform 0.15s ease;
-}
-.rating-stars .star.filled {
-    color: #f59e0b;
-}
-.rating-stars .star.half-filled {
-    background: linear-gradient(90deg, #f59e0b 50%, #d1d5db 50%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.rating-stars .star.hover {
-    transform: scale(1.15);
-}
-.rating-stars .star.hover.filled {
-    color: #fbbf24;
-}
-.rating-stars:not(.readonly) .star:hover {
-    transform: scale(1.2);
 }
 .rating-stars.readonly .star {
     cursor: default;

@@ -4,10 +4,13 @@
   "description": "Electron-based quick selection tool for AI agents",
   "main": "main.js",
   "bin": {
-    "ui-pick-mcp": "./mcp-server.js"
+    "ui-pick-mcp": "./mcp-server.js",
+    "ui-pick": "./pick.js"
   },
   "scripts": {
     "start": "electron .",
+    "pick": "node pick.js",
+    "adopt": "node pick.js --adopt",
     "mcp": "node mcp-server.js",
     "mcp-http": "node mcp-http-server.js"
   },

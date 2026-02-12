@@ -1,0 +1,204 @@
+/* ── Wizard ── */
+.wizard {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Step Indicator */
+.wizard-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 0 16px;
+}
+
+.wizard-step-dot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: var(--wiz-text-muted);
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    border-radius: 24px;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.wizard-step-dot:hover {
+    background: var(--wiz-hover);
+}
+
+.wizard-step-dot.is-active {
+    background: var(--wiz-active-bg);
+    color: var(--wiz-active-text);
+    font-weight: 600;
+}
+
+.wizard-step-dot.is-completed {
+    color: var(--wiz-completed);
+}
+
+.wizard-step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--wiz-dot-bg);
+    color: var(--wiz-dot-text);
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.wizard-step-dot.is-active .wizard-step-num {
+    background: var(--wiz-active-text);
+    color: #fff;
+}
+
+.wizard-step-dot.is-completed .wizard-step-num {
+    background: var(--wiz-completed);
+    color: #fff;
+}
+
+.wizard-step-dot.is-completed .wizard-step-num::after {
+    content: '✓';
+    position: absolute;
+}
+
+.wizard-step-icon {
+    font-size: 18px;
+}
+
+.wizard-step-label {
+    font-size: 13px;
+}
+
+/* Connector */
+.wizard-connector {
+    flex: 1;
+    height: 2px;
+    min-width: 20px;
+    background: var(--wiz-connector);
+    margin: 0 4px;
+}
+
+/* Panels */
+.wizard-panels {
+    min-height: 200px;
+    padding: 16px;
+}
+
+.wizard-panel {
+    animation: wizard-fade-in 0.2s ease;
+}
+
+.wizard-panel.is-hidden {
+    display: none;
+}
+
+@keyframes wizard-fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Nav */
+.wizard-nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    border-top: 1px solid var(--wiz-border);
+}
+
+.wizard-btn {
+    padding: 10px 24px;
+    border: 1px solid var(--wiz-border);
+    border-radius: 6px;
+    background: var(--wiz-btn-bg);
+    color: var(--wiz-text);
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.wizard-btn:hover {
+    background: var(--wiz-hover);
+}
+
+.wizard-btn.is-hidden {
+    visibility: hidden;
+}
+
+.wizard-btn--next {
+    background: var(--wiz-primary);
+    color: #fff;
+    border-color: var(--wiz-primary);
+}
+
+.wizard-btn--next:hover {
+    background: var(--wiz-primary-hover);
+    border-color: var(--wiz-primary-hover);
+}
+
+.wizard-btn--finish {
+    background: var(--wiz-success);
+    border-color: var(--wiz-success);
+}
+
+.wizard-btn--finish:hover {
+    background: var(--wiz-success-hover);
+    border-color: var(--wiz-success-hover);
+}
+
+/* ── Theme Variables ── */
+@layer components {
+    .wizard {
+        --wiz-text: #111827;
+        --wiz-text-muted: #6b7280;
+        --wiz-hover: #f3f4f6;
+        --wiz-active-bg: #eff6ff;
+        --wiz-active-text: #2563eb;
+        --wiz-completed: #16a34a;
+        --wiz-dot-bg: #e5e7eb;
+        --wiz-dot-text: #374151;
+        --wiz-connector: #d1d5db;
+        --wiz-border: #e5e7eb;
+        --wiz-btn-bg: #ffffff;
+        --wiz-primary: #2563eb;
+        --wiz-primary-hover: #1d4ed8;
+        --wiz-success: #16a34a;
+        --wiz-success-hover: #15803d;
+    }
+
+    .jsgui-dark-mode .wizard {
+        --wiz-text: #f9fafb;
+        --wiz-text-muted: #9ca3af;
+        --wiz-hover: #1f2937;
+        --wiz-active-bg: #1e3a5f;
+        --wiz-active-text: #60a5fa;
+        --wiz-completed: #22c55e;
+        --wiz-dot-bg: #374151;
+        --wiz-dot-text: #d1d5db;
+        --wiz-connector: #374151;
+        --wiz-border: #374151;
+        --wiz-btn-bg: #111827;
+        --wiz-primary: #3b82f6;
+        --wiz-primary-hover: #2563eb;
+        --wiz-success: #22c55e;
+        --wiz-success-hover: #16a34a;
+    }
+}

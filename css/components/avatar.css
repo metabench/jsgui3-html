@@ -1,0 +1,165 @@
+/*
+ * Avatar Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-avatar
+ * Sizes: xs, sm, md (default), lg, xl
+ * Shapes: circle (default), square
+ * Features: image, initials, fallback, status dot, avatar group
+ */
+
+/* ── Base ── */
+.jsgui-avatar {
+    display: inline-flex;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* ── Inner ── */
+.jsgui-avatar .avatar-inner {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--j-bg-muted, #94a3b8);
+    color: #fff;
+    font-family: var(--j-font-sans);
+    font-weight: var(--j-font-weight-semibold);
+    background-size: cover;
+    background-position: center;
+    transition: transform var(--j-duration-fast) var(--j-ease-out);
+}
+
+/* ── Square shape ── */
+.jsgui-avatar[data-shape="square"] .avatar-inner {
+    border-radius: var(--j-radius, 6px);
+}
+
+/* ── Fallback icon ── */
+.jsgui-avatar .avatar-fallback {
+    font-size: 1em;
+    line-height: 1;
+}
+
+/* ══════════════════════════════════════════
+   Sizes
+   ══════════════════════════════════════════ */
+
+.jsgui-avatar[data-size="xs"] .avatar-inner {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+}
+
+.jsgui-avatar[data-size="sm"] .avatar-inner {
+    width: 32px;
+    height: 32px;
+    font-size: 12px;
+}
+
+.jsgui-avatar .avatar-inner,
+.jsgui-avatar[data-size="md"] .avatar-inner {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+}
+
+.jsgui-avatar[data-size="lg"] .avatar-inner {
+    width: 56px;
+    height: 56px;
+    font-size: 18px;
+}
+
+.jsgui-avatar[data-size="xl"] .avatar-inner {
+    width: 72px;
+    height: 72px;
+    font-size: 24px;
+}
+
+/* ══════════════════════════════════════════
+   Status dot
+   ══════════════════════════════════════════ */
+
+.jsgui-avatar .avatar-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--j-bg, #fff);
+    box-sizing: content-box;
+}
+
+.jsgui-avatar .avatar-status.hidden {
+    display: none;
+}
+
+.jsgui-avatar .avatar-status.status-online {
+    background: var(--j-success, #22c55e);
+}
+
+.jsgui-avatar .avatar-status.status-offline {
+    background: var(--j-fg-muted, #94a3b8);
+}
+
+.jsgui-avatar .avatar-status.status-busy {
+    background: var(--j-danger, #ef4444);
+}
+
+.jsgui-avatar .avatar-status.status-away {
+    background: var(--j-warning, #f59e0b);
+}
+
+/* Size-adjusted status dots */
+.jsgui-avatar[data-size="xs"] .avatar-status {
+    width: 6px;
+    height: 6px;
+    border-width: 1px;
+}
+
+.jsgui-avatar[data-size="sm"] .avatar-status {
+    width: 8px;
+    height: 8px;
+    border-width: 1.5px;
+}
+
+.jsgui-avatar[data-size="lg"] .avatar-status {
+    width: 12px;
+    height: 12px;
+}
+
+.jsgui-avatar[data-size="xl"] .avatar-status {
+    width: 14px;
+    height: 14px;
+    border-width: 3px;
+}
+
+/* ══════════════════════════════════════════
+   Avatar Group (stacked)
+   ══════════════════════════════════════════ */
+
+.jsgui-avatar-group {
+    display: flex;
+    flex-direction: row;
+}
+
+.jsgui-avatar-group .jsgui-avatar {
+    margin-left: -8px;
+}
+
+.jsgui-avatar-group .jsgui-avatar:first-child {
+    margin-left: 0;
+}
+
+.jsgui-avatar-group .jsgui-avatar .avatar-inner {
+    border: 2px solid var(--j-bg, #fff);
+}
+
+.jsgui-avatar-group .jsgui-avatar:hover {
+    z-index: 1;
+}
+
+.jsgui-avatar-group .jsgui-avatar:hover .avatar-inner {
+    transform: scale(1.1);
+}

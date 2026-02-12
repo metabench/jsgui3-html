@@ -38,7 +38,7 @@ class Stepper extends Control {
         this.set_current_step(is_defined(spec.current_step) ? spec.current_step : 0);
 
         if (!spec.el) {
-            this.compose_stepper();
+            this.compose();
         }
 
         this.bind_model();
@@ -126,7 +126,7 @@ class Stepper extends Control {
         this.raise('step_change', { current_step: this.current_step });
     }
 
-    compose_stepper() {
+    compose() {
         const { context } = this;
 
         const header_ctrl = new Control({ context, tag_name: 'ol' });

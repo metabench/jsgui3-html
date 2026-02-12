@@ -103,7 +103,7 @@ class List extends Control {
         }
 
         if (!spec.el) {
-            this.compose_list();
+            this.compose();
         }
     }
 
@@ -171,7 +171,7 @@ class List extends Control {
         if (!options.from_model) {
             this.set_model_value('items', items);
         }
-        this.compose_list();
+        this.compose();
     }
 
     /**
@@ -185,7 +185,7 @@ class List extends Control {
         if (!options.from_model) {
             this.set_model_value('filter_text', this.filter_text);
         }
-        this.compose_list();
+        this.compose();
     }
 
     /**
@@ -297,7 +297,7 @@ class List extends Control {
         }
     }
 
-    compose_list() {
+    compose() {
         this.clear();
         this.dom.attributes.role = 'listbox';
         if (this.multi_select) {

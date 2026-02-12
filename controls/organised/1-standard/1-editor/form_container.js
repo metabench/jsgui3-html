@@ -45,7 +45,7 @@ class Form_Container extends Control {
         this.show_status_badge = spec.show_status_badge !== false;
 
         if (!spec.el) {
-            this.compose_form();
+            this.compose();
         }
 
         this.bind_model();
@@ -198,7 +198,7 @@ class Form_Container extends Control {
         return validation;
     }
 
-    compose_form() {
+    compose() {
         const { context } = this;
         this.field_controls = {};
 

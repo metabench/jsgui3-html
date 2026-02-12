@@ -1,0 +1,321 @@
+<svg viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="btn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EEF3F9"/><stop offset="45%" stop-color="#D8E2EE"/>
+            <stop offset="55%" stop-color="#C0D0E2"/><stop offset="100%" stop-color="#CCDAEA"/>
+        </linearGradient>
+        <linearGradient id="btnPri" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0D8F0"/><stop offset="45%" stop-color="#7AACE0"/>
+            <stop offset="55%" stop-color="#5090D0"/><stop offset="100%" stop-color="#68A4DD"/>
+        </linearGradient>
+        <linearGradient id="btnOk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0E8C0"/><stop offset="45%" stop-color="#70C870"/>
+            <stop offset="55%" stop-color="#48A848"/><stop offset="100%" stop-color="#5CB85C"/>
+        </linearGradient>
+        <linearGradient id="lunaField" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E0DCD6"/><stop offset="3%" stop-color="#fff"/>
+            <stop offset="100%" stop-color="#fff"/>
+        </linearGradient>
+        <linearGradient id="grpIdentity" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E8EFF6"/><stop offset="100%" stop-color="#DCE6F0"/>
+        </linearGradient>
+        <linearGradient id="grpLayout" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EAEFE8"/><stop offset="100%" stop-color="#DDE6DA"/>
+        </linearGradient>
+        <linearGradient id="grpValid" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F2ECE6"/><stop offset="100%" stop-color="#EAE2DA"/>
+        </linearGradient>
+        <linearGradient id="grpData" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EDE8F2"/><stop offset="100%" stop-color="#E2DAEA"/>
+        </linearGradient>
+        <linearGradient id="grpStyle" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E6F0F0"/><stop offset="100%" stop-color="#DAE8E8"/>
+        </linearGradient>
+        <filter id="shSm" x="-2%" y="-3%" width="106%" height="112%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.12)"/>
+        </filter>
+        <filter id="selGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="rgba(0,120,212,0.5)"/>
+        </filter>
+    </defs>
+    <style>text{font-family:'Segoe UI',Tahoma,sans-serif}.mono{font-family:Consolas,'Courier New',monospace}</style>
+
+    <!-- ══ VS CODE DARK SHELL ══ -->
+    <rect width="1200" height="820" fill="#1E1E1E"/>
+    <rect width="1200" height="30" fill="#323233"/>
+    <text x="12" y="20" font-size="11" fill="#CCC">📐 contact-form.wysiwyg — jsgui3-html — Visual Studio Code</text>
+    <rect x="1172" y="8" width="26" height="14" rx="1" fill="#E81123"/>
+    <line x1="1179" y1="10" x2="1191" y2="20" stroke="#fff" stroke-width="1.2"/>
+    <line x1="1191" y1="10" x2="1179" y2="20" stroke="#fff" stroke-width="1.2"/>
+
+    <!-- Menu -->
+    <rect y="30" width="1200" height="24" fill="#3C3C3C"/>
+    <text x="12" y="46" font-size="11" fill="#CCC">File</text>
+    <text x="46" y="46" font-size="11" fill="#CCC">Edit</text>
+    <text x="82" y="46" font-size="11" fill="#CCC">Selection</text>
+    <text x="148" y="46" font-size="11" fill="#CCC">View</text>
+    <text x="186" y="46" font-size="11" fill="#CCC">Go</text>
+    <text x="212" y="46" font-size="11" fill="#CCC">Run</text>
+    <text x="244" y="46" font-size="11" fill="#CCC">Terminal</text>
+    <text x="306" y="46" font-size="11" fill="#CCC">Help</text>
+
+    <!-- Activity Bar -->
+    <rect y="54" width="48" height="740" fill="#333"/>
+    <rect x="0" y="54" width="48" height="48" fill="#1E1E1E"/>
+    <rect x="0" y="54" width="2" height="48" fill="#fff"/>
+    <text x="16" y="84" font-size="18">📁</text>
+    <text x="16" y="128" font-size="18" fill="#888">🔍</text>
+
+    <!-- Sidebar -->
+    <rect x="48" y="54" width="180" height="740" fill="#252526"/>
+    <text x="58" y="72" font-size="10" font-weight="600" fill="#BBB" letter-spacing="0.8">EXPLORER</text>
+    <text x="58" y="94" font-size="10" font-weight="600" fill="#CCC">▾ JSGUI3-HTML</text>
+    <text x="70" y="112" font-size="10" fill="#CCC">▾ dev-examples</text>
+    <text x="82" y="130" font-size="10" fill="#CCC">▾ wysiwyg-form-builder</text>
+    <rect x="48" y="135" width="180" height="18" fill="#37373D"/>
+    <text x="94" y="148" font-size="10" fill="#fff">📐 contact-form.wysiwyg</text>
+    <text x="94" y="166" font-size="10" fill="#888">order-form.wysiwyg</text>
+    <text x="94" y="184" font-size="10" fill="#888">server.js</text>
+
+    <!-- Tabs -->
+    <rect x="228" y="54" width="972" height="34" fill="#252526"/>
+    <rect x="228" y="54" width="186" height="34" fill="#1E1E1E"/>
+    <rect x="228" y="54" width="186" height="1" fill="#0078D4"/>
+    <text x="244" y="76" font-size="11" fill="#fff">📐 contact-form.wysiwyg</text>
+
+    <!-- Breadcrumbs -->
+    <rect x="228" y="88" width="972" height="22" fill="#1E1E1E"/>
+    <text x="240" y="103" font-size="10" fill="#888">jsgui3-html › dev-examples › wysiwyg-form-builder › contact-form.wysiwyg</text>
+
+    <!-- ══ FORM BUILDER TOOLBAR ══ -->
+    <rect x="228" y="110" width="972" height="36" fill="#F4F2EC" stroke="#D4D0C8" stroke-width="0.5"/>
+    <g transform="translate(238,116)">
+        <rect width="70" height="24" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.8"/>
+        <text x="35" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">🎨 Design</text>
+    </g>
+    <g transform="translate(314,116)">
+        <rect width="60" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="30" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">{ } Code</text>
+    </g>
+    <g transform="translate(380,116)">
+        <rect width="68" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="34" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">▶ Preview</text>
+    </g>
+    <line x1="460" y1="116" x2="460" y2="140" stroke="#C8C4B8"/>
+    <g transform="translate(470,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">⊞</text>
+    </g>
+    <g transform="translate(500,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">↩</text>
+    </g>
+    <g transform="translate(1110,116)">
+        <rect width="58" height="24" rx="3" fill="url(#btnOk)" stroke="#2A8028" stroke-width="0.8"/>
+        <text x="29" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">💾 Save</text>
+    </g>
+
+    <!-- ══ CONTROL PALETTE ══ -->
+    <rect x="228" y="146" width="120" height="604" fill="#F8F6F2" stroke="#D4D0C8" stroke-width="0.5"/>
+    <text x="238" y="164" font-size="10" font-weight="600" fill="#2A4060">Controls</text>
+    <line x1="238" y1="170" x2="340" y2="170" stroke="#D4D0C8"/>
+    <g transform="translate(234,176)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">🔤 Text Input</text></g>
+    <g transform="translate(234,206)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">🔘 Button</text></g>
+    <g transform="translate(234,236)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">☑ Checkbox</text></g>
+    <g transform="translate(234,266)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">⦿ Radio</text></g>
+    <g transform="translate(234,296)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">▼ Combo</text></g>
+    <g transform="translate(234,326)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">📝 TextArea</text></g>
+    <g transform="translate(234,356)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">📅 Date</text></g>
+    <g transform="translate(234,386)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">🔀 Toggle</text></g>
+    <text x="238" y="426" font-size="10" font-weight="600" fill="#2A4060">Layout</text>
+    <line x1="238" y1="432" x2="340" y2="432" stroke="#D4D0C8"/>
+    <g transform="translate(234,438)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">▭ Group Box</text></g>
+    <g transform="translate(234,468)"><rect width="108" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="16" font-size="10" fill="#2A3A50">⊟ Tab Panel</text></g>
+
+    <!-- ══ FORM CANVAS ══ -->
+    <rect x="348" y="146" width="520" height="604" fill="#fff" stroke="#C8C4B8" stroke-width="0.5"/>
+
+    <!-- Form title -->
+    <text x="368" y="176" font-size="15" font-weight="600" fill="#2A4060">Contact Form</text>
+    <line x1="368" y1="184" x2="848" y2="184" stroke="#D4D0C8"/>
+
+    <!-- Name field -->
+    <text x="368" y="206" font-size="10" fill="#444" font-weight="600">Full Name *</text>
+    <rect x="368" y="212" width="480" height="26" rx="2" fill="#8098B0"/>
+    <rect x="369" y="213" width="478" height="24" rx="1" fill="url(#lunaField)"/>
+    <text x="376" y="230" font-size="11" fill="#1A1A1A">Alice Johnson</text>
+
+    <!-- Email (selected) -->
+    <text x="368" y="258" font-size="10" fill="#444" font-weight="600">Email Address *</text>
+    <rect x="364" y="262" width="488" height="30" fill="none" stroke="#0078D4" stroke-width="1.5" stroke-dasharray="4,2" filter="url(#selGlow)"/>
+    <rect x="361" y="259" width="6" height="6" fill="#0078D4"/>
+    <rect x="849" y="259" width="6" height="6" fill="#0078D4"/>
+    <rect x="361" y="289" width="6" height="6" fill="#0078D4"/>
+    <rect x="849" y="289" width="6" height="6" fill="#0078D4"/>
+    <rect x="368" y="264" width="480" height="26" rx="2" fill="#5080A8" stroke="#2060A0"/>
+    <rect x="369" y="265" width="478" height="24" rx="1" fill="#fff"/>
+    <text x="376" y="282" font-size="11" fill="#1A1A1A">alice@company.co.uk</text>
+
+    <!-- Subject -->
+    <text x="368" y="314" font-size="10" fill="#444" font-weight="600">Subject</text>
+    <rect x="368" y="320" width="480" height="26" rx="2" fill="#8098B0"/>
+    <rect x="369" y="321" width="478" height="24" rx="1" fill="url(#lunaField)"/>
+    <text x="376" y="338" font-size="11" fill="#888">Enter subject…</text>
+
+    <!-- Department combo -->
+    <text x="368" y="366" font-size="10" fill="#444" font-weight="600">Department</text>
+    <rect x="368" y="372" width="240" height="26" rx="2" fill="#8098B0"/>
+    <rect x="369" y="373" width="216" height="24" rx="1" fill="#fff"/>
+    <text x="376" y="390" font-size="11" fill="#1A1A1A">Sales</text>
+    <rect x="563" y="373" width="24" height="24" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+    <polygon points="570,383 580,383 575,388" fill="#2A4060"/>
+
+    <!-- Priority combo -->
+    <text x="628" y="366" font-size="10" fill="#444" font-weight="600">Priority</text>
+    <rect x="628" y="372" width="220" height="26" rx="2" fill="#8098B0"/>
+    <rect x="629" y="373" width="196" height="24" rx="1" fill="#fff"/>
+    <text x="636" y="390" font-size="11" fill="#1A1A1A">Normal</text>
+    <rect x="803" y="373" width="24" height="24" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+    <polygon points="810,383 820,383 815,388" fill="#2A4060"/>
+
+    <!-- Message area -->
+    <text x="368" y="420" font-size="10" fill="#444" font-weight="600">Message *</text>
+    <rect x="368" y="426" width="480" height="100" rx="2" fill="#8098B0"/>
+    <rect x="369" y="427" width="478" height="98" rx="1" fill="url(#lunaField)"/>
+    <text x="376" y="448" font-size="11" fill="#888">Type your message here…</text>
+
+    <!-- Checkboxes -->
+    <rect x="376" y="544" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="377" y="545" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="379.5,551.5 382,554.5 387,548.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+    <text x="396" y="555" font-size="10" fill="#1A1A1A">Send me a copy</text>
+    <rect x="376" y="568" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="377" y="569" width="12" height="12" rx="1" fill="#fff"/>
+    <text x="396" y="579" font-size="10" fill="#1A1A1A">Subscribe to updates</text>
+
+    <!-- Form buttons -->
+    <g transform="translate(648,612)">
+        <rect width="96" height="28" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/>
+        <text x="48" y="18" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Send</text>
+    </g>
+    <g transform="translate(752,612)">
+        <rect width="96" height="28" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="48" y="18" text-anchor="middle" font-size="11" fill="#2A3A50">Clear Form</text>
+    </g>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- PROPERTIES PANEL — Grouped with shaded  -->
+    <!-- rounded rectangles                       -->
+    <!-- ════════════════════════════════════════ -->
+    <rect x="868" y="146" width="332" height="604" fill="#F4F2EC" stroke="#D4D0C8" stroke-width="0.5"/>
+
+    <!-- Header: control selector -->
+    <rect x="878" y="154" width="312" height="28" rx="3" fill="#fff" stroke="#C8C4B8" stroke-width="0.5"/>
+    <text x="890" y="172" font-size="10" fill="#2A4060" font-weight="600">TextInput</text>
+    <text x="950" y="172" font-size="10" fill="#888">— email_address</text>
+    <rect x="1158" y="158" width="20" height="20" rx="2" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+    <polygon points="1163,168 1173,168 1168,173" fill="#2A4060"/>
+
+    <!-- ── Identity Group ── -->
+    <rect x="878" y="192" width="312" height="94" rx="6" fill="url(#grpIdentity)" stroke="#B8C8DA" stroke-width="0.5"/>
+    <text x="892" y="210" font-size="10" font-weight="700" fill="#2A5090">Identity</text>
+    <line x1="892" y1="216" x2="1176" y2="216" stroke="rgba(42,80,144,0.2)"/>
+
+    <text x="892" y="234" font-size="10" fill="#444">Name</text>
+    <rect x="970" y="222" width="208" height="18" rx="2" fill="#fff" stroke="#B0C0D4" stroke-width="0.5"/>
+    <text x="976" y="235" font-size="10" fill="#1A1A1A" class="mono">email_address</text>
+
+    <text x="892" y="256" font-size="10" fill="#444">Label</text>
+    <rect x="970" y="244" width="208" height="18" rx="2" fill="#fff" stroke="#B0C0D4" stroke-width="0.5"/>
+    <text x="976" y="257" font-size="10" fill="#1A1A1A">Email Address</text>
+
+    <text x="892" y="278" font-size="10" fill="#444">Placeholder</text>
+    <rect x="970" y="266" width="208" height="18" rx="2" fill="#fff" stroke="#B0C0D4" stroke-width="0.5"/>
+    <text x="976" y="279" font-size="10" fill="#888">Enter email…</text>
+
+    <!-- ── Layout Group ── -->
+    <rect x="878" y="296" width="312" height="94" rx="6" fill="url(#grpLayout)" stroke="#A8C0A8" stroke-width="0.5"/>
+    <text x="892" y="314" font-size="10" font-weight="700" fill="#2A6830">Layout</text>
+    <line x1="892" y1="320" x2="1176" y2="320" stroke="rgba(42,104,48,0.2)"/>
+
+    <text x="892" y="338" font-size="10" fill="#444">Width</text>
+    <rect x="970" y="326" width="100" height="18" rx="2" fill="#fff" stroke="#A8C0A8" stroke-width="0.5"/>
+    <text x="976" y="339" font-size="10" fill="#1A1A1A" class="mono">480</text>
+    <text x="1076" y="339" font-size="10" fill="#888">px</text>
+
+    <text x="892" y="360" font-size="10" fill="#444">Height</text>
+    <rect x="970" y="348" width="100" height="18" rx="2" fill="#fff" stroke="#A8C0A8" stroke-width="0.5"/>
+    <text x="976" y="361" font-size="10" fill="#1A1A1A" class="mono">26</text>
+    <text x="1076" y="361" font-size="10" fill="#888">px</text>
+
+    <text x="892" y="382" font-size="10" fill="#444">Colspan</text>
+    <rect x="970" y="370" width="60" height="18" rx="2" fill="#fff" stroke="#A8C0A8" stroke-width="0.5"/>
+    <text x="976" y="383" font-size="10" fill="#1A1A1A" class="mono">2</text>
+
+    <!-- ── Validation Group ── -->
+    <rect x="878" y="400" width="312" height="116" rx="6" fill="url(#grpValid)" stroke="#C8B8A0" stroke-width="0.5"/>
+    <text x="892" y="418" font-size="10" font-weight="700" fill="#806830">Validation</text>
+    <line x1="892" y1="424" x2="1176" y2="424" stroke="rgba(128,104,48,0.2)"/>
+
+    <text x="892" y="442" font-size="10" fill="#444">Required</text>
+    <rect x="970" y="432" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="971" y="433" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="973.5,439.5 976,442.5 981,436.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+
+    <text x="892" y="464" font-size="10" fill="#444">Pattern</text>
+    <rect x="970" y="452" width="208" height="18" rx="2" fill="#fff" stroke="#C8B8A0" stroke-width="0.5"/>
+    <text x="976" y="465" font-size="9" fill="#888" class="mono">[a-z]+@[a-z]+\.[a-z]+</text>
+
+    <text x="892" y="486" font-size="10" fill="#444">Max length</text>
+    <rect x="970" y="474" width="100" height="18" rx="2" fill="#fff" stroke="#C8B8A0" stroke-width="0.5"/>
+    <text x="976" y="487" font-size="10" fill="#1A1A1A" class="mono">255</text>
+
+    <text x="892" y="508" font-size="10" fill="#444">Error text</text>
+    <rect x="970" y="496" width="208" height="18" rx="2" fill="#fff" stroke="#C8B8A0" stroke-width="0.5"/>
+    <text x="976" y="509" font-size="10" fill="#888">Please enter valid email</text>
+
+    <!-- ── Data Binding Group ── -->
+    <rect x="878" y="526" width="312" height="72" rx="6" fill="url(#grpData)" stroke="#B8A8C8" stroke-width="0.5"/>
+    <text x="892" y="544" font-size="10" font-weight="700" fill="#584088">Data Binding</text>
+    <line x1="892" y1="550" x2="1176" y2="550" stroke="rgba(88,64,136,0.2)"/>
+
+    <text x="892" y="568" font-size="10" fill="#444">Field</text>
+    <rect x="970" y="556" width="208" height="18" rx="2" fill="#fff" stroke="#B8A8C8" stroke-width="0.5"/>
+    <text x="976" y="569" font-size="10" fill="#1A1A1A" class="mono">contact.email</text>
+
+    <text x="892" y="590" font-size="10" fill="#444">Type</text>
+    <rect x="970" y="578" width="140" height="18" rx="2" fill="#fff" stroke="#B8A8C8" stroke-width="0.5"/>
+    <text x="976" y="591" font-size="10" fill="#1A1A1A">String</text>
+    <rect x="1088" y="578" width="22" height="18" rx="0 2 2 0" fill="url(#btn)" stroke="#B8A8C8" stroke-width="0.5"/>
+    <polygon points="1094,586 1104,586 1099,591" fill="#2A4060"/>
+
+    <!-- ── Style Group ── -->
+    <rect x="878" y="608" width="312" height="72" rx="6" fill="url(#grpStyle)" stroke="#A0C0C0" stroke-width="0.5"/>
+    <text x="892" y="626" font-size="10" font-weight="700" fill="#2A6868">Appearance</text>
+    <line x1="892" y1="632" x2="1176" y2="632" stroke="rgba(42,104,104,0.2)"/>
+
+    <text x="892" y="650" font-size="10" fill="#444">Theme</text>
+    <rect x="970" y="638" width="140" height="18" rx="2" fill="#fff" stroke="#A0C0C0" stroke-width="0.5"/>
+    <text x="976" y="651" font-size="10" fill="#1A1A1A">Luna Refined</text>
+    <rect x="1088" y="638" width="22" height="18" rx="0 2 2 0" fill="url(#btn)" stroke="#A0C0C0" stroke-width="0.5"/>
+    <polygon points="1094,646 1104,646 1099,651" fill="#2A4060"/>
+
+    <text x="892" y="672" font-size="10" fill="#444">Read-only</text>
+    <rect x="970" y="662" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="971" y="663" width="12" height="12" rx="1" fill="#fff"/>
+
+    <!-- Description bar at bottom -->
+    <rect x="878" y="690" width="312" height="50" rx="0 0 0 4" fill="#EEEAE2" stroke="#D4D0C8" stroke-width="0.5"/>
+    <text x="892" y="706" font-size="10" font-weight="600" fill="#2A4060">email_address</text>
+    <text x="892" y="722" font-size="9" fill="#666">The email address field for the contact</text>
+    <text x="892" y="734" font-size="9" fill="#666">form. Bound to contact.email model field.</text>
+
+    <!-- ══ STATUS BAR ══ -->
+    <rect x="0" y="794" width="1200" height="26" fill="#007ACC"/>
+    <text x="12" y="811" font-size="10" fill="#fff">↗ main</text>
+    <text x="80" y="811" font-size="10" fill="rgba(255,255,255,0.8)">⟳ 0</text>
+    <text x="120" y="811" font-size="10" fill="rgba(255,255,255,0.8)">⚠ 0</text>
+    <text x="160" y="811" font-size="10" fill="rgba(255,255,255,0.8)">✕ 0</text>
+    <text x="1050" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">WYSIWYG Mode</text>
+    <text x="1190" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">UTF-8</text>
+</svg>

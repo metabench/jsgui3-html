@@ -4,12 +4,24 @@ const { Control } = jsgui;
 const { is_defined } = jsgui;
 
 class Toast extends Control {
+    /**
+     * @param {Object} spec
+     * @param {string} [spec.position] — Position: top-right (default), top-left, top-center,
+     *                                  bottom-right, bottom-left, bottom-center
+     */
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'toast';
         super(spec);
         this.add_class('toast-container');
+        this.add_class('jsgui-toast-container');
         this.dom.tagName = 'div';
         this.dom.attributes['aria-live'] = 'polite';
+
+        // Position
+        const position = spec.position || 'top-right';
+        if (position !== 'top-right') {
+            this.dom.attributes['data-position'] = position;
+        }
 
         this.toast_items = new Map();
         this.toast_id_counter = 1;
@@ -29,9 +41,11 @@ class Toast extends Control {
         const toast_ctrl = new Control({ context: this.context });
         toast_ctrl.dom.tagName = 'div';
         toast_ctrl.add_class('toast');
+        toast_ctrl.add_class('jsgui-toast');
         toast_ctrl.dom.attributes['data-toast-id'] = id;
         if (status) {
             toast_ctrl.add_class(`toast-${status}`);
+            toast_ctrl.dom.attributes['data-status'] = status;
         }
 
         const text_ctrl = new Control({ context: this.context });

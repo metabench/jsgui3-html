@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin Controls — Live Preview</title>
+<style>
+:root,
+[data-admin-theme="vs-default"] {
+  --admin-bg: #f3f3f3;
+  --admin-card-bg: #ffffff;
+  --admin-border: #e0e0e0;
+  --admin-border-accent: #0078d4;
+  --admin-text: #1e1e1e;
+  --admin-text-secondary: #616161;
+  --admin-text-muted: #9e9e9e;
+  --admin-font: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --admin-font-mono: 'Cascadia Code', 'Consolas', 'JetBrains Mono', 'Courier New', monospace;
+  --admin-font-size: 13px;
+  --admin-header-bg: #f8f8f8;
+  --admin-header-text: #616161;
+  --admin-stripe-bg: #f8f8f8;
+  --admin-hover-bg: #e8e8e8;
+  --admin-select-bg: #cce5ff;
+  --admin-accent: #0078d4;
+  --admin-success: #16825d;
+  --admin-warning: #c19c00;
+  --admin-danger: #cd3131;
+  --admin-info: #3794ff;
+  --admin-success-bg: #dff6dd;
+  --admin-warning-bg: #fff4ce;
+  --admin-danger-bg: #fdd;
+  --admin-info-bg: #d6ecff;
+  --admin-radius: 4px;
+  --admin-radius-lg: 6px;
+  --admin-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  --admin-shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+  --admin-row-height: 36px;
+  --admin-cell-padding: 8px 12px;
+}
+
+[data-admin-theme="vs-dark"] {
+  --admin-bg: #1e1e1e;
+  --admin-card-bg: #252526;
+  --admin-border: #3c3c3c;
+  --admin-border-accent: #0078d4;
+  --admin-text: #d4d4d4;
+  --admin-text-secondary: #9d9d9d;
+  --admin-text-muted: #6a6a6a;
+  --admin-font: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --admin-font-mono: 'Cascadia Code', 'Consolas', 'JetBrains Mono', 'Courier New', monospace;
+  --admin-font-size: 13px;
+  --admin-header-bg: #2d2d2d;
+  --admin-header-text: #9d9d9d;
+  --admin-stripe-bg: #2a2a2a;
+  --admin-hover-bg: #2a2d2e;
+  --admin-select-bg: #094771;
+  --admin-accent: #3794ff;
+  --admin-success: #4ec9b0;
+  --admin-warning: #cca700;
+  --admin-danger: #f14c4c;
+  --admin-info: #3794ff;
+  --admin-success-bg: #1e3a2f;
+  --admin-warning-bg: #3a3000;
+  --admin-danger-bg: #3a1d1d;
+  --admin-info-bg: #1a3352;
+  --admin-radius: 4px;
+  --admin-radius-lg: 6px;
+  --admin-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  --admin-shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
+  --admin-row-height: 36px;
+  --admin-cell-padding: 8px 12px;
+}
+
+[data-admin-theme="terminal"] {
+  --admin-bg: #0c0c0c;
+  --admin-card-bg: #1a1a2e;
+  --admin-border: #2a2a4a;
+  --admin-border-accent: #00ff88;
+  --admin-text: #e0e0e0;
+  --admin-text-secondary: #00cc66;
+  --admin-text-muted: #4a6a5a;
+  --admin-font: 'Cascadia Code', 'Consolas', monospace;
+  --admin-font-mono: 'Cascadia Code', 'Consolas', monospace;
+  --admin-font-size: 12px;
+  --admin-header-bg: #16162a;
+  --admin-header-text: #00cc66;
+  --admin-stripe-bg: #151530;
+  --admin-hover-bg: #1f1f3f;
+  --admin-select-bg: #003322;
+  --admin-accent: #00ff88;
+  --admin-success: #00ff88;
+  --admin-warning: #ffcc00;
+  --admin-danger: #ff4444;
+  --admin-info: #44aaff;
+  --admin-success-bg: #003322;
+  --admin-warning-bg: #332a00;
+  --admin-danger-bg: #330a0a;
+  --admin-info-bg: #0a2233;
+  --admin-radius: 2px;
+  --admin-radius-lg: 4px;
+  --admin-shadow: 0 1px 3px rgba(0,255,136,0.05);
+  --admin-shadow-lg: 0 4px 12px rgba(0,255,136,0.08);
+  --admin-row-height: 32px;
+  --admin-cell-padding: 6px 12px;
+}
+
+[data-admin-theme="warm"] {
+  --admin-bg: #fefce8;
+  --admin-card-bg: #fffbeb;
+  --admin-border: #e5d49b;
+  --admin-border-accent: #d97706;
+  --admin-text: #451a03;
+  --admin-text-secondary: #92400e;
+  --admin-text-muted: #b89e6a;
+  --admin-font: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --admin-font-mono: 'Cascadia Code', 'Consolas', monospace;
+  --admin-font-size: 13px;
+  --admin-header-bg: #fef3c7;
+  --admin-header-text: #b45309;
+  --admin-stripe-bg: #fef9c3;
+  --admin-hover-bg: #fde68a;
+  --admin-select-bg: #fcd34d;
+  --admin-accent: #d97706;
+  --admin-success: #16825d;
+  --admin-warning: #d97706;
+  --admin-danger: #dc2626;
+  --admin-info: #2563eb;
+  --admin-success-bg: #dcfce7;
+  --admin-warning-bg: #fef3c7;
+  --admin-danger-bg: #fee2e2;
+  --admin-info-bg: #dbeafe;
+  --admin-radius: 6px;
+  --admin-radius-lg: 8px;
+  --admin-shadow: 0 1px 3px rgba(146,64,14,0.06);
+  --admin-shadow-lg: 0 4px 12px rgba(146,64,14,0.1);
+  --admin-row-height: 36px;
+  --admin-cell-padding: 8px 12px;
+}
+
+
+
+/* ─── Key_Value_Table ─── */
+.jsgui-kv-table {
+    font-family: var(--admin-font, 'Segoe UI', -apple-system, sans-serif);
+    font-size: var(--admin-font-size, 13px);
+    color: var(--admin-text, #1e1e1e);
+    background: var(--admin-card-bg, #fff);
+    border: 1px solid var(--admin-border, #e0e0e0);
+    border-radius: var(--admin-radius-lg, 6px);
+    box-shadow: var(--admin-shadow, 0 1px 3px rgba(0,0,0,0.08));
+    overflow: hidden;
+}
+.jsgui-kv-table.kv-borderless {
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+/* Title bar */
+.kv-title-bar {
+    padding: 12px 16px 8px;
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    background: var(--admin-header-bg, #f8f8f8);
+}
+.kv-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--admin-text, #1e1e1e);
+    line-height: 1.3;
+}
+.kv-subtitle {
+    font-size: 11px;
+    color: var(--admin-text-muted, #9e9e9e);
+    margin-top: 2px;
+}
+
+/* Inner table */
+.kv-table-inner {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Header */
+.kv-header {
+    text-align: left;
+    font-weight: 600;
+    padding: var(--admin-cell-padding, 8px 12px);
+    border-bottom: 2px solid var(--admin-border, #e0e0e0);
+    color: var(--admin-header-text, #616161);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: var(--admin-header-bg, #f8f8f8);
+}
+
+/* Rows */
+.kv-row {
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    transition: background-color 0.1s ease;
+    height: var(--admin-row-height, 36px);
+}
+.kv-row:last-child {
+    border-bottom: none;
+}
+.kv-row:hover {
+    background: var(--admin-hover-bg, #e8e8e8);
+}
+.kv-row-striped {
+    background: var(--admin-stripe-bg, #f8f8f8);
+}
+.kv-row-striped:hover {
+    background: var(--admin-hover-bg, #e8e8e8);
+}
+
+/* Key cell */
+.kv-key {
+    padding: var(--admin-cell-padding, 8px 12px);
+    font-weight: 600;
+    color: var(--admin-text-secondary, #616161);
+    white-space: nowrap;
+    width: 1%;
+    vertical-align: middle;
+    user-select: none;
+}
+
+/* Value cell */
+.kv-value {
+    padding: var(--admin-cell-padding, 8px 12px);
+    color: var(--admin-text, #1e1e1e);
+    vertical-align: middle;
+}
+.kv-value-text {
+    font-family: var(--admin-font-mono, 'Consolas', monospace);
+    font-size: 12px;
+}
+
+/* Badges */
+.kv-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 7px;
+    border-radius: 10px;
+    margin-left: 8px;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+    line-height: 1.6;
+    text-transform: uppercase;
+}
+.kv-badge-default {
+    background: var(--admin-hover-bg, #e8e8e8);
+    color: var(--admin-text-secondary, #616161);
+}
+.kv-badge-success {
+    background: var(--admin-success-bg, #dff6dd);
+    color: var(--admin-success, #16825d);
+}
+.kv-badge-warning {
+    background: var(--admin-warning-bg, #fff4ce);
+    color: var(--admin-warning, #c19c00);
+}
+.kv-badge-danger {
+    background: var(--admin-danger-bg, #fdd);
+    color: var(--admin-danger, #cd3131);
+}
+.kv-badge-info {
+    background: var(--admin-info-bg, #d6ecff);
+    color: var(--admin-info, #3794ff);
+}
+
+/* Copy button */
+.kv-copy-btn {
+    border: 1px solid var(--admin-border, #e0e0e0);
+    background: transparent;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 1px 5px;
+    border-radius: var(--admin-radius, 4px);
+    opacity: 0;
+    transition: opacity 0.15s, background-color 0.1s;
+    color: var(--admin-text-muted, #9e9e9e);
+    margin-left: 8px;
+    vertical-align: middle;
+    line-height: 1;
+}
+.kv-row:hover .kv-copy-btn {
+    opacity: 0.6;
+}
+.kv-copy-btn:hover {
+    opacity: 1 !important;
+    background: var(--admin-hover-bg, #e8e8e8);
+    color: var(--admin-text, #1e1e1e);
+}
+
+/* Compact variant */
+.kv-compact .kv-key,
+.kv-compact .kv-value,
+.kv-compact .kv-header {
+    padding: 4px 10px;
+}
+.kv-compact .kv-row {
+    height: 28px;
+}
+
+
+/* ─── Stat_Card ─── */
+.jsgui-stat-card {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 20px;
+    border-radius: var(--admin-radius-lg, 6px);
+    background: var(--admin-card-bg, #fff);
+    border: 1px solid var(--admin-border, #e0e0e0);
+    box-shadow: var(--admin-shadow, 0 1px 3px rgba(0,0,0,0.08));
+    min-width: 180px;
+    font-family: var(--admin-font, 'Segoe UI', -apple-system, sans-serif);
+    transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.jsgui-stat-card:hover {
+    box-shadow: var(--admin-shadow-lg, 0 4px 12px rgba(0,0,0,0.1));
+    transform: translateY(-1px);
+}
+.stat-card-icon {
+    font-size: 28px;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--admin-radius, 4px);
+    background: var(--admin-stripe-bg, #f8f8f8);
+}
+.stat-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.stat-card-value {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--admin-text, #1e1e1e);
+    font-variant-numeric: tabular-nums;
+}
+.stat-card-label {
+    font-size: 12px;
+    color: var(--admin-text-muted, #9e9e9e);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+.stat-card-trend {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+.stat-card-trend[data-trend="up"]   { color: var(--admin-success, #16825d); }
+.stat-card-trend[data-trend="down"] { color: var(--admin-danger, #cd3131); }
+.stat-card-trend[data-trend="flat"] { color: var(--admin-text-muted, #9e9e9e); }
+.stat-card-trend-arrow { font-size: 14px; }
+
+/* Variant accent bars */
+.jsgui-stat-card[data-variant="success"] { border-left: 3px solid var(--admin-success, #16825d); }
+.jsgui-stat-card[data-variant="warning"] { border-left: 3px solid var(--admin-warning, #c19c00); }
+.jsgui-stat-card[data-variant="danger"]  { border-left: 3px solid var(--admin-danger, #cd3131); }
+.jsgui-stat-card[data-variant="info"]    { border-left: 3px solid var(--admin-info, #3794ff); }
+
+
+/* ─── Log_Viewer ─── */
+.jsgui-log-viewer {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--admin-border, #3c3c3c);
+    border-radius: var(--admin-radius-lg, 6px);
+    background: var(--admin-card-bg, #252526);
+    color: var(--admin-text, #d4d4d4);
+    font-family: var(--admin-font-mono, 'Consolas', monospace);
+    font-size: 12px;
+    overflow: hidden;
+    box-shadow: var(--admin-shadow, 0 1px 3px rgba(0,0,0,0.3));
+}
+.log-viewer-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 12px;
+    background: var(--admin-header-bg, #2d2d2d);
+    border-bottom: 1px solid var(--admin-border, #3c3c3c);
+    min-height: 32px;
+}
+.log-viewer-title {
+    font-family: var(--admin-font, 'Segoe UI', sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--admin-text-secondary, #9d9d9d);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.log-viewer-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.log-viewer-count {
+    font-family: var(--admin-font, 'Segoe UI', sans-serif);
+    font-size: 11px;
+    color: var(--admin-text-muted, #6a6a6a);
+}
+.log-viewer-clear {
+    border: 1px solid var(--admin-border, #3c3c3c);
+    background: transparent;
+    color: var(--admin-text-secondary, #9d9d9d);
+    font-family: var(--admin-font, 'Segoe UI', sans-serif);
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: var(--admin-radius, 4px);
+    cursor: pointer;
+    transition: background-color 0.1s, color 0.1s;
+}
+.log-viewer-clear:hover {
+    background: var(--admin-hover-bg, #2a2d2e);
+    color: var(--admin-text, #d4d4d4);
+}
+.log-viewer-body {
+    overflow-y: auto;
+    max-height: 400px;
+    padding: 2px 0;
+}
+.log-viewer-empty {
+    padding: 24px 12px;
+    text-align: center;
+    color: var(--admin-text-muted, #6a6a6a);
+    font-family: var(--admin-font, 'Segoe UI', sans-serif);
+    font-style: italic;
+}
+.log-entry {
+    display: flex;
+    gap: 8px;
+    padding: 1px 12px;
+    line-height: 1.7;
+    cursor: default;
+    border-left: 2px solid transparent;
+    transition: background-color 0.08s;
+}
+.log-entry:hover {
+    background: var(--admin-hover-bg, #2a2d2e);
+}
+.log-entry-ln {
+    flex-shrink: 0;
+    min-width: 28px;
+    text-align: right;
+    color: var(--admin-text-muted, #6a6a6a);
+    user-select: none;
+    font-size: 11px;
+}
+.log-entry-level {
+    flex-shrink: 0;
+    font-weight: 600;
+    min-width: 44px;
+    font-size: 11px;
+}
+.log-entry-info .log-entry-level  { color: var(--admin-info, #3794ff); }
+.log-entry-warn .log-entry-level  { color: var(--admin-warning, #cca700); }
+.log-entry-error .log-entry-level { color: var(--admin-danger, #f14c4c); }
+.log-entry-debug .log-entry-level { color: #b267e6; }
+
+/* Error entries get a subtle left border */
+.log-entry-error { border-left-color: var(--admin-danger, #f14c4c); }
+.log-entry-warn  { border-left-color: var(--admin-warning, #cca700); }
+
+.log-entry-timestamp {
+    flex-shrink: 0;
+    color: var(--admin-text-muted, #6a6a6a);
+    min-width: 80px;
+    font-size: 11px;
+}
+.log-entry-message {
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+
+/* ─── Data_Table ─── */
+.jsgui-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--admin-font, 'Segoe UI', -apple-system, sans-serif);
+    font-size: var(--admin-font-size, 13px);
+    color: var(--admin-text, #1e1e1e);
+    background: var(--admin-card-bg, #fff);
+}
+
+/* Header */
+.data-table-header {
+    text-align: left;
+    font-weight: 600;
+    padding: var(--admin-cell-padding, 8px 12px);
+    border-bottom: 2px solid var(--admin-border, #e0e0e0);
+    background: var(--admin-header-bg, #f8f8f8);
+    color: var(--admin-header-text, #616161);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    user-select: none;
+    position: relative;
+}
+.data-table-header.is-sortable {
+    cursor: pointer;
+    padding-right: 22px;
+    transition: color 0.1s;
+}
+.data-table-header.is-sortable:hover {
+    color: var(--admin-text, #1e1e1e);
+}
+.data-table-header.is-sortable:focus-visible {
+    outline: 2px solid var(--admin-accent, #0078d4);
+    outline-offset: -2px;
+    border-radius: 2px;
+}
+
+/* Sort indicators */
+.data-table-header[aria-sort="ascending"]::after {
+    content: ' ▲';
+    font-size: 9px;
+    color: var(--admin-accent, #0078d4);
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.data-table-header[aria-sort="descending"]::after {
+    content: ' ▼';
+    font-size: 9px;
+    color: var(--admin-accent, #0078d4);
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.data-table-header[aria-sort="none"]::after {
+    content: ' ⇅';
+    font-size: 9px;
+    color: var(--admin-text-muted, #9e9e9e);
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+.data-table-header.is-sortable:hover[aria-sort="none"]::after {
+    opacity: 0.5;
+}
+
+/* Rows */
+.data-table-row {
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    transition: background-color 0.08s;
+    height: var(--admin-row-height, 36px);
+}
+.data-table-row:last-child {
+    border-bottom: none;
+}
+.data-table-row:hover {
+    background: var(--admin-hover-bg, #e8e8e8);
+}
+
+/* Striped rows */
+.data-table-striped .data-table-row:nth-child(even) {
+    background: var(--admin-stripe-bg, #f8f8f8);
+}
+.data-table-striped .data-table-row:nth-child(even):hover {
+    background: var(--admin-hover-bg, #e8e8e8);
+}
+
+/* Cells */
+.data-table-cell {
+    padding: var(--admin-cell-padding, 8px 12px);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+}
+
+/* Bordered variant */
+.data-table-bordered .data-table-cell,
+.data-table-bordered .data-table-header {
+    border: 1px solid var(--admin-border, #e0e0e0);
+}
+
+/* Compact variant */
+.data-table-compact .data-table-header,
+.data-table-compact .data-table-cell {
+    padding: 4px 8px;
+}
+.data-table-compact .data-table-row {
+    height: 28px;
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: var(--admin-bg, #f3f3f3);
+    color: var(--admin-text, #1e1e1e);
+    font-family: var(--admin-font, 'Segoe UI', 'Inter', sans-serif);
+    padding: 0;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Theme switcher bar */
+.theme-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: var(--admin-card-bg, #fff);
+    border-bottom: 2px solid var(--admin-border-accent, #0078d4);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.theme-bar label {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--admin-text, #1e1e1e);
+    margin-right: 4px;
+}
+.theme-btn {
+    padding: 5px 14px;
+    border: 1px solid var(--admin-border, #e0e0e0);
+    border-radius: var(--admin-radius, 4px);
+    background: var(--admin-card-bg, #fff);
+    color: var(--admin-text, #1e1e1e);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s;
+}
+.theme-btn:hover {
+    background: var(--admin-hover-bg, #e8e8e8);
+}
+.theme-btn.active {
+    background: var(--admin-accent, #0078d4);
+    color: #fff;
+    border-color: var(--admin-accent, #0078d4);
+}
+
+.preview-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 32px 24px;
+}
+
+.section-header {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 32px 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    color: var(--admin-text, #1e1e1e);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.section-header::before {
+    content: '';
+    width: 3px;
+    height: 18px;
+    background: var(--admin-accent, #0078d4);
+    border-radius: 2px;
+}
+.section-header:first-child {
+    margin-top: 0;
+}
+
+.stat-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+}
+.stat-cards-grid .jsgui-stat-card {
+    width: 100%;
+    display: flex;
+}
+
+.data-table-wrap {
+    background: var(--admin-card-bg, #fff);
+    border: 1px solid var(--admin-border, #e0e0e0);
+    border-radius: var(--admin-radius-lg, 6px);
+    overflow: hidden;
+    box-shadow: var(--admin-shadow, 0 1px 3px rgba(0,0,0,0.08));
+}
+</style>
+</head>
+<body>
+<div class="theme-bar">
+    <label>Theme:</label>
+    <button class="theme-btn active" onclick="setTheme('vs-default')">VS Default</button>
+    <button class="theme-btn" onclick="setTheme('vs-dark')">VS Dark</button>
+    <button class="theme-btn" onclick="setTheme('terminal')">Terminal</button>
+    <button class="theme-btn" onclick="setTheme('warm')">Warm</button>
+</div>
+
+<div class="preview-container">
+    <div class="section-header">Stat Cards</div>
+    <div class="stat-cards-grid">
+        <div data-jsgui-id="stat_card_0" data-jsgui-data-model-id="data_object_52" data-jsgui-type="stat_card" data-jsgui-data-model="data_object_52" class="jsgui-stat-card" data-variant="success"><div data-jsgui-id="control_51" data-jsgui-data-model-id="data_object_53" data-jsgui-type="control" data-jsgui-data-model="data_object_53" class="stat-card-icon">👤</div><div data-jsgui-id="control_52" data-jsgui-data-model-id="data_object_54" data-jsgui-type="control" data-jsgui-data-model="data_object_54" class="stat-card-body"><div data-jsgui-id="control_53" data-jsgui-data-model-id="data_object_55" data-jsgui-type="control" data-jsgui-data-model="data_object_55" class="stat-card-value">1,284</div><div data-jsgui-id="control_54" data-jsgui-data-model-id="data_object_56" data-jsgui-type="control" data-jsgui-data-model="data_object_56" class="stat-card-label">Active Users</div><div data-jsgui-id="control_55" data-jsgui-data-model-id="data_object_57" data-jsgui-type="control" data-jsgui-data-model="data_object_57" class="stat-card-trend" data-trend="up"><span data-jsgui-id="control_56" data-jsgui-data-model-id="data_object_58" data-jsgui-type="control" data-jsgui-data-model="data_object_58" class="stat-card-trend-arrow">↑</span><span data-jsgui-id="control_57" data-jsgui-data-model-id="data_object_59" data-jsgui-type="control" data-jsgui-data-model="data_object_59" class="stat-card-trend-value">+12% from yesterday</span></div></div></div>
+<div data-jsgui-id="stat_card_1" data-jsgui-data-model-id="data_object_60" data-jsgui-type="stat_card" data-jsgui-data-model="data_object_60" class="jsgui-stat-card" data-variant="danger"><div data-jsgui-id="control_58" data-jsgui-data-model-id="data_object_61" data-jsgui-type="control" data-jsgui-data-model="data_object_61" class="stat-card-icon">⚠</div><div data-jsgui-id="control_59" data-jsgui-data-model-id="data_object_62" data-jsgui-type="control" data-jsgui-data-model="data_object_62" class="stat-card-body"><div data-jsgui-id="control_60" data-jsgui-data-model-id="data_object_63" data-jsgui-type="control" data-jsgui-data-model="data_object_63" class="stat-card-value">0.3%</div><div data-jsgui-id="control_61" data-jsgui-data-model-id="data_object_64" data-jsgui-type="control" data-jsgui-data-model="data_object_64" class="stat-card-label">Error Rate</div><div data-jsgui-id="control_62" data-jsgui-data-model-id="data_object_65" data-jsgui-type="control" data-jsgui-data-model="data_object_65" class="stat-card-trend" data-trend="down"><span data-jsgui-id="control_63" data-jsgui-data-model-id="data_object_66" data-jsgui-type="control" data-jsgui-data-model="data_object_66" class="stat-card-trend-arrow">↓</span><span data-jsgui-id="control_64" data-jsgui-data-model-id="data_object_67" data-jsgui-type="control" data-jsgui-data-model="data_object_67" class="stat-card-trend-value">-0.1% from avg</span></div></div></div>
+<div data-jsgui-id="stat_card_2" data-jsgui-data-model-id="data_object_68" data-jsgui-type="stat_card" data-jsgui-data-model="data_object_68" class="jsgui-stat-card" data-variant="info"><div data-jsgui-id="control_65" data-jsgui-data-model-id="data_object_69" data-jsgui-type="control" data-jsgui-data-model="data_object_69" class="stat-card-icon">⏱</div><div data-jsgui-id="control_66" data-jsgui-data-model-id="data_object_70" data-jsgui-type="control" data-jsgui-data-model="data_object_70" class="stat-card-body"><div data-jsgui-id="control_67" data-jsgui-data-model-id="data_object_71" data-jsgui-type="control" data-jsgui-data-model="data_object_71" class="stat-card-value">142ms</div><div data-jsgui-id="control_68" data-jsgui-data-model-id="data_object_72" data-jsgui-type="control" data-jsgui-data-model="data_object_72" class="stat-card-label">Response Time</div><div data-jsgui-id="control_69" data-jsgui-data-model-id="data_object_73" data-jsgui-type="control" data-jsgui-data-model="data_object_73" class="stat-card-trend" data-trend="flat"><span data-jsgui-id="control_70" data-jsgui-data-model-id="data_object_74" data-jsgui-type="control" data-jsgui-data-model="data_object_74" class="stat-card-trend-arrow">→</span><span data-jsgui-id="control_71" data-jsgui-data-model-id="data_object_75" data-jsgui-type="control" data-jsgui-data-model="data_object_75" class="stat-card-trend-value">Stable</span></div></div></div>
+<div data-jsgui-id="stat_card_3" data-jsgui-data-model-id="data_object_76" data-jsgui-type="stat_card" data-jsgui-data-model="data_object_76" class="jsgui-stat-card"><div data-jsgui-id="control_72" data-jsgui-data-model-id="data_object_77" data-jsgui-type="control" data-jsgui-data-model="data_object_77" class="stat-card-icon">🟢</div><div data-jsgui-id="control_73" data-jsgui-data-model-id="data_object_78" data-jsgui-type="control" data-jsgui-data-model="data_object_78" class="stat-card-body"><div data-jsgui-id="control_74" data-jsgui-data-model-id="data_object_79" data-jsgui-type="control" data-jsgui-data-model="data_object_79" class="stat-card-value">99.97%</div><div data-jsgui-id="control_75" data-jsgui-data-model-id="data_object_80" data-jsgui-type="control" data-jsgui-data-model="data_object_80" class="stat-card-label">Uptime</div><div data-jsgui-id="control_76" data-jsgui-data-model-id="data_object_81" data-jsgui-type="control" data-jsgui-data-model="data_object_81" class="stat-card-trend" data-trend="up"><span data-jsgui-id="control_77" data-jsgui-data-model-id="data_object_82" data-jsgui-type="control" data-jsgui-data-model="data_object_82" class="stat-card-trend-arrow">↑</span><span data-jsgui-id="control_78" data-jsgui-data-model-id="data_object_83" data-jsgui-type="control" data-jsgui-data-model="data_object_83" class="stat-card-trend-value">+0.02%</span></div></div></div>
+    </div>
+
+    <div class="section-header">Key Value Table</div>
+    <div data-jsgui-id="key_value_table_0" data-jsgui-type="key_value_table" data-jsgui-data-model="data_object_0" class="jsgui-kv-table"><div data-jsgui-id="control_0" data-jsgui-data-model-id="data_object_1" data-jsgui-type="control" data-jsgui-data-model="data_object_1" class="kv-title-bar"><div data-jsgui-id="control_1" data-jsgui-data-model-id="data_object_2" data-jsgui-type="control" data-jsgui-data-model="data_object_2" class="kv-title">Server Configuration</div><div data-jsgui-id="control_2" data-jsgui-data-model-id="data_object_3" data-jsgui-type="control" data-jsgui-data-model="data_object_3" class="kv-subtitle">Production • us-east-1</div></div><table data-jsgui-id="control_3" data-jsgui-data-model-id="data_object_4" data-jsgui-type="control" data-jsgui-data-model="data_object_4" class="kv-table-inner"><thead data-jsgui-id="control_4" data-jsgui-data-model-id="data_object_5" data-jsgui-type="control" data-jsgui-data-model="data_object_5"><tr data-jsgui-id="control_5" data-jsgui-data-model-id="data_object_6" data-jsgui-type="control" data-jsgui-data-model="data_object_6" class="kv-header-row"><th data-jsgui-id="control_6" data-jsgui-data-model-id="data_object_7" data-jsgui-type="control" data-jsgui-data-model="data_object_7" class="kv-header kv-key-header">Setting</th><th data-jsgui-id="control_7" data-jsgui-data-model-id="data_object_8" data-jsgui-type="control" data-jsgui-data-model="data_object_8" class="kv-header kv-value-header">Value</th></tr></thead><tbody data-jsgui-id="control_8" data-jsgui-data-model-id="data_object_9" data-jsgui-type="control" data-jsgui-data-model="data_object_9"><tr data-jsgui-id="control_9" data-jsgui-data-model-id="data_object_10" data-jsgui-type="control" data-jsgui-data-model="data_object_10" class="kv-row"><td data-jsgui-id="control_10" data-jsgui-data-model-id="data_object_11" data-jsgui-type="control" data-jsgui-data-model="data_object_11" class="kv-key">Hostname</td><td data-jsgui-id="control_11" data-jsgui-data-model-id="data_object_12" data-jsgui-type="control" data-jsgui-data-model="data_object_12" class="kv-value"><span data-jsgui-id="control_12" data-jsgui-data-model-id="data_object_13" data-jsgui-type="control" data-jsgui-data-model="data_object_13" class="kv-value-text">api.example.com</span><span data-jsgui-id="control_13" data-jsgui-data-model-id="data_object_14" data-jsgui-type="control" data-jsgui-data-model="data_object_14" class="kv-badge kv-badge-success">LIVE</span><button data-jsgui-id="control_14" data-jsgui-data-model-id="data_object_15" data-jsgui-type="control" data-jsgui-data-model="data_object_15" type="button" class="kv-copy-btn" data-copy-value="api.example.com">⧉</button></td></tr><tr data-jsgui-id="control_15" data-jsgui-data-model-id="data_object_16" data-jsgui-type="control" data-jsgui-data-model="data_object_16" class="kv-row kv-row-striped"><td data-jsgui-id="control_16" data-jsgui-data-model-id="data_object_17" data-jsgui-type="control" data-jsgui-data-model="data_object_17" class="kv-key">Port</td><td data-jsgui-id="control_17" data-jsgui-data-model-id="data_object_18" data-jsgui-type="control" data-jsgui-data-model="data_object_18" class="kv-value"><span data-jsgui-id="control_18" data-jsgui-data-model-id="data_object_19" data-jsgui-type="control" data-jsgui-data-model="data_object_19" class="kv-value-text">443</span><button data-jsgui-id="control_19" data-jsgui-data-model-id="data_object_20" data-jsgui-type="control" data-jsgui-data-model="data_object_20" type="button" class="kv-copy-btn" data-copy-value="443">⧉</button></td></tr><tr data-jsgui-id="control_20" data-jsgui-data-model-id="data_object_21" data-jsgui-type="control" data-jsgui-data-model="data_object_21" class="kv-row"><td data-jsgui-id="control_21" data-jsgui-data-model-id="data_object_22" data-jsgui-type="control" data-jsgui-data-model="data_object_22" class="kv-key">TLS Version</td><td data-jsgui-id="control_22" data-jsgui-data-model-id="data_object_23" data-jsgui-type="control" data-jsgui-data-model="data_object_23" class="kv-value"><span data-jsgui-id="control_23" data-jsgui-data-model-id="data_object_24" data-jsgui-type="control" data-jsgui-data-model="data_object_24" class="kv-value-text">1.3</span><span data-jsgui-id="control_24" data-jsgui-data-model-id="data_object_25" data-jsgui-type="control" data-jsgui-data-model="data_object_25" class="kv-badge kv-badge-info">SECURE</span><button data-jsgui-id="control_25" data-jsgui-data-model-id="data_object_26" data-jsgui-type="control" data-jsgui-data-model="data_object_26" type="button" class="kv-copy-btn" data-copy-value="1.3">⧉</button></td></tr><tr data-jsgui-id="control_26" data-jsgui-data-model-id="data_object_27" data-jsgui-type="control" data-jsgui-data-model="data_object_27" class="kv-row kv-row-striped"><td data-jsgui-id="control_27" data-jsgui-data-model-id="data_object_28" data-jsgui-type="control" data-jsgui-data-model="data_object_28" class="kv-key">Workers</td><td data-jsgui-id="control_28" data-jsgui-data-model-id="data_object_29" data-jsgui-type="control" data-jsgui-data-model="data_object_29" class="kv-value"><span data-jsgui-id="control_29" data-jsgui-data-model-id="data_object_30" data-jsgui-type="control" data-jsgui-data-model="data_object_30" class="kv-value-text">4</span><button data-jsgui-id="control_30" data-jsgui-data-model-id="data_object_31" data-jsgui-type="control" data-jsgui-data-model="data_object_31" type="button" class="kv-copy-btn" data-copy-value="4">⧉</button></td></tr><tr data-jsgui-id="control_31" data-jsgui-data-model-id="data_object_32" data-jsgui-type="control" data-jsgui-data-model="data_object_32" class="kv-row"><td data-jsgui-id="control_32" data-jsgui-data-model-id="data_object_33" data-jsgui-type="control" data-jsgui-data-model="data_object_33" class="kv-key">Max Connections</td><td data-jsgui-id="control_33" data-jsgui-data-model-id="data_object_34" data-jsgui-type="control" data-jsgui-data-model="data_object_34" class="kv-value"><span data-jsgui-id="control_34" data-jsgui-data-model-id="data_object_35" data-jsgui-type="control" data-jsgui-data-model="data_object_35" class="kv-value-text">10,000</span><button data-jsgui-id="control_35" data-jsgui-data-model-id="data_object_36" data-jsgui-type="control" data-jsgui-data-model="data_object_36" type="button" class="kv-copy-btn" data-copy-value="10,000">⧉</button></td></tr><tr data-jsgui-id="control_36" data-jsgui-data-model-id="data_object_37" data-jsgui-type="control" data-jsgui-data-model="data_object_37" class="kv-row kv-row-striped"><td data-jsgui-id="control_37" data-jsgui-data-model-id="data_object_38" data-jsgui-type="control" data-jsgui-data-model="data_object_38" class="kv-key">Memory Limit</td><td data-jsgui-id="control_38" data-jsgui-data-model-id="data_object_39" data-jsgui-type="control" data-jsgui-data-model="data_object_39" class="kv-value"><span data-jsgui-id="control_39" data-jsgui-data-model-id="data_object_40" data-jsgui-type="control" data-jsgui-data-model="data_object_40" class="kv-value-text">2048 MB</span><button data-jsgui-id="control_40" data-jsgui-data-model-id="data_object_41" data-jsgui-type="control" data-jsgui-data-model="data_object_41" type="button" class="kv-copy-btn" data-copy-value="2048 MB">⧉</button></td></tr><tr data-jsgui-id="control_41" data-jsgui-data-model-id="data_object_42" data-jsgui-type="control" data-jsgui-data-model="data_object_42" class="kv-row"><td data-jsgui-id="control_42" data-jsgui-data-model-id="data_object_43" data-jsgui-type="control" data-jsgui-data-model="data_object_43" class="kv-key">Log Level</td><td data-jsgui-id="control_43" data-jsgui-data-model-id="data_object_44" data-jsgui-type="control" data-jsgui-data-model="data_object_44" class="kv-value"><span data-jsgui-id="control_44" data-jsgui-data-model-id="data_object_45" data-jsgui-type="control" data-jsgui-data-model="data_object_45" class="kv-value-text">info</span><button data-jsgui-id="control_45" data-jsgui-data-model-id="data_object_46" data-jsgui-type="control" data-jsgui-data-model="data_object_46" type="button" class="kv-copy-btn" data-copy-value="info">⧉</button></td></tr><tr data-jsgui-id="control_46" data-jsgui-data-model-id="data_object_47" data-jsgui-type="control" data-jsgui-data-model="data_object_47" class="kv-row kv-row-striped"><td data-jsgui-id="control_47" data-jsgui-data-model-id="data_object_48" data-jsgui-type="control" data-jsgui-data-model="data_object_48" class="kv-key">Cache TTL</td><td data-jsgui-id="control_48" data-jsgui-data-model-id="data_object_49" data-jsgui-type="control" data-jsgui-data-model="data_object_49" class="kv-value"><span data-jsgui-id="control_49" data-jsgui-data-model-id="data_object_50" data-jsgui-type="control" data-jsgui-data-model="data_object_50" class="kv-value-text">3600s</span><button data-jsgui-id="control_50" data-jsgui-data-model-id="data_object_51" data-jsgui-type="control" data-jsgui-data-model="data_object_51" type="button" class="kv-copy-btn" data-copy-value="3600s">⧉</button></td></tr></tbody></table></div>
+
+    <div class="section-header">Log Viewer</div>
+    <div data-jsgui-id="log_viewer_0" data-jsgui-data-model-id="data_object_84" data-jsgui-type="log_viewer" data-jsgui-data-model="data_object_84" class="jsgui-log-viewer"><div data-jsgui-id="control_79" data-jsgui-data-model-id="data_object_85" data-jsgui-type="control" data-jsgui-data-model="data_object_85" class="log-viewer-toolbar"><span data-jsgui-id="control_80" data-jsgui-data-model-id="data_object_86" data-jsgui-type="control" data-jsgui-data-model="data_object_86" class="log-viewer-title">Application Log</span><div data-jsgui-id="control_81" data-jsgui-data-model-id="data_object_87" data-jsgui-type="control" data-jsgui-data-model="data_object_87" class="log-viewer-toolbar-right"><span data-jsgui-id="control_82" data-jsgui-data-model-id="data_object_88" data-jsgui-type="control" data-jsgui-data-model="data_object_88" class="log-viewer-count">7 entries</span><button data-jsgui-id="control_83" data-jsgui-data-model-id="data_object_89" data-jsgui-type="control" data-jsgui-data-model="data_object_89" type="button" class="log-viewer-clear">Clear</button></div></div><div data-jsgui-id="control_84" data-jsgui-data-model-id="data_object_90" data-jsgui-type="control" data-jsgui-data-model="data_object_90" class="log-viewer-body"><div data-jsgui-id="control_85" data-jsgui-data-model-id="data_object_91" data-jsgui-type="control" data-jsgui-data-model="data_object_91" class="log-entry log-entry-info" data-index="0"><span data-jsgui-id="control_86" data-jsgui-data-model-id="data_object_92" data-jsgui-type="control" data-jsgui-data-model="data_object_92" class="log-entry-ln">1</span><span data-jsgui-id="control_87" data-jsgui-data-model-id="data_object_93" data-jsgui-type="control" data-jsgui-data-model="data_object_93" class="log-entry-level">INFO </span><span data-jsgui-id="control_88" data-jsgui-data-model-id="data_object_94" data-jsgui-type="control" data-jsgui-data-model="data_object_94" class="log-entry-timestamp">14:22:01.123</span><span data-jsgui-id="control_89" data-jsgui-data-model-id="data_object_95" data-jsgui-type="control" data-jsgui-data-model="data_object_95" class="log-entry-message">Server listening on port 443</span></div><div data-jsgui-id="control_90" data-jsgui-data-model-id="data_object_96" data-jsgui-type="control" data-jsgui-data-model="data_object_96" class="log-entry log-entry-debug" data-index="1"><span data-jsgui-id="control_91" data-jsgui-data-model-id="data_object_97" data-jsgui-type="control" data-jsgui-data-model="data_object_97" class="log-entry-ln">2</span><span data-jsgui-id="control_92" data-jsgui-data-model-id="data_object_98" data-jsgui-type="control" data-jsgui-data-model="data_object_98" class="log-entry-level">DEBUG</span><span data-jsgui-id="control_93" data-jsgui-data-model-id="data_object_99" data-jsgui-type="control" data-jsgui-data-model="data_object_99" class="log-entry-timestamp">14:22:01.456</span><span data-jsgui-id="control_94" data-jsgui-data-model-id="data_object_100" data-jsgui-type="control" data-jsgui-data-model="data_object_100" class="log-entry-message">TLS handshake completed (client: 192.168.1.42)</span></div><div data-jsgui-id="control_95" data-jsgui-data-model-id="data_object_101" data-jsgui-type="control" data-jsgui-data-model="data_object_101" class="log-entry log-entry-info" data-index="2"><span data-jsgui-id="control_96" data-jsgui-data-model-id="data_object_102" data-jsgui-type="control" data-jsgui-data-model="data_object_102" class="log-entry-ln">3</span><span data-jsgui-id="control_97" data-jsgui-data-model-id="data_object_103" data-jsgui-type="control" data-jsgui-data-model="data_object_103" class="log-entry-level">INFO </span><span data-jsgui-id="control_98" data-jsgui-data-model-id="data_object_104" data-jsgui-type="control" data-jsgui-data-model="data_object_104" class="log-entry-timestamp">14:22:01.789</span><span data-jsgui-id="control_99" data-jsgui-data-model-id="data_object_105" data-jsgui-type="control" data-jsgui-data-model="data_object_105" class="log-entry-message">Connected to PostgreSQL cluster (pool: 5&#x2F;20)</span></div><div data-jsgui-id="control_100" data-jsgui-data-model-id="data_object_106" data-jsgui-type="control" data-jsgui-data-model="data_object_106" class="log-entry log-entry-warn" data-index="3"><span data-jsgui-id="control_101" data-jsgui-data-model-id="data_object_107" data-jsgui-type="control" data-jsgui-data-model="data_object_107" class="log-entry-ln">4</span><span data-jsgui-id="control_102" data-jsgui-data-model-id="data_object_108" data-jsgui-type="control" data-jsgui-data-model="data_object_108" class="log-entry-level">WARN </span><span data-jsgui-id="control_103" data-jsgui-data-model-id="data_object_109" data-jsgui-type="control" data-jsgui-data-model="data_object_109" class="log-entry-timestamp">14:22:03.012</span><span data-jsgui-id="control_104" data-jsgui-data-model-id="data_object_110" data-jsgui-type="control" data-jsgui-data-model="data_object_110" class="log-entry-message">Slow query detected: SELECT * FROM users (847ms)</span></div><div data-jsgui-id="control_105" data-jsgui-data-model-id="data_object_111" data-jsgui-type="control" data-jsgui-data-model="data_object_111" class="log-entry log-entry-error" data-index="4"><span data-jsgui-id="control_106" data-jsgui-data-model-id="data_object_112" data-jsgui-type="control" data-jsgui-data-model="data_object_112" class="log-entry-ln">5</span><span data-jsgui-id="control_107" data-jsgui-data-model-id="data_object_113" data-jsgui-type="control" data-jsgui-data-model="data_object_113" class="log-entry-level">ERROR</span><span data-jsgui-id="control_108" data-jsgui-data-model-id="data_object_114" data-jsgui-type="control" data-jsgui-data-model="data_object_114" class="log-entry-timestamp">14:22:05.234</span><span data-jsgui-id="control_109" data-jsgui-data-model-id="data_object_115" data-jsgui-type="control" data-jsgui-data-model="data_object_115" class="log-entry-message">Connection timeout to redis:&#x2F;&#x2F;cache:6379</span></div><div data-jsgui-id="control_110" data-jsgui-data-model-id="data_object_116" data-jsgui-type="control" data-jsgui-data-model="data_object_116" class="log-entry log-entry-info" data-index="5"><span data-jsgui-id="control_111" data-jsgui-data-model-id="data_object_117" data-jsgui-type="control" data-jsgui-data-model="data_object_117" class="log-entry-ln">6</span><span data-jsgui-id="control_112" data-jsgui-data-model-id="data_object_118" data-jsgui-type="control" data-jsgui-data-model="data_object_118" class="log-entry-level">INFO </span><span data-jsgui-id="control_113" data-jsgui-data-model-id="data_object_119" data-jsgui-type="control" data-jsgui-data-model="data_object_119" class="log-entry-timestamp">14:22:07.567</span><span data-jsgui-id="control_114" data-jsgui-data-model-id="data_object_120" data-jsgui-type="control" data-jsgui-data-model="data_object_120" class="log-entry-message">Redis reconnected after 2 retries</span></div><div data-jsgui-id="control_115" data-jsgui-data-model-id="data_object_121" data-jsgui-type="control" data-jsgui-data-model="data_object_121" class="log-entry log-entry-info" data-index="6"><span data-jsgui-id="control_116" data-jsgui-data-model-id="data_object_122" data-jsgui-type="control" data-jsgui-data-model="data_object_122" class="log-entry-ln">7</span><span data-jsgui-id="control_117" data-jsgui-data-model-id="data_object_123" data-jsgui-type="control" data-jsgui-data-model="data_object_123" class="log-entry-level">INFO </span><span data-jsgui-id="control_118" data-jsgui-data-model-id="data_object_124" data-jsgui-type="control" data-jsgui-data-model="data_object_124" class="log-entry-timestamp">14:22:10.890</span><span data-jsgui-id="control_119" data-jsgui-data-model-id="data_object_125" data-jsgui-type="control" data-jsgui-data-model="data_object_125" class="log-entry-message">Health check passed: all services nominal</span></div></div></div>
+
+    <div class="section-header">Data Table</div>
+    <div class="data-table-wrap">
+        <table data-jsgui-id="data_table_0" data-jsgui-data-model-id="data_object_126" data-jsgui-type="data_table" data-jsgui-data-model="data_object_126" class="data-table jsgui-data-table data-table-striped" data-jsgui-ctrl-fields="{'head':'control_120','body':'control_121'}"><thead data-jsgui-id="control_120" data-jsgui-data-model-id="data_object_127" data-jsgui-type="control" data-jsgui-data-model="data_object_127"><tr data-jsgui-id="control_122" data-jsgui-data-model-id="data_object_129" data-jsgui-type="control" data-jsgui-data-model="data_object_129"><th data-jsgui-id="control_123" data-jsgui-data-model-id="data_object_130" data-jsgui-type="control" data-jsgui-data-model="data_object_130" class="data-table-header is-sortable" data-column-key="endpoint" scope="col" tabindex="0" aria-sort="none">Endpoint</th><th data-jsgui-id="control_124" data-jsgui-data-model-id="data_object_131" data-jsgui-type="control" data-jsgui-data-model="data_object_131" class="data-table-header is-sortable" data-column-key="method" scope="col" tabindex="0" aria-sort="none">Method</th><th data-jsgui-id="control_125" data-jsgui-data-model-id="data_object_132" data-jsgui-type="control" data-jsgui-data-model="data_object_132" class="data-table-header is-sortable" data-column-key="latency" scope="col" tabindex="0" aria-sort="none">Latency</th><th data-jsgui-id="control_126" data-jsgui-data-model-id="data_object_133" data-jsgui-type="control" data-jsgui-data-model="data_object_133" class="data-table-header is-sortable" data-column-key="status" scope="col" tabindex="0" aria-sort="none">Status</th><th data-jsgui-id="control_127" data-jsgui-data-model-id="data_object_134" data-jsgui-type="control" data-jsgui-data-model="data_object_134" class="data-table-header is-sortable" data-column-key="last_call" scope="col" tabindex="0" aria-sort="none">Last Call</th></tr></thead><tbody data-jsgui-id="control_121" data-jsgui-data-model-id="data_object_128" data-jsgui-type="control" data-jsgui-data-model="data_object_128"><tr data-jsgui-id="control_128" data-jsgui-data-model-id="data_object_135" data-jsgui-type="control" data-jsgui-data-model="data_object_135" class="data-table-row" data-row-index="0"><td data-jsgui-id="control_129" data-jsgui-data-model-id="data_object_136" data-jsgui-type="control" data-jsgui-data-model="data_object_136" class="data-table-cell">&#x2F;api&#x2F;v1&#x2F;users</td><td data-jsgui-id="control_130" data-jsgui-data-model-id="data_object_137" data-jsgui-type="control" data-jsgui-data-model="data_object_137" class="data-table-cell">GET</td><td data-jsgui-id="control_131" data-jsgui-data-model-id="data_object_138" data-jsgui-type="control" data-jsgui-data-model="data_object_138" class="data-table-cell">42ms</td><td data-jsgui-id="control_132" data-jsgui-data-model-id="data_object_139" data-jsgui-type="control" data-jsgui-data-model="data_object_139" class="data-table-cell">200</td><td data-jsgui-id="control_133" data-jsgui-data-model-id="data_object_140" data-jsgui-type="control" data-jsgui-data-model="data_object_140" class="data-table-cell">2s ago</td></tr><tr data-jsgui-id="control_134" data-jsgui-data-model-id="data_object_141" data-jsgui-type="control" data-jsgui-data-model="data_object_141" class="data-table-row" data-row-index="1"><td data-jsgui-id="control_135" data-jsgui-data-model-id="data_object_142" data-jsgui-type="control" data-jsgui-data-model="data_object_142" class="data-table-cell">&#x2F;api&#x2F;v1&#x2F;auth&#x2F;login</td><td data-jsgui-id="control_136" data-jsgui-data-model-id="data_object_143" data-jsgui-type="control" data-jsgui-data-model="data_object_143" class="data-table-cell">POST</td><td data-jsgui-id="control_137" data-jsgui-data-model-id="data_object_144" data-jsgui-type="control" data-jsgui-data-model="data_object_144" class="data-table-cell">128ms</td><td data-jsgui-id="control_138" data-jsgui-data-model-id="data_object_145" data-jsgui-type="control" data-jsgui-data-model="data_object_145" class="data-table-cell">200</td><td data-jsgui-id="control_139" data-jsgui-data-model-id="data_object_146" data-jsgui-type="control" data-jsgui-data-model="data_object_146" class="data-table-cell">5s ago</td></tr><tr data-jsgui-id="control_140" data-jsgui-data-model-id="data_object_147" data-jsgui-type="control" data-jsgui-data-model="data_object_147" class="data-table-row" data-row-index="2"><td data-jsgui-id="control_141" data-jsgui-data-model-id="data_object_148" data-jsgui-type="control" data-jsgui-data-model="data_object_148" class="data-table-cell">&#x2F;api&#x2F;v1&#x2F;products</td><td data-jsgui-id="control_142" data-jsgui-data-model-id="data_object_149" data-jsgui-type="control" data-jsgui-data-model="data_object_149" class="data-table-cell">GET</td><td data-jsgui-id="control_143" data-jsgui-data-model-id="data_object_150" data-jsgui-type="control" data-jsgui-data-model="data_object_150" class="data-table-cell">67ms</td><td data-jsgui-id="control_144" data-jsgui-data-model-id="data_object_151" data-jsgui-type="control" data-jsgui-data-model="data_object_151" class="data-table-cell">200</td><td data-jsgui-id="control_145" data-jsgui-data-model-id="data_object_152" data-jsgui-type="control" data-jsgui-data-model="data_object_152" class="data-table-cell">8s ago</td></tr><tr data-jsgui-id="control_146" data-jsgui-data-model-id="data_object_153" data-jsgui-type="control" data-jsgui-data-model="data_object_153" class="data-table-row" data-row-index="3"><td data-jsgui-id="control_147" data-jsgui-data-model-id="data_object_154" data-jsgui-type="control" data-jsgui-data-model="data_object_154" class="data-table-cell">&#x2F;api&#x2F;v1&#x2F;orders</td><td data-jsgui-id="control_148" data-jsgui-data-model-id="data_object_155" data-jsgui-type="control" data-jsgui-data-model="data_object_155" class="data-table-cell">POST</td><td data-jsgui-id="control_149" data-jsgui-data-model-id="data_object_156" data-jsgui-type="control" data-jsgui-data-model="data_object_156" class="data-table-cell">245ms</td><td data-jsgui-id="control_150" data-jsgui-data-model-id="data_object_157" data-jsgui-type="control" data-jsgui-data-model="data_object_157" class="data-table-cell">201</td><td data-jsgui-id="control_151" data-jsgui-data-model-id="data_object_158" data-jsgui-type="control" data-jsgui-data-model="data_object_158" class="data-table-cell">12s ago</td></tr><tr data-jsgui-id="control_152" data-jsgui-data-model-id="data_object_159" data-jsgui-type="control" data-jsgui-data-model="data_object_159" class="data-table-row" data-row-index="4"><td data-jsgui-id="control_153" data-jsgui-data-model-id="data_object_160" data-jsgui-type="control" data-jsgui-data-model="data_object_160" class="data-table-cell">&#x2F;api&#x2F;v1&#x2F;health</td><td data-jsgui-id="control_154" data-jsgui-data-model-id="data_object_161" data-jsgui-type="control" data-jsgui-data-model="data_object_161" class="data-table-cell">GET</td><td data-jsgui-id="control_155" data-jsgui-data-model-id="data_object_162" data-jsgui-type="control" data-jsgui-data-model="data_object_162" class="data-table-cell">3ms</td><td data-jsgui-id="control_156" data-jsgui-data-model-id="data_object_163" data-jsgui-type="control" data-jsgui-data-model="data_object_163" class="data-table-cell">200</td><td data-jsgui-id="control_157" data-jsgui-data-model-id="data_object_164" data-jsgui-type="control" data-jsgui-data-model="data_object_164" class="data-table-cell">1s ago</td></tr><tr data-jsgui-id="control_158" data-jsgui-data-model-id="data_object_165" data-jsgui-type="control" data-jsgui-data-model="data_object_165" class="data-table-row" data-row-index="5"><td data-jsgui-id="control_159" data-jsgui-data-model-id="data_object_166" data-jsgui-type="control" data-jsgui-data-model="data_object_166" class="data-table-cell">&#x2F;api&#x2F;v1&#x2F;metrics</td><td data-jsgui-id="control_160" data-jsgui-data-model-id="data_object_167" data-jsgui-type="control" data-jsgui-data-model="data_object_167" class="data-table-cell">GET</td><td data-jsgui-id="control_161" data-jsgui-data-model-id="data_object_168" data-jsgui-type="control" data-jsgui-data-model="data_object_168" class="data-table-cell">892ms</td><td data-jsgui-id="control_162" data-jsgui-data-model-id="data_object_169" data-jsgui-type="control" data-jsgui-data-model="data_object_169" class="data-table-cell">504</td><td data-jsgui-id="control_163" data-jsgui-data-model-id="data_object_170" data-jsgui-type="control" data-jsgui-data-model="data_object_170" class="data-table-cell">30s ago</td></tr></tbody></table>
+    </div>
+</div>
+
+<script>
+function setTheme(name) {
+    document.documentElement.setAttribute('data-admin-theme', name);
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.toLowerCase().replace(/\s+/g, '-') === name.replace('vs-', 'vs ').toLowerCase() || 
+            btn.textContent.toLowerCase() === name.replace('vs-', 'vs '));
+    });
+    // Simpler: just check onclick text
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        const matches = btn.getAttribute('onclick').includes("'" + name + "'");
+        btn.classList.toggle('active', matches);
+    });
+}
+</script>
+</body>
+</html>

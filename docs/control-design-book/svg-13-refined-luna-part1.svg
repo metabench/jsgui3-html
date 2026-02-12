@@ -1,0 +1,408 @@
+<svg viewBox="0 0 1000 700" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Refined gradients: subtle, businesslike, no harsh gloss -->
+        <linearGradient id="btn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EEF3F9"/>
+            <stop offset="45%" stop-color="#D8E2EE"/>
+            <stop offset="55%" stop-color="#C0D0E2"/>
+            <stop offset="100%" stop-color="#CCDAEA"/>
+        </linearGradient>
+        <linearGradient id="btnHover" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFF4E0"/>
+            <stop offset="45%" stop-color="#FFDFAA"/>
+            <stop offset="55%" stop-color="#F0C070"/>
+            <stop offset="100%" stop-color="#F8D090"/>
+        </linearGradient>
+        <linearGradient id="btnPri" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0D8F0"/>
+            <stop offset="45%" stop-color="#7AACE0"/>
+            <stop offset="55%" stop-color="#5090D0"/>
+            <stop offset="100%" stop-color="#68A4DD"/>
+        </linearGradient>
+        <linearGradient id="btnOk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0E8C0"/>
+            <stop offset="45%" stop-color="#70C870"/>
+            <stop offset="55%" stop-color="#48A848"/>
+            <stop offset="100%" stop-color="#5CB85C"/>
+        </linearGradient>
+        <linearGradient id="btnNo" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F0C8C8"/>
+            <stop offset="45%" stop-color="#E07070"/>
+            <stop offset="55%" stop-color="#CC4444"/>
+            <stop offset="100%" stop-color="#D85858"/>
+        </linearGradient>
+        <linearGradient id="btnWarn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFF0CC"/>
+            <stop offset="45%" stop-color="#F0C850"/>
+            <stop offset="55%" stop-color="#D8A820"/>
+            <stop offset="100%" stop-color="#E4B838"/>
+        </linearGradient>
+        <linearGradient id="titleBar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#94B8D8"/>
+            <stop offset="40%" stop-color="#6C9CC8"/>
+            <stop offset="100%" stop-color="#7CA8D0"/>
+        </linearGradient>
+        <linearGradient id="titleInact" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#D4D4D4"/>
+            <stop offset="100%" stop-color="#C0C0C0"/>
+        </linearGradient>
+        <linearGradient id="toolbar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F0EDE6"/>
+            <stop offset="100%" stop-color="#E4E0D8"/>
+        </linearGradient>
+        <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E8E4DD"/>
+            <stop offset="3%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#FFFFFF"/>
+        </linearGradient>
+        <linearGradient id="progBlue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6CB4E8"/>
+            <stop offset="50%" stop-color="#3890D0"/>
+            <stop offset="100%" stop-color="#4CA0DD"/>
+        </linearGradient>
+        <linearGradient id="progGreen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6CD868"/>
+            <stop offset="50%" stop-color="#38B834"/>
+            <stop offset="100%" stop-color="#4CC848"/>
+        </linearGradient>
+        <linearGradient id="closeBtn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E86050"/>
+            <stop offset="100%" stop-color="#CC3828"/>
+        </linearGradient>
+        <filter id="shadow" x="-3%" y="-3%" width="108%" height="112%">
+            <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.18)"/>
+        </filter>
+    </defs>
+    <style>
+        text { font-family: 'Segoe UI', Tahoma, sans-serif; }
+    </style>
+
+    <!-- Background: warm neutral -->
+    <rect width="1000" height="700" fill="#E8E4DC"/>
+
+    <!-- Title -->
+    <text x="500" y="24" text-anchor="middle" font-size="13" font-weight="600" fill="#2A4060">
+        jsgui3-html — Refined Premium Luna: Businesslike, Readable, Consistent
+    </text>
+    <text x="500" y="40" text-anchor="middle" font-size="10" fill="#808080">
+        Subtle gradients · Consistent 8px grid · Clear hierarchy · Professional warmth
+    </text>
+
+    <!-- ══════ BUTTONS ══════ -->
+    <text x="24" y="66" font-size="11" font-weight="600" fill="#2A4060">Buttons</text>
+    <line x1="24" y1="72" x2="976" y2="72" stroke="#C4C0B8"/>
+
+    <!-- Standard -->
+    <g transform="translate(24,82)">
+        <rect width="96" height="30" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="48" y="20" text-anchor="middle" font-size="11" fill="#2A3A50">Standard</text>
+    </g>
+    <!-- Hover -->
+    <g transform="translate(132,82)">
+        <rect width="96" height="30" rx="3" fill="url(#btnHover)" stroke="#B08830" stroke-width="1"/>
+        <text x="48" y="20" text-anchor="middle" font-size="11" fill="#5A3800">Hover</text>
+    </g>
+    <!-- Primary -->
+    <g transform="translate(240,82)">
+        <rect width="96" height="30" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/>
+        <text x="48" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Primary</text>
+    </g>
+    <!-- Success -->
+    <g transform="translate(348,82)">
+        <rect width="96" height="30" rx="3" fill="url(#btnOk)" stroke="#2A8028" stroke-width="1"/>
+        <text x="48" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Confirm</text>
+    </g>
+    <!-- Danger -->
+    <g transform="translate(456,82)">
+        <rect width="96" height="30" rx="3" fill="url(#btnNo)" stroke="#A02020" stroke-width="1"/>
+        <text x="48" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Delete</text>
+    </g>
+    <!-- Warning -->
+    <g transform="translate(564,82)">
+        <rect width="96" height="30" rx="3" fill="url(#btnWarn)" stroke="#907010" stroke-width="1"/>
+        <text x="48" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#4A3000">Warning</text>
+    </g>
+    <!-- Disabled -->
+    <g transform="translate(672,82)">
+        <rect width="96" height="30" rx="3" fill="#EEEEEE" stroke="#C8C8C8" stroke-width="1"/>
+        <text x="48" y="20" text-anchor="middle" font-size="11" fill="#AAAAAA">Disabled</text>
+    </g>
+    <!-- Pill CTA -->
+    <g transform="translate(784,82)">
+        <rect width="140" height="30" rx="15" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/>
+        <text x="70" y="20" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Get Started →</text>
+    </g>
+
+    <!-- ══════ FORM CONTROLS ══════ -->
+    <text x="24" y="140" font-size="11" font-weight="600" fill="#2A4060">Form Controls</text>
+    <line x1="24" y1="146" x2="976" y2="146" stroke="#C4C0B8"/>
+
+    <!-- Text input -->
+    <g transform="translate(24,156)">
+        <text x="0" y="0" font-size="10" fill="#444" font-weight="600">Full Name</text>
+        <rect y="6" width="200" height="26" rx="2" fill="#8098B0" stroke="#6880A0" stroke-width="0.5"/>
+        <rect x="1" y="7" width="198" height="24" rx="1" fill="url(#field)"/>
+        <text x="8" y="24" font-size="11" fill="#1A1A1A">James Richardson</text>
+    </g>
+    <!-- Focused input -->
+    <g transform="translate(244,156)">
+        <text x="0" y="0" font-size="10" fill="#444" font-weight="600">Email Address</text>
+        <rect x="-2" y="4" width="224" height="30" rx="3" fill="#5A90C8" opacity="0.4"/>
+        <rect y="6" width="220" height="26" rx="2" fill="#5080A8" stroke="#3060A0" stroke-width="1"/>
+        <rect x="1" y="7" width="218" height="24" rx="1" fill="#fff"/>
+        <text x="8" y="24" font-size="11" fill="#1A1A1A">hello@example.com</text>
+        <line x1="142" y1="12" x2="142" y2="28" stroke="#2A4060" stroke-width="1"/>
+    </g>
+    <!-- Password -->
+    <g transform="translate(488,156)">
+        <text x="0" y="0" font-size="10" fill="#444" font-weight="600">Password</text>
+        <rect y="6" width="160" height="26" rx="2" fill="#8098B0"/>
+        <rect x="1" y="7" width="158" height="24" rx="1" fill="url(#field)"/>
+        <text x="8" y="25" font-size="12" fill="#1A1A1A">●●●●●●●●</text>
+    </g>
+    <!-- Combo box -->
+    <g transform="translate(668,156)">
+        <text x="0" y="0" font-size="10" fill="#444" font-weight="600">Country</text>
+        <rect y="6" width="180" height="26" rx="2" fill="#8098B0"/>
+        <rect x="1" y="7" width="178" height="24" rx="1" fill="#fff"/>
+        <text x="8" y="24" font-size="11" fill="#1A1A1A">United Kingdom</text>
+        <rect x="155" y="7" width="24" height="24" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+        <polygon points="162,17 172,17 167,22" fill="#2A4060"/>
+    </g>
+
+    <!-- Checkboxes & Radios row -->
+    <g transform="translate(24,210)">
+        <!-- Checkbox checked -->
+        <rect width="14" height="14" rx="2" fill="#8098B0"/>
+        <rect x="1" y="1" width="12" height="12" rx="1" fill="#fff"/>
+        <polyline points="3.5,7.5 6,10.5 11,4.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+        <text x="20" y="11" font-size="11" fill="#1A1A1A">Enable notifications</text>
+        <!-- Checkbox unchecked -->
+        <g transform="translate(180,0)">
+            <rect width="14" height="14" rx="2" fill="#8098B0"/>
+            <rect x="1" y="1" width="12" height="12" rx="1" fill="#fff"/>
+            <text x="20" y="11" font-size="11" fill="#1A1A1A">Dark mode</text>
+        </g>
+        <!-- Checkbox disabled -->
+        <g transform="translate(310,0)">
+            <rect width="14" height="14" rx="2" fill="#D0D0D0"/>
+            <rect x="1" y="1" width="12" height="12" rx="1" fill="#F4F4F4"/>
+            <polyline points="3.5,7.5 6,10.5 11,4.5" fill="none" stroke="#B0B0B0" stroke-width="2" stroke-linecap="round"/>
+            <text x="20" y="11" font-size="11" fill="#A0A0A0">Required (locked)</text>
+        </g>
+        <!-- Radio selected -->
+        <g transform="translate(480,0)">
+            <circle cx="7" cy="7" r="7" fill="#8098B0"/>
+            <circle cx="7" cy="7" r="6" fill="#fff"/>
+            <circle cx="7" cy="7" r="3.5" fill="#2868A0"/>
+            <text x="20" y="11" font-size="11" fill="#1A1A1A">Standard</text>
+        </g>
+        <!-- Radio unselected -->
+        <g transform="translate(590,0)">
+            <circle cx="7" cy="7" r="7" fill="#8098B0"/>
+            <circle cx="7" cy="7" r="6" fill="#fff"/>
+            <text x="20" y="11" font-size="11" fill="#1A1A1A">Express</text>
+        </g>
+        <!-- Toggle ON -->
+        <g transform="translate(700,0)">
+            <rect width="40" height="20" rx="10" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.5"/>
+            <circle cx="29" cy="10" r="7" fill="#fff" stroke="#D0D8E0" stroke-width="0.5"/>
+            <text x="48" y="14" font-size="11" fill="#1A1A1A">On</text>
+        </g>
+        <!-- Toggle OFF -->
+        <g transform="translate(810,0)">
+            <rect width="40" height="20" rx="10" fill="#C8C8C8" stroke="#A0A0A0" stroke-width="0.5"/>
+            <circle cx="11" cy="10" r="7" fill="#fff" stroke="#D0D0D0" stroke-width="0.5"/>
+            <text x="48" y="14" font-size="11" fill="#1A1A1A">Off</text>
+        </g>
+    </g>
+
+    <!-- ══════ WINDOW: Settings Panel ══════ -->
+    <text x="24" y="258" font-size="11" font-weight="600" fill="#2A4060">Application Window — Settings</text>
+    <line x1="24" y1="264" x2="976" y2="264" stroke="#C4C0B8"/>
+
+    <g transform="translate(24,274)" filter="url(#shadow)">
+        <!-- Window frame -->
+        <rect width="600" height="400" rx="5" fill="#CCDAEA" stroke="#7090B0" stroke-width="1"/>
+        <!-- Title bar: refined, not flashy -->
+        <rect x="1" y="1" width="598" height="28" rx="4" fill="url(#titleBar)"/>
+        <!-- Very subtle top highlight (not a glaring reflection) -->
+        <rect x="2" y="2" width="596" height="8" rx="3" fill="rgba(255,255,255,0.15)"/>
+        <text x="14" y="20" font-size="12" fill="#fff" font-weight="600">⚙ Application Settings</text>
+        <!-- Caption buttons -->
+        <rect x="517" y="5" width="24" height="18" rx="2" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.15)"/>
+        <line x1="525" y1="15" x2="535" y2="15" stroke="#fff" stroke-width="1.2"/>
+        <rect x="544" y="5" width="24" height="18" rx="2" fill="rgba(255,255,255,0.2)" stroke="rgba(255,255,255,0.15)"/>
+        <rect x="551" y="8" width="10" height="9" rx="1" fill="none" stroke="#fff" stroke-width="1.2"/>
+        <rect x="571" y="5" width="24" height="18" rx="2" fill="url(#closeBtn)"/>
+        <line x1="578" y1="9" x2="588" y2="19" stroke="#fff" stroke-width="1.5"/>
+        <line x1="588" y1="9" x2="578" y2="19" stroke="#fff" stroke-width="1.5"/>
+
+        <!-- Content area -->
+        <rect x="1" y="29" width="598" height="370" rx="0 0 4 4" fill="#ECEAE4"/>
+
+        <!-- Sidebar navigation -->
+        <rect x="1" y="29" width="150" height="370" fill="#F4F2EC" rx="0 0 0 4"/>
+        <line x1="151" y1="29" x2="151" y2="399" stroke="#D4D0C8"/>
+
+        <!-- Nav items -->
+        <rect x="5" y="37" width="142" height="28" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.5"/>
+        <text x="16" y="56" font-size="11" font-weight="600" fill="#fff">General</text>
+        <text x="16" y="82" font-size="11" fill="#2A4060">Appearance</text>
+        <text x="16" y="106" font-size="11" fill="#2A4060">Network</text>
+        <text x="16" y="130" font-size="11" fill="#2A4060">Security</text>
+        <text x="16" y="154" font-size="11" fill="#2A4060">Updates</text>
+        <text x="16" y="178" font-size="11" fill="#2A4060">Advanced</text>
+        <line x1="5" y1="190" x2="147" y2="190" stroke="#D4D0C8"/>
+        <text x="16" y="210" font-size="10" fill="#888">About</text>
+        <text x="16" y="230" font-size="10" fill="#888">Help</text>
+
+        <!-- Main content -->
+        <!-- Group: Application -->
+        <rect x="164" y="37" width="424" height="105" fill="none" stroke="#C4C0B8" rx="3"/>
+        <rect x="172" y="31" width="80" height="12" fill="#ECEAE4"/>
+        <text x="176" y="40" font-size="10" font-weight="600" fill="#2A4060">Application</text>
+
+        <text x="176" y="60" font-size="10" fill="#444">Language:</text>
+        <rect x="256" y="48" width="180" height="24" rx="2" fill="#8098B0"/>
+        <rect x="257" y="49" width="178" height="22" rx="1" fill="#fff"/>
+        <text x="264" y="64" font-size="10" fill="#1A1A1A">English (United Kingdom)</text>
+        <rect x="411" y="49" width="24" height="22" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+        <polygon points="418,58 428,58 423,63" fill="#2A4060"/>
+
+        <text x="176" y="88" font-size="10" fill="#444">Start with system:</text>
+        <rect x="296" y="78" width="14" height="14" rx="2" fill="#8098B0"/>
+        <rect x="297" y="79" width="12" height="12" rx="1" fill="#fff"/>
+        <polyline points="299.5,85.5 302,88.5 307,82.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+
+        <text x="176" y="112" font-size="10" fill="#444">Check for updates:</text>
+        <circle cx="303" cy="108" r="7" fill="#8098B0"/>
+        <circle cx="303" cy="108" r="6" fill="#fff"/>
+        <circle cx="303" cy="108" r="3.5" fill="#2868A0"/>
+        <text x="316" y="112" font-size="10" fill="#1A1A1A">Automatically</text>
+        <circle cx="419" cy="108" r="7" fill="#8098B0"/>
+        <circle cx="419" cy="108" r="6" fill="#fff"/>
+        <text x="432" y="112" font-size="10" fill="#1A1A1A">Manually</text>
+
+        <!-- Group: Display -->
+        <rect x="164" y="152" width="424" height="88" fill="none" stroke="#C4C0B8" rx="3"/>
+        <rect x="172" y="146" width="56" height="12" fill="#ECEAE4"/>
+        <text x="176" y="155" font-size="10" font-weight="600" fill="#2A4060">Display</text>
+
+        <text x="176" y="176" font-size="10" fill="#444">UI Scale:</text>
+        <!-- Slider -->
+        <rect x="256" y="170" width="220" height="4" rx="2" fill="#C4C0B8"/>
+        <rect x="256" y="170" width="132" height="4" rx="2" fill="url(#progBlue)"/>
+        <rect x="381" y="163" width="14" height="18" rx="3" fill="url(#btn)" stroke="#7090B0" stroke-width="1"/>
+        <text x="488" y="177" font-size="10" fill="#1A1A1A" font-weight="600">125%</text>
+
+        <text x="176" y="204" font-size="10" fill="#444">Smooth scrolling:</text>
+        <rect x="296" y="194" width="40" height="20" rx="10" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.5"/>
+        <circle cx="325" cy="204" r="7" fill="#fff" stroke="#D0D8E0" stroke-width="0.5"/>
+
+        <text x="360" y="204" font-size="10" fill="#444">Font smoothing:</text>
+        <rect x="458" y="194" width="40" height="20" rx="10" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.5"/>
+        <circle cx="487" cy="204" r="7" fill="#fff" stroke="#D0D8E0" stroke-width="0.5"/>
+
+        <!-- Group: Storage -->
+        <rect x="164" y="250" width="424" height="80" fill="none" stroke="#C4C0B8" rx="3"/>
+        <rect x="172" y="244" width="56" height="12" fill="#ECEAE4"/>
+        <text x="176" y="253" font-size="10" font-weight="600" fill="#2A4060">Storage</text>
+
+        <text x="176" y="274" font-size="10" fill="#444">C: Drive</text>
+        <text x="480" y="274" font-size="10" fill="#666" text-anchor="end">187 GB free of 512 GB</text>
+        <rect x="176" y="280" width="400" height="10" rx="5" fill="#D8D4CC"/>
+        <rect x="176" y="280" width="254" height="10" rx="5" fill="url(#progBlue)"/>
+        <text x="500" y="290" font-size="9" fill="#666" text-anchor="end">63%</text>
+
+        <text x="176" y="310" font-size="10" fill="#444">D: Drive</text>
+        <text x="480" y="310" font-size="10" fill="#666" text-anchor="end">820 GB free of 1 TB</text>
+        <rect x="176" y="316" width="400" height="10" rx="5" fill="#D8D4CC"/>
+        <rect x="176" y="316" width="72" height="10" rx="5" fill="url(#progGreen)"/>
+        <text x="500" y="326" font-size="9" fill="#666" text-anchor="end">18%</text>
+
+        <!-- Bottom buttons -->
+        <rect x="382" y="368" width="80" height="26" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/>
+        <text x="422" y="385" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Save</text>
+        <rect x="470" y="368" width="80" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="510" y="385" text-anchor="middle" font-size="11" fill="#2A3A50">Cancel</text>
+        <rect x="558" y="368" width="30" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="573" y="385" text-anchor="middle" font-size="11" fill="#2A3A50">?</text>
+    </g>
+
+    <!-- ══════ RIGHT SIDE: Data Table & Cards ══════ -->
+    <g transform="translate(648,274)" filter="url(#shadow)">
+        <!-- Data table window -->
+        <rect width="328" height="256" rx="5" fill="#CCDAEA" stroke="#7090B0" stroke-width="1"/>
+        <rect x="1" y="1" width="326" height="28" rx="4" fill="url(#titleBar)"/>
+        <rect x="2" y="2" width="324" height="8" rx="3" fill="rgba(255,255,255,0.15)"/>
+        <text x="14" y="20" font-size="11" fill="#fff" font-weight="600">📊 Project Tasks</text>
+        <rect x="299" y="5" width="24" height="18" rx="2" fill="url(#closeBtn)"/>
+        <line x1="306" y1="9" x2="316" y2="19" stroke="#fff" stroke-width="1.3"/>
+        <line x1="316" y1="9" x2="306" y2="19" stroke="#fff" stroke-width="1.3"/>
+
+        <!-- Content -->
+        <rect x="1" y="29" width="326" height="226" fill="#fff" rx="0 0 4 4"/>
+
+        <!-- Column headers -->
+        <rect x="1" y="29" width="326" height="22" fill="#F0EDE6"/>
+        <text x="12" y="44" font-size="10" font-weight="600" fill="#2A4060">Task</text>
+        <line x1="170" y1="30" x2="170" y2="50" stroke="#D4D0C8"/>
+        <text x="180" y="44" font-size="10" font-weight="600" fill="#2A4060">Status</text>
+        <line x1="242" y1="30" x2="242" y2="50" stroke="#D4D0C8"/>
+        <text x="252" y="44" font-size="10" font-weight="600" fill="#2A4060">Priority</text>
+
+        <!-- Row 1 -->
+        <text x="12" y="66" font-size="10" fill="#1A1A1A">Button component</text>
+        <rect x="180" y="56" width="50" height="16" rx="8" fill="#D0F0D0" stroke="#88C888" stroke-width="0.5"/>
+        <text x="205" y="68" text-anchor="middle" font-size="9" fill="#2A6828">Done</text>
+        <rect x="252" y="56" width="50" height="16" rx="8" fill="#FFE0E0" stroke="#E0A0A0" stroke-width="0.5"/>
+        <text x="277" y="68" text-anchor="middle" font-size="9" fill="#A02020">High</text>
+
+        <!-- Row 2 (selected) -->
+        <rect x="1" y="76" width="326" height="22" fill="#4080C0"/>
+        <text x="12" y="91" font-size="10" fill="#fff" font-weight="600">Grid virtual scroll</text>
+        <rect x="180" y="80" width="50" height="16" rx="8" fill="rgba(255,255,255,0.25)"/>
+        <text x="205" y="92" text-anchor="middle" font-size="9" fill="#fff">Active</text>
+        <rect x="252" y="80" width="50" height="16" rx="8" fill="rgba(255,255,255,0.2)"/>
+        <text x="277" y="92" text-anchor="middle" font-size="9" fill="#fff">High</text>
+
+        <!-- Row 3 -->
+        <rect x="1" y="98" width="326" height="22" fill="#F8F7F4"/>
+        <text x="12" y="113" font-size="10" fill="#1A1A1A">Tab control ARIA</text>
+        <rect x="180" y="102" width="50" height="16" rx="8" fill="#FFF0C8" stroke="#D8C888" stroke-width="0.5"/>
+        <text x="205" y="114" text-anchor="middle" font-size="9" fill="#806000">Todo</text>
+        <rect x="252" y="102" width="50" height="16" rx="8" fill="#FFF0C8" stroke="#D8C888" stroke-width="0.5"/>
+        <text x="277" y="114" text-anchor="middle" font-size="9" fill="#806000">Med</text>
+
+        <!-- Row 4 -->
+        <text x="12" y="135" font-size="10" fill="#1A1A1A">Tree view keyboard</text>
+        <rect x="180" y="124" width="50" height="16" rx="8" fill="#FFF0C8" stroke="#D8C888" stroke-width="0.5"/>
+        <text x="205" y="136" text-anchor="middle" font-size="9" fill="#806000">Todo</text>
+        <rect x="252" y="124" width="50" height="16" rx="8" fill="#E0E8F0" stroke="#A0B0C0" stroke-width="0.5"/>
+        <text x="277" y="136" text-anchor="middle" font-size="9" fill="#4060A0">Low</text>
+
+        <!-- Row 5 -->
+        <rect x="1" y="142" width="326" height="22" fill="#F8F7F4"/>
+        <text x="12" y="157" font-size="10" fill="#1A1A1A">Month view styling</text>
+        <rect x="180" y="146" width="50" height="16" rx="8" fill="#D0F0D0" stroke="#88C888" stroke-width="0.5"/>
+        <text x="205" y="158" text-anchor="middle" font-size="9" fill="#2A6828">Done</text>
+        <rect x="252" y="146" width="50" height="16" rx="8" fill="#E0E8F0" stroke="#A0B0C0" stroke-width="0.5"/>
+        <text x="277" y="158" text-anchor="middle" font-size="9" fill="#4060A0">Low</text>
+
+        <!-- Status bar -->
+        <rect x="1" y="233" width="326" height="22" fill="#F0EDE6" rx="0 0 4 4"/>
+        <text x="12" y="248" font-size="9" fill="#666">5 tasks • 2 complete • 1 active</text>
+    </g>
+
+    <!-- ══════ BOTTOM: Design Notes ══════ -->
+    <rect x="648" y="540" width="328" height="134" rx="5" fill="#F8F6F2" stroke="#C4C0B8" filter="url(#shadow)"/>
+    <text x="662" y="560" font-size="11" font-weight="600" fill="#2A4060">Design Principles</text>
+    <line x1="662" y1="566" x2="962" y2="566" stroke="#D4D0C8"/>
+    <text x="662" y="582" font-size="10" fill="#444">• Gradients use 4 stops, subtle midpoint shift</text>
+    <text x="662" y="598" font-size="10" fill="#444">• Top gloss is 15% white, not 40%+</text>
+    <text x="662" y="614" font-size="10" fill="#444">• 8px vertical rhythm, 12px label spacing</text>
+    <text x="662" y="630" font-size="10" fill="#444">• Text: #1A1A1A body, #444 labels, #888 hints</text>
+    <text x="662" y="646" font-size="10" fill="#444">• Borders: midtone, not dark — readable, not harsh</text>
+    <text x="662" y="662" font-size="10" fill="#444">• Selection: solid blue, white text — clear focus</text>
+</svg>

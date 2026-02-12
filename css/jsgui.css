@@ -1,0 +1,62 @@
+/*
+ * jsgui3-html Master Stylesheet
+ * 
+ * Imports all layers in the correct cascade order.
+ * Legacy CSS (basic.css, inline .css strings) goes into jsgui-legacy
+ * so the new component layer always wins.
+ *
+ * Usage:
+ *   <link rel="stylesheet" href="/css/jsgui.css">
+ *
+ * Reference: docs/control-design-book/visual-advancement/02-css-architecture.md
+ */
+
+@layer jsgui-reset, jsgui-tokens, jsgui-legacy, jsgui-components, jsgui-utilities;
+
+/* ── Layer 1: Reset ── */
+@import url('./jsgui-reset.css') layer(jsgui-reset);
+
+/* ── Layer 2: Tokens ── */
+@import url('./jsgui-tokens.css') layer(jsgui-tokens);
+
+/* ── Layer 3 (bridge): Legacy CSS ── */
+@import url('./basic.css') layer(jsgui-legacy);
+@import url('./native-enhanced.css') layer(jsgui-legacy);
+
+/* ── Layer 4: Components ── */
+@import url('./components/button.css') layer(jsgui-components);
+@import url('./components/input.css') layer(jsgui-components);
+@import url('./components/toggle.css') layer(jsgui-components);
+@import url('./components/checkbox.css') layer(jsgui-components);
+@import url('./components/radio.css') layer(jsgui-components);
+@import url('./components/panel.css') layer(jsgui-components);
+@import url('./components/badge.css') layer(jsgui-components);
+@import url('./components/chip.css') layer(jsgui-components);
+@import url('./components/progress.css') layer(jsgui-components);
+@import url('./components/tooltip.css') layer(jsgui-components);
+@import url('./components/toast.css') layer(jsgui-components);
+@import url('./components/search-bar.css') layer(jsgui-components);
+@import url('./components/skeleton.css') layer(jsgui-components);
+@import url('./components/spinner.css') layer(jsgui-components);
+@import url('./components/avatar.css') layer(jsgui-components);
+@import url('./components/modal.css') layer(jsgui-components);
+@import url('./components/accordion.css') layer(jsgui-components);
+@import url('./components/rating.css') layer(jsgui-components);
+@import url('./components/file-upload.css') layer(jsgui-components);
+@import url('./components/slider.css') layer(jsgui-components);
+@import url('./components/tabbed-panel.css') layer(jsgui-components);
+@import url('./components/breadcrumbs.css') layer(jsgui-components);
+@import url('./components/data-table.css') layer(jsgui-components);
+@import url('./components/tree-view.css') layer(jsgui-components);
+@import url('./components/window.css') layer(jsgui-components);
+@import url('./components/split-pane.css') layer(jsgui-components);
+@import url('./components/color-picker.css') layer(jsgui-components);
+@import url('./components/rich-text-editor.css') layer(jsgui-components);
+@import url('./components/sidebar-nav.css') layer(jsgui-components);
+@import url('./components/wizard.css') layer(jsgui-components);
+@import url('./components/inline-cell-edit.css') layer(jsgui-components);
+@import url('./components/markdown-viewer.css') layer(jsgui-components);
+@import url('./components/charts.css') layer(jsgui-components);
+
+/* ── Layer 5: Utilities ── */
+@import url('./jsgui-utilities.css') layer(jsgui-utilities);

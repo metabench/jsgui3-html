@@ -1,6 +1,7 @@
 const jsgui = require('../../../../../html-core/html-core');
 const { Control } = jsgui;
 const { is_defined } = jsgui;
+const { themeable } = require('../../../../../control_mixins/themeable');
 
 /**
  * Chip — A compact element for tags, filters, or selections.
@@ -9,9 +10,12 @@ const { is_defined } = jsgui;
  * @param {string} [spec.label] — Display text
  * @param {string} [spec.icon] — Optional leading icon (text/emoji)
  * @param {boolean} [spec.dismissible=false] — Show close button
- * @param {string} [spec.variant] — Visual variant: 'default'|'primary'|'success'|'warning'|'error'
+ * @param {string} [spec.variant] — Visual variant: 'default'|'primary'|'success'|'warning'|'error'|'info'|'primary-solid'|'danger-solid'
  * @param {boolean} [spec.selected=false] — Selected/active state
  * @param {boolean} [spec.disabled=false] — Disabled state
+ * @param {string} [spec.size] — Size: 'sm', 'md' (default), 'lg'
+ * @param {boolean} [spec.outline] — Outline style (no fill)
+ * @param {string} [spec.avatar] — Avatar image URL (leading image)
  * 
  * Events:
  *   'dismiss' { chip } — Fired when close button is clicked
@@ -27,9 +31,16 @@ class Chip extends Control {
         const chip_variant = spec.variant || 'default';
         const chip_selected = !!spec.selected;
         const chip_disabled = !!spec.disabled;
+        const chip_size = spec.size || '';
+        const chip_outline = !!spec.outline;
+        const chip_avatar = spec.avatar || '';
         super(spec);
         this.add_class('chip');
+        this.add_class('jsgui-chip');
         this.dom.tagName = 'span';
+
+        // Apply themeable
+        themeable(this, 'chip', spec);
 
         // Config
         this._label = chip_label;
@@ -38,13 +49,25 @@ class Chip extends Control {
         this._variant = chip_variant;
         this._selected = chip_selected;
         this._disabled = chip_disabled;
+        this._size = chip_size;
+        this._avatar = chip_avatar;
 
+        // Data attributes for CSS targeting
+        if (this._variant && this._variant !== 'default') {
+            this.dom.attributes['data-variant'] = this._variant;
+        }
+        if (this._size && this._size !== 'md') {
+            this.dom.attributes['data-size'] = this._size;
+        }
+
+        // Legacy class + new CSS class applied via data-variant
         this.add_class(`chip-${this._variant}`);
         if (this._selected) this.add_class('selected');
         if (this._disabled) this.add_class('disabled');
+        if (chip_outline) this.add_class('outline');
 
         if (!spec.el) {
-            this._compose_chip();
+            this.compose();
         }
     }
 
@@ -85,8 +108,17 @@ class Chip extends Control {
 
     // ---- Internal ----
 
-    _compose_chip() {
+    compose() {
         const { context } = this;
+
+        // Avatar (optional leading image)
+        if (this._avatar) {
+            this._avatar_ctrl = new Control({ context, tag_name: 'img' });
+            this._avatar_ctrl.add_class('chip-avatar');
+            this._avatar_ctrl.dom.attributes.src = this._avatar;
+            this._avatar_ctrl.dom.attributes.alt = '';
+            this.add(this._avatar_ctrl);
+        }
 
         // Icon (optional)
         if (this._icon) {
@@ -125,6 +157,13 @@ class Chip extends Control {
             if (this._close_ctrl && this._close_ctrl.dom.el &&
                 (e.target === this._close_ctrl.dom.el || this._close_ctrl.dom.el.contains(e.target))) {
                 this.raise('dismiss', { chip: this });
+                // Auto-remove from DOM with fade-out
+                el.style.transition = 'opacity 0.2s, transform 0.2s';
+                el.style.opacity = '0';
+                el.style.transform = 'scale(0.8)';
+                setTimeout(() => {
+                    if (el.parentNode) el.parentNode.removeChild(el);
+                }, 200);
                 return;
             }
             this.raise('click', { chip: this });

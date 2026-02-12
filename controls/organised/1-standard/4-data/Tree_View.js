@@ -36,11 +36,11 @@ class Tree_View extends Control {
         }
 
         if (!spec.abstract && !spec.el) {
-            this.compose_tree();
+            this.compose();
         }
     }
 
-    compose_tree() {
+    compose() {
         const { context } = this;
         const data = this.view.data.model.data;
 

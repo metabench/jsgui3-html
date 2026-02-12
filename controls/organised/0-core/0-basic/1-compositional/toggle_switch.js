@@ -1,4 +1,6 @@
 const jsgui = require('../../../../../html-core/html-core');
+const { themeable } = require('../../../../../control_mixins/themeable');
+const { apply_token_map } = require('../../../../../themes/token_maps');
 
 const { Control } = jsgui;
 const { is_defined } = jsgui;
@@ -8,6 +10,13 @@ class Toggle_Switch extends Control {
         spec.__type_name = spec.__type_name || 'toggle_switch';
         super(spec);
         this.add_class('toggle-switch');
+        this.add_class('jsgui-toggle');
+
+        // Apply theming
+        const params = themeable(this, 'toggle_switch', spec, {
+            defaults: { size: 'medium' }
+        });
+        apply_token_map(this, 'toggle_switch', params);
 
         this.on_label = is_defined(spec.on_label) ? String(spec.on_label) : 'On';
         this.off_label = is_defined(spec.off_label) ? String(spec.off_label) : 'Off';
@@ -30,15 +39,18 @@ class Toggle_Switch extends Control {
             input_ctrl.dom.attributes.checked = 'checked';
         }
         input_ctrl.add_class('toggle-switch-input');
+        input_ctrl.add_class('jsgui-toggle-input');
 
         const slider_ctrl = new Control({ context });
         slider_ctrl.dom.tagName = 'span';
         slider_ctrl.add_class('toggle-switch-slider');
+        slider_ctrl.add_class('jsgui-toggle-track');
 
         const label_ctrl = new Control({ context });
         label_ctrl.dom.tagName = 'label';
         label_ctrl.dom.attributes.for = input_ctrl._id();
         label_ctrl.add_class('toggle-switch-label');
+        label_ctrl.add_class('jsgui-toggle-label');
         label_ctrl.add(this.checked ? this.on_label : this.off_label);
 
         this._ctrl_fields = this._ctrl_fields || {};

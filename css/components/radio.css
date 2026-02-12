@@ -1,0 +1,104 @@
+/*
+ * Radio Button Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-radio
+ * States: selected, unselected, disabled, focus, hover
+ * Animation: inner circle scale-in with spring ease
+ *
+ * Reference: docs/control-design-book/05-control-catalogue.md §Radio Button
+ *            docs/control-design-book/visual-advancement/04-control-specs.md §4.9
+ */
+
+.jsgui-radio {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--j-space-2);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Hidden native input */
+.jsgui-radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Custom radio circle */
+.jsgui-radio-circle {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--j-border-strong);
+    border-radius: 50%;
+    background: var(--j-bg);
+    transition:
+        border-color var(--j-duration-fast) var(--j-ease-out),
+        background var(--j-duration-fast) var(--j-ease-out);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Inner dot — scales in when selected */
+.jsgui-radio-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--j-primary-fg);
+    transform: scale(0);
+    transition: transform 200ms var(--j-ease-spring);
+}
+
+/* ── Selected state ── */
+.jsgui-radio-input:checked~.jsgui-radio-circle {
+    border-color: var(--j-primary);
+    background: var(--j-primary);
+}
+
+.jsgui-radio-input:checked~.jsgui-radio-circle .jsgui-radio-dot {
+    transform: scale(1);
+}
+
+/* ── Hover ── */
+.jsgui-radio:hover .jsgui-radio-circle {
+    border-color: var(--j-primary);
+}
+
+.jsgui-radio:hover .jsgui-radio-input:checked~.jsgui-radio-circle {
+    background: var(--j-primary-hover);
+    border-color: var(--j-primary-hover);
+}
+
+/* ── Focus ── */
+.jsgui-radio-input:focus-visible~.jsgui-radio-circle {
+    box-shadow: var(--j-focus-ring);
+}
+
+/* ── Disabled ── */
+.jsgui-radio.disabled,
+.jsgui-radio-input:disabled~.jsgui-radio-circle {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── Label ── */
+.jsgui-radio-label {
+    font: var(--j-font-weight-normal) var(--j-text-sm)/1.4 var(--j-font-sans);
+    color: var(--j-fg);
+}
+
+/* ── Radio Group ── */
+.jsgui-radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--j-space-2);
+}
+
+.jsgui-radio-group[data-orientation="horizontal"] {
+    flex-direction: row;
+    gap: var(--j-space-4);
+}

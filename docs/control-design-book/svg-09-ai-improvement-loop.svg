@@ -1,0 +1,121 @@
+<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        text { font-family: Inter, 'Segoe UI', sans-serif; }
+    </style>
+    
+    <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#667eea"/>
+        </marker>
+        <linearGradient id="stepGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#334155"/>
+            <stop offset="100%" stop-color="#1e293b"/>
+        </linearGradient>
+    </defs>
+    
+    <!-- Title -->
+    <text x="400" y="30" text-anchor="middle" font-size="18" font-weight="600" fill="#667eea">
+        AI-Driven Control Improvement Methodology
+    </text>
+    <text x="400" y="48" text-anchor="middle" font-size="11" fill="#94a3b8">
+        The 6-step continuous improvement loop
+    </text>
+    
+    <!-- Step 1: SURVEY -->
+    <rect x="100" y="80" width="160" height="90" rx="12" fill="url(#stepGrad)" stroke="#22c55e" stroke-width="2"/>
+    <circle cx="120" cy="100" r="14" fill="#22c55e"/>
+    <text x="120" y="105" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">1</text>
+    <text x="190" y="100" text-anchor="middle" font-size="14" font-weight="600" fill="#22c55e">SURVEY</text>
+    <text x="180" y="120" text-anchor="middle" font-size="9" fill="#94a3b8">Read control catalogue</text>
+    <text x="180" y="133" text-anchor="middle" font-size="9" fill="#94a3b8">Identify lowest-tier controls</text>
+    <text x="180" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">Check priority list</text>
+    <text x="180" y="159" text-anchor="middle" font-size="9" fill="#94a3b8">→ Prioritized queue</text>
+    
+    <!-- Arrow 1→2 -->
+    <line x1="260" y1="125" x2="310" y2="125" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 2: RESEARCH -->
+    <rect x="320" y="80" width="160" height="90" rx="12" fill="url(#stepGrad)" stroke="#3b82f6" stroke-width="2"/>
+    <circle cx="340" cy="100" r="14" fill="#3b82f6"/>
+    <text x="340" y="105" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">2</text>
+    <text x="410" y="100" text-anchor="middle" font-size="14" font-weight="600" fill="#3b82f6">RESEARCH</text>
+    <text x="400" y="120" text-anchor="middle" font-size="9" fill="#94a3b8">Study 3-5 implementations</text>
+    <text x="400" y="133" text-anchor="middle" font-size="9" fill="#94a3b8">Check WAI-ARIA patterns</text>
+    <text x="400" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">Note exact CSS values</text>
+    <text x="400" y="159" text-anchor="middle" font-size="9" fill="#94a3b8">→ Research document</text>
+    
+    <!-- Arrow 2→3 -->
+    <line x1="480" y1="125" x2="530" y2="125" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 3: DESIGN (SVG) -->
+    <rect x="540" y="80" width="160" height="90" rx="12" fill="url(#stepGrad)" stroke="#a78bfa" stroke-width="2"/>
+    <circle cx="560" cy="100" r="14" fill="#a78bfa"/>
+    <text x="560" y="105" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">3</text>
+    <text x="630" y="100" text-anchor="middle" font-size="14" font-weight="600" fill="#a78bfa">DESIGN</text>
+    <text x="620" y="120" text-anchor="middle" font-size="9" fill="#94a3b8">Create SVG mockups</text>
+    <text x="620" y="133" text-anchor="middle" font-size="9" fill="#94a3b8">All states × all modes</text>
+    <text x="620" y="146" text-anchor="middle" font-size="9" fill="#94a3b8">Annotate with tokens</text>
+    <text x="620" y="159" text-anchor="middle" font-size="9" fill="#94a3b8">→ SVG reference</text>
+    
+    <!-- Arrow 3→4 (down) -->
+    <line x1="620" y1="170" x2="620" y2="220" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 4: IMPLEMENT -->
+    <rect x="540" y="230" width="160" height="90" rx="12" fill="url(#stepGrad)" stroke="#f59e0b" stroke-width="2"/>
+    <circle cx="560" cy="250" r="14" fill="#f59e0b"/>
+    <text x="560" y="255" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">4</text>
+    <text x="630" y="250" text-anchor="middle" font-size="14" font-weight="600" fill="#f59e0b">IMPLEMENT</text>
+    <text x="620" y="270" text-anchor="middle" font-size="9" fill="#94a3b8">CSS first, then variants</text>
+    <text x="620" y="283" text-anchor="middle" font-size="9" fill="#94a3b8">JS changes only if needed</text>
+    <text x="620" y="296" text-anchor="middle" font-size="9" fill="#94a3b8">Create lab demo page</text>
+    <text x="620" y="309" text-anchor="middle" font-size="9" fill="#94a3b8">→ Working code</text>
+    
+    <!-- Arrow 4→5 -->
+    <line x1="540" y1="275" x2="490" y2="275" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 5: TEST -->
+    <rect x="320" y="230" width="160" height="90" rx="12" fill="url(#stepGrad)" stroke="#ef4444" stroke-width="2"/>
+    <circle cx="340" cy="250" r="14" fill="#ef4444"/>
+    <text x="340" y="255" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">5</text>
+    <text x="410" y="250" text-anchor="middle" font-size="14" font-weight="600" fill="#ef4444">TEST</text>
+    <text x="400" y="270" text-anchor="middle" font-size="9" fill="#94a3b8">Visual: all modes, all states</text>
+    <text x="400" y="283" text-anchor="middle" font-size="9" fill="#94a3b8">Functional: events, keyboard</text>
+    <text x="400" y="296" text-anchor="middle" font-size="9" fill="#94a3b8">Regression: npm test</text>
+    <text x="400" y="309" text-anchor="middle" font-size="9" fill="#94a3b8">→ Test results</text>
+    
+    <!-- Arrow 5→6 -->
+    <line x1="320" y1="275" x2="270" y2="275" stroke="#667eea" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <!-- Step 6: DOCUMENT -->
+    <rect x="100" y="230" width="160" height="90" rx="12" fill="url(#stepGrad)" stroke="#06b6d4" stroke-width="2"/>
+    <circle cx="120" cy="250" r="14" fill="#06b6d4"/>
+    <text x="120" y="255" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">6</text>
+    <text x="190" y="250" text-anchor="middle" font-size="14" font-weight="600" fill="#06b6d4">DOCUMENT</text>
+    <text x="180" y="270" text-anchor="middle" font-size="9" fill="#94a3b8">Update control catalogue</text>
+    <text x="180" y="283" text-anchor="middle" font-size="9" fill="#94a3b8">Add SVGs to assets</text>
+    <text x="180" y="296" text-anchor="middle" font-size="9" fill="#94a3b8">Update roadmap files</text>
+    <text x="180" y="309" text-anchor="middle" font-size="9" fill="#94a3b8">→ Updated docs</text>
+    
+    <!-- Loop arrow 6→1 (back to survey) -->
+    <path d="M 180 230 L 180 200 Q 180 185 180 185" fill="none" stroke="#667eea" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow)"/>
+    <text x="165" y="195" font-size="8" fill="#667eea">repeat</text>
+    
+    <!-- Trigger box -->
+    <rect x="200" y="360" width="400" height="100" rx="10" fill="#0f172a" stroke="#667eea" stroke-width="1" stroke-dasharray="6"/>
+    <text x="400" y="385" text-anchor="middle" font-size="13" font-weight="600" fill="#667eea">Minimal Prompt Trigger</text>
+    
+    <rect x="240" y="395" width="320" height="24" rx="4" fill="#1e293b"/>
+    <text x="250" y="411" font-size="11" fill="#94a3b8" font-family="monospace">"Improve the Button control."</text>
+    
+    <rect x="240" y="425" width="320" height="24" rx="4" fill="#1e293b"/>
+    <text x="250" y="441" font-size="11" fill="#94a3b8" font-family="monospace">"Improve the controls."</text>
+    
+    <text x="400" y="470" text-anchor="middle" font-size="9" fill="#64748b">
+        The agent reads Chapter 10, follows the 6-step loop, reports results.
+    </text>
+    
+    <!-- Footer -->
+    <text x="400" y="495" text-anchor="middle" font-size="10" fill="#64748b">
+        jsgui3-html Control Design Book — Chapter 10 Reference
+    </text>
+</svg>

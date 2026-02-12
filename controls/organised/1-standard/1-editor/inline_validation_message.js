@@ -33,7 +33,7 @@ class Inline_Validation_Message extends Control {
 
         this.message = is_defined(spec.message) ? String(spec.message) : '';
         if (!spec.el) {
-            this._compose();
+            this.compose();
         }
     }
 
@@ -41,7 +41,7 @@ class Inline_Validation_Message extends Control {
      * Compose the message structure with icon.
      * @private
      */
-    _compose() {
+    compose() {
         const { context } = this;
 
         // Icon container
@@ -98,8 +98,7 @@ class Inline_Validation_Message extends Control {
                 this._text_ctrl.add(this.message);
             }
         } else {
-            this.clear();
-            this._compose();
+            this.recompose();
         }
 
         if (is_defined(status)) {

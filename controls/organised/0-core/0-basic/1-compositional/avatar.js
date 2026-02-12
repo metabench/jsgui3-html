@@ -19,6 +19,7 @@ class Avatar extends Control {
         spec.__type_name = spec.__type_name || 'avatar';
         super(spec);
         this.add_class('avatar');
+        this.add_class('jsgui-avatar');
 
         // Config
         this._src = spec.src || '';
@@ -29,11 +30,15 @@ class Avatar extends Control {
         this._status = spec.status || '';
         this._bg_color = spec.bg_color || '';
 
+        this.dom.attributes['data-size'] = this._avatar_size;
+        if (this._shape !== 'circle') {
+            this.dom.attributes['data-shape'] = this._shape;
+        }
         this.add_class(`avatar-${this._avatar_size}`);
         this.add_class(`avatar-${this._shape}`);
 
         if (!spec.el) {
-            this._compose_avatar();
+            this.compose();
         }
     }
 
@@ -47,12 +52,12 @@ class Avatar extends Control {
 
     set_src(url) {
         this._src = url || '';
-        this._recompose();
+        this.recompose();
     }
 
     set_initials(text) {
         this._initials = text || '';
-        this._recompose();
+        this.recompose();
     }
 
     set_status(s) {
@@ -71,7 +76,7 @@ class Avatar extends Control {
 
     // ---- Internal ----
 
-    _compose_avatar() {
+    compose() {
         const { context } = this;
 
         // Inner container (for the image or initials)
@@ -115,10 +120,6 @@ class Avatar extends Control {
         this.add(this._status_ctrl);
     }
 
-    _recompose() {
-        this.clear();
-        this._compose_avatar();
-    }
 }
 
 Avatar.css = `

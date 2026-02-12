@@ -36,11 +36,11 @@ class Property_Grid extends Control {
         this._focused_index = -1;
 
         if (!spec.el) {
-            this._compose_grid();
+            this.compose();
         }
     }
 
-    _compose_grid() {
+    compose() {
         const flat_fields = this._flatten_schema(this._schema);
 
         flat_fields.forEach((field, index) => {

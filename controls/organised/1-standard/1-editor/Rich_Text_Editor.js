@@ -39,6 +39,7 @@ class Rich_Text_Editor extends Control {
         super(options);
         const { context } = this;
         this.add_class('rich-text-editor');
+        this.add_class('jsgui-rte');
         this.config = {
             placeholder: options.placeholder || 'Start typing...',
             initial_html: options.initial_html || '',

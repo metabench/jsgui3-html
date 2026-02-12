@@ -1,0 +1,146 @@
+/*
+ * Search Bar Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-search-bar
+ * Features: icon, clear button, sizes, rounded/pill, loading state
+ */
+
+/* ── Base ── */
+.jsgui-search-bar {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    height: var(--search-height, 40px);
+    font-family: var(--j-font-sans);
+    font-size: var(--j-text-sm);
+}
+
+/* ── Input ── */
+.jsgui-search-bar .search-input {
+    width: 100%;
+    height: 100%;
+    padding: 0 12px 0 36px;
+    /* left padding for icon */
+    border: 1px solid var(--j-border);
+    border-radius: var(--j-radius-md);
+    background: var(--j-bg);
+    color: var(--j-fg);
+    font: inherit;
+    outline: none;
+    box-sizing: border-box;
+    transition:
+        border-color var(--j-duration-fast) var(--j-ease-out),
+        box-shadow var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-search-bar .search-input::placeholder {
+    color: var(--j-fg-muted);
+}
+
+.jsgui-search-bar .search-input:focus {
+    border-color: var(--j-primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--j-primary) 20%, transparent);
+}
+
+/* ── Search icon (left) ── */
+.jsgui-search-bar .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    color: var(--j-fg-muted);
+    pointer-events: none;
+    font-size: 1em;
+    line-height: 1;
+}
+
+/* ── Clear button (right) ── */
+.jsgui-search-bar .search-clear {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--j-fg-muted);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    opacity: 0;
+    visibility: hidden;
+    transition:
+        opacity var(--j-duration-fast) var(--j-ease-out),
+        background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-search-bar.has-value .search-clear {
+    opacity: 1;
+    visibility: visible;
+}
+
+.jsgui-search-bar .search-clear:hover {
+    background: var(--j-bg-muted);
+    color: var(--j-fg);
+}
+
+/* ══════════════════════════════════════════
+   Sizes
+   ══════════════════════════════════════════ */
+
+.jsgui-search-bar[data-size="sm"] {
+    --search-height: 32px;
+    font-size: var(--j-text-xs);
+}
+
+.jsgui-search-bar[data-size="lg"] {
+    --search-height: 48px;
+    font-size: var(--j-text-base);
+}
+
+/* ══════════════════════════════════════════
+   Pill shape
+   ══════════════════════════════════════════ */
+
+.jsgui-search-bar.pill .search-input {
+    border-radius: var(--j-radius-full);
+}
+
+/* ══════════════════════════════════════════
+   Loading state
+   ══════════════════════════════════════════ */
+
+.jsgui-search-bar.loading .search-icon {
+    animation: jsgui-search-spin 1s linear infinite;
+}
+
+@keyframes jsgui-search-spin {
+    to {
+        transform: translateY(-50%) rotate(360deg);
+    }
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-search-bar .search-input,
+    .jsgui-search-bar .search-clear {
+        transition: none;
+    }
+
+    .jsgui-search-bar.loading .search-icon {
+        animation: none;
+    }
+}

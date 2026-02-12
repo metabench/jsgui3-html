@@ -70,9 +70,18 @@ class Panel extends Control {
         spec.__type_name = spec.__type_name || 'panel';
         super(spec);
         this.add_class('panel');
+        this.add_class('jsgui-panel');
 
         // Apply themeable - resolves params and applies hooks
         const params = themeable(this, 'panel', spec);
+
+        // Set variant and padding as data attributes for CSS targeting
+        if (params.variant || spec.variant) {
+            this.dom.attributes['data-variant'] = params.variant || spec.variant;
+        }
+        if (params.padding) {
+            this.dom.attributes['data-padding'] = params.padding;
+        }
 
         // Apply token mappings (padding, shadow, radius)
         apply_token_map(this, 'panel', params);
@@ -123,12 +132,12 @@ class Panel extends Control {
         if (show_header) {
             const header = new Control({
                 context,
-                class: 'panel-header'
+                class: 'panel-header jsgui-panel-header'
             });
 
             const title_ctrl = new Control({
                 context,
-                class: 'panel-title'
+                class: 'panel-title jsgui-panel-title'
             });
             title_ctrl.add(this.title);
             header.add(title_ctrl);
@@ -153,7 +162,7 @@ class Panel extends Control {
         // Create content container
         const content_container = new Control({
             context,
-            class: 'panel-content'
+            class: 'panel-content jsgui-panel-content'
         });
         this.add(content_container);
         this._ctrl_fields = this._ctrl_fields || {};

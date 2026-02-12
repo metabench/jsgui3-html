@@ -7,6 +7,7 @@ This directory contains implementation session documents - dense reference check
 | Session | Description | Status | Created |
 |---------|-------------|--------|---------|
 | [JSGUI3-HTML Improvements](./jsgui3_html_improvements_implementation.md) | Comprehensive improvement plan implementation | Active | 2026-01-02 |
+| [Visual Advancement Sprint](./2026-02-12-visual-advancement/PLAN.md) | CSS foundation + core control styling (Button, Input, Toggle, Checkbox, Radio) | Active | 2026-02-12 |
 
 ## Completed Sessions
 

@@ -30,11 +30,11 @@ class Rich_Text_Toolbar extends Control {
         this.buttons = Array.isArray(spec.buttons) ? spec.buttons : DEFAULT_BUTTONS;
 
         if (!spec.el) {
-            this.compose_toolbar();
+            this.compose();
         }
     }
 
-    compose_toolbar() {
+    compose() {
         const { context } = this;
         this.button_controls = [];
 

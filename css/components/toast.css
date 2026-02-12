@@ -1,0 +1,181 @@
+/*
+ * Toast Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-toast-container
+ * Individual toast: .jsgui-toast
+ * Status variants: success, error, warning, info
+ * Features: slide-in animation, auto-dismiss, positions, stacking
+ */
+
+/* ── Container (stacking region) ── */
+.jsgui-toast-container {
+    position: fixed;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--j-space-2, 8px);
+    max-width: 420px;
+    width: 100%;
+    pointer-events: none;
+}
+
+/* Position presets */
+.jsgui-toast-container,
+.jsgui-toast-container[data-position="top-right"] {
+    top: var(--j-space-4, 16px);
+    right: var(--j-space-4, 16px);
+    align-items: flex-end;
+}
+
+.jsgui-toast-container[data-position="top-left"] {
+    top: var(--j-space-4, 16px);
+    left: var(--j-space-4, 16px);
+    align-items: flex-start;
+}
+
+.jsgui-toast-container[data-position="top-center"] {
+    top: var(--j-space-4, 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    align-items: center;
+}
+
+.jsgui-toast-container[data-position="bottom-right"] {
+    bottom: var(--j-space-4, 16px);
+    right: var(--j-space-4, 16px);
+    flex-direction: column-reverse;
+    align-items: flex-end;
+}
+
+.jsgui-toast-container[data-position="bottom-left"] {
+    bottom: var(--j-space-4, 16px);
+    left: var(--j-space-4, 16px);
+    flex-direction: column-reverse;
+    align-items: flex-start;
+}
+
+.jsgui-toast-container[data-position="bottom-center"] {
+    bottom: var(--j-space-4, 16px);
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column-reverse;
+    align-items: center;
+}
+
+/* ── Individual toast ── */
+.jsgui-toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--j-radius-lg, 10px);
+    background: var(--toast-bg, var(--j-bg-elevated, #1f2937));
+    color: var(--toast-fg, var(--j-fg-inverse, #f9fafb));
+    font-family: var(--j-font-sans);
+    font-size: var(--j-text-sm);
+    font-weight: var(--j-font-weight-medium);
+    line-height: 1.4;
+    box-shadow: var(--j-shadow-lg, 0 10px 25px rgba(0, 0, 0, 0.15));
+    pointer-events: auto;
+    min-width: 280px;
+    max-width: 100%;
+
+    /* Entrance animation */
+    animation: jsgui-toast-in var(--j-duration-normal, 0.3s) var(--j-ease-spring, ease-out);
+}
+
+/* ── Status variants ── */
+.jsgui-toast[data-status="success"] {
+    --toast-bg: var(--j-success);
+    --toast-fg: #fff;
+}
+
+.jsgui-toast[data-status="error"] {
+    --toast-bg: var(--j-danger);
+    --toast-fg: #fff;
+}
+
+.jsgui-toast[data-status="warning"] {
+    --toast-bg: var(--j-warning);
+    --toast-fg: #1a1a2e;
+}
+
+.jsgui-toast[data-status="info"] {
+    --toast-bg: var(--j-info);
+    --toast-fg: #fff;
+}
+
+/* ── Sub-elements ── */
+.jsgui-toast .toast-icon {
+    flex-shrink: 0;
+    font-size: 1.25em;
+    line-height: 1;
+}
+
+.jsgui-toast .toast-message {
+    flex: 1;
+    min-width: 0;
+}
+
+.jsgui-toast .toast-dismiss {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: var(--j-radius-sm, 4px);
+    background: transparent;
+    color: inherit;
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: opacity var(--j-duration-fast, 0.15s), background var(--j-duration-fast, 0.15s);
+}
+
+.jsgui-toast .toast-dismiss:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ── Entrance animation ── */
+@keyframes jsgui-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ── Exit animation (applied via JS before removal) ── */
+.jsgui-toast.is-dismissing {
+    animation: jsgui-toast-out 0.2s ease-in forwards;
+}
+
+@keyframes jsgui-toast-out {
+    to {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.95);
+    }
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-toast {
+        animation: none;
+    }
+
+    .jsgui-toast.is-dismissing {
+        animation: none;
+        opacity: 0;
+    }
+}

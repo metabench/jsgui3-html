@@ -1,0 +1,309 @@
+/*
+ * Panel / Card Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-panel
+ * Variants: default, card, elevated, flush, well, glass, outline, hero
+ * Structure: .jsgui-panel > .jsgui-panel-header + .jsgui-panel-content + .jsgui-panel-footer
+ *
+ * Reference: docs/control-design-book/05-control-catalogue.md §Panel
+ */
+
+/* ── Base ── */
+.jsgui-panel {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel-bg, var(--j-bg-elevated));
+    border: 1px solid var(--panel-border, var(--j-border));
+    border-radius: var(--panel-radius, var(--j-radius-lg));
+    box-shadow: var(--panel-shadow, var(--j-shadow-sm));
+    overflow: hidden;
+    font-family: var(--j-font-sans);
+    color: var(--j-fg);
+    transition:
+        box-shadow var(--j-duration-normal) var(--j-ease-out),
+        transform var(--j-duration-normal) var(--j-ease-out),
+        border-color var(--j-duration-fast) var(--j-ease-out);
+}
+
+/* ── Header ── */
+.jsgui-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--j-space-3);
+    padding: var(--panel-header-py, var(--j-space-4)) var(--panel-header-px, var(--j-space-5));
+    border-bottom: 1px solid var(--panel-border, var(--j-border));
+    background: var(--panel-header-bg, transparent);
+    flex-shrink: 0;
+}
+
+.jsgui-panel-title {
+    font-size: var(--panel-title-size, var(--j-text-base));
+    font-weight: var(--j-font-weight-semibold);
+    line-height: 1.3;
+    color: var(--j-fg);
+    margin: 0;
+}
+
+/* ── Content ── */
+.jsgui-panel-content {
+    flex: 1;
+    padding: var(--panel-padding, var(--j-space-5));
+    overflow: auto;
+}
+
+/* ── Footer ── */
+.jsgui-panel-footer {
+    display: flex;
+    align-items: center;
+    gap: var(--j-space-3);
+    padding: var(--panel-footer-py, var(--j-space-3)) var(--panel-footer-px, var(--j-space-5));
+    border-top: 1px solid var(--panel-border, var(--j-border));
+    background: var(--panel-footer-bg, transparent);
+    flex-shrink: 0;
+}
+
+/* ── Collapse toggle ── */
+.jsgui-panel .panel-collapse-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: var(--j-radius-sm);
+    background: transparent;
+    color: var(--j-fg-muted);
+    cursor: pointer;
+    font-size: 12px;
+    transition:
+        background var(--j-duration-fast) var(--j-ease-out),
+        transform var(--j-duration-normal) var(--j-ease-out);
+}
+
+.jsgui-panel .panel-collapse-toggle:hover {
+    background: var(--j-bg-muted);
+    color: var(--j-fg);
+}
+
+/* ── Collapsed state ── */
+.jsgui-panel.collapsed .jsgui-panel-content {
+    display: none;
+}
+
+.jsgui-panel.collapsed .jsgui-panel-footer {
+    display: none;
+}
+
+.jsgui-panel.collapsed .panel-collapse-toggle {
+    transform: rotate(-90deg);
+}
+
+.jsgui-panel.collapsed .jsgui-panel-header {
+    border-bottom: none;
+}
+
+/* ══════════════════════════════════════════
+   Variants
+   ══════════════════════════════════════════ */
+
+/* ── Variant: default (already base styling) ── */
+
+/* ── Variant: card ── */
+.jsgui-panel[data-variant="card"] {
+    --panel-shadow: var(--j-shadow-md);
+    --panel-radius: var(--j-radius-lg);
+}
+
+.jsgui-panel[data-variant="card"]:hover {
+    box-shadow: var(--j-shadow-lg);
+    transform: translateY(-2px);
+}
+
+/* ── Variant: elevated ── */
+.jsgui-panel[data-variant="elevated"] {
+    --panel-shadow: var(--j-shadow-lg);
+    --panel-border: transparent;
+}
+
+.jsgui-panel[data-variant="elevated"]:hover {
+    box-shadow: var(--j-shadow-xl);
+    transform: translateY(-3px);
+}
+
+/* ── Variant: flat ── */
+.jsgui-panel[data-variant="flat"] {
+    --panel-shadow: none;
+    --panel-border: var(--j-border);
+    border-radius: var(--j-radius-md);
+}
+
+/* ── Variant: flush ── */
+.jsgui-panel[data-variant="flush"] {
+    --panel-shadow: none;
+    --panel-border: transparent;
+    --panel-radius: 0;
+    --panel-padding: 0;
+}
+
+.jsgui-panel[data-variant="flush"] .jsgui-panel-header {
+    border-bottom-color: var(--j-border);
+}
+
+/* ── Variant: well ── */
+.jsgui-panel[data-variant="well"] {
+    --panel-bg: var(--j-bg-subtle);
+    --panel-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+    --panel-border: var(--j-border);
+}
+
+/* ── Variant: outline ── */
+.jsgui-panel[data-variant="outline"] {
+    --panel-shadow: none;
+    --panel-bg: transparent;
+    --panel-border: var(--j-border-strong);
+}
+
+.jsgui-panel[data-variant="outline"]:hover {
+    --panel-border: var(--j-primary);
+}
+
+/* ── Variant: hero ── */
+.jsgui-panel[data-variant="hero"] {
+    --panel-shadow: var(--j-shadow-xl);
+    --panel-border: transparent;
+    --panel-radius: var(--j-radius-xl);
+    --panel-padding: var(--j-space-6);
+    background:
+        linear-gradient(135deg,
+            color-mix(in srgb, var(--j-primary) 6%, var(--j-bg-elevated)),
+            var(--j-bg-elevated) 60%);
+}
+
+.jsgui-panel[data-variant="hero"] .jsgui-panel-title {
+    font-size: var(--j-text-xl);
+    font-weight: var(--j-font-weight-bold);
+}
+
+/* ══════════════════════════════════════════
+   Glass Variant — Glassmorphism
+   ══════════════════════════════════════════ */
+
+.jsgui-panel[data-variant="glass"] {
+    --panel-border: rgba(255, 255, 255, 0.12);
+    --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+}
+
+.jsgui-panel[data-variant="glass"] .jsgui-panel-header {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.jsgui-panel[data-variant="glass"] .jsgui-panel-footer {
+    border-top-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.jsgui-panel[data-variant="glass"]:hover {
+    --panel-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    --panel-border: rgba(255, 255, 255, 0.18);
+}
+
+/* Glass on dark theme */
+[data-theme="dark"] .jsgui-panel[data-variant="glass"] {
+    background: rgba(255, 255, 255, 0.04);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --panel-shadow: 0 8px 32px rgba(0, 0, 0, 0.40);
+}
+
+[data-theme="dark"] .jsgui-panel[data-variant="glass"] .jsgui-panel-header {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+[data-theme="dark"] .jsgui-panel[data-variant="glass"]:hover {
+    --panel-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+    --panel-border: rgba(255, 255, 255, 0.14);
+}
+
+/* ══════════════════════════════════════════
+   Padding Presets
+   ══════════════════════════════════════════ */
+
+.jsgui-panel[data-padding="none"] .jsgui-panel-content {
+    padding: 0;
+}
+
+.jsgui-panel[data-padding="small"] .jsgui-panel-content {
+    padding: var(--j-space-3);
+}
+
+.jsgui-panel[data-padding="medium"] .jsgui-panel-content {
+    padding: var(--j-space-5);
+}
+
+.jsgui-panel[data-padding="large"] .jsgui-panel-content {
+    padding: var(--j-space-6);
+}
+
+.jsgui-panel[data-padding="xlarge"] .jsgui-panel-content {
+    padding: var(--j-space-8);
+}
+
+/* ══════════════════════════════════════════
+   Interactive: Hoverable
+   ══════════════════════════════════════════ */
+
+.jsgui-panel.hoverable {
+    cursor: pointer;
+}
+
+.jsgui-panel.hoverable:hover {
+    box-shadow: var(--j-shadow-lg);
+    transform: translateY(-2px);
+    border-color: var(--j-primary);
+}
+
+.jsgui-panel.hoverable:active {
+    transform: translateY(0);
+    box-shadow: var(--j-shadow-sm);
+}
+
+/* ══════════════════════════════════════════
+   Focus (when panel itself is focusable)
+   ══════════════════════════════════════════ */
+
+.jsgui-panel:focus-visible {
+    outline: 2px solid var(--j-primary);
+    outline-offset: 2px;
+}
+
+/* ══════════════════════════════════════════
+   Bordered override
+   ══════════════════════════════════════════ */
+
+.jsgui-panel.bordered {
+    border: 1px solid var(--j-border-strong);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-panel,
+    .jsgui-panel .panel-collapse-toggle {
+        transition: none;
+    }
+
+    .jsgui-panel[data-variant="card"]:hover,
+    .jsgui-panel[data-variant="elevated"]:hover,
+    .jsgui-panel.hoverable:hover {
+        transform: none;
+    }
+}

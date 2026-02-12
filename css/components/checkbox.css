@@ -1,0 +1,143 @@
+/*
+ * Checkbox Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-checkbox
+ * States: checked, unchecked, indeterminate, disabled, focus
+ * Animation: SVG checkmark draw-in, spring scale on toggle
+ *
+ * Reference: docs/control-design-book/05-control-catalogue.md §Checkbox
+ *            docs/control-design-book/visual-advancement/04-control-specs.md §4.9
+ */
+
+.jsgui-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--j-space-2);
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Hidden native input */
+.jsgui-checkbox-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Custom checkbox box */
+.jsgui-checkbox-box {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--j-border-strong);
+    border-radius: var(--j-radius-sm);
+    background: var(--j-bg);
+    transition:
+        background var(--j-duration-fast) var(--j-ease-out),
+        border-color var(--j-duration-fast) var(--j-ease-out),
+        transform 200ms var(--j-ease-spring);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* SVG check mark */
+.jsgui-checkbox-mark {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--j-primary-fg);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    transition: stroke-dashoffset var(--j-duration-normal) var(--j-ease-out);
+}
+
+/* Indeterminate dash */
+.jsgui-checkbox-dash {
+    width: 10px;
+    height: 2px;
+    background: var(--j-primary-fg);
+    border-radius: 1px;
+    transform: scaleX(0);
+    transition: transform var(--j-duration-fast) var(--j-ease-spring);
+    position: absolute;
+}
+
+/* ── Checked state ── */
+.jsgui-checkbox-input:checked~.jsgui-checkbox-box {
+    background: var(--j-primary);
+    border-color: var(--j-primary);
+    transform: scale(1.05);
+}
+
+.jsgui-checkbox-input:checked~.jsgui-checkbox-box .jsgui-checkbox-mark {
+    stroke-dashoffset: 0;
+}
+
+/* Bounce back after toggle */
+.jsgui-checkbox-input:checked~.jsgui-checkbox-box {
+    animation: jsgui-checkbox-pop 300ms var(--j-ease-spring);
+}
+
+@keyframes jsgui-checkbox-pop {
+    0% {
+        transform: scale(0.9);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ── Indeterminate state ── */
+.jsgui-checkbox-input:indeterminate~.jsgui-checkbox-box {
+    background: var(--j-primary);
+    border-color: var(--j-primary);
+}
+
+.jsgui-checkbox-input:indeterminate~.jsgui-checkbox-box .jsgui-checkbox-dash {
+    transform: scaleX(1);
+}
+
+.jsgui-checkbox-input:indeterminate~.jsgui-checkbox-box .jsgui-checkbox-mark {
+    stroke-dashoffset: 20;
+    /* Hidden when indeterminate */
+}
+
+/* ── Hover ── */
+.jsgui-checkbox:hover .jsgui-checkbox-box {
+    border-color: var(--j-primary);
+}
+
+.jsgui-checkbox:hover .jsgui-checkbox-input:checked~.jsgui-checkbox-box {
+    background: var(--j-primary-hover);
+    border-color: var(--j-primary-hover);
+}
+
+/* ── Focus ── */
+.jsgui-checkbox-input:focus-visible~.jsgui-checkbox-box {
+    box-shadow: var(--j-focus-ring);
+}
+
+/* ── Disabled ── */
+.jsgui-checkbox.disabled,
+.jsgui-checkbox-input:disabled~.jsgui-checkbox-box {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ── Label ── */
+.jsgui-checkbox-label {
+    font: var(--j-font-weight-normal) var(--j-text-sm)/1.4 var(--j-font-sans);
+    color: var(--j-fg);
+}

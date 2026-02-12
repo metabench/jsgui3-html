@@ -73,3 +73,19 @@ package-lock.json
 .vscode/
 
 .vscode/settings.json
+
+# Test-generated screenshots (E2E / lab output)
+tmp/screenshots/
+lab/screenshots/
+
+# Session working files (agent-generated, not for commit)
+docs/sessions/*/WORKING_NOTES.md
+docs/sessions/*/FOLLOW_UPS.md
+test/audit/*
+tmp/kv-renderings/gallery.html
+tmp/kv-renderings/kv-api-health-dark.svg
+tmp/kv-renderings/kv-database-status-light.svg
+tmp/kv-renderings/kv-env-vars-terminal.svg
+tmp/kv-renderings/kv-process-info-dark.svg
+tmp/kv-renderings/kv-server-config-light.svg
+tmp/kv-renderings/kv-session-warm.svg

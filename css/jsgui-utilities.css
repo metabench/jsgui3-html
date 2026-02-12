@@ -1,0 +1,43 @@
+/*
+ * jsgui3-html Utilities
+ * 
+ * Atomic helpers for one-off overrides. These always win specificity
+ * because they are in the highest @layer.
+ * Reference: docs/control-design-book/visual-advancement/02-css-architecture.md §2.2
+ */
+
+/* Screen-reader only — visually hidden but accessible */
+.u-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Text truncation */
+.u-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Focus ring utility — use on custom-focusable elements */
+.u-focus-ring:focus-visible {
+    box-shadow: var(--j-focus-ring);
+    outline: none;
+}
+
+/* Disable all transitions (useful during batch DOM updates) */
+.u-no-transition {
+    transition: none !important;
+}
+
+/* Disable pointer events */
+.u-no-pointer {
+    pointer-events: none;
+}

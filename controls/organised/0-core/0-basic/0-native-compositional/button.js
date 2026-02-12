@@ -30,6 +30,7 @@ class Button extends Control {
         spec.tag_name = 'button';
         super(spec);
         this.add_class('button');
+        this.add_class('jsgui-button');
 
         // Apply themeable - resolves params and applies hooks
         const params = themeable(this, 'button', spec);
@@ -48,7 +49,7 @@ class Button extends Control {
         }
 
         if (!spec.el) {
-            this._compose(params);
+            this.compose(params);
         }
     }
 
@@ -56,7 +57,7 @@ class Button extends Control {
      * Compose the button contents based on params.
      * @param {Object} params - Resolved theme params
      */
-    _compose(params) {
+    compose(params) {
         const { context } = this;
         const icon_position = params.icon_position || 'left';
 
@@ -96,10 +97,10 @@ class Button extends Control {
 
     /**
      * Legacy compose method for backward compatibility.
-     * @deprecated Use _compose instead
+     * @deprecated Use compose instead
      */
     'compose_button'() {
-        // This is now handled by _compose, but keep for subclass compatibility
+        // This is now handled by compose, but keep for subclass compatibility
         if (this.text && !this._theme_params) {
             this.add(this.text);
         }

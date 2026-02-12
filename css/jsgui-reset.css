@@ -1,0 +1,21 @@
+/*
+ * jsgui3-html Reset
+ * 
+ * Minimal box-sizing and margin reset for all jsgui controls.
+ * Reference: docs/control-design-book/visual-advancement/02-css-architecture.md §2.2
+ */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+[class^="jsgui-"],
+[class*=" jsgui-"] {
+    margin: 0;
+    padding: 0;
+    font-family: var(--j-font-sans, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

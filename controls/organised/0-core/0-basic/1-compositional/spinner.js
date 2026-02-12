@@ -16,21 +16,29 @@ class Spinner extends Control {
         spec.__type_name = spec.__type_name || 'spinner';
         super(spec);
         this.add_class('spinner-control');
+        this.add_class('jsgui-spinner');
 
         // Config
         this._size = spec.size || 'md';
         this._color = spec.color || null;
         this._label_text = spec.label || '';
         this._visible = is_defined(spec.visible) ? !!spec.visible : true;
+        this._variant = spec.variant || '';
 
         this.add_class(`spinner-${this._size}`);
+        if (this._size !== 'md') {
+            this.dom.attributes['data-size'] = this._size;
+        }
+        if (this._variant) {
+            this.dom.attributes['data-variant'] = this._variant;
+        }
 
         if (!this._visible) {
             this.add_class('hidden');
         }
 
         if (!spec.el) {
-            this._compose_spinner();
+            this.compose();
         }
     }
 
@@ -74,7 +82,7 @@ class Spinner extends Control {
 
     // ---- Internal ----
 
-    _compose_spinner() {
+    compose() {
         const { context } = this;
 
         // Ring element (the spinning part)

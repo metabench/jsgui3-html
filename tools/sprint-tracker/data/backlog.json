@@ -1,0 +1,2086 @@
+{
+  "meta": {
+    "version": 1,
+    "created_at": "2026-02-12T07:22:00Z",
+    "last_updated": "2026-02-12T10:07:11.755Z",
+    "source": "jsgui3-html Control Design Book (Chapters 5, 11, 12, 13, 14)"
+  },
+  "categories": {
+    "css_foundation": "CSS architecture & tokens",
+    "polish": "Polishing existing controls to target tier (Ch.5)",
+    "complete_core": "Completing skeletal core & form controls (Ch.13)",
+    "complete_data": "Completing data, layout & navigation controls (Ch.14)",
+    "enterprise": "New enterprise & application controls (Ch.11)",
+    "dataviz": "New data visualisation & creative controls (Ch.12)"
+  },
+  "phases": [
+    "planning",
+    "implementation",
+    "testing",
+    "e2e_testing",
+    "bug_fixing"
+  ],
+  "tasks": [
+    {
+      "id": "css-tokens",
+      "title": "CSS Tokens (jsgui-tokens.css)",
+      "category": "css_foundation",
+      "chapter": "Sprint",
+      "control": null,
+      "priority": "P0",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css",
+        "foundation"
+      ],
+      "notes": "All --j-* tokens: spacing, radii, shadows, typography, motion, colours (light+dark)",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T06:00:00Z"
+    },
+    {
+      "id": "css-reset",
+      "title": "CSS Reset (jsgui-reset.css)",
+      "category": "css_foundation",
+      "chapter": "Sprint",
+      "control": null,
+      "priority": "P0",
+      "estimated_days": 0.25,
+      "status": "done",
+      "tags": [
+        "css",
+        "foundation"
+      ],
+      "notes": "Box-sizing + font-smoothing for jsgui-* elements",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T06:00:00Z"
+    },
+    {
+      "id": "css-utilities",
+      "title": "CSS Utilities (jsgui-utilities.css)",
+      "category": "css_foundation",
+      "chapter": "Sprint",
+      "control": null,
+      "priority": "P0",
+      "estimated_days": 0.25,
+      "status": "done",
+      "tags": [
+        "css",
+        "foundation"
+      ],
+      "notes": "sr-only, truncate, focus-ring, no-transition, no-pointer",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T06:00:00Z"
+    },
+    {
+      "id": "css-master",
+      "title": "Master Stylesheet (@layer cascade)",
+      "category": "css_foundation",
+      "chapter": "Sprint",
+      "control": null,
+      "priority": "P0",
+      "estimated_days": 0.25,
+      "status": "done",
+      "tags": [
+        "css",
+        "foundation"
+      ],
+      "notes": "jsgui.css with @layer: reset, tokens, legacy, components, utilities",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T06:00:00Z"
+    },
+    {
+      "id": "btn-css",
+      "title": "Button: component CSS (6 variants × 5 states)",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Button",
+      "priority": "P0",
+      "estimated_days": 1,
+      "status": "done",
+      "tags": [
+        "css",
+        "component"
+      ],
+      "notes": "primary, secondary, ghost, danger, outline, link variants with loading spinner",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T06:30:00Z"
+    },
+    {
+      "id": "btn-icon-pill",
+      "title": "Button: icon + pill variants",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Button",
+      "priority": "P1",
+      "estimated_days": 0.5,
+      "status": "not_started",
+      "tags": [
+        "css",
+        "variant"
+      ],
+      "notes": "icon-only (square, tooltip), pill (full border-radius), toolbar (compact flat)",
+      "time_logs": [
+        {
+          "session_id": "verify-test",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T07:33:33.067Z",
+          "ended_at": null,
+          "duration_minutes": 30,
+          "notes": "Test log entry"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 30,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "btn-aria",
+      "title": "Button: full ARIA + keyboard",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Button",
+      "priority": "P1",
+      "estimated_days": 0.5,
+      "status": "not_started",
+      "tags": [
+        "a11y"
+      ],
+      "notes": "aria-disabled, aria-pressed (toggle), loading state announcement",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "btn-animations",
+      "title": "Button: micro-animations (hover lift, press, focus ring fade)",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Button",
+      "priority": "P1",
+      "estimated_days": 0.5,
+      "status": "not_started",
+      "tags": [
+        "css",
+        "animation"
+      ],
+      "notes": "Hover lift, active press scale, loading spinner, focus ring fade-in",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "checkbox-css",
+      "title": "Checkbox: component CSS + SVG checkmark",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Checkbox",
+      "priority": "P0",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css",
+        "component"
+      ],
+      "notes": "SVG stroke draw-in animation, indeterminate dash, pop animation",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T07:00:00Z"
+    },
+    {
+      "id": "checkbox-card-variant",
+      "title": "Checkbox: card variant",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Checkbox",
+      "priority": "P2",
+      "estimated_days": 0.5,
+      "status": "not_started",
+      "tags": [
+        "css",
+        "variant"
+      ],
+      "notes": "Clickable card wrapper with highlighted border when checked",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "radio-css",
+      "title": "Radio: component CSS + spring dot",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Radio_Button",
+      "priority": "P0",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css",
+        "component"
+      ],
+      "notes": "Custom circle/dot with spring animation, radio group layout",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T07:10:00Z"
+    },
+    {
+      "id": "radio-segmented",
+      "title": "Radio: segmented control variant",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Radio_Button",
+      "priority": "P2",
+      "estimated_days": 1,
+      "status": "not_started",
+      "tags": [
+        "css",
+        "variant"
+      ],
+      "notes": "iOS-style segmented control with sliding active indicator",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "toggle-css",
+      "title": "Toggle Switch: component CSS + spring thumb",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Toggle_Switch",
+      "priority": "P0",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css",
+        "component"
+      ],
+      "notes": "Spring-eased thumb, track colour transition, focus ring",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T07:00:00Z"
+    },
+    {
+      "id": "input-css",
+      "title": "Text Input: component CSS (3 variants)",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Text_Input",
+      "priority": "P0",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css",
+        "component"
+      ],
+      "notes": "Outline, filled, underline variants with validation states",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T06:30:00Z"
+    },
+    {
+      "id": "input-floating-label",
+      "title": "Text Input: floating label variant",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Text_Input",
+      "priority": "P1",
+      "estimated_days": 0.5,
+      "status": "not_started",
+      "tags": [
+        "css",
+        "variant",
+        "animation"
+      ],
+      "notes": "Label inside field floats up on focus using :placeholder-shown",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "slider-rewrite",
+      "title": "Slider/Range: modern CSS + range + keyboard",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Horizontal_Slider",
+      "priority": "P1",
+      "estimated_days": 2,
+      "status": "not_started",
+      "tags": [
+        "rewrite",
+        "a11y"
+      ],
+      "notes": "Full rewrite: CSS vars, range mode (two thumbs), steps, tick marks, ARIA, touch",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "progress-bar-polish",
+      "title": "Progress Bar: custom visual + indeterminate + striped",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Progress_Bar",
+      "priority": "P1",
+      "estimated_days": 1,
+      "status": "not_started",
+      "tags": [
+        "css",
+        "animation"
+      ],
+      "notes": "Replace native <progress>, add indeterminate shimmer, striped animated, colour variants",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "color-swatch-polish",
+      "title": "Color Swatch: checkerboard + border + tooltip",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Color_Swatch",
+      "priority": "P2",
+      "estimated_days": 0.5,
+      "status": "not_started",
+      "tags": [
+        "css"
+      ],
+      "notes": "Checkerboard behind alpha, border for light colours, tooltip with hex",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "panel-css",
+      "title": "Panel/Card: component CSS + glass variant",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Panel",
+      "priority": "P0",
+      "estimated_days": 1,
+      "status": "done",
+      "tags": [
+        "css",
+        "component"
+      ],
+      "notes": "Default, elevated, glass, flat variants with header/body/footer sections",
+      "time_logs": [
+        {
+          "session_id": "af1e5672",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T07:51:59.885Z",
+          "ended_at": null,
+          "duration_minutes": 20,
+          "notes": "Created panel.css (8 variants incl glass), updated panel.js with jsgui-panel classes and data-variant attrs"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 20,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T07:52:06.144Z"
+    },
+    {
+      "id": "window-polish",
+      "title": "Window: snap zones, z-order, animate maximize",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Window",
+      "priority": "P0",
+      "estimated_days": 3,
+      "status": "done",
+      "tags": [
+        "feature",
+        "animation"
+      ],
+      "notes": "macOS-traffic-light, win32-classic, glass, floating variants. Snap, z-order, dbl-click maximize",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T10:07:06.545Z",
+          "ended_at": null,
+          "duration_minutes": 8,
+          "notes": "Dark mode glass variant dark focus ring dragging state"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 8,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T10:07:06.551Z"
+    },
+    {
+      "id": "tab-control-polish",
+      "title": "Tab Control: animated indicator + closable + overflow",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Tabbed_Panel",
+      "priority": "P1",
+      "estimated_days": 2,
+      "status": "not_started",
+      "tags": [
+        "css",
+        "feature",
+        "animation"
+      ],
+      "notes": "Sliding underline, underline/pill/boxed/vertical variants, closable tabs, overflow scroll arrows",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "grid-table-polish",
+      "title": "Grid/Table: column resize + sort indicators + virtual scroll",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Data_Table",
+      "priority": "P0",
+      "estimated_days": 5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "performance"
+      ],
+      "notes": "Column resize, reorder, frozen columns, row expansion, selection, sort arrows, virtual scrolling",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T10:07:11.748Z",
+          "ended_at": null,
+          "duration_minutes": 8,
+          "notes": "Dark mode row selection striped dark variant empty state"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 8,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T10:07:11.755Z"
+    },
+    {
+      "id": "list-polish",
+      "title": "List: multi-select + virtual rendering + reorder",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "List",
+      "priority": "P1",
+      "estimated_days": 2,
+      "status": "not_started",
+      "tags": [
+        "feature",
+        "performance"
+      ],
+      "notes": "Ctrl/Shift-click, virtual rendering, drag-to-reorder, ARIA listbox",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "combo-box-polish",
+      "title": "Combo Box: searchable + multi-select + chips",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Combo_Box",
+      "priority": "P1",
+      "estimated_days": 3,
+      "status": "not_started",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Type-to-filter, clear button, chips for multi-select, group headers, ARIA combobox",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "scrollbar-polish",
+      "title": "Scrollbar: thin macOS-style + overlay",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Scrollbar",
+      "priority": "P2",
+      "estimated_days": 1,
+      "status": "not_started",
+      "tags": [
+        "css"
+      ],
+      "notes": "Thin overlay, arrow buttons, page click on track, smooth scroll",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "tree-view-polish",
+      "title": "Tree View: icons + checkbox + keyboard nav + indent guides",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Tree_View",
+      "priority": "P1",
+      "estimated_days": 3,
+      "status": "not_started",
+      "tags": [
+        "feature",
+        "a11y"
+      ],
+      "notes": "Node icons, checkbox selection (tri-state), search/filter, drag-reorder, lazy loading",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "menu-polish",
+      "title": "Menu: context-menu + icons + submenus + keyboard",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Menu",
+      "priority": "P2",
+      "estimated_days": 2,
+      "status": "not_started",
+      "tags": [
+        "feature",
+        "a11y"
+      ],
+      "notes": "Context-menu, dropdown, Win32 variants. Separators, icons, shortcuts, checkable, submenus",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "splitter-polish",
+      "title": "Splitter: collapse + min/max + hover style",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Split_Pane",
+      "priority": "P2",
+      "estimated_days": 1,
+      "status": "not_started",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Double-click to reset, min/max pane sizes, collapse button, cursor feedback",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "toolbar-polish",
+      "title": "Toolbar: separators + overflow + grip",
+      "category": "polish",
+      "chapter": "Ch.5",
+      "control": "Toolbar",
+      "priority": "P2",
+      "estimated_days": 1,
+      "status": "not_started",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Separators, overflow menu (»), grip for drag, toggleable buttons",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "search-bar-complete",
+      "title": "Search_Bar: clear, debounce, autocomplete, icon",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Search_Bar",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Clear button, search icon, debounced input, loading state, autocomplete dropdown",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:43:18.299Z",
+          "ended_at": null,
+          "duration_minutes": 15,
+          "notes": "Rewrote search-bar.js with icon input clear button events, created search-bar.css"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 15,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:43:18.304Z"
+    },
+    {
+      "id": "tooltip-complete",
+      "title": "Tooltip: positioning, arrow, collision detection",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Tooltip",
+      "priority": "P0",
+      "estimated_days": 1.5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "css"
+      ],
+      "notes": "Fixed positioning logic, CSS arrow, viewport collision flip, rich content, delay, theme tokens",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:40:09.589Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "Extracted tooltip CSS to external file with design tokens"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:40:09.595Z"
+    },
+    {
+      "id": "toast-complete",
+      "title": "Toast: slide animation, positioning, timer bar",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Toast",
+      "priority": "P0",
+      "estimated_days": 1.5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "animation"
+      ],
+      "notes": "Slide-in/out, position control, auto-dismiss timer bar, icons, stacking, pause on hover",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:40:27.519Z",
+          "ended_at": null,
+          "duration_minutes": 15,
+          "notes": "Built toast.css with status variants position presets updated toast.js"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 15,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:40:27.524Z"
+    },
+    {
+      "id": "badge-complete",
+      "title": "Badge: colour variants, dot, pill, pulse, max value",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Badge",
+      "priority": "P0",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css",
+        "feature"
+      ],
+      "notes": "primary/success/warning/danger, dot-only, pill shape, pulse animation, 99+, positioning helper",
+      "time_logs": [
+        {
+          "session_id": "af1e5672",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T07:53:00Z",
+          "ended_at": null,
+          "duration_minutes": 0,
+          "notes": "Starting Badge CSS implementation"
+        },
+        {
+          "session_id": "af1e5672",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:00:59.045Z",
+          "ended_at": null,
+          "duration_minutes": 15,
+          "notes": "Built badge.css (10 colour variants, dot, pulse, sizes, positioned overlay), updated badge.js with themeable, data attrs, max-value, set_variant/set_pulse methods"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 15,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:01:08.057Z"
+    },
+    {
+      "id": "chip-complete",
+      "title": "Chip: dismiss, selectable, avatar, variants",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Chip",
+      "priority": "P0",
+      "estimated_days": 1,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Dismissible, clickable selection, avatar/icon slot, colour variants, outlined, disabled",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:29:26.053Z",
+          "ended_at": null,
+          "duration_minutes": 20,
+          "notes": "Built chip.css with 8 colour variants sizes avatar outline chip-group and updated chip.js with themeable data-attrs"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 20,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:29:26.059Z"
+    },
+    {
+      "id": "skeleton-complete",
+      "title": "Skeleton_Loader: shape variants + presets",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Skeleton_Loader",
+      "priority": "P1",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css"
+      ],
+      "notes": "Text line, circle, rectangle, card shapes. Avatar+text combo preset. Reduced motion support",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:43:22.898Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "Created skeleton.css with design tokens, added jsgui-skeleton class and data-variant"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:43:22.906Z"
+    },
+    {
+      "id": "progress-complete",
+      "title": "Progress_Bar: custom styling + indeterminate + striped",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Progress_Bar",
+      "priority": "P0",
+      "estimated_days": 1,
+      "status": "done",
+      "tags": [
+        "css",
+        "feature"
+      ],
+      "notes": "Custom visual (not native), indeterminate shimmer, striped animated, colour variants, labels",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:31:31.184Z",
+          "ended_at": null,
+          "duration_minutes": 15,
+          "notes": "Built progress.css and rewrote progress_bar.js as div-based with variants sizes striped animated indeterminate label"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 15,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:31:31.189Z"
+    },
+    {
+      "id": "spinner-complete",
+      "title": "Spinner: sizes, colours, overlay mode",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Spinner",
+      "priority": "P1",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "css"
+      ],
+      "notes": "xs/sm/md/lg/xl sizes, inherit colour, overlay mode, loading label, reduced-motion fallback",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:49:17.288Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "Created spinner.css with 5 sizes 5 variants overlay mode, added jsgui-spinner class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:49:17.294Z"
+    },
+    {
+      "id": "avatar-complete",
+      "title": "Avatar: fallback initials, status dot, group stack",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Avatar",
+      "priority": "P1",
+      "estimated_days": 1,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Fallback initials from name, status indicator (online/away/busy), sizes, group layout, random colour",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:49:17.437Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "Created avatar.css with 5 sizes shapes status dots avatar group, added jsgui-avatar class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:49:17.442Z"
+    },
+    {
+      "id": "file-upload-complete",
+      "title": "File_Upload: drag-drop zone, preview, progress",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "File_Upload",
+      "priority": "P0",
+      "estimated_days": 2,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Drag-drop zone with dashed border, file preview thumbnails, remove button, progress per file",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:56:41.264Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with dropzone drag-over file list compact mode"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:56:41.272Z"
+    },
+    {
+      "id": "rating-complete",
+      "title": "Rating_Stars: half-star precision, keyboard, readonly",
+      "category": "complete_core",
+      "chapter": "Ch.13",
+      "control": "Rating_Stars",
+      "priority": "P2",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Half-star precision, keyboard navigation, readonly display mode",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:56:40.948Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with sizes colours half-stars, added jsgui-rating class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:56:40.953Z"
+    },
+    {
+      "id": "data-table-complete",
+      "title": "Data_Table: column resize, sort indicators, empty/loading states",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Data_Table",
+      "priority": "P0",
+      "estimated_days": 4.5,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Column resize/reorder, sticky columns, row expansion, empty state, loading skeleton, bulk select",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:14:36.077Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with sticky header sort indicators striped bordered compact"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:14:36.083Z"
+    },
+    {
+      "id": "tree-view-complete",
+      "title": "Tree_View: checkbox selection, keyboard nav, lazy loading",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Tree_View",
+      "priority": "P0",
+      "estimated_days": 3.5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "a11y"
+      ],
+      "notes": "Tri-state checkboxes, keyboard nav, search/filter, context menu, indent guides",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:14:36.244Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with expand collapse indent icons selection hover"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:14:36.251Z"
+    },
+    {
+      "id": "slider-complete",
+      "title": "Horizontal_Slider: full rewrite (CSS, range, ARIA, touch)",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Horizontal_Slider",
+      "priority": "P0",
+      "estimated_days": 3,
+      "status": "done",
+      "tags": [
+        "rewrite",
+        "a11y"
+      ],
+      "notes": "Ground-up rebuild: CSS custom properties, range mode, step snapping, tick marks, ARIA, touch",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:08:53.657Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with track thumb grab hover glow, added jsgui-slider class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:08:53.662Z"
+    },
+    {
+      "id": "tabbed-panel-complete",
+      "title": "Tabbed_Panel: animated indicator, closable, overflow",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Tabbed_Panel",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "animation"
+      ],
+      "notes": "Sliding underline indicator, closable tabs, overflow scroll arrows, lazy content, keyboard nav",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:08:53.804Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with underline pills card vertical variants, added jsgui-tabs class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:08:53.810Z"
+    },
+    {
+      "id": "window-complete",
+      "title": "Window: snap zones, z-order, animate maximize",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Window",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "animation"
+      ],
+      "notes": "Snap-to-edge, z-order management, animated maximize, cascade positioning, double-click title bar",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:14:36.437Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with title bar glass variant macOS chrome dock states"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:14:36.443Z"
+    },
+    {
+      "id": "modal-complete",
+      "title": "Modal: animation, focus trap, backdrop click, sections",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Modal",
+      "priority": "P0",
+      "estimated_days": 1.5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "a11y"
+      ],
+      "notes": "Fade+scale animation, backdrop dismiss, Escape key, focus trap, header/body/footer, scroll lock",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:56:40.487Z",
+          "ended_at": null,
+          "duration_minutes": 20,
+          "notes": "Full rewrite: overlay header body footer sizes close API escape key"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 20,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:56:40.490Z"
+    },
+    {
+      "id": "accordion-complete",
+      "title": "Accordion: chevron animation, exclusive mode, keyboard",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Accordion",
+      "priority": "P1",
+      "estimated_days": 1.5,
+      "status": "done",
+      "tags": [
+        "feature",
+        "animation",
+        "a11y"
+      ],
+      "notes": "Chevron rotation, exclusive mode (one section open), body height animation, disabled, keyboard",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T08:56:40.706Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with chevron flush variant, added jsgui-accordion class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T08:56:40.709Z"
+    },
+    {
+      "id": "breadcrumbs-complete",
+      "title": "Breadcrumbs: custom separator, overflow truncation",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Breadcrumbs",
+      "priority": "P1",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Custom separator, overflow truncation to '...', icon support, current page non-clickable",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:08:53.963Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with separator hover arrow variant sizes, added jsgui-breadcrumbs class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:08:53.969Z"
+    },
+    {
+      "id": "split-pane-complete",
+      "title": "Split_Pane: collapse, min/max, hover style",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Split_Pane",
+      "priority": "P1",
+      "estimated_days": 1,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Double-click collapse, min/max pane enforcement, divider hover style, nested splits, persistence",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:14:36.584Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "CSS with drag handles grip indicator horizontal vertical"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:14:36.590Z"
+    },
+    {
+      "id": "rte-complete",
+      "title": "Rich_Text_Editor: undo/redo, tables, images, code blocks",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Rich_Text_Editor",
+      "priority": "P0",
+      "estimated_days": 3.5,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Undo/redo history, table insertion, image insert/upload, placeholder, blockquote, code blocks",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:50:21.954Z",
+          "ended_at": null,
+          "duration_minutes": 20,
+          "notes": "Built Rich_Text_Editor with toolbar markdown mode external CSS jsgui-rte class"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 20,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:50:21.960Z"
+    },
+    {
+      "id": "color-picker-complete",
+      "title": "Color_Picker: preset swatches, clipboard, eyedropper",
+      "category": "complete_data",
+      "chapter": "Ch.14",
+      "control": "Color_Picker",
+      "priority": "P1",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Preset palette row, click-to-copy hex, EyeDropper API, opacity slider, compact dropdown mode",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:50:25.922Z",
+          "ended_at": null,
+          "duration_minutes": 15,
+          "notes": "External CSS with dark mode minimized inline CSS verified wheel/hex/palette"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 15,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:50:25.927Z"
+    },
+    {
+      "id": "sidebar-nav",
+      "title": "Sidebar Navigation (new control)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Sidebar_Nav",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Collapsible vertical nav: icon+label+badge, collapse-to-icon mode, active indicator, nested sections",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:54:57.254Z",
+          "ended_at": null,
+          "duration_minutes": 15,
+          "notes": "Sidebar Nav with collapse nested items icons badges dark mode CSS"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 15,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:54:57.258Z"
+    },
+    {
+      "id": "wizard",
+      "title": "Wizard / Multi-Step Form (new control)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Wizard",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Progress bar, step validation, back/next/skip, content swap, completed checkmarks",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:55:02.901Z",
+          "ended_at": null,
+          "duration_minutes": 15,
+          "notes": "Wizard with step indicators connectors prev/next validation dark mode CSS"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 15,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:55:02.907Z"
+    },
+    {
+      "id": "inline-cell-edit",
+      "title": "Inline Cell Editing for Data_Table (new feature)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Data_Table",
+      "priority": "P0",
+      "estimated_days": 3.5,
+      "status": "done",
+      "tags": [
+        "feature"
+      ],
+      "notes": "Click cell to edit, text/select/number/date editors, tab nav, dirty indicator, commit animation",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:59:28.210Z",
+          "ended_at": null,
+          "duration_minutes": 12,
+          "notes": "Click-to-edit cell with text/number/select/date types save/cancel keyboard nav"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 12,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:59:28.215Z"
+    },
+    {
+      "id": "command-palette",
+      "title": "Command Palette (new control)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Command_Palette",
+      "priority": "P1",
+      "estimated_days": 3.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Ctrl+K overlay, fuzzy search, categorised results, keyboard navigation, recent/frequent",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "notification-center",
+      "title": "Notification Center (new control)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Notification_Center",
+      "priority": "P1",
+      "estimated_days": 2.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Slide-in panel, grouped by time, read/unread, actions, clear-all, dismiss animation",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "image-gallery",
+      "title": "Image Gallery / Carousel (new control)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Image_Gallery",
+      "priority": "P1",
+      "estimated_days": 2.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Carousel/grid/masonry modes, lightbox overlay, thumbnails, autoplay, slide/fade/zoom transitions",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "timeline",
+      "title": "Timeline (new control)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Timeline",
+      "priority": "P2",
+      "estimated_days": 1.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Vertical/horizontal, alternating cards, coloured dots with icons, connector lines, scroll animate",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "kanban-board",
+      "title": "Kanban Board (new control)",
+      "category": "enterprise",
+      "chapter": "Ch.11",
+      "control": "Kanban_Board",
+      "priority": "P2",
+      "estimated_days": 4.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Columnar drag-drop, WIP limits, card tags/avatar/priority, compact mode, cross-column drag",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "bar-chart",
+      "title": "Bar Chart (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Bar_Chart",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "new-control",
+        "chart"
+      ],
+      "notes": "Vertical/horizontal, stacked, rounded corners, animated grow, tooltip, grid lines",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T10:01:56.089Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "SVG bar chart with gridlines labels values click events dark mode"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T10:01:56.094Z"
+    },
+    {
+      "id": "pie-donut-chart",
+      "title": "Pie / Donut Chart (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Pie_Chart",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "new-control",
+        "chart"
+      ],
+      "notes": "SVG segments, donut mode, segment hover expand, center label, legend, rotate-in animation",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T10:02:00.441Z",
+          "ended_at": null,
+          "duration_minutes": 10,
+          "notes": "SVG pie/donut chart with labels legend click events"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 10,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T10:02:00.449Z"
+    },
+    {
+      "id": "sparkline",
+      "title": "Sparkline (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Sparkline",
+      "priority": "P0",
+      "estimated_days": 0.5,
+      "status": "done",
+      "tags": [
+        "new-control",
+        "chart"
+      ],
+      "notes": "Tiny inline SVG chart, gradient fill, final dot highlight, 80×24px default",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T10:02:02.956Z",
+          "ended_at": null,
+          "duration_minutes": 8,
+          "notes": "Inline SVG sparkline with fill and endpoint dot"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 8,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T10:02:02.961Z"
+    },
+    {
+      "id": "area-chart",
+      "title": "Area Chart (extends Line_Chart)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Area_Chart",
+      "priority": "P1",
+      "estimated_days": 1,
+      "status": "not_started",
+      "tags": [
+        "new-control",
+        "chart"
+      ],
+      "notes": "Filled line chart with gradient below, extends Line_Chart engine",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "gauge",
+      "title": "Gauge / Radial Progress (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Gauge",
+      "priority": "P1",
+      "estimated_days": 2,
+      "status": "not_started",
+      "tags": [
+        "new-control",
+        "chart"
+      ],
+      "notes": "SVG arc, animated needle sweep, colour thresholds, center number, arc/ring styles",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "scatter-plot",
+      "title": "Scatter Plot (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Scatter_Plot",
+      "priority": "P2",
+      "estimated_days": 3,
+      "status": "not_started",
+      "tags": [
+        "new-control",
+        "chart"
+      ],
+      "notes": "Multi-dataset points, tooltip, zoom+pan, trend line (linear/polynomial)",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "heatmap",
+      "title": "Heatmap (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Heatmap",
+      "priority": "P2",
+      "estimated_days": 2,
+      "status": "not_started",
+      "tags": [
+        "new-control",
+        "chart"
+      ],
+      "notes": "Grid of coloured cells (GitHub contribution style), colour scale, tooltip, cell radius",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "markdown-viewer",
+      "title": "Markdown Viewer (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Markdown_Viewer",
+      "priority": "P0",
+      "estimated_days": 2.5,
+      "status": "done",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Parse + style markdown, syntax highlighting, blockquote accent, table styling, wrap marked/markdown-it",
+      "time_logs": [
+        {
+          "session_id": "cli",
+          "agent": "antigravity",
+          "phase": "implementation",
+          "started_at": "2026-02-12T09:59:32.456Z",
+          "ended_at": null,
+          "duration_minutes": 12,
+          "notes": "Markdown viewer with built-in parser code blocks blockquotes GitHub/minimal themes"
+        }
+      ],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 12,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": "2026-02-12T09:59:32.460Z"
+    },
+    {
+      "id": "code-editor",
+      "title": "Code Editor (new control, wrap CodeMirror)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Code_Editor",
+      "priority": "P1",
+      "estimated_days": 1.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Wrap CodeMirror 6, syntax highlighting, line numbers, active line, brackets, theme integration",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "image-cropper",
+      "title": "Image Cropper (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Image_Cropper",
+      "priority": "P1",
+      "estimated_days": 3.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Draggable crop rect, darkened outside, corner/edge handles, aspect ratio, zoom slider",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "map-view",
+      "title": "Map View (new control, wrap Leaflet)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Map_View",
+      "priority": "P1",
+      "estimated_days": 2.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Wrap Leaflet/Mapbox, markers, popups, dark/light map style matching jsgui theme",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "diff-viewer",
+      "title": "Diff Viewer (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Diff_Viewer",
+      "priority": "P2",
+      "estimated_days": 2.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Split/unified diff display, red/green highlighting, line numbers, scrollbar sync",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "calendar-scheduler",
+      "title": "Calendar Scheduler (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Calendar_Scheduler",
+      "priority": "P2",
+      "estimated_days": 8.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "Day/week/month views, draggable events, time grid, slot click to create, event resize",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    },
+    {
+      "id": "flow-editor",
+      "title": "Flow / Diagram Editor (new control)",
+      "category": "dataviz",
+      "chapter": "Ch.12",
+      "control": "Flow_Editor",
+      "priority": "P3",
+      "estimated_days": 8.5,
+      "status": "not_started",
+      "tags": [
+        "new-control"
+      ],
+      "notes": "SVG canvas, nodes (rect/circle), curved Bezier edges, drag to reposition, port connections",
+      "time_logs": [],
+      "phase_totals": {
+        "planning": 0,
+        "implementation": 0,
+        "testing": 0,
+        "e2e_testing": 0,
+        "bug_fixing": 0
+      },
+      "completed_at": null
+    }
+  ]
+}

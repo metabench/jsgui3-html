@@ -1,0 +1,352 @@
+/*
+ * Button Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-button
+ * Variants: primary, secondary (default), ghost, danger, outline, link
+ * States: normal, hover, active, focus, disabled, loading
+ * Sizes: controlled by --btn-* tokens from token_maps.js
+ *
+ * Reference: docs/control-design-book/visual-advancement/04-control-specs.md §4.2
+ */
+
+.jsgui-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--btn-gap, 6px);
+    height: var(--btn-height, 36px);
+    padding: 0 var(--btn-padding-x, 16px);
+    font: var(--j-font-weight-medium) var(--btn-font-size, var(--j-text-sm))/1 var(--j-font-sans);
+    letter-spacing: 0.01em;
+    border-radius: var(--btn-border-radius, var(--j-radius-md));
+    border: 1px solid transparent;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    transition:
+        background var(--j-duration-fast) var(--j-ease-out),
+        box-shadow var(--j-duration-fast) var(--j-ease-out),
+        transform 80ms var(--j-ease-out),
+        border-color var(--j-duration-fast) var(--j-ease-out);
+}
+
+/* ── States ── */
+.jsgui-button:active {
+    transform: scale(0.97);
+}
+
+.jsgui-button:focus-visible {
+    outline: 2px solid var(--j-primary);
+    outline-offset: 2px;
+}
+
+.jsgui-button:disabled,
+.jsgui-button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.jsgui-button.loading {
+    position: relative;
+    color: transparent;
+    pointer-events: none;
+}
+
+.jsgui-button.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: jsgui-spin 600ms linear infinite;
+}
+
+@keyframes jsgui-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Variant: primary ── */
+.jsgui-button[data-variant="primary"] {
+    background: var(--j-primary);
+    color: var(--j-primary-fg);
+}
+
+.jsgui-button[data-variant="primary"]:hover {
+    background: var(--j-primary-hover);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--j-primary) 30%, transparent);
+    transform: translateY(-1px);
+}
+
+.jsgui-button[data-variant="primary"]:active {
+    transform: scale(0.97);
+    box-shadow: none;
+}
+
+/* ── Variant: secondary (default) ── */
+.jsgui-button[data-variant="secondary"],
+.jsgui-button:not([data-variant]) {
+    background: var(--j-bg-muted);
+    color: var(--j-fg);
+    border-color: var(--j-border);
+}
+
+.jsgui-button[data-variant="secondary"]:hover,
+.jsgui-button:not([data-variant]):hover {
+    background: var(--j-bg-subtle);
+    border-color: var(--j-border-strong);
+}
+
+/* ── Variant: ghost ── */
+.jsgui-button[data-variant="ghost"] {
+    background: transparent;
+    color: var(--j-fg);
+}
+
+.jsgui-button[data-variant="ghost"]:hover {
+    background: var(--j-bg-muted);
+}
+
+/* ── Variant: danger ── */
+.jsgui-button[data-variant="danger"] {
+    background: var(--j-danger);
+    color: white;
+}
+
+.jsgui-button[data-variant="danger"]:hover {
+    background: var(--j-danger-hover);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--j-danger) 30%, transparent);
+}
+
+/* ── Variant: outline ── */
+.jsgui-button[data-variant="outline"] {
+    background: transparent;
+    color: var(--j-primary);
+    border-color: var(--j-primary);
+}
+
+.jsgui-button[data-variant="outline"]:hover {
+    background: color-mix(in srgb, var(--j-primary) 8%, transparent);
+}
+
+/* ── Variant: link ── */
+.jsgui-button[data-variant="link"] {
+    background: transparent;
+    color: var(--j-primary);
+    border: none;
+    padding: 0;
+    height: auto;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.jsgui-button[data-variant="link"]:hover {
+    color: var(--j-primary-hover);
+}
+
+/* ── Icon support ── */
+.jsgui-button .button-icon {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--btn-icon-size, 18px);
+    line-height: 1;
+}
+
+/* ══════════════════════════════════════════
+   Icon-only & Pill Shapes (btn-icon-pill)
+   ══════════════════════════════════════════ */
+
+/* Icon-only: square aspect ratio, no text */
+.jsgui-button.btn-icon-only {
+    padding: 0;
+    width: var(--btn-height, 36px);
+    aspect-ratio: 1;
+    border-radius: var(--j-radius-md);
+}
+
+.jsgui-button.btn-icon-only.btn-circle {
+    border-radius: 50%;
+}
+
+/* Pill: fully rounded ends */
+.jsgui-button.btn-pill {
+    border-radius: 999px;
+    padding: 0 var(--btn-padding-x, 20px);
+}
+
+/* ── Size Variants ── */
+.jsgui-button[data-size="xs"] {
+    --btn-height: 28px;
+    --btn-padding-x: 10px;
+    --btn-font-size: var(--j-text-xs);
+    --btn-icon-size: 14px;
+}
+
+.jsgui-button[data-size="sm"] {
+    --btn-height: 32px;
+    --btn-padding-x: 12px;
+    --btn-font-size: var(--j-text-sm);
+    --btn-icon-size: 16px;
+}
+
+.jsgui-button[data-size="lg"] {
+    --btn-height: 44px;
+    --btn-padding-x: 24px;
+    --btn-font-size: var(--j-text-base);
+    --btn-icon-size: 22px;
+}
+
+.jsgui-button[data-size="xl"] {
+    --btn-height: 52px;
+    --btn-padding-x: 32px;
+    --btn-font-size: var(--j-text-lg);
+    --btn-icon-size: 24px;
+}
+
+/* ── Button Group ── */
+.jsgui-button-group {
+    display: inline-flex;
+}
+
+.jsgui-button-group>.jsgui-button {
+    border-radius: 0;
+    margin-left: -1px;
+}
+
+.jsgui-button-group>.jsgui-button:first-child {
+    border-radius: var(--j-radius-md) 0 0 var(--j-radius-md);
+    margin-left: 0;
+}
+
+.jsgui-button-group>.jsgui-button:last-child {
+    border-radius: 0 var(--j-radius-md) var(--j-radius-md) 0;
+}
+
+.jsgui-button-group>.jsgui-button:hover,
+.jsgui-button-group>.jsgui-button:focus-visible {
+    z-index: 1;
+}
+
+/* ══════════════════════════════════════════
+   ARIA States (btn-aria)
+   ══════════════════════════════════════════ */
+
+/* Pressed/toggled state */
+.jsgui-button[aria-pressed="true"] {
+    background: var(--j-primary);
+    color: var(--j-primary-fg);
+    border-color: var(--j-primary);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Expanded state (dropdown triggers) */
+.jsgui-button[aria-expanded="true"] {
+    background: var(--j-bg-subtle);
+    border-color: var(--j-primary);
+}
+
+/* Disabled via ARIA */
+.jsgui-button[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Current (nav context) */
+.jsgui-button[aria-current="page"],
+.jsgui-button[aria-current="true"] {
+    background: color-mix(in srgb, var(--j-primary) 12%, transparent);
+    color: var(--j-primary);
+    font-weight: var(--j-font-weight-semibold);
+}
+
+/* ══════════════════════════════════════════
+   Animations (btn-animations)
+   ══════════════════════════════════════════ */
+
+/* Ripple effect */
+.jsgui-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.jsgui-button .btn-ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(0);
+    animation: jsgui-btn-ripple 600ms ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes jsgui-btn-ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Pulse attention grabber */
+.jsgui-button.btn-pulse {
+    animation: jsgui-btn-pulse 2s ease-in-out infinite;
+}
+
+@keyframes jsgui-btn-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 color-mix(in srgb, var(--j-primary) 40%, transparent);
+    }
+
+    50% {
+        box-shadow: 0 0 0 8px color-mix(in srgb, var(--j-primary) 0%, transparent);
+    }
+}
+
+/* Bounce on click */
+.jsgui-button.btn-bounce:active {
+    animation: jsgui-btn-bounce 300ms ease;
+}
+
+@keyframes jsgui-btn-bounce {
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(0.92);
+    }
+
+    60% {
+        transform: scale(1.04);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Loading with spinning icon */
+.jsgui-button.loading .button-icon {
+    animation: jsgui-spin 800ms linear infinite;
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-button.btn-pulse {
+        animation: none;
+    }
+
+    .jsgui-button .btn-ripple {
+        animation: none;
+        display: none;
+    }
+
+    .jsgui-button.btn-bounce:active {
+        animation: none;
+    }
+}

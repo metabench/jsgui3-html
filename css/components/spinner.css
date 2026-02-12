@@ -1,0 +1,127 @@
+/*
+ * Spinner Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-spinner
+ * Sizes: xs, sm, md (default), lg, xl
+ * Variants: primary (default), success, danger, muted, white
+ * Features: ring animation, label, overlay mode
+ */
+
+/* ── Base ── */
+.jsgui-spinner {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--j-space-2, 8px);
+}
+
+.jsgui-spinner.hidden {
+    display: none;
+}
+
+/* ── Ring (spinning element) ── */
+.jsgui-spinner .spinner-ring {
+    display: block;
+    border-radius: 50%;
+    border: 3px solid var(--j-border, #e5e7eb);
+    border-top-color: var(--spinner-color, var(--j-primary, #3b82f6));
+    animation: jsgui-spin 0.8s linear infinite;
+    box-sizing: border-box;
+}
+
+/* ── Sizes ── */
+.jsgui-spinner[data-size="xs"] .spinner-ring {
+    width: 12px;
+    height: 12px;
+    border-width: 1.5px;
+}
+
+.jsgui-spinner[data-size="sm"] .spinner-ring {
+    width: 16px;
+    height: 16px;
+    border-width: 2px;
+}
+
+.jsgui-spinner .spinner-ring,
+.jsgui-spinner[data-size="md"] .spinner-ring {
+    width: 32px;
+    height: 32px;
+    border-width: 3px;
+}
+
+.jsgui-spinner[data-size="lg"] .spinner-ring {
+    width: 48px;
+    height: 48px;
+    border-width: 4px;
+}
+
+.jsgui-spinner[data-size="xl"] .spinner-ring {
+    width: 64px;
+    height: 64px;
+    border-width: 5px;
+}
+
+/* ── Colour variants ── */
+.jsgui-spinner[data-variant="success"] {
+    --spinner-color: var(--j-success);
+}
+
+.jsgui-spinner[data-variant="danger"] {
+    --spinner-color: var(--j-danger);
+}
+
+.jsgui-spinner[data-variant="muted"] {
+    --spinner-color: var(--j-fg-muted);
+}
+
+.jsgui-spinner[data-variant="white"] {
+    --spinner-color: #fff;
+}
+
+.jsgui-spinner[data-variant="white"] .spinner-ring {
+    border-color: rgba(255, 255, 255, 0.25);
+    border-top-color: #fff;
+}
+
+/* ── Label ── */
+.jsgui-spinner .spinner-label {
+    font-family: var(--j-font-sans);
+    font-size: var(--j-text-sm);
+    font-weight: var(--j-font-weight-medium);
+    color: var(--j-fg-muted);
+    line-height: 1;
+}
+
+.jsgui-spinner .spinner-label.hidden {
+    display: none;
+}
+
+/* ── Overlay mode (covers parent) ── */
+.jsgui-spinner.overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.7);
+    z-index: 10;
+}
+
+[data-theme="dark"] .jsgui-spinner.overlay {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* ── Keyframes ── */
+@keyframes jsgui-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-spinner .spinner-ring {
+        animation: none;
+        border-top-color: transparent;
+        border-right-color: var(--spinner-color, var(--j-primary));
+        border-bottom-color: transparent;
+    }
+}

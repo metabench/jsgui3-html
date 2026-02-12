@@ -1,0 +1,633 @@
+<svg viewBox="0 0 1000 900" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- ════════ Shared Gradients ════════ -->
+        <!-- Luna Blue Button (XP-style) -->
+        <linearGradient id="lunaBtn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fff"/>
+            <stop offset="5%" stop-color="#E8F1FC"/>
+            <stop offset="48%" stop-color="#C0D6F0"/>
+            <stop offset="52%" stop-color="#89B4E2"/>
+            <stop offset="100%" stop-color="#A4CAF0"/>
+        </linearGradient>
+        <linearGradient id="lunaBtnHover" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fff"/>
+            <stop offset="5%" stop-color="#FFF0D4"/>
+            <stop offset="48%" stop-color="#FFD890"/>
+            <stop offset="52%" stop-color="#FFB030"/>
+            <stop offset="100%" stop-color="#FFCF70"/>
+        </linearGradient>
+        <linearGradient id="lunaBtnDefault" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fff"/>
+            <stop offset="5%" stop-color="#D4EDFF"/>
+            <stop offset="48%" stop-color="#8AC0F0"/>
+            <stop offset="52%" stop-color="#4A98D8"/>
+            <stop offset="100%" stop-color="#6FB6EC"/>
+        </linearGradient>
+        <linearGradient id="lunaBtnPressed" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#9ABEDD"/>
+            <stop offset="48%" stop-color="#6E9CC8"/>
+            <stop offset="52%" stop-color="#4A7CAA"/>
+            <stop offset="100%" stop-color="#5A8FBB"/>
+        </linearGradient>
+        <linearGradient id="lunaBtnDisabled" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F6F6F6"/>
+            <stop offset="50%" stop-color="#EBEBEB"/>
+            <stop offset="100%" stop-color="#E0E0E0"/>
+        </linearGradient>
+        <!-- Green Start Button -->
+        <linearGradient id="greenBtn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#B5F0B0"/>
+            <stop offset="5%" stop-color="#8ADB80"/>
+            <stop offset="48%" stop-color="#52B848"/>
+            <stop offset="52%" stop-color="#399030"/>
+            <stop offset="100%" stop-color="#4DAA44"/>
+        </linearGradient>
+        <!-- Taskbar gradient -->
+        <linearGradient id="taskbar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3168D5"/>
+            <stop offset="3%" stop-color="#4484E8"/>
+            <stop offset="50%" stop-color="#245ED6"/>
+            <stop offset="97%" stop-color="#1849B2"/>
+            <stop offset="100%" stop-color="#1941A5"/>
+        </linearGradient>
+        <!-- Title bar gradient (active) -->
+        <linearGradient id="titleActive" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#0A246A"/>
+            <stop offset="30%" stop-color="#3A6EA5"/>
+            <stop offset="100%" stop-color="#6CA0D7"/>
+        </linearGradient>
+        <!-- Aero glass effect -->
+        <linearGradient id="aeroGlass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
+            <stop offset="40%" stop-color="rgba(255,255,255,0.15)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0.05)"/>
+        </linearGradient>
+        <!-- Aero title bar -->
+        <linearGradient id="aeroTitle" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(180,210,240,0.9)"/>
+            <stop offset="35%" stop-color="rgba(140,185,230,0.75)"/>
+            <stop offset="100%" stop-color="rgba(100,160,220,0.6)"/>
+        </linearGradient>
+        <!-- Inset field -->
+        <linearGradient id="fieldInset" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E0E0E0"/>
+            <stop offset="5%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#FFFFFF"/>
+        </linearGradient>
+        <!-- Progress bar XP -->
+        <linearGradient id="xpProgress" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#63C74D"/>
+            <stop offset="40%" stop-color="#37B522"/>
+            <stop offset="60%" stop-color="#2CA01D"/>
+            <stop offset="100%" stop-color="#48C030"/>
+        </linearGradient>
+        <!-- Scrollbar track -->
+        <linearGradient id="scrollTrack" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#E4E4E4"/>
+            <stop offset="50%" stop-color="#F0F0F0"/>
+            <stop offset="100%" stop-color="#E4E4E4"/>
+        </linearGradient>
+        <!-- Tab gradient -->
+        <linearGradient id="tabActive" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#ECE9D8"/>
+        </linearGradient>
+        <linearGradient id="tabInactive" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#D6D2C2"/>
+            <stop offset="100%" stop-color="#B4B0A0"/>
+        </linearGradient>
+        <!-- Glow filter -->
+        <filter id="btnGlow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <filter id="dropShadow" x="-5%" y="-5%" width="115%" height="115%">
+            <feDropShadow dx="2" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.25)"/>
+        </filter>
+    </defs>
+    
+    <style>
+        text { font-family: Tahoma, 'Segoe UI', sans-serif; }
+    </style>
+    
+    <!-- Background -->
+    <rect width="1000" height="900" fill="#ECE9D8"/>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- Title -->
+    <!-- ════════════════════════════════════════════ -->
+    <text x="500" y="32" text-anchor="middle" font-size="16" font-weight="bold" fill="#003399">
+        jsgui3-html — Luna / XP Style Controls
+    </text>
+    <text x="500" y="50" text-anchor="middle" font-size="11" fill="#666">
+        Rich gradients • Beveled depth • Warm surfaces • The best of Windows XP / 7
+    </text>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- SECTION 1: Buttons -->
+    <!-- ════════════════════════════════════════════ -->
+    <text x="30" y="80" font-size="13" font-weight="bold" fill="#003399">Buttons</text>
+    <line x1="30" y1="85" x2="970" y2="85" stroke="#ACA899" stroke-width="1"/>
+    
+    <!-- Normal Button -->
+    <g transform="translate(30, 95)">
+        <rect width="100" height="28" rx="3" fill="url(#lunaBtn)" stroke="#003C74" stroke-width="1"/>
+        <rect x="1" y="1" width="98" height="13" rx="2" fill="rgba(255,255,255,0.35)"/>
+        <text x="50" y="18" text-anchor="middle" font-size="11" fill="#003399">Normal</text>
+        <text x="50" y="42" text-anchor="middle" font-size="9" fill="#888">Normal state</text>
+    </g>
+    
+    <!-- Hover Button (orange glow) -->
+    <g transform="translate(150, 95)">
+        <rect x="-2" y="-2" width="104" height="32" rx="5" fill="#FFD050" opacity="0.5"/>
+        <rect width="100" height="28" rx="3" fill="url(#lunaBtnHover)" stroke="#B06000" stroke-width="1"/>
+        <rect x="1" y="1" width="98" height="13" rx="2" fill="rgba(255,255,255,0.4)"/>
+        <text x="50" y="18" text-anchor="middle" font-size="11" fill="#803000">Hover</text>
+        <text x="50" y="42" text-anchor="middle" font-size="9" fill="#888">Hot-tracked</text>
+    </g>
+    
+    <!-- Default Button (strong blue) -->
+    <g transform="translate(270, 95)">
+        <rect x="-2" y="-2" width="104" height="32" rx="5" fill="#4488DD" opacity="0.4"/>
+        <rect width="100" height="28" rx="3" fill="url(#lunaBtnDefault)" stroke="#003C74" stroke-width="1"/>
+        <rect x="1" y="1" width="98" height="13" rx="2" fill="rgba(255,255,255,0.45)"/>
+        <text x="50" y="18" text-anchor="middle" font-size="11" font-weight="bold" fill="#fff">OK</text>
+        <text x="50" y="42" text-anchor="middle" font-size="9" fill="#888">Default / Focused</text>
+    </g>
+    
+    <!-- Pressed Button -->
+    <g transform="translate(390, 95)">
+        <rect width="100" height="28" rx="3" fill="url(#lunaBtnPressed)" stroke="#003C74" stroke-width="1"/>
+        <text x="50" y="18" text-anchor="middle" font-size="11" fill="#fff">Pressed</text>
+        <text x="50" y="42" text-anchor="middle" font-size="9" fill="#888">Active / Pressed</text>
+    </g>
+    
+    <!-- Disabled Button -->
+    <g transform="translate(510, 95)">
+        <rect width="100" height="28" rx="3" fill="url(#lunaBtnDisabled)" stroke="#ACA899" stroke-width="1"/>
+        <text x="50" y="18" text-anchor="middle" font-size="11" fill="#ACA899">Disabled</text>
+        <text x="50" y="42" text-anchor="middle" font-size="9" fill="#888">Disabled state</text>
+    </g>
+    
+    <!-- Green action button -->
+    <g transform="translate(630, 95)">
+        <rect x="-2" y="-2" width="134" height="36" rx="5" fill="#44CC33" opacity="0.3"/>
+        <rect width="130" height="32" rx="4" fill="url(#greenBtn)" stroke="#1A6B12" stroke-width="1"/>
+        <rect x="1" y="1" width="128" height="14" rx="3" fill="rgba(255,255,255,0.35)"/>
+        <text x="65" y="20" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">▶ Start Task</text>
+        <text x="65" y="48" text-anchor="middle" font-size="9" fill="#888">Green action</text>
+    </g>
+    
+    <!-- Large pill button -->
+    <g transform="translate(790, 95)">
+        <rect x="-2" y="-2" width="174" height="42" rx="21" fill="#4488DD" opacity="0.3"/>
+        <rect width="170" height="38" rx="19" fill="url(#lunaBtnDefault)" stroke="#003C74" stroke-width="1.5"/>
+        <rect x="2" y="2" width="166" height="16" rx="16" fill="rgba(255,255,255,0.4)"/>
+        <text x="85" y="24" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">Get Started →</text>
+        <text x="85" y="52" text-anchor="middle" font-size="9" fill="#888">Large CTA pill</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- SECTION 2: Text Inputs & Fields -->
+    <!-- ════════════════════════════════════════════ -->
+    <text x="30" y="170" font-size="13" font-weight="bold" fill="#003399">Text Inputs &amp; Fields</text>
+    <line x1="30" y1="175" x2="970" y2="175" stroke="#ACA899" stroke-width="1"/>
+    
+    <!-- Normal text input -->
+    <g transform="translate(30, 185)">
+        <text x="0" y="-4" font-size="10" fill="#333">Full Name:</text>
+        <!-- Sunken border -->
+        <rect width="200" height="22" fill="#7F9DB9" rx="0"/>
+        <rect x="1" y="1" width="198" height="20" fill="#fff"/>
+        <rect x="1" y="1" width="198" height="4" fill="url(#fieldInset)"/>
+        <text x="6" y="15" font-size="11" fill="#000">James Richardson</text>
+        <text x="100" y="38" text-anchor="middle" font-size="9" fill="#888">Normal input</text>
+    </g>
+    
+    <!-- Focused text input (with blue glow) -->
+    <g transform="translate(260, 185)">
+        <text x="0" y="-4" font-size="10" fill="#333">Email Address:</text>
+        <rect x="-2" y="-2" width="224" height="26" rx="2" fill="#7EB4EA" opacity="0.6"/>
+        <rect width="220" height="22" fill="#7F9DB9" rx="0"/>
+        <rect x="1" y="1" width="218" height="20" fill="#fff"/>
+        <rect x="1" y="1" width="218" height="4" fill="url(#fieldInset)"/>
+        <text x="6" y="15" font-size="11" fill="#000">user@example.com</text>
+        <!-- Blinking cursor -->
+        <line x1="130" y1="4" x2="130" y2="18" stroke="#000" stroke-width="1"/>
+        <text x="110" y="38" text-anchor="middle" font-size="9" fill="#888">Focused (blue glow)</text>
+    </g>
+    
+    <!-- Password field -->
+    <g transform="translate(510, 185)">
+        <text x="0" y="-4" font-size="10" fill="#333">Password:</text>
+        <rect width="160" height="22" fill="#7F9DB9" rx="0"/>
+        <rect x="1" y="1" width="158" height="20" fill="#fff"/>
+        <rect x="1" y="1" width="158" height="4" fill="url(#fieldInset)"/>
+        <text x="6" y="16" font-size="13" fill="#000">●●●●●●●●</text>
+        <text x="80" y="38" text-anchor="middle" font-size="9" fill="#888">Password mask</text>
+    </g>
+    
+    <!-- Disabled field -->
+    <g transform="translate(700, 185)">
+        <text x="0" y="-4" font-size="10" fill="#ACA899">Serial Number:</text>
+        <rect width="180" height="22" fill="#D4D0C8" rx="0"/>
+        <rect x="1" y="1" width="178" height="20" fill="#F5F5F5"/>
+        <text x="6" y="15" font-size="11" fill="#ACA899">XXXX-XXXX-XXXX</text>
+        <text x="90" y="38" text-anchor="middle" font-size="9" fill="#888">Disabled field</text>
+    </g>
+
+    <!-- Multi-line text area -->
+    <g transform="translate(30, 250)">
+        <text x="0" y="-4" font-size="10" fill="#333">Description:</text>
+        <rect width="300" height="60" fill="#7F9DB9" rx="0"/>
+        <rect x="1" y="1" width="298" height="58" fill="#fff"/>
+        <rect x="1" y="1" width="298" height="4" fill="url(#fieldInset)"/>
+        <text x="6" y="16" font-size="11" fill="#000">Lorem ipsum dolor sit amet,</text>
+        <text x="6" y="30" font-size="11" fill="#000">consectetur adipiscing elit.</text>
+        <text x="6" y="44" font-size="11" fill="#000">Sed do eiusmod tempor.</text>
+        <!-- Scrollbar -->
+        <rect x="284" y="1" width="14" height="58" fill="url(#scrollTrack)"/>
+        <rect x="285" y="2" width="12" height="20" rx="1" fill="url(#lunaBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <text x="150" y="76" text-anchor="middle" font-size="9" fill="#888">Multi-line with scrollbar</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- SECTION 3: Checkboxes, Radios, Toggle -->
+    <!-- ════════════════════════════════════════════ -->
+    <text x="30" y="350" font-size="13" font-weight="bold" fill="#003399">Checkboxes, Radios &amp; Toggles</text>
+    <line x1="30" y1="355" x2="970" y2="355" stroke="#ACA899" stroke-width="1"/>
+    
+    <!-- Checkboxes -->
+    <g transform="translate(30, 370)">
+        <!-- Checked -->
+        <rect width="13" height="13" fill="#7F9DB9" rx="1"/>
+        <rect x="1" y="1" width="11" height="11" fill="#fff" rx="0"/>
+        <polyline points="3,7 5.5,10 10,4" fill="none" stroke="#21A121" stroke-width="2"/>
+        <text x="18" y="11" font-size="11" fill="#000">Enable advanced features</text>
+        
+        <!-- Unchecked -->
+        <g transform="translate(0, 22)">
+            <rect width="13" height="13" fill="#7F9DB9" rx="1"/>
+            <rect x="1" y="1" width="11" height="11" fill="#fff" rx="0"/>
+            <text x="18" y="11" font-size="11" fill="#000">Show hidden files</text>
+        </g>
+        
+        <!-- Indeterminate -->
+        <g transform="translate(0, 44)">
+            <rect width="13" height="13" fill="#7F9DB9" rx="1"/>
+            <rect x="1" y="1" width="11" height="11" fill="#fff" rx="0"/>
+            <rect x="3" y="5.5" width="7" height="2" fill="#21A121"/>
+            <text x="18" y="11" font-size="11" fill="#000">Select all items</text>
+        </g>
+        
+        <!-- Disabled checked -->
+        <g transform="translate(0, 66)">
+            <rect width="13" height="13" fill="#D4D0C8" rx="1"/>
+            <rect x="1" y="1" width="11" height="11" fill="#F5F5F5" rx="0"/>
+            <polyline points="3,7 5.5,10 10,4" fill="none" stroke="#ACA899" stroke-width="2"/>
+            <text x="18" y="11" font-size="11" fill="#ACA899">Required option (locked)</text>
+        </g>
+        <text x="80" y="82" font-size="9" fill="#888">Checkboxes: ✓ checked, — indeterminate, □ unchecked, disabled</text>
+    </g>
+    
+    <!-- Radio Buttons -->
+    <g transform="translate(300, 370)">
+        <!-- Selected -->
+        <circle cx="7" cy="7" r="7" fill="#7F9DB9"/>
+        <circle cx="7" cy="7" r="6" fill="#fff"/>
+        <circle cx="7" cy="7" r="3" fill="#21A121"/>
+        <text x="20" y="11" font-size="11" fill="#000">High quality (320 kbps)</text>
+        
+        <!-- Unselected -->
+        <g transform="translate(0, 22)">
+            <circle cx="7" cy="7" r="7" fill="#7F9DB9"/>
+            <circle cx="7" cy="7" r="6" fill="#fff"/>
+            <text x="20" y="11" font-size="11" fill="#000">Medium quality (192 kbps)</text>
+        </g>
+        
+        <!-- Unselected -->
+        <g transform="translate(0, 44)">
+            <circle cx="7" cy="7" r="7" fill="#7F9DB9"/>
+            <circle cx="7" cy="7" r="6" fill="#fff"/>
+            <text x="20" y="11" font-size="11" fill="#000">Low quality (128 kbps)</text>
+        </g>
+        
+        <!-- Disabled -->
+        <g transform="translate(0, 66)">
+            <circle cx="7" cy="7" r="7" fill="#D4D0C8"/>
+            <circle cx="7" cy="7" r="6" fill="#F5F5F5"/>
+            <circle cx="7" cy="7" r="3" fill="#ACA899"/>
+            <text x="20" y="11" font-size="11" fill="#ACA899">Lossless (unavailable)</text>
+        </g>
+        <text x="90" y="82" font-size="9" fill="#888">Radio buttons: ● selected, ○ unselected, disabled</text>
+    </g>
+    
+    <!-- XP-style Toggle (custom) -->
+    <g transform="translate(620, 370)">
+        <text x="0" y="-4" font-size="10" fill="#333">Luna-style toggle switches:</text>
+        
+        <!-- ON toggle -->
+        <rect width="46" height="22" rx="11" fill="#7F9DB9" stroke="#003C74" stroke-width="1"/>
+        <rect x="1" y="1" width="44" height="20" rx="10" fill="url(#lunaBtnDefault)"/>
+        <rect x="1" y="1" width="44" height="9" rx="10" fill="rgba(255,255,255,0.3)"/>
+        <circle cx="34" cy="11" r="8" fill="url(#lunaBtn)" stroke="#003C74" stroke-width="1"/>
+        <circle cx="34" cy="8" r="5" fill="rgba(255,255,255,0.3)"/>
+        <text x="8" y="15" font-size="8" font-weight="bold" fill="#fff">ON</text>
+        <text x="56" y="15" font-size="11" fill="#000">Wi-Fi</text>
+        
+        <!-- OFF toggle -->
+        <g transform="translate(0, 30)">
+            <rect width="46" height="22" rx="11" fill="#D4D0C8" stroke="#7F9DB9" stroke-width="1"/>
+            <rect x="1" y="1" width="44" height="9" rx="10" fill="rgba(255,255,255,0.3)"/>
+            <circle cx="12" cy="11" r="8" fill="url(#lunaBtn)" stroke="#7F9DB9" stroke-width="1"/>
+            <circle cx="12" cy="8" r="5" fill="rgba(255,255,255,0.3)"/>
+            <text x="24" y="15" font-size="8" fill="#888">OFF</text>
+            <text x="56" y="15" font-size="11" fill="#000">Bluetooth</text>
+        </g>
+        
+        <!-- Disabled toggle -->
+        <g transform="translate(0, 60)">
+            <rect width="46" height="22" rx="11" fill="#E8E8E8" stroke="#D4D0C8" stroke-width="1"/>
+            <circle cx="12" cy="11" r="8" fill="#F0F0F0" stroke="#D4D0C8" stroke-width="1"/>
+            <text x="24" y="15" font-size="8" fill="#C0C0C0">OFF</text>
+            <text x="56" y="15" font-size="11" fill="#ACA899">Location (locked)</text>
+        </g>
+        <text x="50" y="100" font-size="9" fill="#888">Toggle switches in Luna style</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- SECTION 4: Dropdowns, ComboBox, Stepper -->
+    <!-- ════════════════════════════════════════════ -->
+    <text x="30" y="490" font-size="13" font-weight="bold" fill="#003399">Dropdowns, Combo Box &amp; Stepper</text>
+    <line x1="30" y1="495" x2="970" y2="495" stroke="#ACA899" stroke-width="1"/>
+    
+    <!-- Combo box (closed) -->
+    <g transform="translate(30, 505)">
+        <text x="0" y="-4" font-size="10" fill="#333">File Type:</text>
+        <rect width="180" height="22" fill="#7F9DB9"/>
+        <rect x="1" y="1" width="178" height="20" fill="#fff"/>
+        <rect x="1" y="1" width="178" height="3" fill="url(#fieldInset)"/>
+        <text x="6" y="15" font-size="11" fill="#000">All Files (*.*)</text>
+        <!-- Drop arrow button -->
+        <rect x="161" y="1" width="18" height="20" fill="url(#lunaBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <polygon points="165,9 175,9 170,14" fill="#003C74"/>
+        <text x="90" y="38" text-anchor="middle" font-size="9" fill="#888">Closed combo</text>
+    </g>
+    
+    <!-- Combo box (open / expanded) -->
+    <g transform="translate(240, 505)" filter="url(#dropShadow)">
+        <text x="0" y="-4" font-size="10" fill="#333">Font Size:</text>
+        <!-- Main field -->
+        <rect x="-2" y="-2" width="164" height="26" rx="1" fill="#7EB4EA" opacity="0.6"/>
+        <rect width="160" height="22" fill="#7F9DB9"/>
+        <rect x="1" y="1" width="158" height="20" fill="#fff"/>
+        <text x="6" y="15" font-size="11" fill="#000">12</text>
+        <rect x="141" y="1" width="18" height="20" fill="url(#lunaBtnPressed)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <polygon points="145,9 155,9 150,14" fill="#fff"/>
+        <!-- Dropdown list -->
+        <rect x="0" y="22" width="160" height="100" fill="#fff" stroke="#7F9DB9" stroke-width="1"/>
+        <text x="6" y="36" font-size="11" fill="#000">8</text>
+        <text x="6" y="51" font-size="11" fill="#000">10</text>
+        <!-- Highlighted item -->
+        <rect x="1" y="53" width="158" height="16" fill="#316AC5"/>
+        <text x="6" y="66" font-size="11" fill="#fff">12</text>
+        <text x="6" y="81" font-size="11" fill="#000">14</text>
+        <text x="6" y="96" font-size="11" fill="#000">16</text>
+        <text x="6" y="111" font-size="11" fill="#000">18</text>
+    </g>
+    
+    <!-- Number Stepper -->
+    <g transform="translate(440, 505)">
+        <text x="0" y="-4" font-size="10" fill="#333">Opacity:</text>
+        <rect width="80" height="22" fill="#7F9DB9"/>
+        <rect x="1" y="1" width="78" height="20" fill="#fff"/>
+        <rect x="1" y="1" width="78" height="3" fill="url(#fieldInset)"/>
+        <text x="32" y="16" text-anchor="middle" font-size="12" fill="#000">75%</text>
+        <!-- Up/Down buttons -->
+        <rect x="63" y="1" width="16" height="10" fill="url(#lunaBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <polygon points="67,8 75,8 71,3" fill="#003C74"/>
+        <rect x="63" y="11" width="16" height="10" fill="url(#lunaBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <polygon points="67,13 75,13 71,18" fill="#003C74"/>
+        <text x="40" y="38" text-anchor="middle" font-size="9" fill="#888">Spinner / stepper</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- SECTION 5: Slider, Progress, Gauge -->
+    <!-- ════════════════════════════════════════════ -->
+    <text x="30" y="635" font-size="13" font-weight="bold" fill="#003399">Sliders, Progress Bars &amp; Badges</text>
+    <line x1="30" y1="640" x2="970" y2="640" stroke="#ACA899" stroke-width="1"/>
+    
+    <!-- XP-style slider -->
+    <g transform="translate(30, 655)">
+        <text x="0" y="-5" font-size="10" fill="#333">Volume:</text>
+        <!-- Track -->
+        <rect x="0" y="8" width="200" height="4" rx="2" fill="#D4D0C8" stroke="#7F9DB9" stroke-width="1"/>
+        <!-- Fill -->
+        <rect x="0" y="8" width="130" height="4" rx="2" fill="url(#lunaBtnDefault)"/>
+        <!-- Tick marks -->
+        <line x1="0" y1="15" x2="0" y2="19" stroke="#ACA899" stroke-width="1"/>
+        <line x1="50" y1="15" x2="50" y2="19" stroke="#ACA899" stroke-width="1"/>
+        <line x1="100" y1="15" x2="100" y2="19" stroke="#ACA899" stroke-width="1"/>
+        <line x1="150" y1="15" x2="150" y2="19" stroke="#ACA899" stroke-width="1"/>
+        <line x1="200" y1="15" x2="200" y2="19" stroke="#ACA899" stroke-width="1"/>
+        <!-- Thumb (stylized) -->
+        <rect x="122" y="1" width="16" height="18" rx="2" fill="url(#lunaBtn)" stroke="#003C74" stroke-width="1"/>
+        <rect x="123" y="2" width="14" height="7" rx="1" fill="rgba(255,255,255,0.4)"/>
+        <!-- Grip lines -->
+        <line x1="127" y1="8" x2="127" y2="14" stroke="#7F9DB9" stroke-width="1"/>
+        <line x1="130" y1="8" x2="130" y2="14" stroke="#7F9DB9" stroke-width="1"/>
+        <line x1="133" y1="8" x2="133" y2="14" stroke="#7F9DB9" stroke-width="1"/>
+        <!-- Value tooltip -->
+        <rect x="119" y="-18" width="24" height="16" rx="2" fill="url(#lunaBtnDefault)" stroke="#003C74" stroke-width="1"/>
+        <text x="131" y="-6" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">65</text>
+        <text x="100" y="35" text-anchor="middle" font-size="9" fill="#888">Slider with tooltip</text>
+    </g>
+    
+    <!-- XP Chunky Progress Bar -->
+    <g transform="translate(280, 655)">
+        <text x="0" y="-5" font-size="10" fill="#333">Download Progress:</text>
+        <!-- Track (sunken) -->
+        <rect width="220" height="20" fill="#D4D0C8" stroke="#ACA899" stroke-width="1"/>
+        <rect x="1" y="1" width="218" height="18" fill="#fff"/>
+        <!-- Green chunks -->
+        <rect x="3" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="17" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="31" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="45" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="59" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="73" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="87" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="101" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="115" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="129" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <rect x="143" y="3" width="12" height="14" rx="1" fill="url(#xpProgress)"/>
+        <!-- Percentage overlay -->
+        <text x="110" y="14" text-anchor="middle" font-size="10" font-weight="bold" fill="#003399">73%</text>
+        <text x="110" y="35" text-anchor="middle" font-size="9" fill="#888">XP chunky green progress</text>
+    </g>
+    
+    <!-- Smooth gradient progress bar -->
+    <g transform="translate(540, 655)">
+        <text x="0" y="-5" font-size="10" fill="#333">Upload:</text>
+        <defs>
+            <linearGradient id="smoothProgress" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#7ED0FF"/>
+                <stop offset="40%" stop-color="#3A9EE8"/>
+                <stop offset="100%" stop-color="#2080D0"/>
+            </linearGradient>
+        </defs>
+        <rect width="200" height="18" rx="9" fill="#D4D0C8" stroke="#7F9DB9" stroke-width="1"/>
+        <rect x="2" y="2" width="90" height="14" rx="7" fill="url(#smoothProgress)"/>
+        <rect x="2" y="2" width="90" height="6" rx="7" fill="rgba(255,255,255,0.35)"/>
+        <text x="100" y="13" text-anchor="middle" font-size="9" font-weight="bold" fill="#003399">45%</text>
+        <text x="100" y="33" text-anchor="middle" font-size="9" fill="#888">Rounded glass progress</text>
+    </g>
+    
+    <!-- Badges -->
+    <g transform="translate(780, 655)">
+        <text x="0" y="-5" font-size="10" fill="#333">Badges:</text>
+        <!-- New badge -->
+        <rect width="48" height="20" rx="10" fill="url(#greenBtn)" stroke="#1A6B12" stroke-width="1"/>
+        <rect x="1" y="1" width="46" height="8" rx="9" fill="rgba(255,255,255,0.35)"/>
+        <text x="24" y="14" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">NEW</text>
+        
+        <!-- Pro badge -->
+        <g transform="translate(55, 0)">
+            <defs>
+                <linearGradient id="goldBadge" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FFE070"/>
+                    <stop offset="50%" stop-color="#F0B020"/>
+                    <stop offset="100%" stop-color="#D09010"/>
+                </linearGradient>
+            </defs>
+            <rect width="42" height="20" rx="10" fill="url(#goldBadge)" stroke="#A07008" stroke-width="1"/>
+            <rect x="1" y="1" width="40" height="8" rx="9" fill="rgba(255,255,255,0.4)"/>
+            <text x="21" y="14" text-anchor="middle" font-size="9" font-weight="bold" fill="#603000">PRO</text>
+        </g>
+        
+        <!-- Count badge -->
+        <g transform="translate(105, 0)">
+            <defs>
+                <linearGradient id="redBadge" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FF8080"/>
+                    <stop offset="50%" stop-color="#E03030"/>
+                    <stop offset="100%" stop-color="#C02020"/>
+                </linearGradient>
+            </defs>
+            <rect width="38" height="20" rx="10" fill="url(#redBadge)" stroke="#901010" stroke-width="1"/>
+            <rect x="1" y="1" width="36" height="8" rx="9" fill="rgba(255,255,255,0.35)"/>
+            <text x="19" y="14" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff">99+</text>
+        </g>
+        <text x="70" y="35" text-anchor="middle" font-size="9" fill="#888">Glossy badges</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- SECTION 6: Tabs -->
+    <!-- ════════════════════════════════════════════ -->
+    <text x="30" y="730" font-size="13" font-weight="bold" fill="#003399">Tab Control &amp; Star Ratings</text>
+    <line x1="30" y1="735" x2="970" y2="735" stroke="#ACA899" stroke-width="1"/>
+    
+    <!-- Tab Control -->
+    <g transform="translate(30, 745)">
+        <!-- Active tab -->
+        <path d="M0,28 L0,4 Q0,0 4,0 L76,0 Q80,0 80,4 L80,28" fill="url(#tabActive)" stroke="#ACA899" stroke-width="1"/>
+        <line x1="0" y1="28" x2="80" y2="28" stroke="#ECE9D8" stroke-width="2"/>
+        <text x="40" y="18" text-anchor="middle" font-size="11" font-weight="bold" fill="#003399">General</text>
+        
+        <!-- Inactive tab 1 -->
+        <path d="M82,28 L82,7 Q82,3 86,3 L154,3 Q158,3 158,7 L158,28" fill="url(#tabInactive)" stroke="#ACA899" stroke-width="1"/>
+        <text x="120" y="18" text-anchor="middle" font-size="11" fill="#333">Advanced</text>
+        
+        <!-- Inactive tab 2 -->
+        <path d="M160,28 L160,7 Q160,3 164,3 L242,3 Q246,3 246,7 L246,28" fill="url(#tabInactive)" stroke="#ACA899" stroke-width="1"/>
+        <text x="203" y="18" text-anchor="middle" font-size="11" fill="#333">Appearance</text>
+        
+        <!-- Tab content area -->
+        <rect x="0" y="28" width="340" height="100" fill="#ECE9D8" stroke="#ACA899" stroke-width="1"/>
+        
+        <!-- Content inside the tab -->
+        <text x="15" y="48" font-size="10" fill="#333">Display Settings</text>
+        <!-- Checkbox inside tab -->
+        <rect x="15" y="56" width="13" height="13" fill="#7F9DB9" rx="1"/>
+        <rect x="16" y="57" width="11" height="11" fill="#fff"/>
+        <polyline points="18,63 20.5,66 25,60" fill="none" stroke="#21A121" stroke-width="2"/>
+        <text x="33" y="67" font-size="10" fill="#000">Show desktop icons</text>
+        
+        <rect x="15" y="76" width="13" height="13" fill="#7F9DB9" rx="1"/>
+        <rect x="16" y="77" width="11" height="11" fill="#fff"/>
+        <text x="33" y="87" font-size="10" fill="#000">Lock taskbar</text>
+        
+        <!-- Button inside tab -->
+        <rect x="235" y="105" width="90" height="20" rx="3" fill="url(#lunaBtn)" stroke="#003C74" stroke-width="1"/>
+        <rect x="236" y="106" width="88" height="8" rx="2" fill="rgba(255,255,255,0.35)"/>
+        <text x="280" y="119" text-anchor="middle" font-size="10" fill="#003399">Apply</text>
+    </g>
+    
+    <!-- Star Rating -->
+    <g transform="translate(420, 755)">
+        <text x="0" y="-5" font-size="10" fill="#333">Rating:</text>
+        <defs>
+            <linearGradient id="starFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#FFE060"/>
+                <stop offset="50%" stop-color="#FFB820"/>
+                <stop offset="100%" stop-color="#E8A000"/>
+            </linearGradient>
+        </defs>
+        <!-- Star 1 (filled) -->
+        <polygon points="12,0 15,8 24,8 17,13 19,22 12,17 5,22 7,13 0,8 9,8" fill="url(#starFill)" stroke="#C08000" stroke-width="0.5" transform="translate(0,0)"/>
+        <!-- Star 2 (filled) -->
+        <polygon points="12,0 15,8 24,8 17,13 19,22 12,17 5,22 7,13 0,8 9,8" fill="url(#starFill)" stroke="#C08000" stroke-width="0.5" transform="translate(28,0)"/>
+        <!-- Star 3 (filled) -->
+        <polygon points="12,0 15,8 24,8 17,13 19,22 12,17 5,22 7,13 0,8 9,8" fill="url(#starFill)" stroke="#C08000" stroke-width="0.5" transform="translate(56,0)"/>
+        <!-- Star 4 (filled) -->
+        <polygon points="12,0 15,8 24,8 17,13 19,22 12,17 5,22 7,13 0,8 9,8" fill="url(#starFill)" stroke="#C08000" stroke-width="0.5" transform="translate(84,0)"/>
+        <!-- Star 5 (empty) -->
+        <polygon points="12,0 15,8 24,8 17,13 19,22 12,17 5,22 7,13 0,8 9,8" fill="#ECE9D8" stroke="#ACA899" stroke-width="1" transform="translate(112,0)"/>
+        <text x="70" y="36" text-anchor="middle" font-size="11" fill="#333">4.0 / 5.0</text>
+        <text x="70" y="50" text-anchor="middle" font-size="9" fill="#888">Glossy star rating in Luna colors</text>
+    </g>
+    
+    <!-- Chip/Tag components -->
+    <g transform="translate(600, 755)">
+        <text x="0" y="-5" font-size="10" fill="#333">Tags / Chips:</text>
+        <!-- Tag 1 -->
+        <rect width="95" height="22" rx="11" fill="url(#lunaBtnDefault)" stroke="#003C74" stroke-width="1"/>
+        <rect x="1" y="1" width="93" height="9" rx="10" fill="rgba(255,255,255,0.3)"/>
+        <text x="12" y="15" font-size="10" fill="#fff">JavaScript</text>
+        <text x="82" y="15" font-size="10" fill="rgba(255,255,255,0.7)">×</text>
+        <!-- Tag 2 -->
+        <g transform="translate(100, 0)">
+            <rect width="70" height="22" rx="11" fill="url(#greenBtn)" stroke="#1A6B12" stroke-width="1"/>
+            <rect x="1" y="1" width="68" height="9" rx="10" fill="rgba(255,255,255,0.3)"/>
+            <text x="12" y="15" font-size="10" fill="#fff">React</text>
+            <text x="57" y="15" font-size="10" fill="rgba(255,255,255,0.7)">×</text>
+        </g>
+        <!-- Tag 3 -->
+        <g transform="translate(175, 0)">
+            <defs>
+                <linearGradient id="orangeTag" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FFB870"/>
+                    <stop offset="50%" stop-color="#F08020"/>
+                    <stop offset="100%" stop-color="#D06010"/>
+                </linearGradient>
+            </defs>
+            <rect width="80" height="22" rx="11" fill="url(#orangeTag)" stroke="#A04808" stroke-width="1"/>
+            <rect x="1" y="1" width="78" height="9" rx="10" fill="rgba(255,255,255,0.3)"/>
+            <text x="12" y="15" font-size="10" fill="#fff">Node.js</text>
+            <text x="67" y="15" font-size="10" fill="rgba(255,255,255,0.7)">×</text>
+        </g>
+        <text x="120" y="36" text-anchor="middle" font-size="9" fill="#888">Glossy rounded chip tags</text>
+    </g>
+    
+    <!-- ════════════════════════════════════════════ -->
+    <!-- Design Notes -->
+    <!-- ════════════════════════════════════════════ -->
+    <rect x="30" y="860" width="940" height="30" rx="4" fill="#D4EDFF" stroke="#7F9DB9" stroke-width="1"/>
+    <text x="40" y="879" font-size="10" fill="#003399" font-weight="bold">Design Notes:</text>
+    <text x="130" y="879" font-size="10" fill="#003399">
+        All buttons use the XP "split gradient" (light top half, darker bottom half with midpoint seam). Hot-track is orange, default is stronger blue, badges are glossy pill shapes.
+    </text>
+</svg>

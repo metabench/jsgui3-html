@@ -1,0 +1,213 @@
+/*
+ * Tabbed Panel Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-tabs
+ * Variants: default, pills, card, vertical, vertical-right, bottom, compact
+ */
+
+/* ── Container ── */
+.jsgui-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    position: relative;
+    width: 100%;
+    font-family: var(--j-font-sans);
+}
+
+/* ── Hidden radio (CSS-only tab switching) ── */
+.jsgui-tabs .tab-input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* ── Tab label (button) ── */
+.jsgui-tabs .tab-label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--j-space-2, 6px);
+    padding: var(--j-space-2, 8px) var(--j-space-4, 16px);
+    font-size: var(--j-text-sm);
+    font-weight: var(--j-font-weight-medium);
+    color: var(--j-fg-muted);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    white-space: nowrap;
+    transition:
+        color var(--j-duration-fast) var(--j-ease-out),
+        border-color var(--j-duration-fast) var(--j-ease-out);
+    outline: none;
+}
+
+.jsgui-tabs .tab-label:hover {
+    color: var(--j-fg);
+}
+
+.jsgui-tabs .tab-label:focus-visible {
+    box-shadow: 0 0 0 2px var(--j-primary) inset;
+    border-radius: var(--j-radius-sm, 4px);
+}
+
+/* ── Active tab ── */
+.jsgui-tabs .tab-input:checked+.tab-label {
+    color: var(--j-primary);
+    border-bottom-color: var(--j-primary);
+}
+
+/* ── Tab page (content) ── */
+.jsgui-tabs .tab-page {
+    display: none;
+    width: 100%;
+    padding: var(--j-space-4, 16px) 0;
+    font-size: var(--j-text-sm);
+    color: var(--j-fg);
+}
+
+.jsgui-tabs .tab-input:checked+.tab-label+.tab-page {
+    display: block;
+}
+
+/* ── Break (forces pages to new line) ── */
+.jsgui-tabs .break {
+    flex-basis: 100%;
+    height: 0;
+}
+
+/* ── Hidden tab label (overflow) ── */
+.jsgui-tabs .tab-label-hidden {
+    display: none;
+}
+
+/* ── Tab icon ── */
+.jsgui-tabs .tab-icon {
+    font-size: 1.1em;
+    line-height: 1;
+}
+
+/* ── Overflow select ── */
+.jsgui-tabs .tab-overflow-select {
+    padding: var(--j-space-1, 4px) var(--j-space-2, 8px);
+    border: 1px solid var(--j-border);
+    border-radius: var(--j-radius-sm, 4px);
+    font-size: var(--j-text-sm);
+    color: var(--j-fg);
+    background: var(--j-bg);
+}
+
+/* ══════════════════════════════════════════
+   Pills variant
+   ══════════════════════════════════════════ */
+
+.jsgui-tabs[data-variant="pills"] .tab-label {
+    border-bottom: none;
+    border-radius: var(--j-radius, 6px);
+    padding: var(--j-space-2, 6px) var(--j-space-3, 12px);
+}
+
+.jsgui-tabs[data-variant="pills"] .tab-input:checked+.tab-label {
+    background: var(--j-primary);
+    color: #fff;
+}
+
+/* ══════════════════════════════════════════
+   Card variant
+   ══════════════════════════════════════════ */
+
+.jsgui-tabs[data-variant="card"] .tab-label {
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: var(--j-radius, 6px) var(--j-radius, 6px) 0 0;
+    margin-bottom: -1px;
+}
+
+.jsgui-tabs[data-variant="card"] .tab-input:checked+.tab-label {
+    border-color: var(--j-border);
+    background: var(--j-bg);
+    color: var(--j-fg);
+}
+
+.jsgui-tabs[data-variant="card"] .tab-page {
+    border: 1px solid var(--j-border);
+    border-radius: 0 0 var(--j-radius, 6px) var(--j-radius, 6px);
+    padding: var(--j-space-4, 16px);
+}
+
+/* ══════════════════════════════════════════
+   Vertical layout
+   ══════════════════════════════════════════ */
+
+.jsgui-tabs.tabbed-panel-vertical {
+    flex-wrap: nowrap;
+}
+
+.jsgui-tabs.tabbed-panel-vertical .tab-label {
+    border-bottom: none;
+    border-left: 2px solid transparent;
+    width: 100%;
+    text-align: left;
+}
+
+.jsgui-tabs.tabbed-panel-vertical .tab-input:checked+.tab-label {
+    border-left-color: var(--j-primary);
+}
+
+.jsgui-tabs.tabbed-panel-vertical .tab-page {
+    padding: 0 0 0 var(--j-space-4, 16px);
+}
+
+.jsgui-tabs.tabbed-panel-vertical .break {
+    display: none;
+}
+
+/* ── Right-aligned tabs ── */
+.jsgui-tabs.tabbed-panel-right .tab-label {
+    border-left: none;
+    border-right: 2px solid transparent;
+    text-align: right;
+}
+
+.jsgui-tabs.tabbed-panel-right .tab-input:checked+.tab-label {
+    border-right-color: var(--j-primary);
+}
+
+/* ══════════════════════════════════════════
+   Bottom tabs
+   ══════════════════════════════════════════ */
+
+.jsgui-tabs.tabbed-panel-bottom .tab-label {
+    border-bottom: none;
+    border-top: 2px solid transparent;
+    order: 1;
+}
+
+.jsgui-tabs.tabbed-panel-bottom .tab-input:checked+.tab-label {
+    border-top-color: var(--j-primary);
+}
+
+.jsgui-tabs.tabbed-panel-bottom .tab-page {
+    order: -1;
+}
+
+/* ══════════════════════════════════════════
+   Compact
+   ══════════════════════════════════════════ */
+
+.jsgui-tabs[data-variant="compact"] .tab-label {
+    padding: var(--j-space-1, 4px) var(--j-space-2, 8px);
+    font-size: var(--j-text-xs);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-tabs .tab-label {
+        transition: none;
+    }
+}

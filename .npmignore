@@ -1,0 +1,61 @@
+# ─── npm publish exclusions ───
+# More restrictive than .gitignore — keeps dev/test/docs out of the package.
+
+# Dev infrastructure
+tmp/
+lab/
+labs/
+tools/
+docs/
+.agent/
+.github/
+.gemini/
+.vscode/
+
+# Sessions and agent files
+docs/sessions/
+AGENTS.md
+controls/organised/AGENT.md
+
+# Images — none needed in the npm package
+*.png
+*.svg
+*.webp
+*.jpg
+*.jpeg
+*.gif
+*.ico
+*.bmp
+
+# Test artifacts
+screenshots/
+*-e2e.js
+*-demo.js
+*.test.js
+*.spec.js
+test_output*.txt
+diag_output*.txt
+
+# Build / CI
+*.tgz
+coverage/
+.nyc_output/
+.eslintcache
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Type declarations kept separate
+*.d.ts
+
+# Misc dev files
+roadmap.md
+controls/organised/roadmap.md
+package-lock.json

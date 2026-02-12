@@ -1,0 +1,133 @@
+/*
+ * File Upload Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-file-upload
+ * Features: dropzone, file list, progress indicator, drag-over state
+ */
+
+/* ── Dropzone ── */
+.jsgui-file-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--j-space-3, 12px);
+    padding: var(--j-space-8, 32px) var(--j-space-5, 20px);
+    border: 2px dashed var(--j-border, #d1d5db);
+    border-radius: var(--j-radius-lg, 10px);
+    background: var(--j-bg-subtle, #fafafa);
+    font-family: var(--j-font-sans);
+    cursor: pointer;
+    text-align: center;
+    transition:
+        border-color var(--j-duration-fast) var(--j-ease-out),
+        background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-file-upload:hover,
+.jsgui-file-upload.drag-over {
+    border-color: var(--j-primary);
+    background: color-mix(in srgb, var(--j-primary) 5%, var(--j-bg));
+}
+
+.jsgui-file-upload.drag-over {
+    border-style: solid;
+}
+
+/* ── Icon ── */
+.jsgui-file-upload .upload-icon {
+    font-size: 2rem;
+    color: var(--j-fg-muted);
+    line-height: 1;
+}
+
+/* ── Text ── */
+.jsgui-file-upload .upload-label {
+    font-size: var(--j-text-sm);
+    color: var(--j-fg);
+    font-weight: var(--j-font-weight-medium);
+}
+
+.jsgui-file-upload .upload-hint {
+    font-size: var(--j-text-xs);
+    color: var(--j-fg-muted);
+}
+
+/* ── Hidden native input ── */
+.jsgui-file-upload input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+/* ── File list ── */
+.jsgui-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--j-space-2, 8px);
+    width: 100%;
+    margin-top: var(--j-space-3, 12px);
+}
+
+.jsgui-file-item {
+    display: flex;
+    align-items: center;
+    gap: var(--j-space-2, 8px);
+    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
+    border: 1px solid var(--j-border);
+    border-radius: var(--j-radius, 6px);
+    background: var(--j-bg);
+    font-size: var(--j-text-sm);
+}
+
+.jsgui-file-item .file-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.jsgui-file-item .file-size {
+    color: var(--j-fg-muted);
+    font-size: var(--j-text-xs);
+    white-space: nowrap;
+}
+
+.jsgui-file-item .file-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--j-fg-muted);
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.jsgui-file-item .file-remove:hover {
+    background: var(--j-bg-muted);
+    color: var(--j-danger);
+}
+
+/* ── Compact mode ── */
+.jsgui-file-upload[data-mode="compact"] {
+    flex-direction: row;
+    padding: var(--j-space-3, 12px) var(--j-space-4, 16px);
+    gap: var(--j-space-3, 12px);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-file-upload {
+        transition: none;
+    }
+}

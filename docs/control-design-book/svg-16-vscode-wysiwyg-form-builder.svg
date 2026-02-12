@@ -1,0 +1,431 @@
+<svg viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Luna refined button gradients (for form builder area) -->
+        <linearGradient id="btn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EEF3F9"/>
+            <stop offset="45%" stop-color="#D8E2EE"/>
+            <stop offset="55%" stop-color="#C0D0E2"/>
+            <stop offset="100%" stop-color="#CCDAEA"/>
+        </linearGradient>
+        <linearGradient id="btnPri" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0D8F0"/>
+            <stop offset="45%" stop-color="#7AACE0"/>
+            <stop offset="55%" stop-color="#5090D0"/>
+            <stop offset="100%" stop-color="#68A4DD"/>
+        </linearGradient>
+        <linearGradient id="btnOk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0E8C0"/>
+            <stop offset="45%" stop-color="#70C870"/>
+            <stop offset="55%" stop-color="#48A848"/>
+            <stop offset="100%" stop-color="#5CB85C"/>
+        </linearGradient>
+        <linearGradient id="btnNo" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F0C8C8"/>
+            <stop offset="45%" stop-color="#E07070"/>
+            <stop offset="55%" stop-color="#CC4444"/>
+            <stop offset="100%" stop-color="#D85858"/>
+        </linearGradient>
+        <linearGradient id="lunaField" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E0DCD6"/>
+            <stop offset="3%" stop-color="#fff"/>
+            <stop offset="100%" stop-color="#fff"/>
+        </linearGradient>
+        <filter id="shSm" x="-2%" y="-3%" width="106%" height="112%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.12)"/>
+        </filter>
+        <filter id="selGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="rgba(0,120,212,0.5)"/>
+        </filter>
+    </defs>
+    <style>
+        text { font-family: 'Segoe UI', Tahoma, sans-serif; }
+        .mono { font-family: Consolas, 'Courier New', monospace; }
+    </style>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- VS CODE SHELL — Dark Theme            -->
+    <!-- ══════════════════════════════════════ -->
+    <rect width="1200" height="820" fill="#1E1E1E"/>
+
+    <!-- ── Title Bar ── -->
+    <rect width="1200" height="30" fill="#323233"/>
+    <text x="12" y="20" font-size="11" fill="#CCCCCC">📐 form-builder.wysiwyg — jsgui3-html — Visual Studio Code</text>
+    <!-- Window buttons (macOS style dots or Win minimize/max/close) -->
+    <rect x="1108" y="8" width="26" height="14" rx="1" fill="transparent" stroke="#888" stroke-width="0.5"/>
+    <line x1="1117" y1="15" x2="1127" y2="15" stroke="#888" stroke-width="1"/>
+    <rect x="1140" y="8" width="26" height="14" rx="1" fill="transparent" stroke="#888" stroke-width="0.5"/>
+    <rect x="1147" y="10" width="10" height="8" rx="0.5" fill="none" stroke="#888" stroke-width="1"/>
+    <rect x="1172" y="8" width="26" height="14" rx="1" fill="#E81123"/>
+    <line x1="1179" y1="10" x2="1191" y2="20" stroke="#fff" stroke-width="1.2"/>
+    <line x1="1191" y1="10" x2="1179" y2="20" stroke="#fff" stroke-width="1.2"/>
+
+    <!-- ── Menu Bar ── -->
+    <rect y="30" width="1200" height="24" fill="#3C3C3C"/>
+    <text x="12" y="46" font-size="11" fill="#CCCCCC">File</text>
+    <text x="46" y="46" font-size="11" fill="#CCCCCC">Edit</text>
+    <text x="82" y="46" font-size="11" fill="#CCCCCC">Selection</text>
+    <text x="148" y="46" font-size="11" fill="#CCCCCC">View</text>
+    <text x="186" y="46" font-size="11" fill="#CCCCCC">Go</text>
+    <text x="212" y="46" font-size="11" fill="#CCCCCC">Run</text>
+    <text x="244" y="46" font-size="11" fill="#CCCCCC">Terminal</text>
+    <text x="306" y="46" font-size="11" fill="#CCCCCC">Help</text>
+
+    <!-- ── Activity Bar (left icons) ── -->
+    <rect y="54" width="48" height="740" fill="#333333"/>
+    <!-- Explorer icon (active) -->
+    <rect x="0" y="54" width="48" height="48" fill="#1E1E1E"/>
+    <rect x="0" y="54" width="2" height="48" fill="#fff"/>
+    <text x="16" y="84" font-size="18">📁</text>
+    <!-- Search -->
+    <text x="16" y="128" font-size="18" fill="#888">🔍</text>
+    <!-- Source control -->
+    <text x="16" y="172" font-size="18" fill="#888">⑃</text>
+    <!-- Extensions -->
+    <text x="16" y="216" font-size="18" fill="#888">⧉</text>
+
+    <!-- ── Explorer Sidebar ── -->
+    <rect x="48" y="54" width="220" height="740" fill="#252526"/>
+    <text x="60" y="72" font-size="10" font-weight="600" fill="#BBB" letter-spacing="0.8">EXPLORER</text>
+    <!-- File tree -->
+    <text x="60" y="94" font-size="10" font-weight="600" fill="#CCC">▾ JSGUI3-HTML</text>
+    <text x="72" y="112" font-size="10" fill="#CCC">▾ controls</text>
+    <text x="84" y="128" font-size="10" fill="#CCC">▾ organised</text>
+    <text x="96" y="144" font-size="10" fill="#CCC">▾ 0-core</text>
+    <text x="108" y="160" font-size="10" fill="#888">button.js</text>
+    <text x="108" y="176" font-size="10" fill="#888">checkbox.js</text>
+    <text x="108" y="192" font-size="10" fill="#888">text-input.js</text>
+    <text x="108" y="208" font-size="10" fill="#888">combo-box.js</text>
+    <text x="96" y="226" font-size="10" fill="#CCC">▸ 1-compositional</text>
+    <text x="84" y="244" font-size="10" fill="#CCC">▸ 2-data</text>
+    <text x="72" y="262" font-size="10" fill="#CCC">▸ docs</text>
+    <text x="72" y="280" font-size="10" fill="#CCC">▾ dev-examples</text>
+    <!-- Active file highlight -->
+    <rect x="48" y="285" width="220" height="18" fill="#37373D"/>
+    <text x="96" y="298" font-size="10" fill="#fff">📐 form-builder.wysiwyg</text>
+    <text x="84" y="316" font-size="10" fill="#888">server.js</text>
+    <text x="72" y="334" font-size="10" fill="#CCC">▸ lab</text>
+    <text x="72" y="352" font-size="10" fill="#CCC">▸ node_modules</text>
+    <text x="60" y="370" font-size="10" fill="#888">package.json</text>
+
+    <!-- ── Editor Tab Bar ── -->
+    <rect x="268" y="54" width="932" height="34" fill="#252526"/>
+    <!-- Active tab -->
+    <rect x="268" y="54" width="200" height="34" fill="#1E1E1E"/>
+    <rect x="268" y="54" width="200" height="1" fill="#0078D4"/>
+    <text x="284" y="76" font-size="11" fill="#fff">📐 form-builder.wysiwyg</text>
+    <text x="456" y="76" font-size="11" fill="#888">×</text>
+    <!-- Other tabs -->
+    <rect x="468" y="54" width="120" height="34" fill="#2D2D2D"/>
+    <text x="484" y="76" font-size="11" fill="#888">server.js</text>
+    <rect x="588" y="54" width="140" height="34" fill="#2D2D2D"/>
+    <text x="604" y="76" font-size="11" fill="#888">button.js</text>
+
+    <!-- ── Editor Breadcrumbs ── -->
+    <rect x="268" y="88" width="932" height="22" fill="#1E1E1E"/>
+    <text x="280" y="103" font-size="10" fill="#888">jsgui3-html</text>
+    <text x="344" y="103" font-size="10" fill="#555">›</text>
+    <text x="356" y="103" font-size="10" fill="#888">dev-examples</text>
+    <text x="436" y="103" font-size="10" fill="#555">›</text>
+    <text x="448" y="103" font-size="10" fill="#CCC">form-builder.wysiwyg</text>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- MAIN EDITOR AREA — WYSIWYG FORM       -->
+    <!-- Builder with Refined Luna Theme        -->
+    <!-- ══════════════════════════════════════ -->
+
+    <!-- Form builder background (light Luna) -->
+    <rect x="268" y="110" width="932" height="640" fill="#ECEAE4"/>
+
+    <!-- ── Form Builder Toolbar ── -->
+    <rect x="268" y="110" width="932" height="36" fill="#F4F2EC" stroke="#D4D0C8" stroke-width="0.5"/>
+    <!-- Mode buttons -->
+    <g transform="translate(278,116)">
+        <rect width="70" height="24" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.8"/>
+        <text x="35" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">🎨 Design</text>
+    </g>
+    <g transform="translate(354,116)">
+        <rect width="60" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="30" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">{ } Code</text>
+    </g>
+    <g transform="translate(420,116)">
+        <rect width="68" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="34" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">▶ Preview</text>
+    </g>
+    <!-- Separator -->
+    <line x1="500" y1="116" x2="500" y2="140" stroke="#C8C4B8"/>
+    <!-- Alignment/grid tools -->
+    <g transform="translate(510,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">⊞</text>
+    </g>
+    <g transform="translate(540,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">⫼</text>
+    </g>
+    <g transform="translate(570,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">⫿</text>
+    </g>
+    <!-- Separator -->
+    <line x1="608" y1="116" x2="608" y2="140" stroke="#C8C4B8"/>
+    <!-- Undo/Redo -->
+    <g transform="translate(616,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">↩</text>
+    </g>
+    <g transform="translate(646,116)">
+        <rect width="26" height="24" rx="3" fill="#EEEEEE" stroke="#C8C8C8" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#BBB">↪</text>
+    </g>
+    <!-- Right side: Save / Export -->
+    <g transform="translate(1060,116)">
+        <rect width="58" height="24" rx="3" fill="url(#btnOk)" stroke="#2A8028" stroke-width="0.8"/>
+        <text x="29" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">💾 Save</text>
+    </g>
+    <g transform="translate(1124,116)">
+        <rect width="66" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="33" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">Export ↗</text>
+    </g>
+
+    <!-- ── Control Palette (left strip inside editor) ── -->
+    <rect x="268" y="146" width="142" height="604" fill="#F8F6F2" stroke="#D4D0C8" stroke-width="0.5"/>
+    <text x="278" y="166" font-size="10" font-weight="600" fill="#2A4060">Controls</text>
+    <line x1="278" y1="172" x2="400" y2="172" stroke="#D4D0C8"/>
+
+    <!-- Control items (draggable) -->
+    <g transform="translate(276,180)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">🔤 Text Input</text>
+    </g>
+    <g transform="translate(276,212)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">🔘 Button</text>
+    </g>
+    <g transform="translate(276,244)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">☑ Checkbox</text>
+    </g>
+    <g transform="translate(276,276)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">⦿ Radio Group</text>
+    </g>
+    <g transform="translate(276,308)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">▼ Combo Box</text>
+    </g>
+    <g transform="translate(276,340)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">📝 Text Area</text>
+    </g>
+    <g transform="translate(276,372)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">📅 Date Picker</text>
+    </g>
+    <g transform="translate(276,404)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">🎚 Slider</text>
+    </g>
+    <g transform="translate(276,436)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">🔀 Toggle</text>
+    </g>
+    <g transform="translate(276,468)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">📊 Data Grid</text>
+    </g>
+    <text x="278" y="510" font-size="10" font-weight="600" fill="#2A4060">Layout</text>
+    <line x1="278" y1="516" x2="400" y2="516" stroke="#D4D0C8"/>
+    <g transform="translate(276,524)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">▭ Group Box</text>
+    </g>
+    <g transform="translate(276,556)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">⊟ Tab Panel</text>
+    </g>
+    <g transform="translate(276,588)">
+        <rect width="126" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="10" y="17" font-size="10" fill="#2A3A50">— Separator</text>
+    </g>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- FORM CANVAS — The actual form being    -->
+    <!-- designed, with Luna-styled controls    -->
+    <!-- ══════════════════════════════════════ -->
+    <rect x="410" y="146" width="510" height="604" fill="#fff" stroke="#C8C4B8" stroke-width="0.5"/>
+
+    <!-- Grid dots pattern -->
+    <g fill="#E0DCD6" opacity="0.6">
+        <circle cx="426" cy="160" r="0.8"/><circle cx="442" cy="160" r="0.8"/><circle cx="458" cy="160" r="0.8"/><circle cx="474" cy="160" r="0.8"/><circle cx="490" cy="160" r="0.8"/><circle cx="506" cy="160" r="0.8"/>
+        <circle cx="426" cy="176" r="0.8"/><circle cx="442" cy="176" r="0.8"/><circle cx="458" cy="176" r="0.8"/><circle cx="474" cy="176" r="0.8"/><circle cx="490" cy="176" r="0.8"/><circle cx="506" cy="176" r="0.8"/>
+    </g>
+
+    <!-- Form title (on the canvas) -->
+    <text x="430" y="180" font-size="16" font-weight="600" fill="#2A4060">Customer Registration</text>
+    <line x1="430" y1="188" x2="890" y2="188" stroke="#D4D0C8"/>
+
+    <!-- ── Row 1: Name fields ── -->
+    <text x="430" y="210" font-size="10" fill="#444" font-weight="600">First Name</text>
+    <rect x="430" y="216" width="200" height="26" rx="2" fill="#8098B0"/>
+    <rect x="431" y="217" width="198" height="24" rx="1" fill="url(#lunaField)"/>
+    <text x="438" y="234" font-size="11" fill="#1A1A1A">James</text>
+
+    <text x="648" y="210" font-size="10" fill="#444" font-weight="600">Last Name</text>
+    <rect x="648" y="216" width="200" height="26" rx="2" fill="#8098B0"/>
+    <rect x="649" y="217" width="198" height="24" rx="1" fill="url(#lunaField)"/>
+    <text x="656" y="234" font-size="11" fill="#1A1A1A">Richardson</text>
+
+    <!-- ── Row 2: Email (selected control — blue selection handles) ── -->
+    <text x="430" y="262" font-size="10" fill="#444" font-weight="600">Email Address</text>
+    <!-- Selection rectangle around the focused control -->
+    <rect x="426" y="266" width="426" height="32" fill="none" stroke="#0078D4" stroke-width="1.5" stroke-dasharray="4,2" filter="url(#selGlow)"/>
+    <!-- Selection handles (corners) -->
+    <rect x="423" y="263" width="6" height="6" fill="#0078D4"/>
+    <rect x="849" y="263" width="6" height="6" fill="#0078D4"/>
+    <rect x="423" y="295" width="6" height="6" fill="#0078D4"/>
+    <rect x="849" y="295" width="6" height="6" fill="#0078D4"/>
+    <!-- Side handles -->
+    <rect x="636" y="263" width="6" height="6" fill="#0078D4"/>
+    <rect x="636" y="295" width="6" height="6" fill="#0078D4"/>
+
+    <rect x="430" y="268" width="418" height="26" rx="2" fill="#5080A8" stroke="#2060A0" stroke-width="1"/>
+    <rect x="431" y="269" width="416" height="24" rx="1" fill="#fff"/>
+    <text x="438" y="286" font-size="11" fill="#1A1A1A">james@example.com</text>
+
+    <!-- ── Row 3: Phone + Country ── -->
+    <text x="430" y="318" font-size="10" fill="#444" font-weight="600">Phone</text>
+    <rect x="430" y="324" width="200" height="26" rx="2" fill="#8098B0"/>
+    <rect x="431" y="325" width="198" height="24" rx="1" fill="url(#lunaField)"/>
+    <text x="438" y="342" font-size="11" fill="#888">+44 ...</text>
+
+    <text x="648" y="318" font-size="10" fill="#444" font-weight="600">Country</text>
+    <rect x="648" y="324" width="200" height="26" rx="2" fill="#8098B0"/>
+    <rect x="649" y="325" width="178" height="24" rx="1" fill="#fff"/>
+    <text x="656" y="342" font-size="11" fill="#1A1A1A">United Kingdom</text>
+    <rect x="803" y="325" width="24" height="24" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+    <polygon points="810,335 820,335 815,340" fill="#2A4060"/>
+
+    <!-- ── Row 4: Group box "Preferences" ── -->
+    <rect x="430" y="368" width="418" height="130" fill="none" stroke="#C4C0B8" rx="3"/>
+    <rect x="440" y="362" width="82" height="12" fill="#fff"/>
+    <text x="444" y="372" font-size="10" font-weight="600" fill="#2A4060">Preferences</text>
+
+    <!-- Checkboxes inside group -->
+    <rect x="446" y="388" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="447" y="389" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="449.5,395.5 452,398.5 457,392.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+    <text x="466" y="399" font-size="11" fill="#1A1A1A">Receive newsletter</text>
+
+    <rect x="446" y="412" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="447" y="413" width="12" height="12" rx="1" fill="#fff"/>
+    <text x="466" y="423" font-size="11" fill="#1A1A1A">Accept terms and conditions</text>
+
+    <!-- Radio group inside group -->
+    <text x="446" y="450" font-size="10" fill="#444" font-weight="600">Contact preference:</text>
+    <circle cx="453" cy="466" r="7" fill="#8098B0"/>
+    <circle cx="453" cy="466" r="6" fill="#fff"/>
+    <circle cx="453" cy="466" r="3.5" fill="#2868A0"/>
+    <text x="466" y="470" font-size="11" fill="#1A1A1A">Email</text>
+    <circle cx="533" cy="466" r="7" fill="#8098B0"/>
+    <circle cx="533" cy="466" r="6" fill="#fff"/>
+    <text x="546" y="470" font-size="11" fill="#1A1A1A">Phone</text>
+    <circle cx="609" cy="466" r="7" fill="#8098B0"/>
+    <circle cx="609" cy="466" r="6" fill="#fff"/>
+    <text x="622" y="470" font-size="11" fill="#1A1A1A">Post</text>
+
+    <!-- ── Row 5: Notes text area ── -->
+    <text x="430" y="520" font-size="10" fill="#444" font-weight="600">Notes</text>
+    <rect x="430" y="526" width="418" height="70" rx="2" fill="#8098B0"/>
+    <rect x="431" y="527" width="416" height="68" rx="1" fill="url(#lunaField)"/>
+    <text x="438" y="546" font-size="11" fill="#888">Additional notes about this customer...</text>
+
+    <!-- ── Form action buttons ── -->
+    <g transform="translate(648,612)">
+        <rect width="86" height="28" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/>
+        <text x="43" y="18" text-anchor="middle" font-size="11" font-weight="600" fill="#fff">Submit</text>
+    </g>
+    <g transform="translate(742,612)">
+        <rect width="80" height="28" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="40" y="18" text-anchor="middle" font-size="11" fill="#2A3A50">Cancel</text>
+    </g>
+    <g transform="translate(830,612)">
+        <rect width="18" height="28" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="9" y="18" text-anchor="middle" font-size="11" fill="#2A3A50">?</text>
+    </g>
+
+    <!-- ══════════════════════════════════════ -->
+    <!-- PROPERTIES PANEL (right side)          -->
+    <!-- ══════════════════════════════════════ -->
+    <rect x="920" y="146" width="280" height="604" fill="#F4F2EC" stroke="#D4D0C8" stroke-width="0.5"/>
+    <text x="932" y="166" font-size="10" font-weight="600" fill="#2A4060">Properties — Email Address</text>
+    <line x1="932" y1="172" x2="1188" y2="172" stroke="#D4D0C8"/>
+
+    <!-- Property grid -->
+    <text x="932" y="190" font-size="9" font-weight="600" fill="#666">IDENTITY</text>
+    <text x="932" y="208" font-size="10" fill="#444">Name:</text>
+    <rect x="1010" y="196" width="178" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="197" width="176" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="210" font-size="10" fill="#1A1A1A" class="mono">email_address</text>
+
+    <text x="932" y="230" font-size="10" fill="#444">Label:</text>
+    <rect x="1010" y="218" width="178" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="219" width="176" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="232" font-size="10" fill="#1A1A1A">Email Address</text>
+
+    <text x="932" y="254" font-size="9" font-weight="600" fill="#666">LAYOUT</text>
+    <text x="932" y="272" font-size="10" fill="#444">Width:</text>
+    <rect x="1010" y="260" width="80" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="261" width="78" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="274" font-size="10" fill="#1A1A1A" class="mono">418</text>
+    <text x="1096" y="274" font-size="10" fill="#888">px</text>
+
+    <text x="932" y="296" font-size="10" fill="#444">Height:</text>
+    <rect x="1010" y="284" width="80" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="285" width="78" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="298" font-size="10" fill="#1A1A1A" class="mono">26</text>
+    <text x="1096" y="298" font-size="10" fill="#888">px</text>
+
+    <text x="932" y="320" font-size="10" fill="#444">Colspan:</text>
+    <rect x="1010" y="308" width="80" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="309" width="78" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="322" font-size="10" fill="#1A1A1A" class="mono">2</text>
+
+    <text x="932" y="348" font-size="9" font-weight="600" fill="#666">VALIDATION</text>
+    <text x="932" y="366" font-size="10" fill="#444">Required:</text>
+    <rect x="1010" y="356" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="357" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="1013.5,363.5 1016,366.5 1021,360.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+
+    <text x="932" y="390" font-size="10" fill="#444">Pattern:</text>
+    <rect x="1010" y="378" width="178" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="379" width="176" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="392" font-size="10" fill="#888" class="mono">[a-z]+@[a-z]+\.[a-z]+</text>
+
+    <text x="932" y="414" font-size="10" fill="#444">Max length:</text>
+    <rect x="1010" y="402" width="80" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="403" width="78" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="416" font-size="10" fill="#1A1A1A" class="mono">255</text>
+
+    <text x="932" y="442" font-size="9" font-weight="600" fill="#666">DATA BINDING</text>
+    <text x="932" y="460" font-size="10" fill="#444">Field:</text>
+    <rect x="1010" y="448" width="178" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="449" width="176" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="462" font-size="10" fill="#1A1A1A" class="mono">customer.email</text>
+
+    <text x="932" y="484" font-size="10" fill="#444">Type:</text>
+    <rect x="1010" y="472" width="120" height="20" rx="2" fill="#8098B0"/>
+    <rect x="1011" y="473" width="118" height="18" rx="1" fill="#fff"/>
+    <text x="1018" y="486" font-size="10" fill="#1A1A1A">String</text>
+    <rect x="1105" y="473" width="24" height="18" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+    <polygon points="1112,481 1122,481 1117,486" fill="#2A4060"/>
+
+    <!-- ── VS Code Status Bar ── -->
+    <rect x="0" y="794" width="1200" height="26" fill="#007ACC"/>
+    <text x="12" y="811" font-size="10" fill="#fff">↗ main</text>
+    <text x="80" y="811" font-size="10" fill="rgba(255,255,255,0.8)">⟳ 0</text>
+    <text x="120" y="811" font-size="10" fill="rgba(255,255,255,0.8)">⚠ 0</text>
+    <text x="160" y="811" font-size="10" fill="rgba(255,255,255,0.8)">✕ 0</text>
+    <text x="1050" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">WYSIWYG Mode</text>
+    <text x="1120" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">Ln 1, Col 1</text>
+    <text x="1190" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">UTF-8</text>
+</svg>

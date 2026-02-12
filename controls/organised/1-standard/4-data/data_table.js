@@ -62,7 +62,15 @@ class Data_Table extends Control {
         spec.__type_name = spec.__type_name || 'data_table';
         super(spec);
         this.add_class('data-table');
+        this.add_class('jsgui-data-table');
         this.dom.tagName = 'table';
+
+        if (spec.theme) {
+            this.dom.attributes['data-admin-theme'] = spec.theme;
+        }
+        if (spec.compact) this.add_class('data-table-compact');
+        if (spec.bordered) this.add_class('data-table-bordered');
+        if (spec.striped !== false) this.add_class('data-table-striped');
 
         ensure_control_models(this, spec);
         this.model = this.data.model;
@@ -75,13 +83,14 @@ class Data_Table extends Control {
         this.set_page_size(spec.page_size || null);
 
         if (!spec.el) {
-            this.compose_table();
+            this.compose();
         }
 
         this.bind_model();
     }
 
-    compose_table() {
+
+    compose() {
         const { context } = this;
         const head_ctrl = new Control({ context, tag_name: 'thead' });
         const body_ctrl = new Control({ context, tag_name: 'tbody' });
@@ -399,24 +408,120 @@ class Data_Table extends Control {
 }
 
 Data_Table.css = `
-.data-table {
+/* ─── Data_Table ─── */
+.jsgui-data-table {
     width: 100%;
     border-collapse: collapse;
+    font-family: var(--admin-font, 'Segoe UI', -apple-system, sans-serif);
+    font-size: var(--admin-font-size, 13px);
+    color: var(--admin-text, #1e1e1e);
+    background: var(--admin-card-bg, #fff);
 }
+
+/* Header */
 .data-table-header {
     text-align: left;
     font-weight: 600;
-    padding: 6px 8px;
-    border-bottom: 1px solid #ddd;
+    padding: var(--admin-cell-padding, 8px 12px);
+    border-bottom: 2px solid var(--admin-border, #e0e0e0);
+    background: var(--admin-header-bg, #f8f8f8);
+    color: var(--admin-header-text, #616161);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    user-select: none;
+    position: relative;
 }
 .data-table-header.is-sortable {
     cursor: pointer;
+    padding-right: 22px;
+    transition: color 0.1s;
 }
+.data-table-header.is-sortable:hover {
+    color: var(--admin-text, #1e1e1e);
+}
+.data-table-header.is-sortable:focus-visible {
+    outline: 2px solid var(--admin-accent, #0078d4);
+    outline-offset: -2px;
+    border-radius: 2px;
+}
+
+/* Sort indicators */
+.data-table-header[aria-sort="ascending"]::after {
+    content: ' ▲';
+    font-size: 9px;
+    color: var(--admin-accent, #0078d4);
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.data-table-header[aria-sort="descending"]::after {
+    content: ' ▼';
+    font-size: 9px;
+    color: var(--admin-accent, #0078d4);
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+.data-table-header[aria-sort="none"]::after {
+    content: ' ⇅';
+    font-size: 9px;
+    color: var(--admin-text-muted, #9e9e9e);
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+    transition: opacity 0.1s;
+}
+.data-table-header.is-sortable:hover[aria-sort="none"]::after {
+    opacity: 0.5;
+}
+
+/* Rows */
 .data-table-row {
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    transition: background-color 0.08s;
+    height: var(--admin-row-height, 36px);
 }
+.data-table-row:last-child {
+    border-bottom: none;
+}
+.data-table-row:hover {
+    background: var(--admin-hover-bg, #e8e8e8);
+}
+
+/* Striped rows */
+.data-table-striped .data-table-row:nth-child(even) {
+    background: var(--admin-stripe-bg, #f8f8f8);
+}
+.data-table-striped .data-table-row:nth-child(even):hover {
+    background: var(--admin-hover-bg, #e8e8e8);
+}
+
+/* Cells */
 .data-table-cell {
-    padding: 6px 8px;
+    padding: var(--admin-cell-padding, 8px 12px);
+    vertical-align: middle;
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+}
+
+/* Bordered variant */
+.data-table-bordered .data-table-cell,
+.data-table-bordered .data-table-header {
+    border: 1px solid var(--admin-border, #e0e0e0);
+}
+
+/* Compact variant */
+.data-table-compact .data-table-header,
+.data-table-compact .data-table-cell {
+    padding: 4px 8px;
+}
+.data-table-compact .data-table-row {
+    height: 28px;
 }
 `;
 

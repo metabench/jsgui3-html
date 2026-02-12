@@ -19,6 +19,7 @@ const jsgui = require('../../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
+const { themeable } = require('../../../../../control_mixins/themeable');
 
 var group = jsgui.group;
 
@@ -77,7 +78,11 @@ class Radio_Button extends Control {
         this.__type_name = 'radio_button';
 
         this.add_class('radio-button');
+        this.add_class('jsgui-radio');
         var context = this.context;
+
+        // Apply theming
+        const params = themeable(this, 'radio_button', spec);
         //var that = this;
 
         // A different way of raising change events?
@@ -122,9 +127,9 @@ class Radio_Button extends Control {
                 context
             });
             {
-                const {dom} = html_radio;
+                const { dom } = html_radio;
                 dom.tagName = 'input';
-                const {attributes} = dom;
+                const { attributes } = dom;
                 attributes.type = 'radio';
 
                 attributes.name = name;
@@ -137,6 +142,18 @@ class Radio_Button extends Control {
                 }
 
             }
+
+            html_radio.add_class('jsgui-radio-input');
+
+            // Custom radio circle with dot
+            const radio_circle = new Control({ context });
+            radio_circle.dom.tagName = 'div';
+            radio_circle.add_class('jsgui-radio-circle');
+
+            const radio_dot = new Control({ context });
+            radio_dot.dom.tagName = 'span';
+            radio_dot.add_class('jsgui-radio-dot');
+            radio_circle.add(radio_dot);
             /*
             html_radio.set('dom.tagName', 'input');
             html_radio.set('dom.attributes.type', 'radio');
@@ -194,8 +211,10 @@ class Radio_Button extends Control {
 
             //html_label.set('dom.attributes.for', html_radio._id());
             html_label.dom.attributes.for = html_radio._id();
+            html_label.add_class('jsgui-radio-label');
 
             this.add(html_radio);
+            this.add(radio_circle);
             this.add(html_label);
 
             this._ctrl_fields = this._ctrl_fields || {};
@@ -204,7 +223,7 @@ class Radio_Button extends Control {
             this.radio = html_radio;
             this.label = html_label;
             this._input_base_el = html_radio;
-            
+
             //this.set('radio', html_radio);
             //this.set('label', html_label);
             //html_radio.set('dom.attributes.type', 'radio');

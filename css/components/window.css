@@ -1,0 +1,205 @@
+/*
+ * Window Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-window
+ * Features: title bar, minimize/maximize/close, resize handles, glass variant
+ */
+
+/* ── Base window ── */
+.jsgui-window {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    background: var(--j-bg, #fff);
+    border-radius: var(--j-radius-lg, 10px);
+    box-shadow: var(--j-shadow-xl, 0 10px 40px rgba(0, 0, 0, 0.15));
+    overflow: hidden;
+    font-family: var(--j-font-sans);
+}
+
+.jsgui-window.no-transitions {
+    transition: none !important;
+}
+
+/* ── Title bar ── */
+.jsgui-window .title.bar {
+    display: flex;
+    align-items: center;
+    height: 36px;
+    padding: 0 var(--j-space-3, 12px);
+    background: var(--j-bg-subtle, #f1f5f9);
+    border-bottom: 1px solid var(--j-border);
+    flex-shrink: 0;
+    cursor: default;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.jsgui-window .title.bar .title-text {
+    flex: 1;
+    font-size: var(--j-text-sm);
+    font-weight: var(--j-font-weight-medium);
+    color: var(--j-fg);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Window buttons ── */
+.jsgui-window .title.bar .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--j-fg-muted);
+    font-size: 14px;
+    cursor: pointer;
+    transition: background var(--j-duration-fast), color var(--j-duration-fast);
+}
+
+.jsgui-window .title.bar .button:hover {
+    background: var(--j-bg-muted);
+    color: var(--j-fg);
+}
+
+.jsgui-window .title.bar .button.close-btn:hover {
+    background: var(--j-danger, #ef4444);
+    color: #fff;
+}
+
+.jsgui-window .title.bar .button+.button {
+    margin-left: 4px;
+}
+
+/* ── Inner content ── */
+.jsgui-window .relative .inner {
+    width: 100%;
+    height: calc(100% - 36px);
+    overflow: auto;
+}
+
+/* ── Resize handles ── */
+:root {
+    --rhsqsize: 14px;
+}
+
+.jsgui-window .resize-handle {
+    position: absolute;
+    z-index: 2;
+    background: transparent;
+}
+
+.jsgui-window .resize-handle.bottom-right {
+    width: var(--rhsqsize);
+    height: var(--rhsqsize);
+    right: 0;
+    bottom: 0;
+    cursor: nwse-resize;
+}
+
+/* ── State classes ── */
+.jsgui-window.minimized .relative .inner {
+    display: none;
+}
+
+.jsgui-window.maximized .resize-handle {
+    display: none;
+}
+
+.jsgui-window.docked-left,
+.jsgui-window.docked-right,
+.jsgui-window.docked-top,
+.jsgui-window.docked-bottom,
+.jsgui-window.docked-fill {
+    border-radius: 0;
+}
+
+/* ══════════════════════════════════════════
+   Glass variant
+   ══════════════════════════════════════════ */
+
+.jsgui-window[data-variant="glass"] {
+    background: rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+}
+
+.jsgui-window[data-variant="glass"] .title.bar {
+    background: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ══════════════════════════════════════════
+   Traffic light buttons (macOS style)
+   ══════════════════════════════════════════ */
+
+.jsgui-window[data-chrome="traffic-light"] .title.bar .button {
+    width: 12px;
+    height: 12px;
+    font-size: 0;
+}
+
+.jsgui-window[data-chrome="traffic-light"] .title.bar .close-btn {
+    background: #ff5f57;
+}
+
+.jsgui-window[data-chrome="traffic-light"] .title.bar .minimize-btn {
+    background: #ffbd2e;
+}
+
+.jsgui-window[data-chrome="traffic-light"] .title.bar .maximize-btn {
+    background: #28c840;
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .jsgui-window,
+    .jsgui-window .title.bar .button {
+        transition: none;
+    }
+}
+
+/* ══════════════════════════════════════════
+   Dark Mode
+   ══════════════════════════════════════════ */
+
+.jsgui-dark-mode .jsgui-window {
+    background: var(--j-bg, #1e293b);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+}
+
+.jsgui-dark-mode .jsgui-window .title.bar {
+    background: var(--j-bg-subtle, #0f172a);
+    border-bottom-color: var(--j-border, #334155);
+}
+
+.jsgui-dark-mode .jsgui-window .title.bar .button:hover {
+    background: var(--j-bg-muted, #334155);
+}
+
+.jsgui-dark-mode .jsgui-window[data-variant="glass"] {
+    background: rgba(15, 23, 42, 0.75);
+}
+
+.jsgui-dark-mode .jsgui-window[data-variant="glass"] .title.bar {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Focus ring */
+.jsgui-window:focus-within .title.bar {
+    background: var(--j-bg-muted, #e2e8f0);
+}
+
+/* Active/dragging state */
+.jsgui-window.is-dragging {
+    opacity: 0.92;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}

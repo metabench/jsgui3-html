@@ -17,7 +17,9 @@
   "scripts": {
     "lab:list": "node lab/experiment_runner.js list",
     "lab:run": "node lab/experiment_runner.js run",
-    "lab:run-all": "node lab/experiment_runner.js run-all"
+    "lab:run-all": "node lab/experiment_runner.js run-all",
+    "sprint-tracker": "node tools/sprint-tracker/tracker_server.js",
+    "sprint-tracker:electron": "cd tools/sprint-tracker && npx electron ."
   },
   "license": "MIT",
   "dependencies": {
@@ -54,10 +56,11 @@
     "url": "https://github.com/metabench/jsgui3-html.git"
   },
   "devDependencies": {
+    "electron": "^35.1.5",
     "esbuild": "^0.27.1",
     "jsdom": "^22.1.0",
     "jsgui3-server": "^0.0.143",
     "puppeteer": "^24.37.2"
   },
-  "version": "0.0.182"
+  "version": "0.0.183"
 }

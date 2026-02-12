@@ -1,0 +1,161 @@
+/* ── Inline Cell Edit ── */
+.inline-cell-edit {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    min-width: 80px;
+}
+
+/* Display state */
+.ice-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: 100%;
+    min-height: 32px;
+}
+
+.ice-display:hover {
+    border-color: var(--ice-border-hover);
+    background: var(--ice-hover);
+}
+
+.ice-display:focus {
+    outline: 2px solid var(--ice-focus);
+    outline-offset: -2px;
+}
+
+.ice-display.is-hidden {
+    display: none;
+}
+
+.ice-value {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ice-value.is-placeholder {
+    color: var(--ice-placeholder);
+    font-style: italic;
+}
+
+.ice-edit-icon {
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.15s;
+}
+
+.ice-display:hover .ice-edit-icon {
+    opacity: 0.6;
+}
+
+/* Editor state */
+.ice-editor {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+
+.ice-editor.is-hidden {
+    display: none;
+}
+
+.ice-input {
+    flex: 1;
+    padding: 4px 8px;
+    border: 1px solid var(--ice-border-active);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: inherit;
+    min-height: 30px;
+    outline: none;
+    background: var(--ice-input-bg);
+    color: inherit;
+}
+
+.ice-input:focus {
+    border-color: var(--ice-focus);
+    box-shadow: 0 0 0 2px var(--ice-focus-ring);
+}
+
+.ice-actions {
+    display: flex;
+    gap: 2px;
+}
+
+.ice-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--ice-border);
+    border-radius: 4px;
+    background: var(--ice-btn-bg);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.15s;
+}
+
+.ice-btn:hover {
+    background: var(--ice-hover);
+}
+
+.ice-btn--save {
+    color: var(--ice-save);
+    border-color: var(--ice-save);
+}
+
+.ice-btn--save:hover {
+    background: var(--ice-save);
+    color: #fff;
+}
+
+.ice-btn--cancel {
+    color: var(--ice-cancel);
+    border-color: var(--ice-cancel);
+}
+
+.ice-btn--cancel:hover {
+    background: var(--ice-cancel);
+    color: #fff;
+}
+
+/* ── Theme Variables ── */
+@layer components {
+    .inline-cell-edit {
+        --ice-border: #d1d5db;
+        --ice-border-hover: #93c5fd;
+        --ice-border-active: #2563eb;
+        --ice-hover: #f9fafb;
+        --ice-focus: #2563eb;
+        --ice-focus-ring: rgba(37, 99, 235, 0.2);
+        --ice-placeholder: #9ca3af;
+        --ice-input-bg: #ffffff;
+        --ice-btn-bg: #ffffff;
+        --ice-save: #16a34a;
+        --ice-cancel: #dc2626;
+    }
+
+    .jsgui-dark-mode .inline-cell-edit {
+        --ice-border: #374151;
+        --ice-border-hover: #3b82f6;
+        --ice-border-active: #60a5fa;
+        --ice-hover: #1f2937;
+        --ice-focus: #60a5fa;
+        --ice-focus-ring: rgba(96, 165, 250, 0.25);
+        --ice-placeholder: #6b7280;
+        --ice-input-bg: #111827;
+        --ice-btn-bg: #1f2937;
+        --ice-save: #22c55e;
+        --ice-cancel: #ef4444;
+    }
+}

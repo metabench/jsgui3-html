@@ -1,0 +1,124 @@
+/*
+ * jsgui3-html Design Tokens
+ * 
+ * All CSS custom properties for theming, spacing, shadows, typography, and motion.
+ * Prefix: --j-  (short, distinctive, fast to type)
+ * 
+ * Reference: docs/control-design-book/visual-advancement/02-css-architecture.md
+ */
+
+:root {
+    /* ── Spacing (8px base scale) ── */
+    --j-space-1: 4px;
+    --j-space-2: 8px;
+    --j-space-3: 12px;
+    --j-space-4: 16px;
+    --j-space-5: 24px;
+    --j-space-6: 32px;
+    --j-space-7: 40px;
+    --j-space-8: 48px;
+
+    /* ── Border Radii ── */
+    --j-radius-sm: 4px;
+    --j-radius-md: 6px;
+    --j-radius-lg: 12px;
+    --j-radius-xl: 16px;
+    --j-radius-full: 9999px;
+
+    /* ── Shadows ── */
+    --j-shadow-sm: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.10);
+    --j-shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --j-shadow-lg: 0 10px 15px rgba(0,0,0,0.10), 0 4px 6px rgba(0,0,0,0.05);
+    --j-shadow-xl: 0 20px 25px rgba(0,0,0,0.10), 0 10px 10px rgba(0,0,0,0.04);
+
+    /* ── Typography ── */
+    --j-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --j-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --j-text-xs: 0.75rem;
+    --j-text-sm: 0.875rem;
+    --j-text-base: 1rem;
+    --j-text-lg: 1.125rem;
+    --j-text-xl: 1.5rem;
+    --j-line-height: 1.5;
+    --j-font-weight-normal: 400;
+    --j-font-weight-medium: 500;
+    --j-font-weight-semibold: 600;
+    --j-font-weight-bold: 700;
+
+    /* ── Motion ── */
+    --j-ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+    --j-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --j-duration-fast: 120ms;
+    --j-duration-normal: 200ms;
+    --j-duration-slow: 350ms;
+
+    /* ── Colours (Light theme — default) ── */
+    --j-bg: #ffffff;
+    --j-bg-subtle: #f8f9fa;
+    --j-bg-muted: #f1f3f5;
+    --j-bg-elevated: #ffffff;
+
+    --j-fg: #1a1a2e;
+    --j-fg-muted: #6c757d;
+    --j-fg-subtle: #adb5bd;
+
+    --j-border: #dee2e6;
+    --j-border-strong: #adb5bd;
+
+    --j-primary: #4361ee;
+    --j-primary-hover: #3a56d4;
+    --j-primary-fg: #ffffff;
+
+    --j-danger: #e63946;
+    --j-danger-hover: #c5303c;
+    --j-success: #2a9d8f;
+    --j-success-hover: #238378;
+    --j-warning: #f4a261;
+    --j-warning-hover: #e08b42;
+    --j-info: #457b9d;
+
+    --j-focus-ring: 0 0 0 3px rgba(67, 97, 238, 0.35);
+}
+
+/* ── Dark theme overrides ── */
+[data-theme="dark"] {
+    --j-bg: #0f0f1a;
+    --j-bg-subtle: #1a1a2e;
+    --j-bg-muted: #252540;
+    --j-bg-elevated: #1e1e35;
+
+    --j-fg: #e8e8f0;
+    --j-fg-muted: #9ca3af;
+    --j-fg-subtle: #6b7280;
+
+    --j-border: #2d2d4a;
+    --j-border-strong: #4a4a6a;
+
+    --j-primary: #6C83F7;
+    --j-primary-hover: #8B9CF9;
+    --j-primary-fg: #0f0f1a;
+
+    --j-danger: #f87171;
+    --j-danger-hover: #ef4444;
+    --j-success: #34d399;
+    --j-success-hover: #10b981;
+    --j-warning: #fbbf24;
+    --j-warning-hover: #f59e0b;
+    --j-info: #60a5fa;
+
+    --j-shadow-sm: 0 1px 3px rgba(0,0,0,0.30);
+    --j-shadow-md: 0 4px 8px rgba(0,0,0,0.40);
+    --j-shadow-lg: 0 10px 20px rgba(0,0,0,0.50);
+    --j-shadow-xl: 0 20px 30px rgba(0,0,0,0.60);
+
+    --j-focus-ring: 0 0 0 3px rgba(108, 131, 247, 0.4);
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+    :root {
+        --j-duration-fast: 0ms;
+        --j-duration-normal: 0ms;
+        --j-duration-slow: 0ms;
+    }
+}

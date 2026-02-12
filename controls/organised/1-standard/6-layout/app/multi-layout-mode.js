@@ -140,7 +140,7 @@ class Multi_Layout_Mode extends Control {
         //this.add_class('multi-layout-mode');
         this.add_class('multi-layout-mode');
         if (!spec.el) {
-            this.compose_mlm();
+            this.compose();
         }
 
         this._features = this._features || []; // an array is cool but map is better for testing for specific ones.
@@ -162,7 +162,7 @@ class Multi_Layout_Mode extends Control {
 
 
     }
-    'compose_mlm'() {
+    'compose'() {
         var layout_mode = this.layout_mode;
         let context = this.context;
 

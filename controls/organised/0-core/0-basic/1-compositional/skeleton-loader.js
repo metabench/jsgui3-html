@@ -17,6 +17,7 @@ class Skeleton_Loader extends Control {
         spec.__type_name = spec.__type_name || 'skeleton_loader';
         super(spec);
         this.add_class('skeleton-loader');
+        this.add_class('jsgui-skeleton');
 
         // Config
         this._variant = spec.variant || 'text';
@@ -25,11 +26,12 @@ class Skeleton_Loader extends Control {
         this._lines = is_defined(spec.lines) ? Math.max(1, Math.floor(spec.lines)) : 1;
         this._animate = is_defined(spec.animate) ? !!spec.animate : true;
 
+        this.dom.attributes['data-variant'] = this._variant;
         this.add_class(`skeleton-${this._variant}`);
         if (!this._animate) this.add_class('no-animate');
 
         if (!spec.el) {
-            this._compose_skeleton();
+            this.compose();
         }
     }
 
@@ -47,7 +49,7 @@ class Skeleton_Loader extends Control {
 
     // ---- Internal ----
 
-    _compose_skeleton() {
+    compose() {
         const { context } = this;
 
         const style_parts = [];

@@ -24,6 +24,11 @@ Server-side rendering (SSR) in jsgui3 produces HTML that may look correct as str
 
 Browser verification catches issues that unit tests miss.
 
+For detailed operational procedures, see **[Browser Automation Workflow](../../workflows/browser_automation.md)**.
+
+## Common Pitfalls (Activation)
+Server-side rendered HTML may appear correct but be **inert** (non-interactive) if the client-side JavaScript is not properly bundled and served. Always verify interactivity (clicking, typing) not just visual presence.
+
 ## Procedure
 
 ### 1. Create a Demo Server

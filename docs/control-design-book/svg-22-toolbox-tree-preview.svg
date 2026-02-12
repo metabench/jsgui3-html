@@ -1,0 +1,334 @@
+<svg viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="btn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EEF3F9"/><stop offset="45%" stop-color="#D8E2EE"/>
+            <stop offset="55%" stop-color="#C0D0E2"/><stop offset="100%" stop-color="#CCDAEA"/>
+        </linearGradient>
+        <linearGradient id="btnPri" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0D8F0"/><stop offset="45%" stop-color="#7AACE0"/>
+            <stop offset="55%" stop-color="#5090D0"/><stop offset="100%" stop-color="#68A4DD"/>
+        </linearGradient>
+        <linearGradient id="btnOk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0E8C0"/><stop offset="45%" stop-color="#70C870"/>
+            <stop offset="55%" stop-color="#48A848"/><stop offset="100%" stop-color="#5CB85C"/>
+        </linearGradient>
+        <linearGradient id="lunaField" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E0DCD6"/><stop offset="3%" stop-color="#fff"/>
+            <stop offset="100%" stop-color="#fff"/>
+        </linearGradient>
+        <linearGradient id="grpId" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E8EFF6"/><stop offset="100%" stop-color="#DCE6F0"/>
+        </linearGradient>
+        <linearGradient id="grpLay" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EAEFE8"/><stop offset="100%" stop-color="#DDE6DA"/>
+        </linearGradient>
+        <linearGradient id="grpVal" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F2ECE6"/><stop offset="100%" stop-color="#EAE2DA"/>
+        </linearGradient>
+        <linearGradient id="grpDat" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EDE8F2"/><stop offset="100%" stop-color="#E2DAEA"/>
+        </linearGradient>
+        <filter id="shSm" x="-2%" y="-3%" width="106%" height="112%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.12)"/>
+        </filter>
+        <filter id="selGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="rgba(0,120,212,0.5)"/>
+        </filter>
+        <filter id="tipSh" x="-5%" y="-5%" width="115%" height="130%">
+            <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.25)"/>
+        </filter>
+    </defs>
+    <style>text{font-family:'Segoe UI',Tahoma,sans-serif}.mono{font-family:Consolas,'Courier New',monospace}</style>
+
+    <!-- ══ VS CODE SHELL ══ -->
+    <rect width="1200" height="820" fill="#1E1E1E"/>
+    <rect width="1200" height="30" fill="#323233"/>
+    <text x="12" y="20" font-size="11" fill="#CCC">📐 user-profile.wysiwyg — jsgui3-html — Visual Studio Code</text>
+    <rect x="1172" y="8" width="26" height="14" rx="1" fill="#E81123"/>
+    <line x1="1179" y1="10" x2="1191" y2="20" stroke="#fff" stroke-width="1.2"/>
+    <line x1="1191" y1="10" x2="1179" y2="20" stroke="#fff" stroke-width="1.2"/>
+    <rect y="30" width="1200" height="24" fill="#3C3C3C"/>
+    <text x="12" y="46" font-size="11" fill="#CCC">File</text><text x="46" y="46" font-size="11" fill="#CCC">Edit</text>
+    <text x="82" y="46" font-size="11" fill="#CCC">Selection</text><text x="148" y="46" font-size="11" fill="#CCC">View</text>
+    <text x="186" y="46" font-size="11" fill="#CCC">Go</text><text x="212" y="46" font-size="11" fill="#CCC">Run</text>
+    <text x="244" y="46" font-size="11" fill="#CCC">Terminal</text><text x="306" y="46" font-size="11" fill="#CCC">Help</text>
+
+    <rect y="54" width="48" height="740" fill="#333"/>
+    <rect x="0" y="54" width="48" height="48" fill="#1E1E1E"/>
+    <rect x="0" y="54" width="2" height="48" fill="#fff"/>
+    <text x="16" y="84" font-size="18">📁</text>
+    <text x="16" y="128" font-size="18" fill="#888">🔍</text>
+
+    <rect x="48" y="54" width="160" height="740" fill="#252526"/>
+    <text x="56" y="72" font-size="10" font-weight="600" fill="#BBB" letter-spacing="0.8">EXPLORER</text>
+    <text x="56" y="94" font-size="10" font-weight="600" fill="#CCC">▾ JSGUI3-HTML</text>
+    <text x="68" y="112" font-size="10" fill="#CCC">▾ dev-examples</text>
+    <rect x="48" y="117" width="160" height="18" fill="#37373D"/>
+    <text x="80" y="130" font-size="10" fill="#fff">📐 user-profile.wysiwyg</text>
+
+    <rect x="208" y="54" width="992" height="34" fill="#252526"/>
+    <rect x="208" y="54" width="180" height="34" fill="#1E1E1E"/>
+    <rect x="208" y="54" width="180" height="1" fill="#0078D4"/>
+    <text x="224" y="76" font-size="11" fill="#fff">📐 user-profile.wysiwyg</text>
+    <rect x="208" y="88" width="992" height="22" fill="#1E1E1E"/>
+    <text x="220" y="103" font-size="10" fill="#888">jsgui3-html › dev-examples › user-profile.wysiwyg</text>
+
+    <!-- Toolbar -->
+    <rect x="208" y="110" width="992" height="36" fill="#F4F2EC" stroke="#D4D0C8" stroke-width="0.5"/>
+    <g transform="translate(218,116)"><rect width="70" height="24" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.8"/><text x="35" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">🎨 Design</text></g>
+    <g transform="translate(294,116)"><rect width="60" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/><text x="30" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">{ } Code</text></g>
+    <g transform="translate(360,116)"><rect width="68" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/><text x="34" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">▶ Preview</text></g>
+    <g transform="translate(1132,116)"><rect width="58" height="24" rx="3" fill="url(#btnOk)" stroke="#2A8028" stroke-width="0.8"/><text x="29" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">💾 Save</text></g>
+
+    <!-- ════════════════════════════════════════════════ -->
+    <!-- APPROACH 3: TREE VIEW + HOVER PREVIEW          -->
+    <!-- Maps to actual jsgui3 control hierarchy.       -->
+    <!-- Search at top, tree with indent + counts,       -->
+    <!-- hover tooltip shows visual preview of control   -->
+    <!-- ════════════════════════════════════════════════ -->
+    <rect x="208" y="146" width="192" height="604" fill="#F0EDE8" stroke="#D4D0C8" stroke-width="0.5"/>
+
+    <!-- Header with view mode toggle -->
+    <rect x="208" y="146" width="192" height="24" fill="#E4E0D8" stroke="#C8C4B8" stroke-width="0.5"/>
+    <text x="218" y="162" font-size="10" font-weight="600" fill="#2A4060">Control Browser</text>
+    <!-- Tree/Grid toggle -->
+    <rect x="362" y="149" width="16" height="16" rx="2" fill="#C8C4B8"/>
+    <rect x="364" y="151" width="4" height="4" fill="#666"/>
+    <rect x="370" y="151" width="4" height="4" fill="#666"/>
+    <rect x="364" y="157" width="4" height="4" fill="#666"/>
+    <rect x="370" y="157" width="4" height="4" fill="#666"/>
+    <rect x="382" y="149" width="16" height="16" rx="2" fill="#D8D4CC" stroke="#A0A0A0" stroke-width="0.5"/>
+    <line x1="384" y1="152" x2="396" y2="152" stroke="#444" stroke-width="1"/>
+    <line x1="384" y1="156" x2="394" y2="156" stroke="#444" stroke-width="1"/>
+    <line x1="384" y1="160" x2="396" y2="160" stroke="#444" stroke-width="1"/>
+
+    <!-- Search bar -->
+    <rect x="214" y="176" width="180" height="22" rx="11" fill="#8098B0"/>
+    <rect x="215" y="177" width="178" height="20" rx="10" fill="#fff"/>
+    <text x="232" y="191" font-size="9" fill="#AAA">🔍 Find control…</text>
+
+    <!-- ── Tree View ── -->
+    <!-- Matches the actual jsgui3 controls hierarchy -->
+    <g font-size="10">
+        <!-- Root: Core -->
+        <text x="218" y="218" fill="#2A4060" font-weight="600">▾ 📦 core</text>
+        <text x="388" y="218" text-anchor="end" font-size="8" fill="#999">98</text>
+
+        <!-- core > basic -->
+        <line x1="224" y1="222" x2="224" y2="470" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="236" y="236" fill="#2A4060" font-weight="600">▾ 📂 basic</text>
+        <text x="388" y="236" text-anchor="end" font-size="8" fill="#999">42</text>
+
+        <!-- core > basic > atomic -->
+        <line x1="242" y1="240" x2="242" y2="340" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="254" y="254" fill="#2A4060" font-weight="600">▾ 📂 atomic</text>
+        <text x="388" y="254" text-anchor="end" font-size="8" fill="#999">18</text>
+
+        <line x1="260" y1="258" x2="260" y2="338" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="272" y="270" fill="#333">🔤 Text_Input</text>
+        <text x="272" y="286" fill="#333">🔢 Number_Input</text>
+        <text x="272" y="302" fill="#333">🔑 Password_Input</text>
+        <!-- Hovered item -->
+        <rect x="264" y="306" width="128" height="16" rx="2" fill="#D0E0F0"/>
+        <text x="272" y="318" fill="#0050A0" font-weight="600">☑ Checkbox</text>
+        <text x="272" y="334" fill="#333">⦿ Radio_Button</text>
+
+        <!-- core > basic > compositional -->
+        <text x="254" y="354" fill="#2A4060" font-weight="600">▾ 📂 compositional</text>
+        <text x="388" y="354" text-anchor="end" font-size="8" fill="#999">14</text>
+
+        <line x1="260" y1="358" x2="260" y2="430" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="272" y="370" fill="#333">▼ Combo_Box</text>
+        <text x="272" y="386" fill="#333">📋 List_Box</text>
+        <text x="272" y="402" fill="#333">🎚 Slider</text>
+        <text x="272" y="418" fill="#333">🔀 Toggle_Switch</text>
+        <text x="272" y="434" fill="#888">… 10 more</text>
+
+        <!-- core > basic > display -->
+        <text x="254" y="454" fill="#2A4060">▸ 📂 display</text>
+        <text x="388" y="454" text-anchor="end" font-size="8" fill="#999">10</text>
+
+        <!-- core > layout -->
+        <text x="236" y="474" fill="#2A4060">▸ 📂 layout</text>
+        <text x="388" y="474" text-anchor="end" font-size="8" fill="#999">16</text>
+
+        <!-- core > containers -->
+        <text x="236" y="492" fill="#2A4060">▸ 📂 containers</text>
+        <text x="388" y="492" text-anchor="end" font-size="8" fill="#999">12</text>
+
+        <!-- core > navigation -->
+        <text x="236" y="510" fill="#2A4060">▸ 📂 navigation</text>
+        <text x="388" y="510" text-anchor="end" font-size="8" fill="#999">8</text>
+
+        <!-- core > dialogs -->
+        <text x="236" y="528" fill="#2A4060">▸ 📂 dialogs</text>
+        <text x="388" y="528" text-anchor="end" font-size="8" fill="#999">6</text>
+
+        <!-- Root: Data -->
+        <text x="218" y="552" fill="#2A4060" font-weight="600">▸ 📦 data</text>
+        <text x="388" y="552" text-anchor="end" font-size="8" fill="#999">54</text>
+
+        <!-- Root: Visualisation -->
+        <text x="218" y="572" fill="#2A4060" font-weight="600">▸ 📦 visualisation</text>
+        <text x="388" y="572" text-anchor="end" font-size="8" fill="#999">38</text>
+
+        <!-- Root: Media -->
+        <text x="218" y="592" fill="#2A4060" font-weight="600">▸ 📦 media</text>
+        <text x="388" y="592" text-anchor="end" font-size="8" fill="#999">18</text>
+
+        <!-- Root: Enterprise -->
+        <text x="218" y="612" fill="#2A4060" font-weight="600">▸ 📦 enterprise</text>
+        <text x="388" y="612" text-anchor="end" font-size="8" fill="#999">24</text>
+
+        <!-- Root: Custom -->
+        <text x="218" y="632" fill="#2A4060" font-weight="600">▸ 📦 custom</text>
+        <text x="388" y="632" text-anchor="end" font-size="8" fill="#999">15</text>
+    </g>
+
+    <!-- Path breadcrumb at bottom -->
+    <rect x="208" y="670" width="192" height="18" fill="#E4E0D8" stroke="#C8C4B8" stroke-width="0.5"/>
+    <text x="216" y="683" font-size="8" fill="#666">core › basic › atomic › Checkbox</text>
+
+    <!-- Total count bar -->
+    <rect x="208" y="688" width="192" height="16" fill="#F0EDE8" stroke="#D4D0C8" stroke-width="0.5"/>
+    <text x="304" y="700" text-anchor="middle" font-size="8" fill="#888">247 controls • 6 packages • 24 folders</text>
+
+    <!-- ══ HOVER PREVIEW TOOLTIP ══ -->
+    <!-- Floating card that appears when hovering over a tree item -->
+    <g transform="translate(402,270)" filter="url(#tipSh)">
+        <rect width="200" height="120" rx="4" fill="#fff" stroke="#A0B0C0" stroke-width="0.5"/>
+        <!-- Arrow pointing left -->
+        <polygon points="-6,20 0,14 0,26" fill="#fff" stroke="#A0B0C0" stroke-width="0.5"/>
+        <rect x="-0.5" y="15" width="2" height="10" fill="#fff"/>
+
+        <!-- Header -->
+        <rect width="200" height="24" rx="4 4 0 0" fill="#E8EFF6" stroke="#B0C0D4" stroke-width="0.5"/>
+        <text x="10" y="16" font-size="10" font-weight="600" fill="#2A5090">☑ Checkbox</text>
+        <text x="190" y="16" text-anchor="end" font-size="8" fill="#888">core.basic</text>
+
+        <!-- Mini preview of the control -->
+        <g transform="translate(10,34)">
+            <!-- Unchecked -->
+            <rect width="12" height="12" rx="2" fill="#8098B0"/>
+            <rect x="0.5" y="0.5" width="11" height="11" rx="1.5" fill="#fff"/>
+            <text x="18" y="10" font-size="9" fill="#333">Unchecked</text>
+
+            <!-- Checked -->
+            <rect y="20" width="12" height="12" rx="2" fill="#8098B0"/>
+            <rect x="0.5" y="20.5" width="11" height="11" rx="1.5" fill="#fff"/>
+            <polyline points="2.5,26.5 5,29.5 10,23.5" fill="none" stroke="#2868A0" stroke-width="1.5" stroke-linecap="round"/>
+            <text x="18" y="30" font-size="9" fill="#333">Checked</text>
+
+            <!-- Disabled -->
+            <rect y="40" width="12" height="12" rx="2" fill="#C0C0C0"/>
+            <rect x="0.5" y="40.5" width="11" height="11" rx="1.5" fill="#EAEAEA"/>
+            <text x="18" y="50" font-size="9" fill="#AAA">Disabled</text>
+        </g>
+
+        <!-- Info line -->
+        <text x="10" y="106" font-size="8" fill="#888">States: 4 • Variants: 3 • Tier: A</text>
+    </g>
+
+    <!-- ══ FORM CANVAS ══ -->
+    <rect x="400" y="146" width="450" height="604" fill="#fff" stroke="#C8C4B8" stroke-width="0.5"/>
+    <text x="420" y="174" font-size="15" font-weight="600" fill="#2A4060">User Profile</text>
+    <line x1="420" y1="182" x2="832" y2="182" stroke="#D4D0C8"/>
+
+    <circle cx="452" cy="214" r="24" fill="#D0D8E0" stroke="#A0B0C0"/>
+    <text x="448" y="218" font-size="14" fill="#666">👤</text>
+    <text x="488" y="206" font-size="10" fill="#444" font-weight="600">Display Name</text>
+    <rect x="488" y="212" width="340" height="24" rx="2" fill="#8098B0"/>
+    <rect x="489" y="213" width="338" height="22" rx="1" fill="url(#lunaField)"/>
+    <text x="496" y="229" font-size="10" fill="#1A1A1A">Alice Johnson</text>
+
+    <text x="420" y="260" font-size="10" fill="#444" font-weight="600">Email *</text>
+    <rect x="420" y="266" width="406" height="24" rx="2" fill="#8098B0"/>
+    <rect x="421" y="267" width="404" height="22" rx="1" fill="url(#lunaField)"/>
+    <text x="428" y="283" font-size="10" fill="#1A1A1A">alice@company.co.uk</text>
+
+    <text x="420" y="310" font-size="10" fill="#444" font-weight="600">Bio</text>
+    <rect x="420" y="316" width="406" height="56" rx="2" fill="#8098B0"/>
+    <rect x="421" y="317" width="404" height="54" rx="1" fill="url(#lunaField)"/>
+    <text x="428" y="340" font-size="10" fill="#888">Tell us about yourself…</text>
+
+    <rect x="420" y="390" width="406" height="100" fill="none" stroke="#C4C0B8" rx="3"/>
+    <rect x="430" y="384" width="80" height="12" fill="#fff"/>
+    <text x="434" y="394" font-size="10" font-weight="600" fill="#2A4060">Preferences</text>
+    <text x="436" y="418" font-size="10" fill="#444" font-weight="600">Theme</text>
+    <rect x="436" y="424" width="180" height="24" rx="2" fill="#8098B0"/>
+    <rect x="437" y="425" width="156" height="22" rx="1" fill="#fff"/>
+    <text x="444" y="441" font-size="10" fill="#1A1A1A">Luna Refined</text>
+    <rect x="571" y="425" width="22" height="22" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+    <polygon points="577,435 587,435 582,440" fill="#2A4060"/>
+    <text x="636" y="418" font-size="10" fill="#444" font-weight="600">Notifications</text>
+    <rect x="636" y="426" width="36" height="18" rx="9" fill="#4AC84A"/>
+    <circle cx="663" cy="435" r="7" fill="#fff"/>
+    <rect x="436" y="460" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="437" y="461" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="439.5,467.5 442,470.5 447,464.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+    <text x="456" y="471" font-size="10" fill="#1A1A1A">Make profile public</text>
+
+    <g transform="translate(636,506)"><rect width="96" height="26" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/><text x="48" y="17" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Save Profile</text></g>
+    <g transform="translate(736,506)"><rect width="88" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/><text x="44" y="17" text-anchor="middle" font-size="10" fill="#2A3A50">Cancel</text></g>
+
+    <!-- ══ PROPERTIES PANEL (grouped) ══ -->
+    <rect x="850" y="146" width="350" height="604" fill="#F4F2EC" stroke="#D4D0C8" stroke-width="0.5"/>
+    <rect x="860" y="154" width="330" height="28" rx="3" fill="#fff" stroke="#C8C4B8" stroke-width="0.5"/>
+    <text x="872" y="172" font-size="10" fill="#2A4060" font-weight="600">TextInput</text>
+    <text x="936" y="172" font-size="10" fill="#888">— email</text>
+
+    <rect x="860" y="192" width="330" height="72" rx="6" fill="url(#grpId)" stroke="#B8C8DA" stroke-width="0.5"/>
+    <text x="874" y="210" font-size="10" font-weight="700" fill="#2A5090">Identity</text>
+    <line x1="874" y1="216" x2="1176" y2="216" stroke="rgba(42,80,144,0.15)"/>
+    <text x="874" y="232" font-size="10" fill="#444">Name</text>
+    <rect x="950" y="220" width="228" height="18" rx="2" fill="#fff" stroke="#B0C0D4" stroke-width="0.5"/>
+    <text x="956" y="233" font-size="10" fill="#1A1A1A" class="mono">email</text>
+    <text x="874" y="254" font-size="10" fill="#444">Label</text>
+    <rect x="950" y="242" width="228" height="18" rx="2" fill="#fff" stroke="#B0C0D4" stroke-width="0.5"/>
+    <text x="956" y="255" font-size="10" fill="#1A1A1A">Email</text>
+
+    <rect x="860" y="274" width="330" height="72" rx="6" fill="url(#grpLay)" stroke="#A8C0A8" stroke-width="0.5"/>
+    <text x="874" y="292" font-size="10" font-weight="700" fill="#2A6830">Layout</text>
+    <line x1="874" y1="298" x2="1176" y2="298" stroke="rgba(42,104,48,0.15)"/>
+    <text x="874" y="314" font-size="10" fill="#444">Width</text>
+    <rect x="950" y="302" width="100" height="18" rx="2" fill="#fff" stroke="#A8C0A8" stroke-width="0.5"/>
+    <text x="956" y="315" font-size="10" fill="#1A1A1A" class="mono">406</text>
+    <text x="1056" y="315" font-size="10" fill="#888">px</text>
+    <text x="874" y="336" font-size="10" fill="#444">Colspan</text>
+    <rect x="950" y="324" width="60" height="18" rx="2" fill="#fff" stroke="#A8C0A8" stroke-width="0.5"/>
+    <text x="956" y="337" font-size="10" fill="#1A1A1A" class="mono">2</text>
+
+    <rect x="860" y="356" width="330" height="92" rx="6" fill="url(#grpVal)" stroke="#C8B8A0" stroke-width="0.5"/>
+    <text x="874" y="374" font-size="10" font-weight="700" fill="#806830">Validation</text>
+    <line x1="874" y1="380" x2="1176" y2="380" stroke="rgba(128,104,48,0.15)"/>
+    <text x="874" y="396" font-size="10" fill="#444">Required</text>
+    <rect x="950" y="386" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="951" y="387" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="953.5,393.5 956,396.5 961,390.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+    <text x="874" y="418" font-size="10" fill="#444">Pattern</text>
+    <rect x="950" y="406" width="228" height="18" rx="2" fill="#fff" stroke="#C8B8A0" stroke-width="0.5"/>
+    <text x="956" y="419" font-size="9" fill="#888" class="mono">[a-z]+@[a-z]+\.[a-z]+</text>
+    <text x="874" y="440" font-size="10" fill="#444">Max length</text>
+    <rect x="950" y="428" width="100" height="18" rx="2" fill="#fff" stroke="#C8B8A0" stroke-width="0.5"/>
+    <text x="956" y="441" font-size="10" fill="#1A1A1A" class="mono">255</text>
+
+    <rect x="860" y="458" width="330" height="72" rx="6" fill="url(#grpDat)" stroke="#B8A8C8" stroke-width="0.5"/>
+    <text x="874" y="476" font-size="10" font-weight="700" fill="#584088">Data Binding</text>
+    <line x1="874" y1="482" x2="1176" y2="482" stroke="rgba(88,64,136,0.15)"/>
+    <text x="874" y="498" font-size="10" fill="#444">Field</text>
+    <rect x="950" y="486" width="228" height="18" rx="2" fill="#fff" stroke="#B8A8C8" stroke-width="0.5"/>
+    <text x="956" y="499" font-size="10" fill="#1A1A1A" class="mono">user.email</text>
+    <text x="874" y="520" font-size="10" fill="#444">Type</text>
+    <rect x="950" y="508" width="160" height="18" rx="2" fill="#fff" stroke="#B8A8C8" stroke-width="0.5"/>
+    <text x="956" y="521" font-size="10" fill="#1A1A1A">String</text>
+
+    <rect x="860" y="540" width="330" height="40" rx="4" fill="#EEEAE2" stroke="#D4D0C8" stroke-width="0.5"/>
+    <text x="874" y="556" font-size="9" font-weight="600" fill="#2A4060">email</text>
+    <text x="874" y="572" font-size="9" fill="#666">Email input bound to user.email</text>
+
+    <!-- ══ STATUS BAR ══ -->
+    <rect x="0" y="794" width="1200" height="26" fill="#007ACC"/>
+    <text x="12" y="811" font-size="10" fill="#fff">↗ main</text>
+    <text x="700" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="middle">core › basic › atomic — 18 of 247 controls</text>
+    <text x="1190" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">UTF-8</text>
+</svg>

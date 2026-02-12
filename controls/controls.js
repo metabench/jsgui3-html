@@ -17,6 +17,8 @@
 
 const controls = {
     Active_HTML_Document: require('./organised/1-standard/5-ui/Active_HTML_Document'),
+    Activity_Feed: require('./organised/1-standard/4-data/activity_feed'),
+    Admin_Theme: require('./organised/1-standard/4-data/admin_theme'),
     Arrow_Button: require('./organised/0-core/1-advanced/vector/arrow-button'),
     //Audio_Player: require('./audio-player'),
     Audio_Volume: require('./organised/1-standard/5-ui/audio-volume'),
@@ -38,6 +40,7 @@ const controls = {
     Color_Picker: require('./organised/0-core/0-basic/1-compositional/color-picker'),
     Checkbox: require('./organised/0-core/0-basic/0-native-compositional/checkbox'),
     Combo_Box: require('./organised/0-core/0-basic/1-compositional/combo-box'),
+    Command_Palette: require('./organised/1-standard/5-ui/command_palette'),
     Cluster: require('./organised/1-standard/6-layout/cluster'),
     Dropdown_Menu: require('./organised/0-core/0-basic/1-compositional/Dropdown_Menu'),
     Drawer: require('./organised/1-standard/6-layout/drawer'),
@@ -68,6 +71,7 @@ const controls = {
     File_Tree_Node: require('./organised/1-standard/5-ui/file-tree-node'),
     Icon: require('./organised/0-core/0-basic/0-native-compositional/icon'),
     Inline_Validation_Message: require('./organised/1-standard/1-editor/inline_validation_message'),
+    Key_Value_Table: require('./organised/1-standard/4-data/key_value_table'),
     Item: require('./organised/0-core/0-basic/1-compositional/item'),
     Item_Selector: require('./organised/0-core/0-basic/1-compositional/item-selector'),
     //Item_View: require('./old/item-view'),
@@ -75,6 +79,7 @@ const controls = {
     //Vector: require('./vector'),
     Line_Chart: require('./organised/1-standard/5-ui/line-chart'),
     List: require('./organised/0-core/0-basic/1-compositional/list'),
+    Log_Viewer: require('./organised/1-standard/4-data/log_viewer'),
     // could be in forms / standard forms.
     Login: require('./organised/0-core/1-advanced/login'),
     //Media_Scrubber: require('./media-scrubber'),
@@ -118,6 +123,8 @@ const controls = {
     Skeleton_Loader: require('./organised/0-core/0-basic/1-compositional/skeleton-loader'),
     Spinner: require('./organised/0-core/0-basic/1-compositional/spinner'),
     Split_Pane: require('./organised/1-standard/6-layout/split_pane'),
+    Stat_Card: require('./organised/1-standard/4-data/stat_card'),
+    Status_Dashboard: require('./organised/1-standard/4-data/status_dashboard'),
     Stack: require('./organised/1-standard/6-layout/stack'),
     Standard_Web_Page: require('./organised/1-standard/3-page/standard-web-page'),
     Start_Stop_Toggle_Button: require('./organised/1-standard/5-ui/start-stop-toggle-button'),
@@ -161,7 +168,18 @@ const controls = {
     Password_Input: require('./organised/0-core/0-basic/0-native-compositional/password_input'),
     Virtual_List: require('./organised/1-standard/4-data/virtual_list'),
     Virtual_Grid: require('./organised/1-standard/4-data/virtual_grid'),
-    Error_Summary: require('../validation/error_summary')
+    Error_Summary: require('../validation/error_summary'),
+
+    // ── New controls (sprint batch) ──
+    Sidebar_Nav: require('./organised/1-standard/6-layout/sidebar_nav'),
+    Wizard: require('./organised/1-standard/5-ui/wizard'),
+    Inline_Cell_Edit: require('./organised/1-standard/4-data/inline_cell_edit'),
+    Markdown_Viewer: require('./organised/1-standard/0-viewer/markdown_viewer'),
+    Bar_Chart: require('./organised/1-standard/4-data/bar_chart'),
+    Pie_Chart: require('./organised/1-standard/4-data/pie_chart'),
+    Sparkline: require('./organised/1-standard/4-data/sparkline'),
+    Area_Chart: require('./organised/1-standard/4-data/area_chart'),
+    Gauge: require('./organised/1-standard/4-data/gauge')
 }
 
 // a show_validation_status mixin perhaps???

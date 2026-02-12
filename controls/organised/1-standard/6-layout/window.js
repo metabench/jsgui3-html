@@ -40,6 +40,7 @@ class Window extends Control {
 		super(spec);
 		this.__type_name = 'window';
 		this.add_class('window');
+		this.add_class('jsgui-window');
 
 		// Resolve theme params
 		const { params, hooks } = resolve_params('window', spec, this.context);
@@ -461,161 +462,17 @@ class Window extends Control {
 					this.snap_to_bounds();
 				});
 			}
-			setInterval(() => {
-				if (this.has_class('minimized')) {
-					const extended_bcr = this.bcr().extend('left', 80);
-					const minimized_siblings = this.siblings.filter(x => x.has_class('minimized'));
-					const overlaps = extended_bcr.overlaps(minimized_siblings);
-					if (overlaps && overlaps.length > 0) {
-						const max_overlap_width = Math.max(...overlaps.map(x => x.w))
-						if (max_overlap_width <= 78) {
-							const parent_bcr = this.parent.bcr();
-							const parent_left = parent_bcr[0][0];
-							const my_bcr = this.bcr();
-							const my_left = my_bcr[0][0];
-							const dist_from_parent_left = my_left - parent_left;
-							if (dist_from_parent_left > 2) {
-								this.ta[6] = this.ta[6] - 1;
-							}
-						}
-					} else {
-						const parent_bcr = this.parent.bcr();
-						const parent_left = parent_bcr[0][0];
-						const my_bcr = this.bcr();
-						const my_left = my_bcr[0][0];
-						const dist_from_parent_left = my_left - parent_left;
-						if (dist_from_parent_left > 2) {
-							if (dist_from_parent_left > 8) {
-								this.ta[6] = this.ta[6] - 8;
-							} else {
-								this.ta[6] = this.ta[6] - dist_from_parent_left;
-							}
-						}
-					}
-				}
-			}, 18);
 		}
 	}
 }
 Window.css = `
-.relative {
-	position: relative;
-}
-.window.no-transitions {
-	transition: none !important; 
-}
-:root {
-	--rhsqsize: 16px;
-}
-.resize-handle {
-	width: var(--rhsqsize);
-	height: var(--rhsqsize);
-	color: #CCCCCC;
-	opacity: 0.45;
-	position: absolute;
-	line-height: var(--rhsqsize);
-	font-size: var(--rhsqsize);
-	user-select: none;
-	transition: color 0.14s ease-in-out, opacity 0.14s ease-in-out;
-}
-.resize-handle:hover {
-	color: #EFCF00;
-	opacity: 0.5;
-}
-.resize-handle.resizing {
-	color: #FFDF00;
-	opacity: 1;
-}
-.bottom-right.resize-handle {
-	right: 0;
-	bottom: 0;
-	cursor: nwse-resize;
-	z-index: 10000001;
-}
 .window {
     position: absolute;
-    border: 1px solid #CCCCCC;
-	background-color: #F4F4F4;
-	width: 360px;
-	height: 360px;
-	border-radius: 5px;
-	transition: width 0.14s linear, height 0.14s linear; 
-	overflow: hidden;
-	-webkit-user-select: none;
-	user-select: none;
-}
-.window .relative {
-	height: inherit;
-	overflow: hidden;
+    width: 360px;
+    height: 360px;
 }
 .window.minimized {
-	height: 31px;
+    height: 36px;
 }
-.window.minimized .bottom-right.resize-handle {
-	display: none;
-}
-.window.maximized .bottom-right.resize-handle {
-	display: none;
-}
-.window.docked-left,
-.window.docked-right,
-.window.docked-top,
-.window.docked-bottom,
-.window.docked-fill {
-	border-radius: 0;
-}
-.window .title.bar {
-    height: 31px;
-	background-color: #0D4F8B;
-	background-image: linear-gradient(to right, #0D4F8B , #3fb0d9);
-    color: #FFFFFF;
-    font-size: 12px;
-    line-height: 32px;
-    text-indent: 4px;
-    -webkit-box-shadow: inset 0px -2px 2px -2px rgba(0, 0, 0, 0.75);
-    -moz-box-shadow: inset 0px -2px 2px -2px rgba(0, 0, 0, 0.75);
-    box-shadow: inset 0px -2px 2px -2px rgba(0, 0, 0, 0.75);
-	border-radius: 4px;
-	-webkit-user-select: none;
-	user-select: none;
-	overflow: hidden;
-	cursor: default;
-}
-.window .title.bar h2 {
-	font-weight: 400;
-	margin-left: 42px;
-	float: left;
-}
-.window .title.bar > span {
-    vertical-align: middle;
-    line-height: 31px;
-}
-.window .title.bar .button > span {
-	transform: scale(2);
-    display: inline-block;
-	line-height: 13px;
-    height: 14px;
-}
-.window .title.bar .right {
-    margin-right: 2px;
-    margin-top: 2px;
-    position: absolute;
-    right: 0;
-    top: 0;
-	height: 29px;
-}
-.window .title.bar .button {
-    width: 26px;
-	height: 26px;
-	line-height: 24px;
-	font-size: 14px;
-}
-.window .title.bar .button + .button {
-    margin-left: 3px;
-}
-.window .relative .inner {
-	width: 100%;
-	height: calc(100% - 31px);
-}
-`
+`;
 module.exports = Window;

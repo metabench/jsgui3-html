@@ -1,0 +1,91 @@
+/*
+ * Split Pane Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-split-pane
+ * Features: horizontal/vertical, drag handle, min/max sizes
+ */
+
+/* ── Base ── */
+.jsgui-split-pane {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+/* Vertical layout (stacked top/bottom) */
+.jsgui-split-pane.split-pane-vertical {
+    flex-direction: column;
+}
+
+/* ── Panes ── */
+.jsgui-split-pane .split-pane-pane {
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+}
+
+/* ── Drag handle ── */
+.jsgui-split-pane .split-pane-handle {
+    flex-shrink: 0;
+    background: var(--j-border, #e2e8f0);
+    position: relative;
+    z-index: 1;
+    transition: background var(--j-duration-fast) var(--j-ease-out);
+}
+
+/* Horizontal handle (vertical bar between left/right) */
+.jsgui-split-pane:not(.split-pane-vertical)>.split-pane-handle {
+    width: 4px;
+    cursor: col-resize;
+}
+
+/* Vertical handle (horizontal bar between top/bottom) */
+.jsgui-split-pane.split-pane-vertical>.split-pane-handle {
+    height: 4px;
+    cursor: row-resize;
+}
+
+/* Handle hover/active */
+.jsgui-split-pane .split-pane-handle:hover {
+    background: var(--j-primary, #3b82f6);
+}
+
+.jsgui-split-pane .split-pane-handle:active {
+    background: var(--j-primary, #3b82f6);
+}
+
+/* Handle grip indicator (dots) */
+.jsgui-split-pane .split-pane-handle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 2px;
+}
+
+.jsgui-split-pane:not(.split-pane-vertical)>.split-pane-handle::after {
+    width: 2px;
+    height: 24px;
+    border-top: 2px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.15);
+}
+
+.jsgui-split-pane.split-pane-vertical>.split-pane-handle::after {
+    width: 24px;
+    height: 2px;
+    border-left: 2px solid rgba(0, 0, 0, 0.15);
+    border-right: 2px solid rgba(0, 0, 0, 0.15);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-split-pane .split-pane-handle {
+        transition: none;
+    }
+}

@@ -1,0 +1,108 @@
+/*
+ * Breadcrumbs Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-breadcrumbs
+ * Features: separator, hover underline, current (last) item, compact size
+ */
+
+/* ── Base ── */
+.jsgui-breadcrumbs {
+    font-family: var(--j-font-sans);
+}
+
+/* ── List ── */
+.jsgui-breadcrumbs .breadcrumbs-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--j-space-1, 4px);
+    padding: 0;
+    margin: 0;
+}
+
+/* ── Items ── */
+.jsgui-breadcrumbs .breadcrumbs-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--j-space-1, 4px);
+    font-size: var(--j-text-sm);
+    color: var(--j-fg-muted);
+}
+
+/* Separator */
+.jsgui-breadcrumbs .breadcrumbs-item::after {
+    content: '/';
+    color: var(--j-border, #cbd5e1);
+    font-weight: 300;
+    margin-left: var(--j-space-1, 2px);
+}
+
+.jsgui-breadcrumbs .breadcrumbs-item:last-child::after {
+    content: '';
+}
+
+/* Current (last) item */
+.jsgui-breadcrumbs .breadcrumbs-item:last-child .breadcrumbs-link {
+    color: var(--j-fg);
+    font-weight: var(--j-font-weight-medium);
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ── Link / button ── */
+.jsgui-breadcrumbs .breadcrumbs-link {
+    text-decoration: none;
+    color: var(--j-fg-muted);
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: var(--j-space-1, 2px) var(--j-space-1, 4px);
+    border-radius: var(--j-radius-sm, 3px);
+    font: inherit;
+    line-height: 1.4;
+    transition:
+        color var(--j-duration-fast) var(--j-ease-out),
+        background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-breadcrumbs .breadcrumbs-link:hover {
+    color: var(--j-primary);
+    background: color-mix(in srgb, var(--j-primary) 8%, transparent);
+}
+
+.jsgui-breadcrumbs .breadcrumbs-link:focus-visible {
+    outline: 2px solid var(--j-primary);
+    outline-offset: 2px;
+}
+
+/* ══════════════════════════════════════════
+   Sizes
+   ══════════════════════════════════════════ */
+
+.jsgui-breadcrumbs[data-size="sm"] .breadcrumbs-item {
+    font-size: var(--j-text-xs);
+}
+
+.jsgui-breadcrumbs[data-size="lg"] .breadcrumbs-item {
+    font-size: var(--j-text-base);
+}
+
+/* ══════════════════════════════════════════
+   Arrow separator variant
+   ══════════════════════════════════════════ */
+
+.jsgui-breadcrumbs[data-variant="arrow"] .breadcrumbs-item::after {
+    content: '›';
+    font-size: 1.1em;
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-breadcrumbs .breadcrumbs-link {
+        transition: none;
+    }
+}

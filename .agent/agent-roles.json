@@ -1,0 +1,31 @@
+{
+    "description": "Agent personas available for Antigravity to adopt from copilot-dl-news",
+    "source_repo": "c:\\Users\\james\\Documents\\repos\\copilot-dl-news",
+    "index_path": ".github/agents/index.json",
+    "agents": [
+        {
+            "slug": "memory-agent",
+            "when": "Session continuity, knowledge retrieval, capturing user intent"
+        },
+        {
+            "slug": "refactor-locksmith",
+            "when": "Surgical refactoring without breaking callers"
+        },
+        {
+            "slug": "endurance-brain-agent",
+            "when": "Multi-step execution tasks, preventing suggest-then-stop"
+        },
+        {
+            "slug": "design-skills-curator",
+            "when": "UI design, theming, WLILO styling, visual quality"
+        },
+        {
+            "slug": "prof-edge-case",
+            "when": "Edge case hunting, boundary testing, regression guards"
+        },
+        {
+            "slug": "ux-cartographer",
+            "when": "UI flow mapping, E2E design, behaviour invariants"
+        }
+    ]
+}

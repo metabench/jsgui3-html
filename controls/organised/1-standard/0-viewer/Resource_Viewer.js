@@ -43,11 +43,11 @@ class Resource_Viewer extends Control {
         });
 
         if (!spec.abstract && !spec.el) {
-            this.compose_viewer();
+            this.compose();
         }
     }
 
-    compose_viewer() {
+    compose() {
         this.refresh_view();
     }
 

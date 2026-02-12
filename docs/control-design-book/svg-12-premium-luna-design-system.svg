@@ -1,0 +1,510 @@
+<svg viewBox="0 0 1100 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Premium upgraded Luna gradients -->
+        <linearGradient id="pBtn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="6%" stop-color="#E8F0FA"/>
+            <stop offset="46%" stop-color="#C4D8EE"/>
+            <stop offset="54%" stop-color="#8EB8E2"/>
+            <stop offset="94%" stop-color="#A6C8EC"/>
+            <stop offset="100%" stop-color="#B4D2F2"/>
+        </linearGradient>
+        <linearGradient id="pBtnHot" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFDF8"/>
+            <stop offset="6%" stop-color="#FFE8C0"/>
+            <stop offset="46%" stop-color="#FFD080"/>
+            <stop offset="54%" stop-color="#FFA830"/>
+            <stop offset="94%" stop-color="#FFBE60"/>
+            <stop offset="100%" stop-color="#FFCE80"/>
+        </linearGradient>
+        <linearGradient id="pBtnPrimary" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="6%" stop-color="#D0E4FF"/>
+            <stop offset="46%" stop-color="#7CB4F0"/>
+            <stop offset="54%" stop-color="#3C8CD8"/>
+            <stop offset="94%" stop-color="#5CA0E4"/>
+            <stop offset="100%" stop-color="#70B0F0"/>
+        </linearGradient>
+        <linearGradient id="pBtnDanger" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="6%" stop-color="#FFD8D8"/>
+            <stop offset="46%" stop-color="#F09090"/>
+            <stop offset="54%" stop-color="#D84040"/>
+            <stop offset="94%" stop-color="#E06060"/>
+            <stop offset="100%" stop-color="#E87070"/>
+        </linearGradient>
+        <linearGradient id="pBtnSuccess" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="6%" stop-color="#D0F0D0"/>
+            <stop offset="46%" stop-color="#70D070"/>
+            <stop offset="54%" stop-color="#30A830"/>
+            <stop offset="94%" stop-color="#50C050"/>
+            <stop offset="100%" stop-color="#60CC60"/>
+        </linearGradient>
+        <linearGradient id="pBtnWarn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="6%" stop-color="#FFF0D0"/>
+            <stop offset="46%" stop-color="#FFD060"/>
+            <stop offset="54%" stop-color="#E8A000"/>
+            <stop offset="94%" stop-color="#F0B830"/>
+            <stop offset="100%" stop-color="#F4C440"/>
+        </linearGradient>
+        <linearGradient id="pBtnPurple" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFFFFF"/>
+            <stop offset="6%" stop-color="#E0D8F0"/>
+            <stop offset="46%" stop-color="#B0A0D8"/>
+            <stop offset="54%" stop-color="#7858B0"/>
+            <stop offset="94%" stop-color="#9070C0"/>
+            <stop offset="100%" stop-color="#A080D0"/>
+        </linearGradient>
+        <!-- Gloss overlays -->
+        <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.6)"/>
+            <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </linearGradient>
+        <!-- Title bars -->
+        <linearGradient id="tBar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#B0D0F0"/>
+            <stop offset="15%" stop-color="#88BAE8"/>
+            <stop offset="50%" stop-color="#60A0DD"/>
+            <stop offset="85%" stop-color="#80B4E4"/>
+            <stop offset="100%" stop-color="#98C4EC"/>
+        </linearGradient>
+        <!-- Shadows -->
+        <filter id="ds" x="-5%" y="-5%" width="115%" height="115%">
+            <feDropShadow dx="2" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.2)"/>
+        </filter>
+        <filter id="ds2" x="-5%" y="-5%" width="115%" height="115%">
+            <feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="rgba(0,0,0,0.15)"/>
+        </filter>
+        <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+            <feGaussianBlur stdDeviation="3" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <!-- Inset for fields -->
+        <linearGradient id="fld" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#D8D4CC"/>
+            <stop offset="4%" stop-color="#FFF"/>
+            <stop offset="100%" stop-color="#FFF"/>
+        </linearGradient>
+        <!-- Progress fills -->
+        <linearGradient id="pgBlue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#7EC8FF"/>
+            <stop offset="40%" stop-color="#3A9EE8"/>
+            <stop offset="100%" stop-color="#2080D0"/>
+        </linearGradient>
+        <linearGradient id="pgGreen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#80E878"/>
+            <stop offset="40%" stop-color="#40C838"/>
+            <stop offset="100%" stop-color="#28A820"/>
+        </linearGradient>
+        <linearGradient id="pgOrange" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#FFD080"/>
+            <stop offset="40%" stop-color="#F0A030"/>
+            <stop offset="100%" stop-color="#D88810"/>
+        </linearGradient>
+    </defs>
+    <style>text{font-family:'Segoe UI',Tahoma,sans-serif}</style>
+
+    <!-- BG -->
+    <rect width="1100" height="800" fill="#E8E4DA"/>
+    <text x="550" y="28" text-anchor="middle" font-size="15" font-weight="bold" fill="#003399">
+        jsgui3-html — "Premium Luna" Design System: The Best of XP/7 — Enhanced
+    </text>
+    <text x="550" y="46" text-anchor="middle" font-size="11" fill="#666">
+        Same visual language, but more refined gradients, richer shadows, smoother curves, better typography
+    </text>
+
+    <!-- ═══════ ROW 1: Button Family ═══════ -->
+    <text x="30" y="72" font-size="12" font-weight="bold" fill="#003399">Complete Button Family</text>
+    <line x1="30" y1="77" x2="1070" y2="77" stroke="#B4B0A0"/>
+
+    <!-- Primary -->
+    <g transform="translate(30,88)">
+        <rect x="-2" y="-2" width="114" height="38" rx="6" fill="#4488DD" opacity="0.35"/>
+        <rect width="110" height="34" rx="5" fill="url(#pBtnPrimary)" stroke="#1858A0" stroke-width="1"/>
+        <rect x="1" y="1" width="108" height="14" rx="4" fill="url(#gloss)"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Primary</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Default / CTA</text>
+    </g>
+    <!-- Secondary -->
+    <g transform="translate(160,88)">
+        <rect width="110" height="34" rx="5" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="1"/>
+        <rect x="1" y="1" width="108" height="14" rx="4" fill="url(#gloss)"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" fill="#1A4070">Secondary</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Normal action</text>
+    </g>
+    <!-- Hover -->
+    <g transform="translate(290,88)">
+        <rect x="-2" y="-2" width="114" height="38" rx="6" fill="#FFD050" opacity="0.45"/>
+        <rect width="110" height="34" rx="5" fill="url(#pBtnHot)" stroke="#B06000" stroke-width="1"/>
+        <rect x="1" y="1" width="108" height="14" rx="4" fill="url(#gloss)"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" fill="#703000">Hover</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Hot-tracked</text>
+    </g>
+    <!-- Success -->
+    <g transform="translate(420,88)">
+        <rect x="-2" y="-2" width="114" height="38" rx="6" fill="#30CC30" opacity="0.3"/>
+        <rect width="110" height="34" rx="5" fill="url(#pBtnSuccess)" stroke="#188018" stroke-width="1"/>
+        <rect x="1" y="1" width="108" height="14" rx="4" fill="url(#gloss)"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">✓ Success</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Confirm / Save</text>
+    </g>
+    <!-- Danger -->
+    <g transform="translate(550,88)">
+        <rect x="-2" y="-2" width="114" height="38" rx="6" fill="#DD4444" opacity="0.3"/>
+        <rect width="110" height="34" rx="5" fill="url(#pBtnDanger)" stroke="#A01818" stroke-width="1"/>
+        <rect x="1" y="1" width="108" height="14" rx="4" fill="url(#gloss)"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">✕ Danger</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Delete / Remove</text>
+    </g>
+    <!-- Warning -->
+    <g transform="translate(680,88)">
+        <rect x="-2" y="-2" width="114" height="38" rx="6" fill="#EEB030" opacity="0.3"/>
+        <rect width="110" height="34" rx="5" fill="url(#pBtnWarn)" stroke="#907010" stroke-width="1"/>
+        <rect x="1" y="1" width="108" height="14" rx="4" fill="url(#gloss)"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#603000">⚠ Warning</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Caution action</text>
+    </g>
+    <!-- Purple / accent -->
+    <g transform="translate(810,88)">
+        <rect x="-2" y="-2" width="114" height="38" rx="6" fill="#8860C0" opacity="0.3"/>
+        <rect width="110" height="34" rx="5" fill="url(#pBtnPurple)" stroke="#4A3080" stroke-width="1"/>
+        <rect x="1" y="1" width="108" height="14" rx="4" fill="url(#gloss)"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Accent</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Branded / accent</text>
+    </g>
+    <!-- Disabled -->
+    <g transform="translate(940,88)">
+        <rect width="110" height="34" rx="5" fill="#F0F0F0" stroke="#C4C0B8" stroke-width="1"/>
+        <text x="55" y="22" text-anchor="middle" font-size="12" fill="#B0B0B0">Disabled</text>
+        <text x="55" y="48" text-anchor="middle" font-size="9" fill="#888">Unavailable</text>
+    </g>
+
+    <!-- ═══════ ROW 2: Pill & Icon Buttons ═══════ -->
+    <!-- Large pill -->
+    <g transform="translate(30,152)">
+        <rect x="-2" y="-2" width="184" height="46" rx="23" fill="#4488DD" opacity="0.3"/>
+        <rect width="180" height="42" rx="21" fill="url(#pBtnPrimary)" stroke="#1858A0" stroke-width="1.5"/>
+        <rect x="2" y="2" width="176" height="18" rx="18" fill="url(#gloss)"/>
+        <text x="90" y="27" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">Get Started →</text>
+    </g>
+    <!-- Icon buttons -->
+    <g transform="translate(230,152)">
+        <rect width="36" height="36" rx="5" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="1"/>
+        <rect x="1" y="1" width="34" height="15" rx="4" fill="url(#gloss)"/>
+        <text x="18" y="24" text-anchor="middle" font-size="16">📋</text>
+    </g>
+    <g transform="translate(275,152)">
+        <rect width="36" height="36" rx="5" fill="url(#pBtnHot)" stroke="#B06000" stroke-width="1"/>
+        <rect x="1" y="1" width="34" height="15" rx="4" fill="url(#gloss)"/>
+        <text x="18" y="24" text-anchor="middle" font-size="16">✂️</text>
+    </g>
+    <g transform="translate(320,152)">
+        <rect width="36" height="36" rx="5" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="1"/>
+        <rect x="1" y="1" width="34" height="15" rx="4" fill="url(#gloss)"/>
+        <text x="18" y="24" text-anchor="middle" font-size="16">📎</text>
+    </g>
+    <g transform="translate(365,152)">
+        <rect width="36" height="36" rx="5" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="1"/>
+        <rect x="1" y="1" width="34" height="15" rx="4" fill="url(#gloss)"/>
+        <text x="18" y="24" text-anchor="middle" font-size="16">🔍</text>
+    </g>
+    <g transform="translate(410,152)">
+        <rect width="36" height="36" rx="5" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="1"/>
+        <rect x="1" y="1" width="34" height="15" rx="4" fill="url(#gloss)"/>
+        <text x="18" y="24" text-anchor="middle" font-size="16">⚙</text>
+    </g>
+
+    <!-- Button group (segmented) -->
+    <g transform="translate(470,155)">
+        <text x="0" y="-5" font-size="9" fill="#666">Segmented buttons:</text>
+        <rect width="70" height="32" rx="5 0 0 5" fill="url(#pBtnPrimary)" stroke="#1858A0" stroke-width="1"/>
+        <rect x="1" y="1" width="68" height="13" rx="4 0 0 0" fill="url(#gloss)"/>
+        <text x="35" y="21" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">Day</text>
+        <rect x="70" y="0" width="70" height="32" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="1"/>
+        <rect x="71" y="1" width="68" height="13" fill="url(#gloss)"/>
+        <text x="105" y="21" text-anchor="middle" font-size="10" fill="#1A4070">Week</text>
+        <rect x="140" y="0" width="70" height="32" rx="0 5 5 0" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="1"/>
+        <rect x="141" y="1" width="68" height="13" rx="0 4 0 0" fill="url(#gloss)"/>
+        <text x="175" y="21" text-anchor="middle" font-size="10" fill="#1A4070">Month</text>
+    </g>
+
+    <!-- ═══════ ROW 3: Form Controls ═══════ -->
+    <text x="30" y="215" font-size="12" font-weight="bold" fill="#003399">Form Controls — Enhanced</text>
+    <line x1="30" y1="220" x2="1070" y2="220" stroke="#B4B0A0"/>
+
+    <!-- Text input with label -->
+    <g transform="translate(30,230)">
+        <text x="0" y="0" font-size="10" fill="#333" font-weight="600">Username:</text>
+        <rect y="6" width="200" height="26" rx="4" fill="#7F9DB9" stroke="#5A80A8" stroke-width="0.5"/>
+        <rect x="1" y="7" width="198" height="24" rx="3" fill="url(#fld)"/>
+        <text x="8" y="24" font-size="11" fill="#000">james.richardson</text>
+    </g>
+
+    <!-- Focused input with glow -->
+    <g transform="translate(260,230)">
+        <text x="0" y="0" font-size="10" fill="#333" font-weight="600">Email:</text>
+        <rect x="-3" y="3" width="226" height="32" rx="6" fill="#68A8E8" opacity="0.5"/>
+        <rect y="6" width="220" height="26" rx="4" fill="#5A90C0" stroke="#2060A0" stroke-width="1"/>
+        <rect x="1" y="7" width="218" height="24" rx="3" fill="#fff"/>
+        <text x="8" y="24" font-size="11" fill="#000">hello@example.com</text>
+        <line x1="140" y1="12" x2="140" y2="28" stroke="#003399" stroke-width="1"/>
+    </g>
+
+    <!-- Search with icon -->
+    <g transform="translate(510,230)">
+        <text x="0" y="0" font-size="10" fill="#333" font-weight="600">Search:</text>
+        <rect y="6" width="200" height="26" rx="13" fill="#7F9DB9"/>
+        <rect x="1" y="7" width="198" height="24" rx="12" fill="#fff"/>
+        <text x="14" y="24" font-size="12" fill="#B0B0B0">🔍</text>
+        <text x="32" y="24" font-size="11" fill="#ACA899">Search files...</text>
+    </g>
+
+    <!-- Combo box -->
+    <g transform="translate(740,230)">
+        <text x="0" y="0" font-size="10" fill="#333" font-weight="600">Country:</text>
+        <rect y="6" width="180" height="26" rx="4" fill="#7F9DB9"/>
+        <rect x="1" y="7" width="178" height="24" rx="3" fill="#fff"/>
+        <text x="8" y="24" font-size="11" fill="#000">United Kingdom</text>
+        <rect x="155" y="7" width="24" height="24" rx="0 3 3 0" fill="url(#pBtn)" stroke="#7F9DB9" stroke-width="0.5"/>
+        <rect x="156" y="8" width="22" height="10" rx="0 2 0 0" fill="url(#gloss)"/>
+        <polygon points="161,17 173,17 167,23" fill="#003C74"/>
+    </g>
+
+    <!-- ═══════ ROW 4: Premium Enhanced Window ═══════ -->
+    <text x="30" y="290" font-size="12" font-weight="bold" fill="#003399">Premium Enhanced Window — Email Client</text>
+    <line x1="30" y1="295" x2="1070" y2="295" stroke="#B4B0A0"/>
+
+    <g transform="translate(30,305)" filter="url(#ds)">
+        <!-- Window chrome -->
+        <rect width="700" height="370" rx="8" fill="rgba(80,140,200,0.4)" stroke="rgba(40,90,160,0.5)" stroke-width="1"/>
+        <rect x="1" y="1" width="698" height="368" rx="7" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.25)" stroke-width="0.5"/>
+
+        <!-- Title bar glass -->
+        <rect x="2" y="2" width="696" height="32" rx="6" fill="url(#tBar)"/>
+        <rect x="3" y="3" width="694" height="13" rx="5" fill="rgba(255,255,255,0.35)"/>
+        <text x="14" y="24" font-size="16">✉️</text>
+        <text x="36" y="24" font-size="12" fill="#0A2050" font-weight="600">Inbox — jsgui3 Mail</text>
+        <text x="160" y="24" font-size="10" fill="rgba(10,30,80,0.6)">(3 unread)</text>
+
+        <!-- Caption buttons -->
+        <rect x="605" y="5" width="28" height="22" rx="3" fill="rgba(255,255,255,0.3)" stroke="rgba(100,140,180,0.3)"/>
+        <line x1="613" y1="17" x2="625" y2="17" stroke="#1A3060" stroke-width="1.5"/>
+        <rect x="636" y="5" width="28" height="22" rx="3" fill="rgba(255,255,255,0.3)" stroke="rgba(100,140,180,0.3)"/>
+        <rect x="644" y="9" width="12" height="10" rx="1" fill="none" stroke="#1A3060" stroke-width="1.5"/>
+        <rect x="667" y="5" width="28" height="22" rx="3" fill="#E04040" stroke="#B02020"/>
+        <line x1="675" y1="9" x2="687" y2="22" stroke="#fff" stroke-width="1.5"/>
+        <line x1="687" y1="9" x2="675" y2="22" stroke="#fff" stroke-width="1.5"/>
+
+        <!-- Toolbar -->
+        <rect x="2" y="34" width="696" height="36" fill="#F2EFEA"/>
+        <!-- Toolbar buttons -->
+        <g transform="translate(8,38)">
+            <rect width="60" height="28" rx="4" fill="url(#pBtnPrimary)" stroke="#1858A0" stroke-width="0.8"/>
+            <rect x="1" y="1" width="58" height="11" rx="3" fill="url(#gloss)"/>
+            <text x="30" y="19" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">✏ New</text>
+        </g>
+        <g transform="translate(75,38)">
+            <rect width="60" height="28" rx="4" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="0.8"/>
+            <rect x="1" y="1" width="58" height="11" rx="3" fill="url(#gloss)"/>
+            <text x="30" y="19" text-anchor="middle" font-size="10" fill="#1A4070">↩ Reply</text>
+        </g>
+        <g transform="translate(142,38)">
+            <rect width="78" height="28" rx="4" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="0.8"/>
+            <rect x="1" y="1" width="76" height="11" rx="3" fill="url(#gloss)"/>
+            <text x="39" y="19" text-anchor="middle" font-size="10" fill="#1A4070">↩↩ Reply All</text>
+        </g>
+        <g transform="translate(227,38)">
+            <rect width="72" height="28" rx="4" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="0.8"/>
+            <rect x="1" y="1" width="70" height="11" rx="3" fill="url(#gloss)"/>
+            <text x="36" y="19" text-anchor="middle" font-size="10" fill="#1A4070">⤳ Forward</text>
+        </g>
+        <line x1="310" y1="40" x2="310" y2="64" stroke="#C4C0B8"/>
+        <g transform="translate(318,38)">
+            <rect width="60" height="28" rx="4" fill="url(#pBtnDanger)" stroke="#A01818" stroke-width="0.8"/>
+            <rect x="1" y="1" width="58" height="11" rx="3" fill="url(#gloss)"/>
+            <text x="30" y="19" text-anchor="middle" font-size="10" font-weight="bold" fill="#fff">🗑 Delete</text>
+        </g>
+
+        <!-- Message list header -->
+        <rect x="2" y="70" width="696" height="20" fill="#E8E4DA" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="12" y="84" font-size="9" font-weight="bold" fill="#333">From</text>
+        <line x1="180" y1="71" x2="180" y2="89" stroke="#C8C4BC"/>
+        <text x="190" y="84" font-size="9" font-weight="bold" fill="#333">Subject</text>
+        <line x1="480" y1="71" x2="480" y2="89" stroke="#C8C4BC"/>
+        <text x="490" y="84" font-size="9" font-weight="bold" fill="#333">Date</text>
+        <line x1="580" y1="71" x2="580" y2="89" stroke="#C8C4BC"/>
+        <text x="590" y="84" font-size="9" font-weight="bold" fill="#333">Size</text>
+
+        <!-- Email row 1 (unread, selected) -->
+        <rect x="2" y="90" width="696" height="22" fill="#316AC5"/>
+        <text x="12" y="106" font-size="10" fill="#fff" font-weight="bold">Sarah Johnson</text>
+        <text x="190" y="106" font-size="10" fill="#fff" font-weight="bold">Re: Project milestone review 🔵</text>
+        <text x="490" y="106" font-size="10" fill="rgba(255,255,255,0.8)">Today 10:22</text>
+        <text x="590" y="106" font-size="10" fill="rgba(255,255,255,0.8)">14 KB</text>
+
+        <!-- Email row 2 (unread) -->
+        <rect x="2" y="112" width="696" height="22" fill="#fff"/>
+        <text x="12" y="128" font-size="10" fill="#000" font-weight="bold">GitHub</text>
+        <text x="190" y="128" font-size="10" fill="#000" font-weight="bold">[jsgui3-html] PR #47 merged 🔵</text>
+        <text x="490" y="128" font-size="10" fill="#666">Today 09:15</text>
+        <text x="590" y="128" font-size="10" fill="#666">8 KB</text>
+
+        <!-- Email row 3 (read) -->
+        <rect x="2" y="134" width="696" height="22" fill="#F8F6F2"/>
+        <text x="12" y="150" font-size="10" fill="#444">DevOps Team</text>
+        <text x="190" y="150" font-size="10" fill="#444">Build #2847 passed ✅</text>
+        <text x="490" y="150" font-size="10" fill="#888">Yesterday</text>
+        <text x="590" y="150" font-size="10" fill="#888">6 KB</text>
+
+        <!-- Email row 4 (read) -->
+        <rect x="2" y="156" width="696" height="22" fill="#fff"/>
+        <text x="12" y="172" font-size="10" fill="#444">Alex Chen</text>
+        <text x="190" y="172" font-size="10" fill="#444">Code review feedback</text>
+        <text x="490" y="172" font-size="10" fill="#888">Feb 9</text>
+        <text x="590" y="172" font-size="10" fill="#888">22 KB</text>
+
+        <!-- Email preview pane -->
+        <rect x="2" y="180" width="696" height="2" fill="#D4D0C8"/>
+        <rect x="2" y="182" width="696" height="158" fill="#fff"/>
+
+        <!-- Preview header -->
+        <rect x="2" y="182" width="696" height="50" fill="#F8F6F2"/>
+        <text x="14" y="200" font-size="12" font-weight="bold" fill="#003399">Re: Project milestone review</text>
+        <text x="14" y="216" font-size="10" fill="#666">From: Sarah Johnson &lt;sarah@company.com&gt;</text>
+        <text x="14" y="228" font-size="10" fill="#666">To: James Richardson — Today at 10:22 AM</text>
+
+        <!-- Preview body -->
+        <text x="14" y="250" font-size="10" fill="#000">Hi James,</text>
+        <text x="14" y="268" font-size="10" fill="#333">
+            Great progress on the UI controls! The new Month View
+        </text>
+        <text x="14" y="284" font-size="10" fill="#333">
+            looks excellent. I've reviewed the range selection and
+        </text>
+        <text x="14" y="300" font-size="10" fill="#333">
+            multi-select features — both work smoothly now.
+        </text>
+        <text x="14" y="322" font-size="10" fill="#333">
+            Can we schedule a demo for the team next Tuesday?
+        </text>
+
+        <!-- Status bar -->
+        <rect x="2" y="340" width="696" height="28" rx="0 0 6 6" fill="#E8E4DA" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="12" y="358" font-size="10" fill="#333">📬 3 unread • 247 total</text>
+        <text x="580" y="358" font-size="10" fill="#666">Connected ✓</text>
+    </g>
+
+    <!-- ═══════ SIDE: Cards / Panels ═══════ -->
+    <g transform="translate(760,305)" filter="url(#ds2)">
+        <!-- Card 1: Notification card -->
+        <rect width="300" height="110" rx="6" fill="#ECE9D8" stroke="#ACA899" stroke-width="1"/>
+        <rect x="1" y="1" width="298" height="22" rx="5" fill="url(#tBar)"/>
+        <rect x="2" y="2" width="296" height="9" rx="4" fill="rgba(255,255,255,0.3)"/>
+        <text x="12" y="17" font-size="11" font-weight="bold" fill="#0A2050">🔔 Notifications</text>
+        <text x="284" y="17" font-size="10" fill="rgba(10,30,80,0.6)">×</text>
+
+        <g transform="translate(10,32)">
+            <circle cx="6" cy="6" r="4" fill="#30A830"/>
+            <text x="16" y="10" font-size="10" fill="#333">Build #2847 completed successfully</text>
+            <text x="16" y="22" font-size="9" fill="#888">2 minutes ago</text>
+        </g>
+        <line x1="10" y1="58" x2="290" y2="58" stroke="#D4D0C8"/>
+        <g transform="translate(10,64)">
+            <circle cx="6" cy="6" r="4" fill="#E8A000"/>
+            <text x="16" y="10" font-size="10" fill="#333">PR #48 awaiting review</text>
+            <text x="16" y="22" font-size="9" fill="#888">15 minutes ago</text>
+        </g>
+        <rect x="210" y="85" width="75" height="20" rx="3" fill="url(#pBtn)" stroke="#5A80A8" stroke-width="0.5"/>
+        <rect x="211" y="86" width="73" height="8" rx="2" fill="url(#gloss)"/>
+        <text x="247" y="99" text-anchor="middle" font-size="9" fill="#1A4070">View All</text>
+    </g>
+
+    <!-- Card 2: Stats panel -->
+    <g transform="translate(760,425)" filter="url(#ds2)">
+        <rect width="300" height="120" rx="6" fill="#ECE9D8" stroke="#ACA899" stroke-width="1"/>
+        <rect x="1" y="1" width="298" height="22" rx="5" fill="url(#tBar)"/>
+        <rect x="2" y="2" width="296" height="9" rx="4" fill="rgba(255,255,255,0.3)"/>
+        <text x="12" y="17" font-size="11" font-weight="bold" fill="#0A2050">📊 Project Stats</text>
+
+        <text x="15" y="42" font-size="10" fill="#333">Tasks Complete:</text>
+        <rect x="15" y="48" width="270" height="14" rx="7" fill="#D4D0C8" stroke="#ACA899" stroke-width="0.5"/>
+        <rect x="16" y="49" width="200" height="12" rx="6" fill="url(#pgBlue)"/>
+        <rect x="16" y="49" width="200" height="5" rx="6" fill="rgba(255,255,255,0.3)"/>
+        <text x="150" y="59" text-anchor="middle" font-size="8" font-weight="bold" fill="#fff">74%</text>
+
+        <text x="15" y="76" font-size="10" fill="#333">Build Health:</text>
+        <rect x="15" y="82" width="270" height="14" rx="7" fill="#D4D0C8" stroke="#ACA899" stroke-width="0.5"/>
+        <rect x="16" y="83" width="245" height="12" rx="6" fill="url(#pgGreen)"/>
+        <rect x="16" y="83" width="245" height="5" rx="6" fill="rgba(255,255,255,0.3)"/>
+        <text x="150" y="93" text-anchor="middle" font-size="8" font-weight="bold" fill="#fff">91%</text>
+
+        <text x="15" y="110" font-size="10" fill="#333">Storage Used:</text>
+        <rect x="100" y="100" width="185" height="14" rx="7" fill="#D4D0C8" stroke="#ACA899" stroke-width="0.5"/>
+        <rect x="101" y="101" width="95" height="12" rx="6" fill="url(#pgOrange)"/>
+        <rect x="101" y="101" width="95" height="5" rx="6" fill="rgba(255,255,255,0.3)"/>
+        <text x="150" y="111" text-anchor="middle" font-size="8" font-weight="bold" fill="#fff">52%</text>
+    </g>
+
+    <!-- Card 3: Calendar mini -->
+    <g transform="translate(760,555)" filter="url(#ds2)">
+        <rect width="300" height="120" rx="6" fill="#ECE9D8" stroke="#ACA899" stroke-width="1"/>
+        <rect x="1" y="1" width="298" height="22" rx="5" fill="url(#tBar)"/>
+        <rect x="2" y="2" width="296" height="9" rx="4" fill="rgba(255,255,255,0.3)"/>
+        <text x="12" y="17" font-size="11" font-weight="bold" fill="#0A2050">📅 February 2026</text>
+        <rect x="255" y="4" width="18" height="16" rx="2" fill="rgba(255,255,255,0.3)"/>
+        <text x="260" y="16" font-size="10" fill="#0A2050">◀</text>
+        <rect x="275" y="4" width="18" height="16" rx="2" fill="rgba(255,255,255,0.3)"/>
+        <text x="280" y="16" font-size="10" fill="#0A2050">▶</text>
+
+        <!-- Day headers -->
+        <g transform="translate(10,28)">
+            <text x="12" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#003399">Mo</text>
+            <text x="52" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#003399">Tu</text>
+            <text x="92" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#003399">We</text>
+            <text x="132" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#003399">Th</text>
+            <text x="172" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#003399">Fr</text>
+            <text x="212" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#888">Sa</text>
+            <text x="252" y="12" text-anchor="middle" font-size="9" font-weight="bold" fill="#888">Su</text>
+        </g>
+        <!-- Week 1 -->
+        <g transform="translate(10,45)">
+            <text x="92" y="12" text-anchor="middle" font-size="10" fill="#333">1</text>
+            <text x="132" y="12" text-anchor="middle" font-size="10" fill="#333">2</text>
+            <text x="172" y="12" text-anchor="middle" font-size="10" fill="#333">3</text>
+            <text x="212" y="12" text-anchor="middle" font-size="10" fill="#888">4</text>
+            <text x="252" y="12" text-anchor="middle" font-size="10" fill="#888">5</text>
+        </g>
+        <!-- Week 2 -->
+        <g transform="translate(10,61)">
+            <text x="12" y="12" text-anchor="middle" font-size="10" fill="#333">6</text>
+            <text x="52" y="12" text-anchor="middle" font-size="10" fill="#333">7</text>
+            <text x="92" y="12" text-anchor="middle" font-size="10" fill="#333">8</text>
+            <text x="132" y="12" text-anchor="middle" font-size="10" fill="#333">9</text>
+            <text x="172" y="12" text-anchor="middle" font-size="10" fill="#333">10</text>
+            <!-- Today -->
+            <circle cx="212" cy="8" r="11" fill="url(#pBtnPrimary)" stroke="#1858A0" stroke-width="0.5"/>
+            <text x="212" y="12" text-anchor="middle" font-size="10" fill="#fff" font-weight="bold">11</text>
+            <text x="252" y="12" text-anchor="middle" font-size="10" fill="#888">12</text>
+        </g>
+        <!-- Week 3 -->
+        <g transform="translate(10,77)">
+            <text x="12" y="12" text-anchor="middle" font-size="10" fill="#333">13</text>
+            <text x="52" y="12" text-anchor="middle" font-size="10" fill="#333">14</text>
+            <text x="92" y="12" text-anchor="middle" font-size="10" fill="#333">15</text>
+            <text x="132" y="12" text-anchor="middle" font-size="10" fill="#333">16</text>
+            <text x="172" y="12" text-anchor="middle" font-size="10" fill="#333">17</text>
+            <text x="212" y="12" text-anchor="middle" font-size="10" fill="#888">18</text>
+            <text x="252" y="12" text-anchor="middle" font-size="10" fill="#888">19</text>
+        </g>
+    </g>
+
+    <!-- ═══════ BOTTOM: Design philosophy ═══════ -->
+    <rect x="20" y="700" width="1060" height="90" rx="5" fill="#D4EDFF" stroke="#7F9DB9" stroke-width="1"/>
+    <text x="35" y="720" font-size="12" font-weight="bold" fill="#003399">Design Philosophy: Premium Luna</text>
+    <text x="35" y="738" font-size="10" fill="#1A4070">• Same XP/7 "split gradient" technique, but with smoother gradients, softer borders, and richer color stops</text>
+    <text x="35" y="754" font-size="10" fill="#1A4070">• Full color family: Primary (blue), Success (green), Danger (red), Warning (amber), Accent (purple), plus warm orange hover on everything</text>
+    <text x="35" y="770" font-size="10" fill="#1A4070">• Pill buttons, segmented controls, icon buttons, search fields — all using the same gloss/split-gradient DNA as classic Windows but refined</text>
+    <text x="35" y="786" font-size="10" fill="#1A4070">• Window chrome uses translucent glass with inner white stroke — like Aero but warmer and more tactile than Microsoft's original</text>
+</svg>

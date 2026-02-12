@@ -1,0 +1,100 @@
+/*
+ * Slider Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-slider
+ * Features: track, thumb, filled track, sizes, colour variants
+ */
+
+/* ── Base ── */
+.jsgui-slider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 32px;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.jsgui-slider .relative {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+/* ── Track (horizontal bar) ── */
+.jsgui-slider .h-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: var(--slider-track-h, 4px);
+    background: var(--j-border, #e2e8f0);
+    border-radius: var(--slider-track-h, 4px);
+}
+
+/* ── Thumb (vertical bar / handle) ── */
+.jsgui-slider .v-bar {
+    position: absolute;
+    width: var(--slider-thumb, 16px);
+    height: var(--slider-thumb, 16px);
+    background: var(--slider-color, var(--j-primary, #3b82f6));
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+    cursor: grab;
+    z-index: 1;
+    transition: box-shadow var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-slider .v-bar:hover {
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--slider-color, var(--j-primary)) 20%, transparent);
+}
+
+.jsgui-slider .v-bar:active {
+    cursor: grabbing;
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--slider-color, var(--j-primary)) 25%, transparent);
+}
+
+/* ══════════════════════════════════════════
+   Sizes
+   ══════════════════════════════════════════ */
+
+.jsgui-slider[data-size="sm"] {
+    --slider-track-h: 2px;
+    --slider-thumb: 12px;
+    height: 24px;
+}
+
+.jsgui-slider[data-size="lg"] {
+    --slider-track-h: 6px;
+    --slider-thumb: 20px;
+    height: 40px;
+}
+
+/* ══════════════════════════════════════════
+   Colour variants
+   ══════════════════════════════════════════ */
+
+.jsgui-slider[data-variant="success"] {
+    --slider-color: var(--j-success);
+}
+
+.jsgui-slider[data-variant="danger"] {
+    --slider-color: var(--j-danger);
+}
+
+.jsgui-slider[data-variant="warning"] {
+    --slider-color: var(--j-warning);
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-slider .v-bar {
+        transition: none;
+    }
+}

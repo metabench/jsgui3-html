@@ -1,0 +1,255 @@
+/*
+ * Chip Component CSS — jsgui3-html
+ *
+ * Target class: .jsgui-chip
+ * Colour variants: default, primary, success, warning, danger, info
+ * Features: dismissible, selectable, avatar slot, outline style, sizes
+ *
+ * Reference: docs/control-design-book/visual-advancement/13-completing-core-form.md §Chip
+ */
+
+/* ── Base ── */
+.jsgui-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    font-family: var(--j-font-sans);
+    font-size: var(--j-text-sm);
+    font-weight: var(--j-font-weight-medium);
+    line-height: 1;
+    white-space: nowrap;
+    border-radius: var(--j-radius-full);
+    background: var(--chip-bg, var(--j-bg-muted));
+    color: var(--chip-fg, var(--j-fg));
+    border: 1px solid var(--chip-border, var(--j-border));
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    box-sizing: border-box;
+    transition:
+        background var(--j-duration-fast) var(--j-ease-out),
+        border-color var(--j-duration-fast) var(--j-ease-out),
+        box-shadow var(--j-duration-fast) var(--j-ease-out),
+        transform 80ms var(--j-ease-out);
+}
+
+/* ── Hover / Active ── */
+.jsgui-chip:hover {
+    background: var(--chip-hover-bg, var(--j-bg-subtle));
+    border-color: var(--chip-hover-border, var(--j-border-strong));
+}
+
+.jsgui-chip:active {
+    transform: scale(0.96);
+}
+
+/* ── Focus ── */
+.jsgui-chip:focus-visible {
+    outline: 2px solid var(--j-primary);
+    outline-offset: 2px;
+}
+
+/* ── Selected ── */
+.jsgui-chip.selected {
+    --chip-bg: var(--j-primary);
+    --chip-fg: var(--j-primary-fg);
+    --chip-border: var(--j-primary);
+    --chip-hover-bg: var(--j-primary-hover);
+    --chip-hover-border: var(--j-primary-hover);
+}
+
+/* ── Disabled ── */
+.jsgui-chip.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ══════════════════════════════════════════
+   Colour Variants
+   ══════════════════════════════════════════ */
+
+.jsgui-chip[data-variant="primary"] {
+    --chip-bg: color-mix(in srgb, var(--j-primary) 12%, transparent);
+    --chip-fg: var(--j-primary);
+    --chip-border: color-mix(in srgb, var(--j-primary) 30%, transparent);
+    --chip-hover-bg: color-mix(in srgb, var(--j-primary) 20%, transparent);
+}
+
+.jsgui-chip[data-variant="success"] {
+    --chip-bg: color-mix(in srgb, var(--j-success) 12%, transparent);
+    --chip-fg: var(--j-success);
+    --chip-border: color-mix(in srgb, var(--j-success) 30%, transparent);
+    --chip-hover-bg: color-mix(in srgb, var(--j-success) 20%, transparent);
+}
+
+.jsgui-chip[data-variant="warning"] {
+    --chip-bg: color-mix(in srgb, var(--j-warning) 12%, transparent);
+    --chip-fg: var(--j-warning-hover);
+    --chip-border: color-mix(in srgb, var(--j-warning) 30%, transparent);
+    --chip-hover-bg: color-mix(in srgb, var(--j-warning) 20%, transparent);
+}
+
+.jsgui-chip[data-variant="danger"],
+.jsgui-chip[data-variant="error"] {
+    --chip-bg: color-mix(in srgb, var(--j-danger) 12%, transparent);
+    --chip-fg: var(--j-danger);
+    --chip-border: color-mix(in srgb, var(--j-danger) 30%, transparent);
+    --chip-hover-bg: color-mix(in srgb, var(--j-danger) 20%, transparent);
+}
+
+.jsgui-chip[data-variant="info"] {
+    --chip-bg: color-mix(in srgb, var(--j-info) 12%, transparent);
+    --chip-fg: var(--j-info);
+    --chip-border: color-mix(in srgb, var(--j-info) 30%, transparent);
+    --chip-hover-bg: color-mix(in srgb, var(--j-info) 20%, transparent);
+}
+
+/* ── Solid fill variants ── */
+.jsgui-chip[data-variant="primary-solid"] {
+    --chip-bg: var(--j-primary);
+    --chip-fg: var(--j-primary-fg);
+    --chip-border: var(--j-primary);
+    --chip-hover-bg: var(--j-primary-hover);
+}
+
+.jsgui-chip[data-variant="success-solid"] {
+    --chip-bg: var(--j-success);
+    --chip-fg: #fff;
+    --chip-border: var(--j-success);
+    --chip-hover-bg: var(--j-success-hover);
+}
+
+.jsgui-chip[data-variant="danger-solid"] {
+    --chip-bg: var(--j-danger);
+    --chip-fg: #fff;
+    --chip-border: var(--j-danger);
+    --chip-hover-bg: var(--j-danger-hover);
+}
+
+/* ══════════════════════════════════════════
+   Sizes
+   ══════════════════════════════════════════ */
+
+.jsgui-chip[data-size="sm"] {
+    height: 24px;
+    padding: 0 8px;
+    gap: 4px;
+    font-size: var(--j-text-xs);
+}
+
+.jsgui-chip[data-size="lg"] {
+    height: 40px;
+    padding: 0 16px;
+    gap: 8px;
+    font-size: var(--j-text-base);
+}
+
+/* ══════════════════════════════════════════
+   Sub-elements
+   ══════════════════════════════════════════ */
+
+/* Icon */
+.jsgui-chip .chip-icon {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.1em;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+/* Avatar (leading image) */
+.jsgui-chip .chip-avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: -4px;
+    flex-shrink: 0;
+}
+
+.jsgui-chip[data-size="sm"] .chip-avatar {
+    width: 16px;
+    height: 16px;
+    margin-left: -2px;
+}
+
+.jsgui-chip[data-size="lg"] .chip-avatar {
+    width: 28px;
+    height: 28px;
+    margin-left: -6px;
+}
+
+/* Label */
+.jsgui-chip .chip-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Close / dismiss button */
+.jsgui-chip .chip-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    margin-right: -4px;
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 1;
+    color: inherit;
+    opacity: 0.55;
+    cursor: pointer;
+    transition:
+        opacity var(--j-duration-fast) var(--j-ease-out),
+        background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-chip .chip-close:hover {
+    opacity: 1;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="dark"] .jsgui-chip .chip-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ══════════════════════════════════════════
+   Outline style (no fill)
+   ══════════════════════════════════════════ */
+
+.jsgui-chip.outline {
+    background: transparent;
+}
+
+.jsgui-chip.outline:hover {
+    background: var(--j-bg-muted);
+}
+
+/* ══════════════════════════════════════════
+   Chip Group (horizontal wrap)
+   ══════════════════════════════════════════ */
+
+.jsgui-chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--j-space-2);
+    align-items: center;
+}
+
+/* ══════════════════════════════════════════
+   Reduced Motion
+   ══════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+    .jsgui-chip {
+        transition: none;
+    }
+
+    .jsgui-chip:active {
+        transform: none;
+    }
+}

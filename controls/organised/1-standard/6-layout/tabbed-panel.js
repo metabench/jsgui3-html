@@ -118,6 +118,7 @@ class Tabbed_Panel extends Panel {
         apply_token_map(this, 'tab', params);
 
         this.add_class('tab-container');
+        this.add_class('jsgui-tabs');
         this.tabs = spec.tabs;
         this.tab_bar = spec.tab_bar || {};
         this.aria_label = spec.aria_label;
@@ -182,22 +183,30 @@ class Tabbed_Panel extends Panel {
             label.dom.attributes.tabindex = is_checked ? '0' : '-1';
             label.dom.attributes['aria-selected'] = is_checked ? 'true' : 'false';
             label.dom.attributes['aria-controls'] = panel_id;
-            if (tab_variant === 'icon' && tab_def && tab_def.icon) {
+            // Icon support — works for any tab definition with an icon
+            const tab_icon = (tab_def && typeof tab_def === 'object') ? tab_def.icon : null;
+            if (tab_icon) {
                 const icon_span = new Control({ context, tag_name: 'span' });
                 icon_span.add_class('tab-icon');
-                icon_span.add(String(tab_def.icon));
+                icon_span.add(String(tab_icon));
                 label.add(icon_span);
-                if (name) {
-                    const label_span = new Control({ context, tag_name: 'span' });
-                    label_span.add_class('tab-text');
-                    label_span.add(name);
-                    label.add(label_span);
-                } else {
-                    const fallback_text = `Tab ${tab_index + 1}`;
-                    ensure_sr_text(label, fallback_text);
-                }
-            } else {
-                label.add(name);
+            }
+            if (name) {
+                const label_span = new Control({ context, tag_name: 'span' });
+                label_span.add_class('tab-text');
+                label_span.add(name);
+                label.add(label_span);
+            } else if (!tab_icon) {
+                const fallback_text = `Tab ${tab_index + 1}`;
+                ensure_sr_text(label, fallback_text);
+            }
+            // Badge count support (e.g. { title: 'Errors', badge: 3 })
+            const tab_badge = (tab_def && typeof tab_def === 'object') ? tab_def.badge : null;
+            if (tab_badge != null) {
+                const badge_span = new Control({ context, tag_name: 'span' });
+                badge_span.add_class('tab-badge');
+                badge_span.add(String(tab_badge));
+                label.add(badge_span);
             }
             apply_focus_ring(label);
             this.add(label);
@@ -237,7 +246,7 @@ class Tabbed_Panel extends Panel {
             if (t === 'object') {
                 const label_text = tab.title || tab.name || tab.text || ('Tab ' + (idx_tab + 1));
                 const content = tab.content;
-                return { label_text, content };
+                return { label_text, content, icon: tab.icon, badge: tab.badge };
             }
 
             return { label_text: String(tab), content: undefined };
@@ -390,70 +399,94 @@ Tabbed_Panel.css = `
 .tab-container {
     display: flex;
     flex-wrap: wrap;
-    flex-direction: row; /* Change to 'row' for top or bottom tabs */
-    width: 300px; /* Adjust width as needed */
+    flex-direction: row;
     position: relative;
-    height: 300px;
+    font-family: var(--admin-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+    background: var(--admin-card-bg, #fff);
+    border: 1px solid var(--admin-border, #e2e8f0);
+    border-radius: 8px;
+    overflow: hidden;
 }
 .tabbed-panel-vertical {
     flex-direction: column;
-    align-items: flex-start;
-}
-.tabbed-panel-right {
-    align-items: flex-end;
 }
 .tabbed-panel-bottom {
     flex-direction: column-reverse;
-}
-.break {
-    flex-basis: 100%;
-    height: 0;
 }
 .tab-input {
     display: none;
 }
 .tab-label {
-    height: 22px;
-    background-color: #ccc;
-    padding: 4px;
-    margin: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--admin-muted, #64748b);
+    border-bottom: 2px solid transparent;
+    background: var(--admin-header-bg, #f8fafc);
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    user-select: none;
+}
+.tab-label:hover {
+    color: var(--admin-text, #1e293b);
+    background: var(--admin-hover, #f1f5f9);
+}
+.tab-input:checked + .tab-label {
+    color: var(--admin-accent, #3b82f6);
+    border-bottom-color: var(--admin-accent, #3b82f6);
+    background: var(--admin-card-bg, #fff);
+}
+.tab-icon {
+    font-size: 14px;
+    line-height: 1;
+}
+.tab-text {
+    line-height: 1.4;
+}
+.tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--admin-muted, #94a3b8);
+    color: #fff;
+    line-height: 1;
+}
+.tab-input:checked + .tab-label .tab-badge {
+    background: var(--admin-accent, #3b82f6);
 }
 .tab-label-hidden {
     display: none;
 }
-.tab-icon {
-    margin-right: 6px;
-}
-.tab-overflow-select {
-    margin: 2px;
-    padding: 4px;
-}
-.tab-input:checked + .tab-label {
-    background-color: #DDFFDD;
+.tab-page {
+    display: none;
+    width: 100%;
+    padding: 14px;
+    color: var(--admin-text, #1e293b);
 }
 .tab-input:checked + .tab-label + .tab-page {
     display: block;
 }
-.tab-page {
-    display: none;
-    
-
-
-    /*
-    order: 100;
-    left: 4px;
-    right: 4px;
-    top: 32px;
-    */
-
-
-    /* height: calc(100% - 32px); */
-
-    height: 300px;
-    width: 300px;
-    background-color: #FFFFFF;
-    border: 1px solid #CCCCCC;
+.break {
+    flex-basis: 100%;
+    height: 0;
+    border-top: 1px solid var(--admin-border, #e2e8f0);
+}
+/* Vertical tabs */
+.tabbed-panel-vertical .tab-label {
+    border-bottom: none;
+    border-right: 2px solid transparent;
+}
+.tabbed-panel-vertical .tab-input:checked + .tab-label {
+    border-right-color: var(--admin-accent, #3b82f6);
 }
 `;
 module.exports = Tabbed_Panel;

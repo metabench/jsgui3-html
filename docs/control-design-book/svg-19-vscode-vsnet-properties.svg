@@ -1,0 +1,409 @@
+<svg viewBox="0 0 1200 820" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="btn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EEF3F9"/><stop offset="45%" stop-color="#D8E2EE"/>
+            <stop offset="55%" stop-color="#C0D0E2"/><stop offset="100%" stop-color="#CCDAEA"/>
+        </linearGradient>
+        <linearGradient id="btnPri" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0D8F0"/><stop offset="45%" stop-color="#7AACE0"/>
+            <stop offset="55%" stop-color="#5090D0"/><stop offset="100%" stop-color="#68A4DD"/>
+        </linearGradient>
+        <linearGradient id="btnOk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0E8C0"/><stop offset="45%" stop-color="#70C870"/>
+            <stop offset="55%" stop-color="#48A848"/><stop offset="100%" stop-color="#5CB85C"/>
+        </linearGradient>
+        <linearGradient id="lunaField" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E0DCD6"/><stop offset="3%" stop-color="#fff"/>
+            <stop offset="100%" stop-color="#fff"/>
+        </linearGradient>
+        <!-- Classic VS.NET property grid header -->
+        <linearGradient id="vsBar" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#0A246A"/>
+            <stop offset="100%" stop-color="#A6CAF0"/>
+        </linearGradient>
+        <filter id="shSm" x="-2%" y="-3%" width="106%" height="112%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.12)"/>
+        </filter>
+        <filter id="selGlow" x="-10%" y="-10%" width="120%" height="120%">
+            <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="rgba(0,120,212,0.5)"/>
+        </filter>
+    </defs>
+    <style>text{font-family:'Segoe UI',Tahoma,sans-serif}.mono{font-family:Consolas,'Courier New',monospace}</style>
+
+    <!-- ══ VS CODE DARK SHELL ══ -->
+    <rect width="1200" height="820" fill="#1E1E1E"/>
+    <rect width="1200" height="30" fill="#323233"/>
+    <text x="12" y="20" font-size="11" fill="#CCC">📐 settings-form.wysiwyg — jsgui3-html — Visual Studio Code</text>
+    <rect x="1108" y="8" width="26" height="14" rx="1" fill="transparent" stroke="#888" stroke-width="0.5"/>
+    <line x1="1117" y1="15" x2="1127" y2="15" stroke="#888" stroke-width="1"/>
+    <rect x="1140" y="8" width="26" height="14" rx="1" fill="transparent" stroke="#888" stroke-width="0.5"/>
+    <rect x="1147" y="10" width="10" height="8" rx="0.5" fill="none" stroke="#888" stroke-width="1"/>
+    <rect x="1172" y="8" width="26" height="14" rx="1" fill="#E81123"/>
+    <line x1="1179" y1="10" x2="1191" y2="20" stroke="#fff" stroke-width="1.2"/>
+    <line x1="1191" y1="10" x2="1179" y2="20" stroke="#fff" stroke-width="1.2"/>
+
+    <rect y="30" width="1200" height="24" fill="#3C3C3C"/>
+    <text x="12" y="46" font-size="11" fill="#CCC">File</text>
+    <text x="46" y="46" font-size="11" fill="#CCC">Edit</text>
+    <text x="82" y="46" font-size="11" fill="#CCC">Selection</text>
+    <text x="148" y="46" font-size="11" fill="#CCC">View</text>
+    <text x="186" y="46" font-size="11" fill="#CCC">Go</text>
+    <text x="212" y="46" font-size="11" fill="#CCC">Run</text>
+    <text x="244" y="46" font-size="11" fill="#CCC">Terminal</text>
+    <text x="306" y="46" font-size="11" fill="#CCC">Help</text>
+
+    <!-- Activity Bar -->
+    <rect y="54" width="48" height="740" fill="#333"/>
+    <rect x="0" y="54" width="48" height="48" fill="#1E1E1E"/>
+    <rect x="0" y="54" width="2" height="48" fill="#fff"/>
+    <text x="16" y="84" font-size="18">📁</text>
+    <text x="16" y="128" font-size="18" fill="#888">🔍</text>
+
+    <!-- Sidebar -->
+    <rect x="48" y="54" width="180" height="740" fill="#252526"/>
+    <text x="58" y="72" font-size="10" font-weight="600" fill="#BBB" letter-spacing="0.8">EXPLORER</text>
+    <text x="58" y="94" font-size="10" font-weight="600" fill="#CCC">▾ JSGUI3-HTML</text>
+    <text x="70" y="112" font-size="10" fill="#CCC">▾ dev-examples</text>
+    <text x="82" y="130" font-size="10" fill="#CCC">▾ wysiwyg-form-builder</text>
+    <rect x="48" y="135" width="180" height="18" fill="#37373D"/>
+    <text x="94" y="148" font-size="10" fill="#fff">📐 settings-form.wysiwyg</text>
+    <text x="94" y="166" font-size="10" fill="#888">order-form.wysiwyg</text>
+    <text x="94" y="184" font-size="10" fill="#888">contact-form.wysiwyg</text>
+    <text x="94" y="202" font-size="10" fill="#888">server.js</text>
+
+    <!-- Tabs -->
+    <rect x="228" y="54" width="972" height="34" fill="#252526"/>
+    <rect x="228" y="54" width="190" height="34" fill="#1E1E1E"/>
+    <rect x="228" y="54" width="190" height="1" fill="#0078D4"/>
+    <text x="244" y="76" font-size="11" fill="#fff">📐 settings-form.wysiwyg</text>
+
+    <!-- Breadcrumbs -->
+    <rect x="228" y="88" width="972" height="22" fill="#1E1E1E"/>
+    <text x="240" y="103" font-size="10" fill="#888">jsgui3-html › dev-examples › wysiwyg-form-builder › settings-form.wysiwyg</text>
+
+    <!-- ══ TOOLBAR ══ -->
+    <rect x="228" y="110" width="972" height="36" fill="#F4F2EC" stroke="#D4D0C8" stroke-width="0.5"/>
+    <g transform="translate(238,116)">
+        <rect width="70" height="24" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.8"/>
+        <text x="35" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">🎨 Design</text>
+    </g>
+    <g transform="translate(314,116)">
+        <rect width="60" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="30" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">{ } Code</text>
+    </g>
+    <g transform="translate(380,116)">
+        <rect width="68" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="34" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">▶ Preview</text>
+    </g>
+    <line x1="460" y1="116" x2="460" y2="140" stroke="#C8C4B8"/>
+    <g transform="translate(470,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">⊞</text>
+    </g>
+    <g transform="translate(500,116)">
+        <rect width="26" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.6"/>
+        <text x="13" y="16" text-anchor="middle" font-size="12" fill="#444">↩</text>
+    </g>
+    <g transform="translate(1110,116)">
+        <rect width="58" height="24" rx="3" fill="url(#btnOk)" stroke="#2A8028" stroke-width="0.8"/>
+        <text x="29" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">💾 Save</text>
+    </g>
+
+    <!-- ══ CONTROL PALETTE (narrow) ══ -->
+    <rect x="228" y="146" width="110" height="604" fill="#F8F6F2" stroke="#D4D0C8" stroke-width="0.5"/>
+    <text x="236" y="164" font-size="10" font-weight="600" fill="#2A4060">Controls</text>
+    <line x1="236" y1="170" x2="332" y2="170" stroke="#D4D0C8"/>
+    <g transform="translate(232,176)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">🔤 Text Input</text></g>
+    <g transform="translate(232,202)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">🔘 Button</text></g>
+    <g transform="translate(232,228)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">☑ Checkbox</text></g>
+    <g transform="translate(232,254)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">⦿ Radio</text></g>
+    <g transform="translate(232,280)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">▼ Combo</text></g>
+    <g transform="translate(232,306)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">📝 TextArea</text></g>
+    <g transform="translate(232,332)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">📅 Date</text></g>
+    <g transform="translate(232,358)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">🔀 Toggle</text></g>
+    <g transform="translate(232,384)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">🎚 Slider</text></g>
+    <text x="236" y="420" font-size="10" font-weight="600" fill="#2A4060">Layout</text>
+    <line x1="236" y1="426" x2="332" y2="426" stroke="#D4D0C8"/>
+    <g transform="translate(232,432)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">▭ Group Box</text></g>
+    <g transform="translate(232,458)"><rect width="100" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/><text x="8" y="15" font-size="9" fill="#2A3A50">⊟ Tab Panel</text></g>
+
+    <!-- ══ FORM CANVAS ══ -->
+    <rect x="338" y="146" width="500" height="604" fill="#fff" stroke="#C8C4B8" stroke-width="0.5"/>
+
+    <!-- Form: Settings Page with tabs -->
+    <text x="358" y="174" font-size="15" font-weight="600" fill="#2A4060">Application Settings</text>
+    <line x1="358" y1="182" x2="820" y2="182" stroke="#D4D0C8"/>
+
+    <!-- Tab control (Luna style) -->
+    <rect x="358" y="192" width="460" height="26" fill="#ECEAE4"/>
+    <rect x="358" y="192" width="80" height="26" fill="#fff" stroke="#C4C0B8" stroke-width="0.5"/>
+    <rect x="358" y="192" width="80" height="2" fill="#4080C0"/>
+    <text x="378" y="210" font-size="10" font-weight="600" fill="#2A4060">General</text>
+    <rect x="438" y="196" width="80" height="22" fill="#ECEAE4" stroke="#C4C0B8" stroke-width="0.5"/>
+    <text x="458" y="212" font-size="10" fill="#666">Display</text>
+    <rect x="518" y="196" width="80" height="22" fill="#ECEAE4" stroke="#C4C0B8" stroke-width="0.5"/>
+    <text x="538" y="212" font-size="10" fill="#666">Network</text>
+    <rect x="598" y="196" width="80" height="22" fill="#ECEAE4" stroke="#C4C0B8" stroke-width="0.5"/>
+    <text x="610" y="212" font-size="10" fill="#666">Advanced</text>
+
+    <!-- Tab content area -->
+    <rect x="358" y="218" width="460" height="410" fill="#fff" stroke="#C4C0B8" stroke-width="0.5"/>
+
+    <!-- Group: User Preferences -->
+    <rect x="370" y="230" width="436" height="120" fill="none" stroke="#C4C0B8" rx="3"/>
+    <rect x="380" y="224" width="110" height="12" fill="#fff"/>
+    <text x="384" y="234" font-size="10" font-weight="600" fill="#2A4060">User Preferences</text>
+
+    <!-- Username (selected) -->
+    <text x="386" y="258" font-size="10" fill="#444" font-weight="600">Username *</text>
+    <rect x="382" y="262" width="414" height="30" fill="none" stroke="#0078D4" stroke-width="1.5" stroke-dasharray="4,2" filter="url(#selGlow)"/>
+    <rect x="379" y="259" width="6" height="6" fill="#0078D4"/>
+    <rect x="793" y="259" width="6" height="6" fill="#0078D4"/>
+    <rect x="379" y="289" width="6" height="6" fill="#0078D4"/>
+    <rect x="793" y="289" width="6" height="6" fill="#0078D4"/>
+    <rect x="386" y="264" width="406" height="24" rx="2" fill="#5080A8" stroke="#2060A0"/>
+    <rect x="387" y="265" width="404" height="22" rx="1" fill="#fff"/>
+    <text x="394" y="281" font-size="10" fill="#1A1A1A">admin_user</text>
+
+    <!-- Language combo -->
+    <text x="386" y="310" font-size="10" fill="#444" font-weight="600">Language</text>
+    <rect x="386" y="316" width="200" height="24" rx="2" fill="#8098B0"/>
+    <rect x="387" y="317" width="176" height="22" rx="1" fill="#fff"/>
+    <text x="394" y="333" font-size="10" fill="#1A1A1A">English (UK)</text>
+    <rect x="541" y="317" width="22" height="22" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+    <polygon points="547,327 557,327 552,332" fill="#2A4060"/>
+
+    <!-- Theme combo -->
+    <text x="600" y="310" font-size="10" fill="#444" font-weight="600">Theme</text>
+    <rect x="600" y="316" width="192" height="24" rx="2" fill="#8098B0"/>
+    <rect x="601" y="317" width="168" height="22" rx="1" fill="#fff"/>
+    <text x="608" y="333" font-size="10" fill="#1A1A1A">Luna Refined</text>
+    <rect x="747" y="317" width="22" height="22" rx="0 1 1 0" fill="url(#btn)" stroke="#8098B0" stroke-width="0.5"/>
+    <polygon points="753,327 763,327 758,332" fill="#2A4060"/>
+
+    <!-- Group: Notifications -->
+    <rect x="370" y="362" width="436" height="120" fill="none" stroke="#C4C0B8" rx="3"/>
+    <rect x="380" y="356" width="88" height="12" fill="#fff"/>
+    <text x="384" y="366" font-size="10" font-weight="600" fill="#2A4060">Notifications</text>
+
+    <rect x="394" y="383" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="395" y="384" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="397.5,390.5 400,393.5 405,387.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+    <text x="414" y="394" font-size="10" fill="#1A1A1A">Enable email notifications</text>
+
+    <rect x="394" y="407" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="395" y="408" width="12" height="12" rx="1" fill="#fff"/>
+    <polyline points="397.5,414.5 400,417.5 405,411.5" fill="none" stroke="#2868A0" stroke-width="2" stroke-linecap="round"/>
+    <text x="414" y="418" font-size="10" fill="#1A1A1A">Enable desktop notifications</text>
+
+    <rect x="394" y="431" width="14" height="14" rx="2" fill="#8098B0"/>
+    <rect x="395" y="432" width="12" height="12" rx="1" fill="#fff"/>
+    <text x="414" y="442" font-size="10" fill="#1A1A1A">Sound alert on warning</text>
+
+    <text x="386" y="468" font-size="10" fill="#444" font-weight="600">Alert level</text>
+    <!-- Slider -->
+    <rect x="470" y="458" width="160" height="6" rx="3" fill="#D4D0C8"/>
+    <rect x="470" y="458" width="100" height="6" rx="3" fill="#5090D0"/>
+    <circle cx="570" cy="461" r="7" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/>
+    <text x="640" y="468" font-size="10" fill="#1A1A1A">Medium</text>
+
+    <!-- Auto-save toggle -->
+    <text x="386" y="506" font-size="10" fill="#444" font-weight="600">Auto-save</text>
+    <rect x="450" y="496" width="36" height="18" rx="9" fill="#4AC84A"/>
+    <circle cx="477" cy="505" r="7" fill="#fff"/>
+
+    <!-- Save / Reset buttons -->
+    <g transform="translate(600,606)">
+        <rect width="76" height="26" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="1"/>
+        <text x="38" y="17" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">Apply</text>
+    </g>
+    <g transform="translate(684,606)">
+        <rect width="76" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="38" y="17" text-anchor="middle" font-size="10" fill="#2A3A50">Reset</text>
+    </g>
+    <g transform="translate(768,606)">
+        <rect width="52" height="26" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="1"/>
+        <text x="26" y="17" text-anchor="middle" font-size="10" fill="#2A3A50">?</text>
+    </g>
+
+    <!-- ════════════════════════════════════════════ -->
+    <!-- VS.NET CLASSIC PROPERTY GRID                -->
+    <!-- Replicates the look of Visual Studio .NET   -->
+    <!-- Properties window — flat grid, grey back,   -->
+    <!-- collapsible categories, icon toolbar         -->
+    <!-- ════════════════════════════════════════════ -->
+    <rect x="838" y="146" width="362" height="604" fill="#F0F0F0"/>
+
+    <!-- ── Property Grid Title Bar (VS.NET blue gradient) ── -->
+    <rect x="838" y="146" width="362" height="20" fill="url(#vsBar)"/>
+    <text x="848" y="160" font-size="10" font-weight="600" fill="#fff">Properties</text>
+    <text x="1170" y="160" font-size="10" fill="rgba(255,255,255,0.7)" text-anchor="end">×</text>
+
+    <!-- ── Object selector dropdown (Win XP/2003 style) ── -->
+    <rect x="840" y="168" width="358" height="22" fill="#fff" stroke="#7F9DB9" stroke-width="1"/>
+    <text x="850" y="183" font-size="10" fill="#000">txtUsername</text>
+    <text x="930" y="183" font-size="9" fill="#666">System.Windows.Forms.TextBox</text>
+    <rect x="1176" y="169" width="20" height="20" fill="#E4E4E4" stroke="#7F9DB9" stroke-width="0.5"/>
+    <polygon points="1181,179 1191,179 1186,184" fill="#333"/>
+
+    <!-- ── Toolbar: Categorized / Alphabetical / Properties / Events ── -->
+    <rect x="838" y="192" width="362" height="22" fill="#E4E4E4" stroke="#C0C0C0" stroke-width="0.5"/>
+    <!-- Categorized (active/pressed) -->
+    <rect x="840" y="194" width="22" height="18" fill="#C0C0C0" stroke="#808080" stroke-width="0.5"/>
+    <rect x="844" y="197" width="5" height="3" fill="#333"/>
+    <line x1="851" y1="198" x2="858" y2="198" stroke="#333" stroke-width="1"/>
+    <rect x="844" y="203" width="5" height="3" fill="#333"/>
+    <line x1="851" y1="204" x2="858" y2="204" stroke="#333" stroke-width="1"/>
+    <!-- Alphabetical -->
+    <rect x="864" y="194" width="22" height="18" fill="#E4E4E4" stroke="#C0C0C0" stroke-width="0.5"/>
+    <text x="871" y="207" font-size="10" fill="#333" font-weight="600">AZ</text>
+    <!-- Properties page -->
+    <rect x="892" y="194" width="22" height="18" fill="#E4E4E4" stroke="#C0C0C0" stroke-width="0.5"/>
+    <text x="898" y="207" font-size="10" fill="#333">⚡</text>
+    <!-- Events -->
+    <rect x="916" y="194" width="22" height="18" fill="#E4E4E4" stroke="#C0C0C0" stroke-width="0.5"/>
+    <text x="923" y="207" font-size="10" fill="#333">⚙</text>
+
+    <!-- ══ PROPERTY GRID — Classic flat style ══ -->
+    <!-- Vertical divider between names and values -->
+    <!-- category header bg: #D4D0C8  -->
+
+    <!-- == Category: Appearance == -->
+    <rect x="838" y="214" width="362" height="18" fill="#D4D0C8" stroke="#A0A0A0" stroke-width="0.5"/>
+    <text x="858" y="227" font-size="10" font-weight="700" fill="#000">▾ Appearance</text>
+
+    <!-- Grid rows (alternating white, with separator) -->
+    <rect x="838" y="232" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="232" x2="1000" y2="250" stroke="#D4D0C8"/>
+    <text x="848" y="245" font-size="10" fill="#000">BackColor</text>
+    <rect x="1004" y="235" width="12" height="12" fill="#fff" stroke="#666" stroke-width="0.5"/>
+    <text x="1022" y="245" font-size="10" fill="#000">Window</text>
+
+    <rect x="838" y="250" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="250" x2="1000" y2="268" stroke="#D4D0C8"/>
+    <text x="848" y="263" font-size="10" fill="#000">BorderStyle</text>
+    <text x="1008" y="263" font-size="10" fill="#000">Fixed3D</text>
+
+    <rect x="838" y="268" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="268" x2="1000" y2="286" stroke="#D4D0C8"/>
+    <text x="848" y="281" font-size="10" fill="#000">Cursor</text>
+    <text x="1008" y="281" font-size="10" fill="#000">IBeam</text>
+
+    <rect x="838" y="286" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="286" x2="1000" y2="304" stroke="#D4D0C8"/>
+    <text x="848" y="299" font-size="10" font-weight="700" fill="#000">Font</text>
+    <text x="1008" y="299" font-size="10" fill="#000">Segoe UI, 9pt</text>
+    <text x="1180" y="299" font-size="10" fill="#666" text-anchor="end">…</text>
+
+    <rect x="838" y="304" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="304" x2="1000" y2="322" stroke="#D4D0C8"/>
+    <text x="848" y="317" font-size="10" fill="#000">ForeColor</text>
+    <rect x="1004" y="307" width="12" height="12" fill="#000" stroke="#666" stroke-width="0.5"/>
+    <text x="1022" y="317" font-size="10" fill="#000">ControlText</text>
+
+    <rect x="838" y="322" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="322" x2="1000" y2="340" stroke="#D4D0C8"/>
+    <text x="848" y="335" font-size="10" fill="#000">TextAlign</text>
+    <text x="1008" y="335" font-size="10" fill="#000">Left</text>
+
+    <!-- == Category: Behaviour == -->
+    <rect x="838" y="340" width="362" height="18" fill="#D4D0C8" stroke="#A0A0A0" stroke-width="0.5"/>
+    <text x="858" y="353" font-size="10" font-weight="700" fill="#000">▾ Behavior</text>
+
+    <rect x="838" y="358" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="358" x2="1000" y2="376" stroke="#D4D0C8"/>
+    <text x="848" y="371" font-size="10" fill="#000">Enabled</text>
+    <text x="1008" y="371" font-size="10" fill="#000">True</text>
+
+    <rect x="838" y="376" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="376" x2="1000" y2="394" stroke="#D4D0C8"/>
+    <text x="848" y="389" font-size="10" fill="#000">MaxLength</text>
+    <text x="1008" y="389" font-size="10" fill="#000">100</text>
+
+    <rect x="838" y="394" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="394" x2="1000" y2="412" stroke="#D4D0C8"/>
+    <text x="848" y="407" font-size="10" fill="#000">Multiline</text>
+    <text x="1008" y="407" font-size="10" fill="#000">False</text>
+
+    <rect x="838" y="412" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="412" x2="1000" y2="430" stroke="#D4D0C8"/>
+    <text x="848" y="425" font-size="10" fill="#000">PasswordChar</text>
+    <text x="1008" y="425" font-size="10" fill="#000"></text>
+
+    <rect x="838" y="430" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="430" x2="1000" y2="448" stroke="#D4D0C8"/>
+    <text x="848" y="443" font-size="10" fill="#000">ReadOnly</text>
+    <text x="1008" y="443" font-size="10" fill="#000">False</text>
+
+    <!-- == Category: Data == -->
+    <rect x="838" y="448" width="362" height="18" fill="#D4D0C8" stroke="#A0A0A0" stroke-width="0.5"/>
+    <text x="858" y="461" font-size="10" font-weight="700" fill="#000">▾ Data</text>
+
+    <rect x="838" y="466" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="466" x2="1000" y2="484" stroke="#D4D0C8"/>
+    <text x="848" y="479" font-size="10" fill="#000">(DataBindings)</text>
+    <text x="1008" y="479" font-size="10" fill="#666">(Collection)</text>
+    <text x="1180" y="479" font-size="10" fill="#666" text-anchor="end">…</text>
+
+    <!-- Selected row (Tag) -->
+    <rect x="838" y="484" width="362" height="18" fill="#0A246A"/>
+    <line x1="1000" y1="484" x2="1000" y2="502" stroke="#0A246A"/>
+    <text x="848" y="497" font-size="10" fill="#fff">Tag</text>
+    <text x="1008" y="497" font-size="10" fill="#fff"></text>
+
+    <!-- == Category: Design == -->
+    <rect x="838" y="502" width="362" height="18" fill="#D4D0C8" stroke="#A0A0A0" stroke-width="0.5"/>
+    <text x="858" y="515" font-size="10" font-weight="700" fill="#000">▾ Design</text>
+
+    <rect x="838" y="520" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="520" x2="1000" y2="538" stroke="#D4D0C8"/>
+    <text x="848" y="533" font-size="10" font-weight="700" fill="#000">(Name)</text>
+    <text x="1008" y="533" font-size="10" fill="#000">txtUsername</text>
+
+    <rect x="838" y="538" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="538" x2="1000" y2="556" stroke="#D4D0C8"/>
+    <text x="848" y="551" font-size="10" fill="#000">Locked</text>
+    <text x="1008" y="551" font-size="10" fill="#000">False</text>
+
+    <rect x="838" y="556" width="362" height="18" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+    <line x1="1000" y1="556" x2="1000" y2="574" stroke="#D4D0C8"/>
+    <text x="848" y="569" font-size="10" fill="#000">Modifiers</text>
+    <text x="1008" y="569" font-size="10" fill="#000">Private</text>
+
+    <!-- == Category: Layout == -->
+    <rect x="838" y="574" width="362" height="18" fill="#D4D0C8" stroke="#A0A0A0" stroke-width="0.5"/>
+    <text x="858" y="587" font-size="10" font-weight="700" fill="#000">▸ Layout</text>
+
+    <!-- == Category: Misc == -->
+    <rect x="838" y="592" width="362" height="18" fill="#D4D0C8" stroke="#A0A0A0" stroke-width="0.5"/>
+    <text x="858" y="605" font-size="10" font-weight="700" fill="#000">▸ Misc</text>
+
+    <!-- ── Scrollbar (classic flat) ── -->
+    <rect x="1182" y="214" width="18" height="396" fill="#E0E0E0" stroke="#C0C0C0" stroke-width="0.5"/>
+    <rect x="1183" y="215" width="16" height="20" fill="#C0C0C0" stroke="#808080" stroke-width="0.5"/>
+    <text x="1191" y="229" text-anchor="middle" font-size="10" fill="#333">▲</text>
+    <rect x="1183" y="236" width="16" height="80" fill="#C0C0C0" stroke="#808080" stroke-width="0.5"/>
+    <rect x="1183" y="590" width="16" height="20" fill="#C0C0C0" stroke="#808080" stroke-width="0.5"/>
+    <text x="1191" y="604" text-anchor="middle" font-size="10" fill="#333">▼</text>
+
+    <!-- ── Description pane (bottom) — VS.NET style ── -->
+    <rect x="838" y="614" width="362" height="4" fill="#C0C0C0"/>
+    <rect x="838" y="618" width="362" height="132" fill="#F0F0F0" stroke="#C0C0C0" stroke-width="0.5"/>
+    <text x="850" y="638" font-size="10" font-weight="700" fill="#000">Tag</text>
+    <text x="850" y="658" font-size="10" fill="#000">Gets or sets the object that</text>
+    <text x="850" y="674" font-size="10" fill="#000">contains data about the control.</text>
+    <rect x="850" y="690" width="340" height="1" fill="#D4D0C8"/>
+    <text x="850" y="710" font-size="9" fill="#666">Data type: System.Object</text>
+    <text x="850" y="726" font-size="9" fill="#666">Default value: (none)</text>
+    <text x="850" y="742" font-size="9" fill="#666">Category: Data</text>
+
+    <!-- ══ STATUS BAR ══ -->
+    <rect x="0" y="794" width="1200" height="26" fill="#007ACC"/>
+    <text x="12" y="811" font-size="10" fill="#fff">↗ main</text>
+    <text x="80" y="811" font-size="10" fill="rgba(255,255,255,0.8)">⟳ 0</text>
+    <text x="120" y="811" font-size="10" fill="rgba(255,255,255,0.8)">⚠ 0</text>
+    <text x="160" y="811" font-size="10" fill="rgba(255,255,255,0.8)">✕ 0</text>
+    <text x="700" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="middle">Properties: Categorized View</text>
+    <text x="1050" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">WYSIWYG Mode</text>
+    <text x="1190" y="811" font-size="10" fill="rgba(255,255,255,0.8)" text-anchor="end">UTF-8</text>
+</svg>

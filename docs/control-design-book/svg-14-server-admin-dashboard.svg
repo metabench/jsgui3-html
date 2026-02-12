@@ -1,0 +1,384 @@
+<svg viewBox="0 0 1100 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="btn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#EEF3F9"/>
+            <stop offset="45%" stop-color="#D8E2EE"/>
+            <stop offset="55%" stop-color="#C0D0E2"/>
+            <stop offset="100%" stop-color="#CCDAEA"/>
+        </linearGradient>
+        <linearGradient id="btnPri" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0D8F0"/>
+            <stop offset="45%" stop-color="#7AACE0"/>
+            <stop offset="55%" stop-color="#5090D0"/>
+            <stop offset="100%" stop-color="#68A4DD"/>
+        </linearGradient>
+        <linearGradient id="btnOk" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#C0E8C0"/>
+            <stop offset="45%" stop-color="#70C870"/>
+            <stop offset="55%" stop-color="#48A848"/>
+            <stop offset="100%" stop-color="#5CB85C"/>
+        </linearGradient>
+        <linearGradient id="btnNo" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F0C8C8"/>
+            <stop offset="45%" stop-color="#E07070"/>
+            <stop offset="55%" stop-color="#CC4444"/>
+            <stop offset="100%" stop-color="#D85858"/>
+        </linearGradient>
+        <linearGradient id="tBar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#94B8D8"/>
+            <stop offset="40%" stop-color="#6C9CC8"/>
+            <stop offset="100%" stop-color="#7CA8D0"/>
+        </linearGradient>
+        <linearGradient id="sidebar" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#3A6090"/>
+            <stop offset="100%" stop-color="#2A4870"/>
+        </linearGradient>
+        <linearGradient id="field" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E8E4DD"/>
+            <stop offset="3%" stop-color="#FFFFFF"/>
+            <stop offset="100%" stop-color="#FFFFFF"/>
+        </linearGradient>
+        <linearGradient id="progBlue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6CB4E8"/>
+            <stop offset="50%" stop-color="#3890D0"/>
+            <stop offset="100%" stop-color="#4CA0DD"/>
+        </linearGradient>
+        <linearGradient id="progGreen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6CD868"/>
+            <stop offset="50%" stop-color="#38B834"/>
+            <stop offset="100%" stop-color="#4CC848"/>
+        </linearGradient>
+        <linearGradient id="progAmber" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F0C860"/>
+            <stop offset="50%" stop-color="#D8A020"/>
+            <stop offset="100%" stop-color="#E0B030"/>
+        </linearGradient>
+        <linearGradient id="closeBtn" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#E86050"/>
+            <stop offset="100%" stop-color="#CC3828"/>
+        </linearGradient>
+        <linearGradient id="statCard" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F6F4F0"/>
+            <stop offset="100%" stop-color="#ECEAE4"/>
+        </linearGradient>
+        <filter id="sh" x="-2%" y="-2%" width="106%" height="110%">
+            <feDropShadow dx="1" dy="2" stdDeviation="3" flood-color="rgba(0,0,0,0.15)"/>
+        </filter>
+        <filter id="shSm" x="-2%" y="-3%" width="106%" height="112%">
+            <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.12)"/>
+        </filter>
+    </defs>
+    <style>text{font-family:'Segoe UI',Tahoma,sans-serif}</style>
+
+    <!-- ══ OUTER WINDOW CHROME ══ -->
+    <rect width="1100" height="800" rx="6" fill="#CCDAEA" stroke="#7090B0" stroke-width="1"/>
+
+    <!-- Title bar -->
+    <rect x="1" y="1" width="1098" height="30" rx="5" fill="url(#tBar)"/>
+    <rect x="2" y="2" width="1096" height="8" rx="4" fill="rgba(255,255,255,0.12)"/>
+    <text x="14" y="21" font-size="12" fill="#fff" font-weight="600">⚙ jsgui3 Server Administration</text>
+    <text x="260" y="21" font-size="10" fill="rgba(255,255,255,0.7)">— localhost:8080</text>
+
+    <!-- Caption buttons -->
+    <rect x="1017" y="5" width="24" height="20" rx="2" fill="rgba(255,255,255,0.15)"/>
+    <line x1="1025" y1="16" x2="1035" y2="16" stroke="#fff" stroke-width="1.2"/>
+    <rect x="1044" y="5" width="24" height="20" rx="2" fill="rgba(255,255,255,0.15)"/>
+    <rect x="1051" y="8" width="10" height="9" rx="1" fill="none" stroke="#fff" stroke-width="1.2"/>
+    <rect x="1071" y="5" width="24" height="20" rx="2" fill="url(#closeBtn)"/>
+    <line x1="1078" y1="9" x2="1088" y2="21" stroke="#fff" stroke-width="1.5"/>
+    <line x1="1088" y1="9" x2="1078" y2="21" stroke="#fff" stroke-width="1.5"/>
+
+    <!-- ══ SIDEBAR NAVIGATION ══ -->
+    <rect x="1" y="31" width="180" height="768" fill="url(#sidebar)" rx="0 0 0 5"/>
+
+    <!-- Server identity -->
+    <rect x="10" y="40" width="162" height="50" rx="4" fill="rgba(255,255,255,0.08)"/>
+    <text x="20" y="58" font-size="11" font-weight="600" fill="#fff">jsgui3 Server</text>
+    <circle cx="160" cy="54" r="5" fill="#4AC84A"/>
+    <text x="20" y="74" font-size="9" fill="rgba(255,255,255,0.65)">v3.0.0 • PID 12847</text>
+    <text x="20" y="84" font-size="9" fill="rgba(255,255,255,0.65)">Uptime: 3h 48m</text>
+
+    <!-- Nav sections -->
+    <text x="14" y="116" font-size="9" font-weight="600" fill="rgba(255,255,255,0.45)" letter-spacing="0.5">MONITORING</text>
+
+    <!-- Active nav item -->
+    <rect x="4" y="124" width="172" height="28" rx="3" fill="rgba(255,255,255,0.15)"/>
+    <rect x="4" y="124" width="3" height="28" rx="1" fill="#fff"/>
+    <text x="20" y="143" font-size="11" font-weight="600" fill="#fff">📊 Dashboard</text>
+
+    <text x="20" y="169" font-size="11" fill="rgba(255,255,255,0.8)">📡 Routes</text>
+    <text x="20" y="193" font-size="11" fill="rgba(255,255,255,0.8)">📦 Resources</text>
+    <text x="20" y="217" font-size="11" fill="rgba(255,255,255,0.8)">📤 Publishers</text>
+
+    <text x="14" y="248" font-size="9" font-weight="600" fill="rgba(255,255,255,0.45)" letter-spacing="0.5">SERVER</text>
+    <text x="20" y="268" font-size="11" fill="rgba(255,255,255,0.8)">🌐 Network</text>
+    <text x="20" y="292" font-size="11" fill="rgba(255,255,255,0.8)">🔒 Security</text>
+    <text x="20" y="316" font-size="11" fill="rgba(255,255,255,0.8)">📁 Static Files</text>
+
+    <text x="14" y="348" font-size="9" font-weight="600" fill="rgba(255,255,255,0.45)" letter-spacing="0.5">TOOLS</text>
+    <text x="20" y="368" font-size="11" fill="rgba(255,255,255,0.8)">🖥 Console</text>
+    <text x="20" y="392" font-size="11" fill="rgba(255,255,255,0.8)">📋 Logs</text>
+    <text x="20" y="416" font-size="11" fill="rgba(255,255,255,0.8)">⚙ Settings</text>
+
+    <!-- ══ MAIN CONTENT AREA ══ -->
+    <rect x="181" y="31" width="918" height="768" fill="#ECEAE4" rx="0 0 5 0"/>
+
+    <!-- Content header -->
+    <rect x="181" y="31" width="918" height="36" fill="#F4F2EC"/>
+    <line x1="181" y1="67" x2="1099" y2="67" stroke="#D4D0C8"/>
+    <text x="200" y="54" font-size="13" font-weight="600" fill="#2A4060">Dashboard</text>
+    <text x="280" y="54" font-size="10" fill="#888">Server overview and real-time metrics</text>
+
+    <!-- Refresh / actions in toolbar -->
+    <g transform="translate(910,40)">
+        <rect width="72" height="24" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.8"/>
+        <text x="36" y="16" text-anchor="middle" font-size="10" fill="#2A3A50">↻ Refresh</text>
+    </g>
+    <g transform="translate(990,40)">
+        <rect width="90" height="24" rx="3" fill="url(#btnNo)" stroke="#A02020" stroke-width="0.8"/>
+        <text x="45" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">⏹ Stop Server</text>
+    </g>
+
+    <!-- ══ STATUS CARDS ROW ══ -->
+    <!-- Card 1: Server Status -->
+    <g transform="translate(200,80)" filter="url(#shSm)">
+        <rect width="210" height="80" rx="4" fill="url(#statCard)" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="14" y="20" font-size="10" fill="#888">Server Status</text>
+        <circle cx="192" cy="16" r="5" fill="#4AC84A" stroke="#38A038" stroke-width="0.5"/>
+        <text x="14" y="42" font-size="18" font-weight="600" fill="#2A4060">Running</text>
+        <text x="14" y="60" font-size="10" fill="#666">HTTP on 2 interfaces • Port 8080</text>
+        <text x="14" y="72" font-size="9" fill="#888">Started: 11 Feb 2026, 07:21</text>
+    </g>
+
+    <!-- Card 2: Resources -->
+    <g transform="translate(424,80)" filter="url(#shSm)">
+        <rect width="210" height="80" rx="4" fill="url(#statCard)" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="14" y="20" font-size="10" fill="#888">Resource Pool</text>
+        <text x="14" y="42" font-size="18" font-weight="600" fill="#2A4060">8</text>
+        <text x="40" y="42" font-size="12" fill="#888">resources</text>
+        <text x="14" y="60" font-size="10" fill="#666">Router, Website, Info, Pages...</text>
+        <text x="14" y="72" font-size="9" fill="#888">Access: server_admin (full)</text>
+    </g>
+
+    <!-- Card 3: Routes -->
+    <g transform="translate(648,80)" filter="url(#shSm)">
+        <rect width="210" height="80" rx="4" fill="url(#statCard)" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="14" y="20" font-size="10" fill="#888">Active Routes</text>
+        <text x="14" y="42" font-size="18" font-weight="600" fill="#2A4060">12</text>
+        <text x="38" y="42" font-size="12" fill="#888">routes</text>
+        <text x="14" y="60" font-size="10" fill="#666">3 API • 6 static • 2 page • 1 wildcard</text>
+        <text x="14" y="72" font-size="9" fill="#888">Router: Server Router</text>
+    </g>
+
+    <!-- Card 4: Publishers -->
+    <g transform="translate(872,80)" filter="url(#shSm)">
+        <rect width="210" height="80" rx="4" fill="url(#statCard)" stroke="#D4D0C8" stroke-width="0.5"/>
+        <text x="14" y="20" font-size="10" fill="#888">Publishers</text>
+        <text x="14" y="42" font-size="18" font-weight="600" fill="#2A4060">5</text>
+        <text x="34" y="42" font-size="12" fill="#888">active</text>
+        <text x="14" y="60" font-size="10" fill="#666">Webpage, Function, CSS, JS, HTML</text>
+        <text x="14" y="72" font-size="9" fill="#888">Bundler: ready</text>
+    </g>
+
+    <!-- ══ ROUTES TABLE ══ -->
+    <g transform="translate(200,178)" filter="url(#shSm)">
+        <rect width="882" height="240" rx="4" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+
+        <!-- Table header bar -->
+        <rect x="0" y="0" width="882" height="30" rx="4 4 0 0" fill="#F4F2EC"/>
+        <text x="14" y="20" font-size="11" font-weight="600" fill="#2A4060">Routes — Server Router</text>
+        <!-- Search -->
+        <rect x="600" y="5" width="160" height="20" rx="10" fill="#8098B0"/>
+        <rect x="601" y="6" width="158" height="18" rx="9" fill="#fff"/>
+        <text x="614" y="19" font-size="9" fill="#AAA">🔍 Filter routes…</text>
+        <!-- Add route button -->
+        <rect x="770" y="4" width="100" height="22" rx="3" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.5"/>
+        <text x="820" y="19" text-anchor="middle" font-size="10" font-weight="600" fill="#fff">+ Add Route</text>
+
+        <!-- Column headers -->
+        <rect x="0" y="30" width="882" height="22" fill="#F8F7F4"/>
+        <text x="14" y="45" font-size="10" font-weight="600" fill="#2A4060">Route Pattern</text>
+        <line x1="220" y1="31" x2="220" y2="51" stroke="#E4E0D8"/>
+        <text x="234" y="45" font-size="10" font-weight="600" fill="#2A4060">Method</text>
+        <line x1="310" y1="31" x2="310" y2="51" stroke="#E4E0D8"/>
+        <text x="324" y="45" font-size="10" font-weight="600" fill="#2A4060">Handler</text>
+        <line x1="540" y1="31" x2="540" y2="51" stroke="#E4E0D8"/>
+        <text x="554" y="45" font-size="10" font-weight="600" fill="#2A4060">Type</text>
+        <line x1="660" y1="31" x2="660" y2="51" stroke="#E4E0D8"/>
+        <text x="674" y="45" font-size="10" font-weight="600" fill="#2A4060">Status</text>
+        <line x1="760" y1="31" x2="760" y2="51" stroke="#E4E0D8"/>
+        <text x="774" y="45" font-size="10" font-weight="600" fill="#2A4060">Actions</text>
+
+        <!-- Row 1 -->
+        <text x="14" y="69" font-size="10" fill="#1A1A1A" font-family="Consolas,monospace">/</text>
+        <text x="234" y="69" font-size="10" fill="#444">GET</text>
+        <text x="324" y="69" font-size="10" fill="#444">HTTP_Webpage_Publisher</text>
+        <rect x="554" y="58" width="56" height="16" rx="8" fill="#E0E8F0" stroke="#A0B0C0" stroke-width="0.5"/>
+        <text x="582" y="70" text-anchor="middle" font-size="9" fill="#3060A0">Page</text>
+        <circle cx="700" cy="65" r="4" fill="#4AC84A"/>
+        <text x="712" y="69" font-size="10" fill="#2A6828">Active</text>
+        <text x="786" y="69" font-size="9" fill="#2868A0" text-decoration="underline">Edit</text>
+
+        <!-- Row 2 (selected) -->
+        <rect x="0" y="78" width="882" height="24" fill="#4080C0"/>
+        <text x="14" y="94" font-size="10" fill="#fff" font-family="Consolas,monospace">/api/status</text>
+        <text x="234" y="94" font-size="10" fill="rgba(255,255,255,0.9)">GET</text>
+        <text x="324" y="94" font-size="10" fill="rgba(255,255,255,0.9)">HTTP_Function_Publisher</text>
+        <rect x="554" y="84" width="56" height="16" rx="8" fill="rgba(255,255,255,0.2)"/>
+        <text x="582" y="96" text-anchor="middle" font-size="9" fill="#fff">API</text>
+        <circle cx="700" cy="90" r="4" fill="#4AC84A"/>
+        <text x="712" y="94" font-size="10" fill="rgba(255,255,255,0.9)">Active</text>
+        <text x="786" y="94" font-size="9" fill="rgba(200,220,255,1)" text-decoration="underline">Edit</text>
+
+        <!-- Row 3 -->
+        <rect x="0" y="102" width="882" height="24" fill="#F8F7F4"/>
+        <text x="14" y="118" font-size="10" fill="#1A1A1A" font-family="Consolas,monospace">/api/resources</text>
+        <text x="234" y="118" font-size="10" fill="#444">GET</text>
+        <text x="324" y="118" font-size="10" fill="#444">HTTP_Function_Publisher</text>
+        <rect x="554" y="108" width="56" height="16" rx="8" fill="#E0E8F0" stroke="#A0B0C0" stroke-width="0.5"/>
+        <text x="582" y="120" text-anchor="middle" font-size="9" fill="#3060A0">API</text>
+        <circle cx="700" cy="114" r="4" fill="#4AC84A"/>
+        <text x="712" y="118" font-size="10" fill="#2A6828">Active</text>
+        <text x="786" y="118" font-size="9" fill="#2868A0" text-decoration="underline">Edit</text>
+
+        <!-- Row 4 -->
+        <text x="14" y="142" font-size="10" fill="#1A1A1A" font-family="Consolas,monospace">/bundle.js</text>
+        <text x="234" y="142" font-size="10" fill="#444">GET</text>
+        <text x="324" y="142" font-size="10" fill="#444">Static_Route_HTTP_Responder</text>
+        <rect x="554" y="132" width="56" height="16" rx="8" fill="#F0EDE4" stroke="#C8C4B8" stroke-width="0.5"/>
+        <text x="582" y="144" text-anchor="middle" font-size="9" fill="#806800">Static</text>
+        <circle cx="700" cy="138" r="4" fill="#4AC84A"/>
+        <text x="712" y="142" font-size="10" fill="#2A6828">Active</text>
+        <text x="786" y="142" font-size="9" fill="#2868A0" text-decoration="underline">Edit</text>
+
+        <!-- Row 5 -->
+        <rect x="0" y="150" width="882" height="24" fill="#F8F7F4"/>
+        <text x="14" y="166" font-size="10" fill="#1A1A1A" font-family="Consolas,monospace">/bundle.css</text>
+        <text x="234" y="166" font-size="10" fill="#444">GET</text>
+        <text x="324" y="166" font-size="10" fill="#444">Static_Route_HTTP_Responder</text>
+        <rect x="554" y="156" width="56" height="16" rx="8" fill="#F0EDE4" stroke="#C8C4B8" stroke-width="0.5"/>
+        <text x="582" y="168" text-anchor="middle" font-size="9" fill="#806800">Static</text>
+        <circle cx="700" cy="162" r="4" fill="#4AC84A"/>
+        <text x="712" y="166" font-size="10" fill="#2A6828">Active</text>
+        <text x="786" y="166" font-size="9" fill="#2868A0" text-decoration="underline">Edit</text>
+
+        <!-- Row 6 -->
+        <text x="14" y="190" font-size="10" fill="#1A1A1A" font-family="Consolas,monospace">/*</text>
+        <text x="234" y="190" font-size="10" fill="#444">ALL</text>
+        <text x="324" y="190" font-size="10" fill="#444">HTTP_Website_Publisher</text>
+        <rect x="554" y="180" width="56" height="16" rx="8" fill="#D8F0D8" stroke="#88C888" stroke-width="0.5"/>
+        <text x="582" y="192" text-anchor="middle" font-size="9" fill="#2A6828">Catch</text>
+        <circle cx="700" cy="186" r="4" fill="#4AC84A"/>
+        <text x="712" y="190" font-size="10" fill="#2A6828">Active</text>
+        <text x="786" y="190" font-size="9" fill="#2868A0" text-decoration="underline">Edit</text>
+
+        <!-- Pagination -->
+        <rect x="0" y="210" width="882" height="30" fill="#F8F7F4" rx="0 0 4 4"/>
+        <text x="14" y="229" font-size="10" fill="#666">Showing 1–6 of 12 routes</text>
+        <g transform="translate(740,216)">
+            <rect width="28" height="18" rx="2" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+            <text x="14" y="13" text-anchor="middle" font-size="10" fill="#2A3A50">◀</text>
+        </g>
+        <g transform="translate(774,216)">
+            <rect width="24" height="18" rx="2" fill="url(#btnPri)" stroke="#2868A0" stroke-width="0.5"/>
+            <text x="12" y="13" text-anchor="middle" font-size="10" fill="#fff" font-weight="600">1</text>
+        </g>
+        <g transform="translate(802,216)">
+            <rect width="24" height="18" rx="2" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+            <text x="12" y="13" text-anchor="middle" font-size="10" fill="#2A3A50">2</text>
+        </g>
+        <g transform="translate(830,216)">
+            <rect width="28" height="18" rx="2" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+            <text x="14" y="13" text-anchor="middle" font-size="10" fill="#2A3A50">▶</text>
+        </g>
+    </g>
+
+    <!-- ══ NETWORK BINDINGS ══ -->
+    <g transform="translate(200,436)" filter="url(#shSm)">
+        <rect width="430" height="180" rx="4" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+        <rect x="0" y="0" width="430" height="28" rx="4 4 0 0" fill="#F4F2EC"/>
+        <text x="14" y="19" font-size="11" font-weight="600" fill="#2A4060">🌐 Network Bindings</text>
+
+        <!-- Interface rows -->
+        <rect x="0" y="28" width="430" height="22" fill="#F8F7F4"/>
+        <text x="14" y="43" font-size="10" font-weight="600" fill="#2A4060">Interface</text>
+        <text x="180" y="43" font-size="10" font-weight="600" fill="#2A4060">Address</text>
+        <text x="310" y="43" font-size="10" font-weight="600" fill="#2A4060">Port</text>
+        <text x="370" y="43" font-size="10" font-weight="600" fill="#2A4060">Protocol</text>
+
+        <text x="14" y="67" font-size="10" fill="#444">Ethernet</text>
+        <text x="180" y="67" font-size="10" fill="#1A1A1A" font-family="Consolas,monospace">192.168.1.42</text>
+        <text x="310" y="67" font-size="10" fill="#1A1A1A">8080</text>
+        <text x="370" y="67" font-size="10" fill="#444">HTTP</text>
+        <circle cx="416" cy="63" r="4" fill="#4AC84A"/>
+
+        <rect x="0" y="76" width="430" height="24" fill="#F8F7F4"/>
+        <text x="14" y="92" font-size="10" fill="#444">Loopback</text>
+        <text x="180" y="92" font-size="10" fill="#1A1A1A" font-family="Consolas,monospace">127.0.0.1</text>
+        <text x="310" y="92" font-size="10" fill="#1A1A1A">8080</text>
+        <text x="370" y="92" font-size="10" fill="#444">HTTP</text>
+        <circle cx="416" cy="88" r="4" fill="#4AC84A"/>
+
+        <!-- Allowed addresses -->
+        <line x1="10" y1="108" x2="420" y2="108" stroke="#E4E0D8"/>
+        <text x="14" y="126" font-size="10" fill="#888">Allowed addresses: all IPv4 (no filter)</text>
+        <text x="14" y="144" font-size="10" fill="#888">HTTP timeout: 10,800,000 ms (3 hours)</text>
+        <text x="14" y="162" font-size="10" fill="#888">HTTPS: not configured</text>
+
+        <rect x="310" y="148" width="108" height="22" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="364" y="163" text-anchor="middle" font-size="10" fill="#2A3A50">Configure TLS</text>
+    </g>
+
+    <!-- ══ RESOURCE POOL ══ -->
+    <g transform="translate(648,436)" filter="url(#shSm)">
+        <rect width="434" height="180" rx="4" fill="#fff" stroke="#D4D0C8" stroke-width="0.5"/>
+        <rect x="0" y="0" width="434" height="28" rx="4 4 0 0" fill="#F4F2EC"/>
+        <text x="14" y="19" font-size="11" font-weight="600" fill="#2A4060">📦 Resource Pool</text>
+
+        <!-- Resource list -->
+        <text x="14" y="50" font-size="10" fill="#1A1A1A">Server Router</text>
+        <rect x="280" y="40" width="56" height="14" rx="7" fill="#D8F0D8" stroke="#88C888" stroke-width="0.5"/>
+        <text x="308" y="50" text-anchor="middle" font-size="8" fill="#2A6828">Active</text>
+        <text x="348" y="50" font-size="9" fill="#888">Router</text>
+
+        <rect x="0" y="56" width="434" height="20" fill="#F8F7F4"/>
+        <text x="14" y="70" font-size="10" fill="#1A1A1A">Website Resource</text>
+        <rect x="280" y="60" width="56" height="14" rx="7" fill="#D8F0D8" stroke="#88C888" stroke-width="0.5"/>
+        <text x="308" y="70" text-anchor="middle" font-size="8" fill="#2A6828">Active</text>
+        <text x="348" y="70" font-size="9" fill="#888">Website</text>
+
+        <text x="14" y="90" font-size="10" fill="#1A1A1A">Local Server Info</text>
+        <rect x="280" y="80" width="56" height="14" rx="7" fill="#D8F0D8" stroke="#88C888" stroke-width="0.5"/>
+        <text x="308" y="90" text-anchor="middle" font-size="8" fill="#2A6828">Active</text>
+        <text x="348" y="90" font-size="9" fill="#888">Info</text>
+
+        <rect x="0" y="96" width="434" height="20" fill="#F8F7F4"/>
+        <text x="14" y="110" font-size="10" fill="#1A1A1A">Page Context: / (Home)</text>
+        <rect x="280" y="100" width="56" height="14" rx="7" fill="#D8F0D8" stroke="#88C888" stroke-width="0.5"/>
+        <text x="308" y="110" text-anchor="middle" font-size="8" fill="#2A6828">Active</text>
+        <text x="348" y="110" font-size="9" fill="#888">Page</text>
+
+        <text x="14" y="130" font-size="10" fill="#1A1A1A">Page Context: /admin</text>
+        <rect x="280" y="120" width="56" height="14" rx="7" fill="#D8F0D8" stroke="#88C888" stroke-width="0.5"/>
+        <text x="308" y="130" text-anchor="middle" font-size="8" fill="#2A6828">Active</text>
+        <text x="348" y="130" font-size="9" fill="#888">Page</text>
+
+        <text x="14" y="150" font-size="10" fill="#888">+ 3 more resources</text>
+        <rect x="320" y="152" width="100" height="20" rx="3" fill="url(#btn)" stroke="#8698AA" stroke-width="0.5"/>
+        <text x="370" y="166" text-anchor="middle" font-size="9" fill="#2A3A50">View All →</text>
+    </g>
+
+    <!-- ══ BOTTOM STATUS BAR ══ -->
+    <rect x="1" y="775" width="1098" height="24" fill="#E8E4DC" stroke="#D4D0C8" stroke-width="0.5" rx="0 0 5 5"/>
+    <circle cx="16" cy="787" r="4" fill="#4AC84A"/>
+    <text x="26" y="791" font-size="9" fill="#444">Server running</text>
+    <line x1="110" y1="778" x2="110" y2="796" stroke="#C8C4B8"/>
+    <text x="120" y="791" font-size="9" fill="#666">Memory: 48 MB</text>
+    <line x1="220" y1="778" x2="220" y2="796" stroke="#C8C4B8"/>
+    <text x="230" y="791" font-size="9" fill="#666">CPU: 2.1%</text>
+    <line x1="310" y1="778" x2="310" y2="796" stroke="#C8C4B8"/>
+    <text x="320" y="791" font-size="9" fill="#666">Requests today: 1,247</text>
+    <line x1="460" y1="778" x2="460" y2="796" stroke="#C8C4B8"/>
+    <text x="470" y="791" font-size="9" fill="#666">Errors: 3 (0.24%)</text>
+    <text x="1060" y="791" font-size="9" fill="#888" text-anchor="end">11:16 AM</text>
+</svg>
