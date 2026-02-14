@@ -77,6 +77,10 @@ package-lock.json
 # Test-generated screenshots (E2E / lab output)
 tmp/screenshots/
 lab/screenshots/
+test/e2e/screenshots/
+
+# Fallback for ad-hoc local test runs from repo root
+screenshots/
 
 # Session working files (agent-generated, not for commit)
 docs/sessions/*/WORKING_NOTES.md

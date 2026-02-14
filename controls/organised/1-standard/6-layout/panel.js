@@ -99,12 +99,21 @@ class Panel extends Control {
         this._collapsible = params.collapsible || false;
         this._collapsed = false;
 
+        // ARIA: region role with label from title
+        this.dom.attributes.role = 'region';
+
         if (def(spec.name)) {
             this.name = spec.name;
         }
 
         if (def(spec.title)) {
             this.title = spec.title;
+            this.dom.attributes['aria-label'] = spec.title;
+        }
+
+        // Hoverable interaction mode
+        if (spec.hoverable || params.hoverable) {
+            this.add_class('hoverable');
         }
 
         if (!spec.abstract && !spec.el) {
@@ -166,7 +175,7 @@ class Panel extends Control {
         });
         this.add(content_container);
         this._ctrl_fields = this._ctrl_fields || {};
-        this._ctrl_fields.content = content_container;
+        this._ctrl_fields.content_container = content_container;
         this.content_container = content_container;
 
         // Add initial content
@@ -186,6 +195,28 @@ class Panel extends Control {
         } else {
             this.add(content);
         }
+    }
+
+    /**
+     * Add a footer to the panel.
+     * @param {*} content - Content to add to the footer
+     * @returns {Control} The footer control
+     */
+    add_footer(content) {
+        if (!this._ctrl_fields || !this._ctrl_fields.footer) {
+            const { context } = this;
+            const footer = new Control({
+                context,
+                class: 'panel-footer jsgui-panel-footer'
+            });
+            this.add(footer);
+            this._ctrl_fields = this._ctrl_fields || {};
+            this._ctrl_fields.footer = footer;
+        }
+        if (content) {
+            this._ctrl_fields.footer.add(content);
+        }
+        return this._ctrl_fields.footer;
     }
 
     /**

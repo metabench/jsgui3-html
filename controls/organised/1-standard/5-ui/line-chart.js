@@ -2,7 +2,7 @@
 
 var jsgui = require('../../../../html-core/html-core');
 
-var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, extend = jsgui.extend;
+var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 var Collection = jsgui.Collection;
 
@@ -71,6 +71,13 @@ class Line_Chart extends Control {
                 'y_minor_notch_spacing': y_minor_notch_spacing,
                 'suppress_0_axes_labels': suppress_0_axes_labels
             });
+
+            // Store size, range, origin as instance properties (nested arrays get stringified by the data model)
+            this._chart_size = spec.size || [400, 300];
+            this._chart_range = spec.range || [[0, 0], [100, 100]];
+            if (spec.x_origin !== undefined) this._chart_x_origin = spec.x_origin;
+            if (spec.y_origin !== undefined) this._chart_y_origin = spec.y_origin;
+
             this.add_full_axes();
         }
 
@@ -90,8 +97,11 @@ class Line_Chart extends Control {
 
         if (typeof window == 'undefined') {
             // For sending the fields to the client.
+            var _range = this.get('range');
+            var _x_origin = this.get('x_origin');
+            var _y_origin = this.get('y_origin');
 
-            extend(this._fields = this._fields || {}, {
+            var fields_obj = {
                 'vert_margin': vert_margin,
                 'left_margin': left_margin,
                 'right_margin': right_margin,
@@ -100,37 +110,41 @@ class Line_Chart extends Control {
                 'y_major_notch_spacing': y_major_notch_spacing,
                 'x_minor_notch_spacing': x_minor_notch_spacing,
                 'y_minor_notch_spacing': y_minor_notch_spacing,
-                'suppress_0_axes_labels': suppress_0_axes_labels,
-                'range': this.get('range').value(),
-                'x_origin': this.get('x_origin').value(),
-                'y_origin': this.get('y_origin').value()
-            });
+                'suppress_0_axes_labels': suppress_0_axes_labels
+            };
+            if (_range && typeof _range.value === 'function') fields_obj['range'] = _range.value();
+            if (_x_origin && typeof _x_origin.value === 'function') fields_obj['x_origin'] = _x_origin.value();
+            if (_y_origin && typeof _y_origin.value === 'function') fields_obj['y_origin'] = _y_origin.value();
+
+            Object.assign(this._fields = this._fields || {}, fields_obj);
         }
     }
 
     'add_full_axes'() {
+        // Helper to unwrap Data_Value or raw values from this.get()
+        var _val = (v) => (v && typeof v.value === 'function') ? v.value() : v;
 
-        var vert_margin = this.get('vert_margin');
-        var left_margin = this.get('left_margin');
-        var right_margin = this.get('right_margin');
-        var axis_thickness = this.get('axis_thickness');
-        var x_major_notch_spacing = this.get('x_major_notch_spacing');
-        var y_major_notch_spacing = this.get('y_major_notch_spacing');
-        var x_minor_notch_spacing = this.get('x_minor_notch_spacing');
-        var y_minor_notch_spacing = this.get('y_minor_notch_spacing');
-        var suppress_0_axes_labels = this.get('suppress_0_axes_labels');
+        var vert_margin = _val(this.get('vert_margin'));
+        var left_margin = _val(this.get('left_margin'));
+        var right_margin = _val(this.get('right_margin'));
+        var axis_thickness = _val(this.get('axis_thickness'));
+        var x_major_notch_spacing = _val(this.get('x_major_notch_spacing'));
+        var y_major_notch_spacing = _val(this.get('y_major_notch_spacing'));
+        var x_minor_notch_spacing = _val(this.get('x_minor_notch_spacing'));
+        var y_minor_notch_spacing = _val(this.get('y_minor_notch_spacing'));
+        var suppress_0_axes_labels = _val(this.get('suppress_0_axes_labels'));
 
 
 
 
-        var size = this.get('size').value();
+        var size = this._chart_size || _val(this.get('size'));
         //console.log('size', size);
 
+        // size can be [[w], [h]] or [w, h]
+        var w = Array.isArray(size[0]) ? size[0][0] : size[0];
+        var h = Array.isArray(size[1]) ? size[1][0] : size[1];
 
-        var w = size[0][0];
-        var h = size[1][0];
-
-        var range = this.get('range').value();
+        var range = this._chart_range || _val(this.get('range'));
 
         console.log('range', range);
 
@@ -202,7 +216,7 @@ class Line_Chart extends Control {
             'tag_name': 'svg'
         });
 
-        svg.set('dom.attributes', {
+        Object.assign(svg.dom.attributes, {
             'width': w,
             'height': h,
             'viewPort': '0 0 ' + w + ' ' + h,
@@ -270,14 +284,14 @@ class Line_Chart extends Control {
         var y_axis_top = vert_margin;
         var y_axis_bottom = h - vert_margin;
 
-        var add_y_axis_line = function() {
+        var add_y_axis_line = () => {
 
             var y_axis = new Control({
                 'context': this.context,
                 'tag_name': 'line'
             });
 
-            y_axis.set('dom.attributes', {
+            Object.assign(y_axis.dom.attributes, {
                 'width': 10,
                 'height': h,
                 'x1': y_axis_x,
@@ -291,13 +305,13 @@ class Line_Chart extends Control {
             svg.add(y_axis);
         };
 
-        var add_x_axis_line = function() {
+        var add_x_axis_line = () => {
             var x_axis = new Control({
                 'context': this.context,
                 'tag_name': 'line'
             });
 
-            x_axis.set('dom.attributes', {
+            Object.assign(x_axis.dom.attributes, {
                 'width': 10,
                 'height': h,
                 'x1': x_axis_left,
@@ -311,7 +325,7 @@ class Line_Chart extends Control {
             svg.add(x_axis);
         };
 
-        var add_x_notch_group = function(spacing, height) {
+        var add_x_notch_group = (spacing, height) => {
             //console.log('x_min', x_min);
             //console.log('spacing', spacing);
             var num_notches_left_of_origin = Math.floor((x_min * -1) / spacing);
@@ -333,7 +347,7 @@ class Line_Chart extends Control {
 
                 // calculate the notch x position.
 
-                x_notch.set('dom.attributes', {
+                Object.assign(x_notch.dom.attributes, {
                     'width': 2,
                     'height': height,
                     'x1': x_location,
@@ -352,7 +366,7 @@ class Line_Chart extends Control {
             }
         }
 
-        var add_x_label_group = function(spacing) {
+        var add_x_label_group = (spacing) => {
             var num_notches_left_of_origin = Math.floor((x_min * -1) / spacing);
             var num_notches_right_of_origin = Math.floor(x_max / spacing);
             var first_notch_x_value = num_notches_left_of_origin * spacing * -1;
@@ -370,7 +384,7 @@ class Line_Chart extends Control {
                         'context': this.context,
                         'tag_name': 'text'
                     });
-                    x_notch_label.set('dom.attributes', {
+                    Object.assign(x_notch_label.dom.attributes, {
                         'x': x_location - 4,
                         'y': y_origin + 28,
                         'font-family': 'Verdana',
@@ -382,7 +396,7 @@ class Line_Chart extends Control {
                 notch_x_value += spacing;
             }
         }
-        var add_y_label_group = function(spacing) {
+        var add_y_label_group = (spacing) => {
             var num_notches_below_origin = Math.floor((y_min * -1) / spacing);
             var num_notches_above_origin = Math.floor(y_max / spacing);
 
@@ -400,11 +414,6 @@ class Line_Chart extends Control {
 
                 if (!(suppress_0_axes_labels && notch_y_value === 0)) {
 
-                    var y_notch = new Control({
-                        'context': this.context,
-                        'tag_name': 'line'
-                    });
-
                     var y_location = y_location_from_value(notch_y_value);
 
                     var y_notch_label = new Control({
@@ -412,7 +421,7 @@ class Line_Chart extends Control {
                         'tag_name': 'text'
                     });
 
-                    y_notch_label.set('dom.attributes', {
+                    Object.assign(y_notch_label.dom.attributes, {
                         'x': x_origin - 48,
                         'y': y_location + 6,
                         'font-family': 'Verdana',
@@ -426,7 +435,7 @@ class Line_Chart extends Control {
             }
         }
 
-        var add_y_notch_group = function(spacing, length) {
+        var add_y_notch_group = (spacing, length) => {
             //console.log('x_min', x_min);
             //console.log('spacing', spacing);
             var num_notches_below_origin = Math.floor((y_min * -1) / spacing);
@@ -453,7 +462,7 @@ class Line_Chart extends Control {
 
                 var y_location = y_location_from_value(notch_y_value);
 
-                y_notch.set('dom.attributes', {
+                Object.assign(y_notch.dom.attributes, {
                     'width': length,
                     'height': 2,
                     'x1': x_origin - length,
@@ -473,7 +482,7 @@ class Line_Chart extends Control {
         }
 
 
-        var add_x_axis_major_notches = function() {
+        var add_x_axis_major_notches = () => {
             // x_major_notch_spacing
 
             // paint notches from origin (if origin is shown)
@@ -490,7 +499,7 @@ class Line_Chart extends Control {
 
         }
 
-        var add_x_axis_minor_notches = function() {
+        var add_x_axis_minor_notches = () => {
             // x_major_notch_spacing
 
             // paint notches from origin (if origin is shown)
@@ -508,13 +517,13 @@ class Line_Chart extends Control {
 
         }
 
-        var add_origin_label = function() {
+        var add_origin_label = () => {
             var origin_label = new Control({
                 'context': this.context,
                 'tag_name': 'text'
             });
 
-            origin_label.set('dom.attributes', {
+            Object.assign(origin_label.dom.attributes, {
                 'x': x_origin - 14,
                 'y': y_origin + 14,
                 'font-family': 'Verdana',
@@ -528,24 +537,24 @@ class Line_Chart extends Control {
             svg.add(origin_label);
         }
 
-        var add_y_axis_major_notches = function() {
+        var add_y_axis_major_notches = () => {
             add_y_notch_group(y_major_notch_spacing, 20);
         }
 
-        var add_y_axis_minor_notches = function() {
+        var add_y_axis_minor_notches = () => {
             console.log('x_minor_notch_spacing', y_minor_notch_spacing);
             add_y_notch_group(y_minor_notch_spacing, 10);
 
         }
 
-        var add_major_x_axis_labels = function() {
+        var add_major_x_axis_labels = () => {
             add_x_label_group(x_major_notch_spacing);
         }
-        var add_major_y_axis_labels = function() {
+        var add_major_y_axis_labels = () => {
             add_y_label_group(y_major_notch_spacing);
         }
 
-        var add_major_axes_labels = function() {
+        var add_major_axes_labels = () => {
             add_major_x_axis_labels();
             add_major_y_axis_labels();
         }

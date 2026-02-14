@@ -203,6 +203,43 @@
 }
 
 /* ══════════════════════════════════════════
+   Disabled Tabs
+   ══════════════════════════════════════════ */
+
+.jsgui-tabs .tab-label.tab-disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ══════════════════════════════════════════
+   Closable Tabs
+   ══════════════════════════════════════════ */
+
+.jsgui-tabs .tab-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    margin-left: var(--j-space-1, 4px);
+    border: none;
+    border-radius: var(--j-radius-sm, 4px);
+    background: transparent;
+    color: var(--j-fg-muted);
+    font-size: 14px;
+    line-height: 1;
+    cursor: pointer;
+    transition: background var(--j-duration-fast) var(--j-ease-out);
+}
+
+.jsgui-tabs .tab-close:hover {
+    background: var(--j-bg-muted);
+    color: var(--j-fg);
+}
+
+/* ══════════════════════════════════════════
    Reduced Motion
    ══════════════════════════════════════════ */
 

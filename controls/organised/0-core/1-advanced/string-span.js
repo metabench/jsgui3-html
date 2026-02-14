@@ -18,7 +18,16 @@ const jsgui = require('./../../../../html-core/html-core');
 
 // could inherit span control?
 
-const {controls, parse, each, are_equal} = jsgui;
+const {controls, parse, each} = jsgui;
+const are_equal = jsgui.are_equal || function(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return a == b;
+    if (typeof a !== typeof b) return false;
+    if (typeof a !== 'object') return a === b;
+    const ka = Object.keys(a), kb = Object.keys(b);
+    if (ka.length !== kb.length) return false;
+    return ka.every(k => are_equal(a[k], b[k]));
+};
 const {Control, Text_Node} = controls;
 
 const Button = require('../0-basic/0-native-compositional/button');

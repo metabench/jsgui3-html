@@ -1048,6 +1048,28 @@ div.grid .row .cell span {
     line-height: 20px;
 }
 
+:is(.jsgui-dark-mode, [data-theme="dark"]) table.grid {
+    background-color: #1f2937;
+    border-color: #4b5563;
+    color: #e5e7eb;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) div.grid .header.row .cell,
+:is(.jsgui-dark-mode, [data-theme="dark"]) div.grid .row .row-header.cell {
+    background-color: #374151;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) div.grid .row .cell {
+    border-right-color: #4b5563;
+    border-bottom-color: #4b5563;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) div.grid .row .cell span,
+:is(.jsgui-dark-mode, [data-theme="dark"]) div.grid .header.row .cell span,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .color-grid .cell span {
+    color: #e5e7eb;
+}
+
 /*
 div.grid .row .cell span {
     font-size: 12px;

@@ -130,7 +130,7 @@
         --md-text-muted: #6b7280;
     }
 
-    .jsgui-dark-mode .markdown-viewer {
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .markdown-viewer {
         --md-text: #e5e7eb;
         --md-heading: #f9fafb;
         --md-link: #60a5fa;

@@ -1,79 +1,14 @@
 const jsgui = require('../../../../../html-core/html-core');
 const { Control } = jsgui;
 const { is_defined } = jsgui;
+const Color_Value = require('../../../../../html-core/Color_Value');
 
-// ────────────────────────────────────────────
-// Color conversion utilities
-// ────────────────────────────────────────────
-
-function hsl_to_rgb(h, s, l) {
-    h = ((h % 360) + 360) % 360;
-    s = Math.max(0, Math.min(1, s));
-    l = Math.max(0, Math.min(1, l));
-    const c = (1 - Math.abs(2 * l - 1)) * s;
-    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-    const m = l - c / 2;
-    let r = 0, g = 0, b = 0;
-    if (h < 60) { r = c; g = x; }
-    else if (h < 120) { r = x; g = c; }
-    else if (h < 180) { g = c; b = x; }
-    else if (h < 240) { g = x; b = c; }
-    else if (h < 300) { r = x; b = c; }
-    else { r = c; b = x; }
-    return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)];
-}
-
-function rgb_to_hsl(r, g, b) {
-    r /= 255; g /= 255; b /= 255;
-    const max = Math.max(r, g, b), min = Math.min(r, g, b);
-    let h = 0, s = 0, l = (max + min) / 2;
-    if (max !== min) {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
-        else if (max === g) h = ((b - r) / d + 2) * 60;
-        else h = ((r - g) / d + 4) * 60;
-    }
-    return [Math.round(h), Math.round(s * 100), Math.round(l * 100)];
-}
-
-function hex_to_rgb(hex) {
-    hex = hex.replace(/^#/, '');
-    if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
-    const n = parseInt(hex, 16);
-    return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
-}
-
-function rgb_to_hex(r, g, b) {
-    return '#' + [r, g, b].map(c => c.toString(16).padStart(2, '0')).join('');
-}
-
-function parse_color(input) {
-    if (!input || typeof input !== 'string') return { h: 0, s: 100, l: 50, a: 1 };
-    input = input.trim().toLowerCase();
-
-    // Hex
-    if (input.startsWith('#')) {
-        const [r, g, b] = hex_to_rgb(input);
-        const [h, s, l] = rgb_to_hsl(r, g, b);
-        return { h, s, l, a: 1 };
-    }
-
-    // rgb(r,g,b) or rgba(r,g,b,a)
-    const rgb_match = input.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+))?\s*\)/);
-    if (rgb_match) {
-        const [h, s, l] = rgb_to_hsl(+rgb_match[1], +rgb_match[2], +rgb_match[3]);
-        return { h, s, l, a: rgb_match[4] !== undefined ? +rgb_match[4] : 1 };
-    }
-
-    // hsl(h,s%,l%) or hsla
-    const hsl_match = input.match(/hsla?\(\s*(\d+)\s*,\s*(\d+)%?\s*,\s*(\d+)%?\s*(?:,\s*([\d.]+))?\s*\)/);
-    if (hsl_match) {
-        return { h: +hsl_match[1], s: +hsl_match[2], l: +hsl_match[3], a: hsl_match[4] !== undefined ? +hsl_match[4] : 1 };
-    }
-
-    return { h: 0, s: 100, l: 50, a: 1 };
-}
+// ── Re-export conversion utilities from Color_Value ──
+const hsl_to_rgb = Color_Value.hsl_to_rgb;
+const rgb_to_hsl = Color_Value.rgb_to_hsl;
+const hex_to_rgb = Color_Value.hex_to_rgb;
+const rgb_to_hex = Color_Value.rgb_to_hex;
+const parse_color = Color_Value.parse_color;
 
 // ────────────────────────────────────────────
 
@@ -130,13 +65,9 @@ class Color_Picker extends Control {
 
         this._cfg = cfg;
 
-        // Internal HSL + alpha state
-        const parsed = parse_color(initial_value);
-        this._h = parsed.h;
-        this._s = parsed.s;
-        this._l = parsed.l;
-        this._a = parsed.a;
-        this._prev_hex = this._current_hex();
+        // Internal color model — Color_Value instance
+        this._color = new Color_Value(initial_value);
+        this._prev_hex = this._color.hex;
 
         if (!spec.el) {
             this.compose();
@@ -145,68 +76,74 @@ class Color_Picker extends Control {
 
     // ── Public API ──
 
-    get h() { return this._h; }
-    get s() { return this._s; }
-    get l() { return this._l; }
-    get alpha() { return this._a; }
+    /** @returns {Color_Value} The underlying color model (for MVVM binding) */
+    get color_model() { return this._color; }
+
+    /** @returns {number} Hue 0-360 */
+    get h() { return this._color.h; }
+    /** @returns {number} Saturation 0-100 */
+    get s() { return this._color.s; }
+    /** @returns {number} Lightness 0-100 */
+    get l() { return this._color.l; }
+    /** @returns {number} Alpha 0-1 */
+    get alpha() { return this._color.alpha; }
 
     get value() {
         return this._format_output();
     }
 
-    get hex() { return this._current_hex(); }
+    get hex() { return this._color.hex; }
 
     get rgb() {
-        const [r, g, b] = hsl_to_rgb(this._h, this._s / 100, this._l / 100);
-        return { r, g, b };
+        return this._color.rgb;
     }
 
     get hsl() {
-        return { h: this._h, s: this._s, l: this._l };
+        return this._color.hsl;
     }
 
     set_value(color_str) {
-        const parsed = parse_color(color_str);
-        this._h = parsed.h;
-        this._s = parsed.s;
-        this._l = parsed.l;
-        this._a = parsed.a;
+        this._color.set(color_str);
         this._sync_ui();
     }
 
     set_hsl(h, s, l) {
-        this._h = ((h % 360) + 360) % 360;
-        this._s = Math.max(0, Math.min(100, s));
-        this._l = Math.max(0, Math.min(100, l));
+        this._color.set_hsl(h, s, l);
         this._sync_ui();
     }
 
     set_alpha(a) {
-        this._a = Math.max(0, Math.min(1, a));
+        this._color.set_alpha(a);
         this._sync_ui();
     }
+
+    // ── Internal property shims ──
+    // These let all internal code (compose, activate, event handlers) continue
+    // using this._h / this._s / this._l / this._a transparently while the
+    // actual state lives in this._color.
+    get _h() { return this._color._h; }
+    set _h(v) { this._color._h = v; }
+    get _s() { return this._color._s; }
+    set _s(v) { this._color._s = v; }
+    get _l() { return this._color._l; }
+    set _l(v) { this._color._l = v; }
+    get _a() { return this._color._a; }
+    set _a(v) { this._color._a = v; }
 
     // ── Internal ──
 
     _current_hex() {
-        const [r, g, b] = hsl_to_rgb(this._h, this._s / 100, this._l / 100);
-        return rgb_to_hex(r, g, b);
+        return this._color.hex;
     }
 
     _format_output() {
-        const [r, g, b] = hsl_to_rgb(this._h, this._s / 100, this._l / 100);
-        switch (this._cfg.output_format) {
-            case 'rgb': return `rgb(${r}, ${g}, ${b})`;
-            case 'rgba': return `rgba(${r}, ${g}, ${b}, ${this._a})`;
-            case 'hsl': return `hsl(${this._h}, ${this._s}%, ${this._l}%)`;
-            default: return rgb_to_hex(r, g, b);
-        }
+        return this._color.to_string(this._cfg.output_format);
     }
 
     _sync_ui() {
         // Update hex input
         if (this._hex_input) {
-            this._hex_input_val = this._current_hex();
+            this._hex_input_val = this._color.hex;
         }
         // Update preview
         if (this._preview_new) {

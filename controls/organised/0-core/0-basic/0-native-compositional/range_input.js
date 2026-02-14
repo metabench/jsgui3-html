@@ -3,6 +3,7 @@ const jsgui = require('../../../../../html-core/html-core');
 const { Control } = jsgui;
 const { is_defined } = jsgui;
 const { apply_full_input_api } = require('../../../../../control_mixins/input_api');
+const { themeable } = require('../../../../../control_mixins/themeable');
 
 const normalize_number_value = value => {
     if (!is_defined(value)) return '';
@@ -23,9 +24,23 @@ class Range_Input extends Control {
         spec.__type_name = spec.__type_name || 'range_input';
         super(spec);
         this.add_class('range-input');
+        this.add_class('jsgui-slider');
         this.dom.tagName = 'input';
         this.dom.attributes.type = 'range';
         this.enhance_only = !!spec.enhance_only && !!spec.el;
+
+        // Apply theming
+        const params = themeable(this, 'slider', spec, {
+            defaults: { size: 'medium' }
+        });
+
+        // Emit data-variant and data-size for CSS
+        if (params.variant) {
+            this.dom.attributes['data-variant'] = params.variant;
+        }
+        if (params.size && params.size !== 'medium') {
+            this.dom.attributes['data-size'] = params.size === 'small' ? 'sm' : params.size === 'large' ? 'lg' : params.size;
+        }
 
         set_attr_if_defined(this.dom.attributes, 'min', spec.min);
         set_attr_if_defined(this.dom.attributes, 'max', spec.max);

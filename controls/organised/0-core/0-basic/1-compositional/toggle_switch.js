@@ -23,43 +23,51 @@ class Toggle_Switch extends Control {
         this.checked = !!spec.checked;
 
         if (!spec.el) {
-            this.compose_toggle_switch();
+            this.compose(params);
         }
     }
 
-    compose_toggle_switch() {
+    compose(params) {
         const { context } = this;
 
+        // Hidden native <input type="checkbox"> for accessibility
         const input_ctrl = new Control({ context });
         input_ctrl.dom.tagName = 'input';
         input_ctrl.dom.attributes.type = 'checkbox';
         input_ctrl.dom.attributes.id = input_ctrl._id();
+        input_ctrl.dom.attributes.role = 'switch';
         input_ctrl.dom.attributes['aria-checked'] = this.checked ? 'true' : 'false';
         if (this.checked) {
             input_ctrl.dom.attributes.checked = 'checked';
         }
-        input_ctrl.add_class('toggle-switch-input');
         input_ctrl.add_class('jsgui-toggle-input');
 
-        const slider_ctrl = new Control({ context });
-        slider_ctrl.dom.tagName = 'span';
-        slider_ctrl.add_class('toggle-switch-slider');
-        slider_ctrl.add_class('jsgui-toggle-track');
+        // Track element (CSS: .jsgui-toggle-track)
+        const track_ctrl = new Control({ context });
+        track_ctrl.dom.tagName = 'span';
+        track_ctrl.add_class('jsgui-toggle-track');
 
+        // Thumb element inside track (CSS: .jsgui-toggle-thumb)
+        const thumb_ctrl = new Control({ context });
+        thumb_ctrl.dom.tagName = 'span';
+        thumb_ctrl.add_class('jsgui-toggle-thumb');
+        track_ctrl.add(thumb_ctrl);
+
+        // Label
         const label_ctrl = new Control({ context });
         label_ctrl.dom.tagName = 'label';
         label_ctrl.dom.attributes.for = input_ctrl._id();
-        label_ctrl.add_class('toggle-switch-label');
         label_ctrl.add_class('jsgui-toggle-label');
         label_ctrl.add(this.checked ? this.on_label : this.off_label);
 
         this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.input = input_ctrl;
-        this._ctrl_fields.slider = slider_ctrl;
+        this._ctrl_fields.track = track_ctrl;
+        this._ctrl_fields.thumb = thumb_ctrl;
         this._ctrl_fields.label = label_ctrl;
 
         this.add(input_ctrl);
-        this.add(slider_ctrl);
+        this.add(track_ctrl);
         this.add(label_ctrl);
     }
 
@@ -82,6 +90,7 @@ class Toggle_Switch extends Control {
             }
             if (input_ctrl.dom.el) {
                 input_ctrl.dom.el.checked = next_checked;
+                input_ctrl.dom.el.setAttribute('aria-checked', next_checked ? 'true' : 'false');
             }
         }
 
@@ -104,6 +113,27 @@ class Toggle_Switch extends Control {
         return !!this.checked;
     }
 
+    /**
+     * Set the disabled state.
+     * @param {boolean} disabled
+     */
+    set_disabled(disabled) {
+        const input_ctrl = this._ctrl_fields && this._ctrl_fields.input;
+        if (disabled) {
+            this.add_class('disabled');
+            if (input_ctrl) {
+                input_ctrl.dom.attributes.disabled = 'disabled';
+                if (input_ctrl.dom.el) input_ctrl.dom.el.disabled = true;
+            }
+        } else {
+            this.remove_class('disabled');
+            if (input_ctrl) {
+                delete input_ctrl.dom.attributes.disabled;
+                if (input_ctrl.dom.el) input_ctrl.dom.el.disabled = false;
+            }
+        }
+    }
+
     activate() {
         if (!this.__active) {
             super.activate();
@@ -117,6 +147,18 @@ class Toggle_Switch extends Control {
                     value: this.checked
                 });
             });
+
+            // Keyboard: Space/Enter to toggle
+            this.add_dom_event_listener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const el = input_ctrl.dom.el;
+                    if (el && !el.disabled) {
+                        el.checked = !el.checked;
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+            });
         }
     }
 }
@@ -126,33 +168,6 @@ Toggle_Switch.css = `
     display: inline-flex;
     align-items: center;
     gap: 8px;
-}
-.toggle-switch-input {
-    margin: 0;
-}
-.toggle-switch-slider {
-    width: 28px;
-    height: 16px;
-    border-radius: 999px;
-    background: #bbb;
-    position: relative;
-}
-.toggle-switch-slider::after {
-    content: '';
-    position: absolute;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #fff;
-    top: 2px;
-    left: 2px;
-    transition: transform 0.2s ease;
-}
-.toggle-switch-input:checked + .toggle-switch-slider::after {
-    transform: translateX(12px);
-}
-.toggle-switch-label {
-    font-size: 0.9em;
 }
 `;
 

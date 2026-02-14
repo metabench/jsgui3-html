@@ -171,11 +171,11 @@
         --chart-text: #111827;
     }
 
-    .jsgui-dark-mode .bar-chart,
-    .jsgui-dark-mode .pie-chart,
-    .jsgui-dark-mode .sparkline,
-    .jsgui-dark-mode .jsgui-area-chart,
-    .jsgui-dark-mode .jsgui-gauge {
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .bar-chart,
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .pie-chart,
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .sparkline,
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-area-chart,
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-gauge {
         --chart-grid: #374151;
         --chart-label: #9ca3af;
         --chart-text: #f9fafb;

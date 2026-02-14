@@ -1,4 +1,4 @@
-const {field, Data_Object, Evented_Class} = require('lang-tools');
+const { field, Data_Object, Evented_Class } = require('lang-tools');
 
 // And the View Data as well...
 
@@ -12,10 +12,14 @@ class Control_View extends Evented_Class {
     // .data.model
     // .ui.data.model
 
+    // Convenience: view.model → view.data.model
+    get model() { return this.data ? this.data.model : undefined; }
+    set model(v) { if (this.data) this.data.model = v; }
+
     constructor(spec = {}) {
         super();
         if (spec.context) this.context = spec.context;
-        const {context} = this;
+        const { context } = this;
 
         // view.data.model
 
@@ -35,7 +39,7 @@ class Control_View extends Evented_Class {
                 //this.data.model = spec.data.model;
                 o_data.model = spec.data.model;
             } else {
-                
+
             }
         }
 
@@ -52,7 +56,7 @@ class Control_View extends Evented_Class {
         }
         */
 
-        const o_ui = {context};
+        const o_ui = { context };
         if (spec.ui && spec.ui.data) {
             o_ui.data = spec.ui.data;
         }
@@ -61,7 +65,7 @@ class Control_View extends Evented_Class {
 
         // UI - if the control is selected, how is that displayed?
 
-        
+
 
 
         // Not to sure we need the low level control view object.
@@ -90,7 +94,7 @@ class Control_View extends Evented_Class {
 
 
 
-        
+
 
 
         // And the UI will have a compositional model.
@@ -121,7 +125,7 @@ class Control_View extends Evented_Class {
         // .ui.compositional.data.model....
 
         // Does seem sensible to store various properties deeper within structures.
-        
+
 
 
 
@@ -132,7 +136,7 @@ class Control_View extends Evented_Class {
         if (spec.data) {
 
 
-            
+
         }
         if (!this.data.model) {
 

@@ -100,8 +100,8 @@ class File_Upload extends Control {
             'context': this.context
 
         });
-        input_file.set('dom.attributes.type', 'file');
-        input_file.set('dom.attributes.name', 'file');
+        input_file.dom.attributes.type = 'file';
+        input_file.dom.attributes.name = 'file';
 
         frm.add(input_file);
 

@@ -18,6 +18,7 @@
     "lab:list": "node lab/experiment_runner.js list",
     "lab:run": "node lab/experiment_runner.js run",
     "lab:run-all": "node lab/experiment_runner.js run-all",
+    "test:playwright:all": "npm --prefix test/e2e run test:playwright:all",
     "sprint-tracker": "node tools/sprint-tracker/tracker_server.js",
     "sprint-tracker:electron": "cd tools/sprint-tracker && npx electron ."
   },
@@ -62,5 +63,5 @@
     "jsgui3-server": "^0.0.143",
     "puppeteer": "^24.37.2"
   },
-  "version": "0.0.183"
+  "version": "0.0.184"
 }

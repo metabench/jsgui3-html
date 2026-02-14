@@ -74,11 +74,12 @@ class Horizontal_Menu extends Control {
 			var tobj = tof(obj);
 			if (tobj == 'object') {
 				each(obj, (v, key) => {
-					var menu_node = make(Menu_Node({
+					var menu_node = new Menu_Node({
+						'context': this.context,
 						'text': key,
 						'value': v,
 						'menu': this
-					}))
+					});
 					this.add(menu_node);
 				})
 			}

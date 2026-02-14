@@ -96,7 +96,7 @@ describe('Panel Theme Integration', () => {
         it('creates content container', () => {
             const panel = new Panel({ context });
             expect(panel.content_container).to.exist;
-            expect(panel._ctrl_fields.content).to.exist;
+            expect(panel._ctrl_fields.content_container).to.exist;
         });
 
         it('adds initial content', () => {

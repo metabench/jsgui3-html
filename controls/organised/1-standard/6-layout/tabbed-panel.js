@@ -158,6 +158,9 @@ class Tabbed_Panel extends Panel {
         const tab_pages = [];
 
         const add_tab = (name, group_name, is_checked, tab_index, tab_def) => {
+            const is_disabled = (tab_def && typeof tab_def === 'object') ? !!tab_def.disabled : false;
+            const is_closable = (tab_def && typeof tab_def === 'object') ? !!tab_def.closable : false;
+
             var html_radio = new Control({ context });
             {
                 const { dom } = html_radio;
@@ -165,7 +168,8 @@ class Tabbed_Panel extends Panel {
                 const { attributes } = dom;
                 attributes.type = 'radio';
                 attributes.name = group_name;
-                if (is_checked) attributes.checked = 'checked';
+                if (is_checked && !is_disabled) attributes.checked = 'checked';
+                if (is_disabled) attributes.disabled = 'disabled';
             }
             html_radio.add_class('tab-input');
             this.add(html_radio);
@@ -177,11 +181,15 @@ class Tabbed_Panel extends Panel {
             const panel_id = `${this._id()}-panel-${tab_index}`;
             label.dom.attributes.for = html_radio.dom.attributes.id;
             label.add_class('tab-label');
+            if (is_disabled) {
+                label.add_class('tab-disabled');
+                label.dom.attributes['aria-disabled'] = 'true';
+            }
             label.dom.attributes['data-tab-index'] = String(tab_index);
             label.dom.attributes.role = 'tab';
             label.dom.attributes.id = tab_id;
-            label.dom.attributes.tabindex = is_checked ? '0' : '-1';
-            label.dom.attributes['aria-selected'] = is_checked ? 'true' : 'false';
+            label.dom.attributes.tabindex = (is_checked && !is_disabled) ? '0' : '-1';
+            label.dom.attributes['aria-selected'] = (is_checked && !is_disabled) ? 'true' : 'false';
             label.dom.attributes['aria-controls'] = panel_id;
             // Icon support — works for any tab definition with an icon
             const tab_icon = (tab_def && typeof tab_def === 'object') ? tab_def.icon : null;
@@ -207,6 +215,16 @@ class Tabbed_Panel extends Panel {
                 badge_span.add_class('tab-badge');
                 badge_span.add(String(tab_badge));
                 label.add(badge_span);
+            }
+            // Close button support
+            if (is_closable) {
+                const close_btn = new Control({ context, tag_name: 'button' });
+                close_btn.add_class('tab-close');
+                close_btn.dom.attributes.type = 'button';
+                close_btn.dom.attributes['aria-label'] = `Close ${name || 'tab'}`;
+                close_btn.dom.attributes.tabindex = '-1';
+                close_btn.add('×');
+                label.add(close_btn);
             }
             apply_focus_ring(label);
             this.add(label);

@@ -50,8 +50,9 @@ class Radio_Button_Group extends Control {
         if (!spec.abstract && !spec.el) {
             var id = this._id();
 
-            //
-            var items = this.get('items').value();
+            // Support items from spec or data model
+            var _items = this.get('items');
+            var items = (_items && typeof _items.value === 'function') ? _items.value() : (spec.items || []);
             //console.log('items', items);
             //throw 'stop';
 

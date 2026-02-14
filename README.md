@@ -1381,6 +1381,16 @@ class DataList extends Control {
 
 ## Testing
 
+### Playwright E2E (Aggregate)
+
+Run all Playwright E2E suites from the repository root:
+
+```bash
+npm run test:playwright:all
+```
+
+This delegates to `test/e2e` and runs the aggregate Playwright runner.
+
 ### Unit Testing Controls
 ```javascript
 // test/controls/button.test.js

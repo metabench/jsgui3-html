@@ -11,11 +11,13 @@
     "test:e2e:missing-controls": "mocha missing-controls.test.js --timeout 30000 --exit",
     "test:e2e:progressive": "mocha progressive.test.js --timeout 120000 --exit",
     "test:e2e:user-form": "mocha user-form.test.js --timeout 30000 --exit",
-    "test:e2e:watch": "mocha **/*.test.js --watch --timeout 30000"
+    "test:e2e:watch": "mocha **/*.test.js --watch --timeout 30000",
+    "test:playwright:all": "node playwright/run_all_playwright.js"
   },
   "devDependencies": {
-    "mocha": "^10.0.0",
     "chai": "^4.3.0",
+    "mocha": "^10.0.0",
+    "playwright": "^1.58.2",
     "puppeteer": "^21.0.0"
   }
 }

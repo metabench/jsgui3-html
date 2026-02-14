@@ -78,10 +78,42 @@
     --j-info: #457b9d;
 
     --j-focus-ring: 0 0 0 3px rgba(67, 97, 238, 0.35);
+
+    /* ── Admin token bridge (light) ── */
+    --admin-bg: #f3f3f3;
+    --admin-card-bg: #ffffff;
+    --admin-border: #e0e0e0;
+    --admin-border-accent: #0078d4;
+    --admin-text: #1e1e1e;
+    --admin-text-secondary: #616161;
+    --admin-text-muted: #9e9e9e;
+    --admin-font: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --admin-font-mono: 'Cascadia Code', 'Consolas', 'JetBrains Mono', 'Courier New', monospace;
+    --admin-font-size: 13px;
+    --admin-header-bg: #f8f8f8;
+    --admin-header-text: #616161;
+    --admin-stripe-bg: #f8f8f8;
+    --admin-hover-bg: #e8e8e8;
+    --admin-select-bg: #cce5ff;
+    --admin-accent: #0078d4;
+    --admin-success: #16825d;
+    --admin-warning: #c19c00;
+    --admin-danger: #cd3131;
+    --admin-info: #3794ff;
+    --admin-success-bg: #dff6dd;
+    --admin-warning-bg: #fff4ce;
+    --admin-danger-bg: #fdd;
+    --admin-info-bg: #d6ecff;
+    --admin-radius: 4px;
+    --admin-radius-lg: 6px;
+    --admin-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --admin-shadow-lg: 0 4px 12px rgba(0,0,0,0.1);
+    --admin-row-height: 36px;
+    --admin-cell-padding: 8px 12px;
 }
 
 /* ── Dark theme overrides ── */
-[data-theme="dark"] {
+:is([data-theme="dark"], .jsgui-dark-mode) {
     --j-bg: #0f0f1a;
     --j-bg-subtle: #1a1a2e;
     --j-bg-muted: #252540;
@@ -112,6 +144,31 @@
     --j-shadow-xl: 0 20px 30px rgba(0,0,0,0.60);
 
     --j-focus-ring: 0 0 0 3px rgba(108, 131, 247, 0.4);
+
+    /* ── Admin token bridge (dark / vs-dark) ── */
+    --admin-bg: #1e1e1e;
+    --admin-card-bg: #252526;
+    --admin-border: #3c3c3c;
+    --admin-border-accent: #0078d4;
+    --admin-text: #d4d4d4;
+    --admin-text-secondary: #9d9d9d;
+    --admin-text-muted: #6a6a6a;
+    --admin-header-bg: #2d2d2d;
+    --admin-header-text: #9d9d9d;
+    --admin-stripe-bg: #2a2a2a;
+    --admin-hover-bg: #2a2d2e;
+    --admin-select-bg: #094771;
+    --admin-accent: #3794ff;
+    --admin-success: #4ec9b0;
+    --admin-warning: #cca700;
+    --admin-danger: #f14c4c;
+    --admin-info: #3794ff;
+    --admin-success-bg: #1e3a2f;
+    --admin-warning-bg: #3a3000;
+    --admin-danger-bg: #3a1d1d;
+    --admin-info-bg: #1a3352;
+    --admin-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    --admin-shadow-lg: 0 4px 12px rgba(0,0,0,0.4);
 }
 
 /* ── Reduced motion ── */

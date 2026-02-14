@@ -39,12 +39,15 @@ let dragable = (ctrl, opts = {}) => {
 
 
 	const setup_isomorphic = () => {
-        const old_silent = ctrl.view.data.model.mixins.silent;
-        ctrl.view.data.model.mixins.silent = true;
-        ctrl.view.data.model.mixins.push({
-            name: 'dragable'
-        });
-        ctrl.view.data.model.mixins.silent = old_silent;
+        const model_mixins = ctrl.view && ctrl.view.data && ctrl.view.data.model && ctrl.view.data.model.mixins;
+        if (model_mixins) {
+            const old_silent = model_mixins.silent;
+            model_mixins.silent = true;
+            model_mixins.push({
+                name: 'dragable'
+            });
+            model_mixins.silent = old_silent;
+        }
         field(ctrl, 'dragable');
     }
     setup_isomorphic();

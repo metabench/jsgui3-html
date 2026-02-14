@@ -179,7 +179,7 @@
         --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     }
 
-    .jsgui-dark-mode .color-picker {
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .color-picker {
         --bg-surface: #1e293b;
         --bg-secondary: #334155;
         --bg-input: #0f172a;

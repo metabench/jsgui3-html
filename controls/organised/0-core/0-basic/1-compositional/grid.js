@@ -6,11 +6,8 @@ const {
     def,
     Control
 } = jsgui;
+const Data_Model_View_Model_Control = require('../../../../../html-core/Data_Model_View_Model_Control');
 const mx_selectable = require('../../../../../control_mixins/selectable');
-const {
-    prop,
-    field
-} = require('obext');
 const Cell = require('./Cell');
 const Grid_Cell = Cell;
 
@@ -20,7 +17,7 @@ const Grid_Cell = Cell;
 
 
 
-class Grid extends Control {
+class Grid extends Data_Model_View_Model_Control {
     constructor(spec, add, make) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'grid';
@@ -32,43 +29,31 @@ class Grid extends Control {
         this.add_class('grid');
         var spec_data = spec.data;
         this._arr_rows = [];
-        field(this, 'composition_mode');
-        if (spec.composition_mode) {
-            this.composition_mode = spec.composition_mode
-        } else {
-            this.composition_mode = 'divs'
-        }
 
-        prop(this, 'grid_size', spec.grid_size || [12, 12]);
-
-        /*
-        let _grid_size;
-        Object.defineProperty(this, 'grid_size', {
-            get() {
-                return _grid_size;
-            },
-            set(value) {
-                if (Array.isArray(value) && value.length === 2) {
-                    let old = _grid_size
-                    _grid_size = value;
-                    console.log('set _grid_size', value);
-                    this.raise('change', {
-                        'name': 'grid_size',
-                        'old': old,
-                        'value': value
-                    });
-                } else {
-                    throw 'Invalid grid_size. Expected [x, y]';
-                }
-            }
+        // ── Model properties (replaces obext prop/field) ──
+        this.model = this.data.model;
+        this.model.batch(() => {
+            this.model.set('composition_mode', spec.composition_mode || 'divs');
+            this.model.set('grid_size', spec.grid_size || [12, 12]);
+            this.model.set('cell_size', spec.cell_size || null);
+            this.model.set('column_headers', spec.column_headers || false);
+            this.model.set('row_headers', spec.row_headers || false);
+            this.model.set('cell_selection', !!spec.cell_selection);
+            this.model.set('drag_selection', !!spec.drag_selection);
+            if (spec.data) this.model.set('grid_data', spec.data);
         });
-        if (spec.grid_size) _grid_size = spec.grid_size;
-        */
-        field(this, 'cell_size');
-        if (spec.cell_size) this.cell_size = spec.cell_size;
-        field(this, 'column_headers', false);
-        field(this, 'row_headers', false);
-        prop(this, 'data', false);
+
+        // ── Computed: cell_count ──
+        this.computed(
+            this.model,
+            ['grid_size'],
+            (grid_size) => {
+                if (!grid_size || !Array.isArray(grid_size)) return 0;
+                return grid_size[0] * grid_size[1];
+            },
+            { property_name: 'cell_count' }
+        );
+
         this.map_cells = {};
         this.arr_cells = {};
         if (spec.data) {
@@ -85,7 +70,7 @@ class Grid extends Control {
                     for (x = 0; x < lx; x++) {
                     }
                 }
-                _grid_size = [max_x, ly];
+                this.model.set('grid_size', [max_x, ly], true);
             }
         }
         if (!spec.el) {
@@ -100,15 +85,37 @@ class Grid extends Control {
                 this._fields.cell_size = this.cell_size;
             }
         }
-        this.changes({
-            grid_size: v => {
-                if (!spec.el) {
-                    this.clear();
-                    this.full_compose_as_divs();
-                }
+
+        // ── Watch (replaces this.changes()) ──
+        this.watch(this.model, 'grid_size', () => {
+            if (!spec.el) {
+                this.clear();
+                this._arr_rows = [];
+                this.map_cells = {};
+                this.arr_cells = {};
+                this.full_compose_as_divs();
             }
         });
     }
+
+    // ── Model Accessors (read-through) ──
+    get composition_mode() { return this.model ? this.model.composition_mode : 'divs'; }
+    set composition_mode(v) { if (this.model) this.model.set('composition_mode', v); }
+    get grid_size() { return this.model ? this.model.grid_size : [12, 12]; }
+    set grid_size(v) { if (this.model) this.model.set('grid_size', v); }
+    get cell_size() { return this.model ? this.model.cell_size : null; }
+    set cell_size(v) { if (this.model) this.model.set('cell_size', v); }
+    get column_headers() { return this.model ? this.model.column_headers : false; }
+    set column_headers(v) { if (this.model) this.model.set('column_headers', v); }
+    get row_headers() { return this.model ? this.model.row_headers : false; }
+    set row_headers(v) { if (this.model) this.model.set('row_headers', v); }
+    get grid_data() { return this.model ? this.model.grid_data : null; }
+    set grid_data(v) { if (this.model) this.model.set('grid_data', v); }
+    get cell_selection() { return this.model ? this.model.cell_selection : false; }
+    set cell_selection(v) { if (this.model) this.model.set('cell_selection', v); }
+    get drag_selection() { return this.model ? this.model.drag_selection : false; }
+    set drag_selection(v) { if (this.model) this.model.set('drag_selection', v); }
+    get cell_count() { return this.model ? this.model.cell_count : 0; }
 
     //  Have the size system set up within the 'view model'.
 
@@ -231,7 +238,7 @@ class Grid extends Control {
             } else {
                 if (this.size) row_height = Math.floor(this.size[1] / num_rows);
             }
-            const data = this.data;
+            const data = this.grid_data;
             var x, y;
             if (this.column_headers) {
                 let header_row = new Control({
@@ -329,7 +336,7 @@ class Grid extends Control {
     }
     'full_compose_as_table'() {
         this.dom.tagName = table;
-        var data = this.data;
+        var data = this.grid_data;
         var range = data.range;
         var value;
         if (tof(data) === 'data_grid') {
@@ -368,19 +375,15 @@ class Grid extends Control {
         if (!this.__active) {
             super.activate();
             this.selection_scope = this.selection_scope || this.context.new_selection_scope(this);
-            var load_rows = () => {
-                var _arr_rows = this._arr_rows = [];
-                this.rows.content._arr.forEach((v) => {
-                    _arr_rows.push(v);
+
+            // Use _ctrl_fields.rows (set in full_compose_as_divs)
+            const rows_ctrl = this._ctrl_fields && this._ctrl_fields.rows;
+            if (rows_ctrl && rows_ctrl.content && rows_ctrl.content._arr) {
+                this._arr_rows = [];
+                rows_ctrl.content._arr.forEach((v) => {
+                    this._arr_rows.push(v);
                 });
             }
-            load_rows();
-            var load_cells = () => {
-                each(this._arr_rows, (row) => {
-                    each(row.content._arr, (cell) => {
-                    });
-                });
-            };
 
             // Drag selection: listen for drag events on cells and select ranges
             if (this.drag_selection) {
@@ -453,9 +456,10 @@ class Grid extends Control {
     }
 }
 Grid.css = `
+/* ─── Grid ─── */
 table.grid {
-    background-color: #eceff1;
-    border: 1px solid #546e7a;
+    background-color: var(--admin-card-bg, #eceff1);
+    border: 1px solid var(--admin-border, #546e7a);
     padding: 2px;
     cursor: default;
 }
@@ -471,15 +475,20 @@ table.grid td {
     margin-left: 2px;
     padding: 2px;
 }
-.mid-width {
-    width: 450px;
-}
 div.grid {
     user-select: none;
     clear: both;
+    font-family: var(--admin-font, 'Segoe UI', -apple-system, sans-serif);
+    color: var(--admin-text, #1e1e1e);
 }
 div.grid .header.row .cell {
-    text-align: center
+    text-align: center;
+    background: var(--admin-header-bg, #f8f8f8);
+    color: var(--admin-header-text, #616161);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 div.grid .row {
     clear: both;
@@ -493,20 +502,26 @@ div.grid .header.row .cell span {
 div.grid .row .cell {
     float: left;
     box-sizing: border-box;
-    border-right: 1px solid #AAAAAA;
-    border-bottom: 1px solid #999999;
+    border-right: 1px solid var(--admin-border, #AAAAAA);
+    border-bottom: 1px solid var(--admin-border-strong, #999999);
+    transition: background-color 0.08s;
+}
+div.grid .row .cell:hover {
+    background: var(--admin-hover-bg, #e8e8e8);
 }
 div.grid .row .cell.selected {
     float: left;
     box-sizing: border-box;
-    border: 2px solid #2046df;
+    border: 2px solid var(--admin-accent, #0078d4);
     border-radius: 4px;
+    background: var(--admin-accent-bg, rgba(0, 120, 212, 0.08));
 }
 div.grid .row .cell.selected span {
     position: relative;
     left: 3px;
     top: -1px;
     font-size: 16pt;
+    color: var(--admin-accent, #0078d4);
 }
 div.grid .row .cell span {
     position: relative;

@@ -163,7 +163,13 @@ const pre_activate = (context) => {
             var jsgui_id = el.getAttribute('data-jsgui-id');
             if (jsgui_id) {
                 const ctrl = map_controls[jsgui_id];
-                ctrl.pre_activate(ctrl.dom.el);
+                if (ctrl) {
+                    try {
+                        ctrl.pre_activate(ctrl.dom.el);
+                    } catch (e) {
+                        console.error('[jsgui] pre_activate failed for ' + (ctrl.__type_name || jsgui_id) + ':', e);
+                    }
+                }
             }
         }
     });
@@ -181,7 +187,13 @@ const activate = function (context) {
             var jsgui_id = el.getAttribute('data-jsgui-id');
             if (jsgui_id) {
                 const ctrl = map_controls[jsgui_id];
-                ctrl.activate(ctrl.dom.el);
+                if (ctrl) {
+                    try {
+                        ctrl.activate(ctrl.dom.el);
+                    } catch (e) {
+                        console.error('[jsgui] activate failed for ' + (ctrl.__type_name || jsgui_id) + ':', e);
+                    }
+                }
             }
         }
     });

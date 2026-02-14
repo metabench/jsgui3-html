@@ -173,7 +173,7 @@
         --sidebar-badge-text: #ffffff;
     }
 
-    .jsgui-dark-mode .sidebar-nav {
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .sidebar-nav {
         --sidebar-bg: #111827;
         --sidebar-border: #1f2937;
         --sidebar-text: #f9fafb;

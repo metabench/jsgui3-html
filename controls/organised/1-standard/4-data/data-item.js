@@ -39,7 +39,7 @@ class Data_Item extends Control {
 
         //console.log('this.value', this.value);
 
-        this.add(new jsgui.textNode({
+        this.add(new jsgui.Text_Node({
             text: this.value + '',
             context: this.context
         }));

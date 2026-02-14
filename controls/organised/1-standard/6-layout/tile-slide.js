@@ -86,7 +86,7 @@ class Tile_Slider extends Control {
 
         this._ctrl_fields = {
             'above': above,
-            'left': left,
+            'left_ctrl': left,
             'central': central,
             'right': right,
             'below': below
@@ -206,10 +206,17 @@ class Tile_Slider extends Control {
         if (!this.__active) {
             super.activate();
 
-            setTimeout(async () => {
-                await this.slide_to_right();
-                console.log('awaited slide to right');
-            }, 2000);
+            // Only auto-slide if size is defined and controls are available
+            if (this.size && this.left_ctrl && this.central) {
+                setTimeout(async () => {
+                    try {
+                        await this.slide_to_right();
+                        console.log('awaited slide to right');
+                    } catch (e) {
+                        // slide not available in this context
+                    }
+                }, 2000);
+            }
         }
     }
 

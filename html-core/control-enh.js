@@ -540,15 +540,19 @@ class Control extends Control_Core {
 
 						//console.log('o_mixins', o_mixins);
 
-						const old_silent = this.view.data.model.mixins.silent;
+						const model_mixins = this.view && this.view.data && this.view.data.model && this.view.data.model.mixins;
+						const can_mutate_model_mixins = model_mixins && typeof model_mixins.push === 'function';
+						const old_silent = can_mutate_model_mixins ? model_mixins.silent : undefined;
 
 						// .silently(cb) function could be one way to do these things.
 
-						this.view.data.model.mixins.silent = true;
+						if (can_mutate_model_mixins) {
+							model_mixins.silent = true;
+						}
 						//});
 						//console.log('o_mixins', o_mixins);
 
-						each(o_mixins, (mixin) => {
+							each(o_mixins, (mixin) => {
 							const {name, options} = mixin;
 
 							const converted_name = name.replace(/-/g, '_');
@@ -559,7 +563,9 @@ class Control extends Control_Core {
 
 							// and run the mixin here???
 
-							this.view.data.model.mixins.push(mixin);
+							if (can_mutate_model_mixins) {
+								model_mixins.push(mixin);
+							}
 
 								const mixins = this.context && this.context.mixins;
 								const the_mixin = mixins ? mixins[converted_name] : undefined;
@@ -576,7 +582,9 @@ class Control extends Control_Core {
 
 						});
 
-						this.view.data.model.mixins.silent = old_silent;
+						if (can_mutate_model_mixins) {
+							model_mixins.silent = old_silent;
+						}
 
 						// Set it back up in the view.data.model.mixins collection.
 
@@ -645,6 +653,7 @@ class Control extends Control_Core {
 		} = this;
 		var map_controls = context.map_controls;
 		let el = this.dom.el;
+		if (!this.content || typeof this.content.on !== 'function') return;
 		this.content.on('change', (e_change) => {
 			let itemDomEl;
 			var type = e_change.name;
@@ -801,6 +810,7 @@ class Control extends Control_Core {
 				if (el.getAttribute) {
 					let cns = el.childNodes;
 					let content = this.content;
+					const content_arr = content && content._arr;
 					for (c = 0, l = cns.length; c < l; c++) {
 						let cn = cns[c];
 						if (cn) {
@@ -822,6 +832,14 @@ class Control extends Control_Core {
 		do_activation();
 	}
 	'pre_activate_content_controls' () {
+		// Reserved property names that must not be overwritten by _ctrl_fields hydration.
+		// These are getters, setters, or critical infrastructure on Control.
+		const _RESERVED_CTRL_KEYS = {
+			'left':1,'top':1,'html':1,'color':1,'size':1,'dom':1,'content':1,
+			'background':1,'disabled':1,'pos':1,'value':1,'context':1,'parent':1,
+			'style':1,'data':1,'view':1,'el':1,'tag':1,'internal_relative_div':1,
+			'this_and_descendents':1,'descendents':1,'siblings':1
+		};
 		const do_pre_activation = () => {
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this);
@@ -844,11 +862,16 @@ class Control extends Control_Core {
 					let key, value;
 					for (c = 0; c < l_ctrl_fields_keys; c++) {
 						key = ctrl_fields_keys[c];
+						if (_RESERVED_CTRL_KEYS[key]) {
+							console.warn('[jsgui] Skipping reserved _ctrl_fields key "' + key + '" on ' + (this.__type_name || 'control') + ' to prevent hydration collision');
+							continue;
+						}
 						value = ctrl_fields[key];
 						this[key] = context.map_controls[value];
 					}
 					let cns = el.childNodes;
 					let content = this.content;
+					const content_arr = content && content._arr;
 					for (c = 0, l = cns.length; c < l; c++) {
 						let cn = cns[c];
 						if (cn) {
@@ -867,14 +890,16 @@ class Control extends Control_Core {
 										});
 									}
 									if (!found) {
-										content._arr.push(cctrl);
+										if (content_arr && Array.isArray(content_arr)) {
+											content_arr.push(cctrl);
+										}
 									}
 									cctrl.parent = this;
 								}
 							}
 							if (nt === 3) {
 								const i_sibling = c;
-								const corresponding_ctrl = content._arr[i_sibling];
+								const corresponding_ctrl = content_arr ? content_arr[i_sibling] : undefined;
 								if (corresponding_ctrl) {
 									if (corresponding_ctrl.text === cn.nodeValue) {
 										corresponding_ctrl.dom.el = cn;

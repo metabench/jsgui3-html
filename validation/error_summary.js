@@ -239,15 +239,15 @@ class Error_Summary extends Control {
 
 Error_Summary.css = `
 .error-summary {
-    background-color: #fef2f2;
-    border: 1px solid #ef4444;
+    background-color: var(--admin-danger-bg, #fef2f2);
+    border: 1px solid var(--admin-danger, #ef4444);
     border-radius: 4px;
     padding: 16px;
     margin-bottom: 16px;
 }
 
 .error-summary-title {
-    color: #b91c1c;
+    color: var(--admin-danger, #b91c1c);
     font-size: 16px;
     font-weight: 600;
     margin: 0 0 12px 0;
@@ -268,17 +268,17 @@ Error_Summary.css = `
 }
 
 .error-summary-link {
-    color: #b91c1c;
+    color: var(--admin-danger, #b91c1c);
     text-decoration: underline;
     cursor: pointer;
 }
 
 .error-summary-link:hover {
-    color: #991b1b;
+    color: var(--admin-danger, #991b1b);
 }
 
 .error-summary-link:focus {
-    outline: 2px solid #ef4444;
+    outline: 2px solid var(--admin-danger, #ef4444);
     outline-offset: 2px;
 }
 
@@ -294,6 +294,20 @@ Error_Summary.css = `
 .error-summary[hidden],
 .error-summary.hidden {
     display: none;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .error-summary {
+    background-color: #3a1d1d;
+    border-color: #f14c4c;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .error-summary-title,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .error-summary-link {
+    color: #fca5a5;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .error-summary-link:hover {
+    color: #fecaca;
 }
 `;
 

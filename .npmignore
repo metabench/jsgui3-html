@@ -7,6 +7,7 @@ lab/
 labs/
 tools/
 docs/
+test/
 .agent/
 .github/
 .gemini/
@@ -29,6 +30,8 @@ controls/organised/AGENT.md
 
 # Test artifacts
 screenshots/
+test/e2e/screenshots/
+test/**/screenshots/
 *-e2e.js
 *-demo.js
 *.test.js

@@ -3,6 +3,14 @@
 const Value_Editor_Base = require('./Value_Editor_Base');
 const { register_value_editor } = require('./value_editor_registry');
 
+// Compact picker for popup
+let Color_Picker_Tabbed;
+try {
+    Color_Picker_Tabbed = require('../../0-core/0-basic/1-compositional/color-picker-tabbed');
+} catch (e) {
+    Color_Picker_Tabbed = null;
+}
+
 // 36-color default palette
 const DEFAULT_PALETTE = [
     '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
@@ -57,18 +65,30 @@ class Color_Value_Editor extends Value_Editor_Base {
         this._popup_container.add_class('ve-color-popup');
         this._popup_container.dom.attributes.style = 'display:none';
 
-        // Build color grid
-        this._grid = new jsgui.Control({ context: this.context, tag_name: 'div' });
-        this._grid.add_class('ve-color-grid');
-        this._palette.forEach(hex => {
-            const cell = new jsgui.Control({ context: this.context, tag_name: 'div' });
-            cell.add_class('ve-color-cell');
-            cell.dom.attributes.style = `background:${hex}`;
-            cell.dom.attributes['data-color'] = hex;
-            cell.dom.attributes.title = hex;
-            this._grid.add(cell);
-        });
-        this._popup_container.add(this._grid);
+        // Use compact Color_Picker_Tabbed if available
+        if (Color_Picker_Tabbed) {
+            this._picker = new Color_Picker_Tabbed({
+                context: this.context,
+                variant: 'compact',
+                value: this._value || '#3b82f6',
+                show_preview: true,
+                show_actions: false
+            });
+            this._popup_container.add(this._picker);
+        } else {
+            // Fallback: flat color grid
+            this._grid = new jsgui.Control({ context: this.context, tag_name: 'div' });
+            this._grid.add_class('ve-color-grid');
+            this._palette.forEach(hex => {
+                const cell = new jsgui.Control({ context: this.context, tag_name: 'div' });
+                cell.add_class('ve-color-cell');
+                cell.dom.attributes.style = `background:${hex}`;
+                cell.dom.attributes['data-color'] = hex;
+                cell.dom.attributes.title = hex;
+                this._grid.add(cell);
+            });
+            this._popup_container.add(this._grid);
+        }
         this.add(this._popup_container);
 
         this._open = false;
@@ -92,8 +112,17 @@ class Color_Value_Editor extends Value_Editor_Base {
                 });
             }
 
-            // Color cell clicks
-            if (this._grid.dom.el) {
+            // Wire Color_Picker_Tabbed if present
+            if (this._picker) {
+                this._picker.on('change', (e) => {
+                    if (e && e.hex) {
+                        this.set_value(e.hex, { source: 'user' });
+                    }
+                });
+            }
+
+            // Color cell clicks (fallback grid)
+            if (this._grid && this._grid.dom.el) {
                 this._grid.dom.el.addEventListener('click', (e) => {
                     const cell = e.target.closest('.ve-color-cell');
                     if (cell) {

@@ -38,6 +38,49 @@ class Button extends Control {
         // Apply token mappings (size -> CSS variables)
         apply_token_map(this, 'button', params);
 
+        // Emit data-variant so CSS selectors like [data-variant="primary"] match
+        if (params.variant && params.variant !== 'secondary') {
+            this.dom.attributes['data-variant'] = params.variant;
+        }
+
+        // Emit data-size so CSS selectors like [data-size="lg"] match
+        if (params.size && params.size !== 'medium') {
+            this.dom.attributes['data-size'] = params.size;
+        }
+
+        // Full width support
+        if (params.full_width || spec.full_width) {
+            this.add_class('btn-full-width');
+        }
+
+        // Pill shape
+        if (params.shape === 'pill' || spec.shape === 'pill') {
+            this.add_class('btn-pill');
+        }
+
+        // Circle shape (for FAB / icon-only)
+        if (params.shape === 'circle' || spec.shape === 'circle') {
+            this.add_class('btn-circle');
+        }
+
+        // Toggle mode: aria-pressed support
+        this._toggle = !!(spec.toggle || params.toggle);
+        if (this._toggle) {
+            this._pressed = !!spec.pressed;
+            this.dom.attributes['aria-pressed'] = this._pressed ? 'true' : 'false';
+            if (this._pressed) this.add_class('pressed');
+        }
+
+        // Icon-only mode: data attribute + aria-label for accessibility
+        const icon_pos = spec.icon_position || params.icon_position || 'left';
+        if (icon_pos === 'only') {
+            this.dom.attributes['data-icon-only'] = 'true';
+            // When icon-only, use label/text as aria-label for screen readers
+            if (spec.label || spec.text) {
+                this.dom.attributes['aria-label'] = spec.label || spec.text;
+            }
+        }
+
         // Store text/label
         if (spec.text || spec.label) {
             this.text = spec.text || spec.label;
@@ -108,6 +151,39 @@ class Button extends Control {
 
     'activate'() {
         super.activate();
+
+        if (this.dom && this.dom.el) {
+            // Toggle mode: flip aria-pressed on click
+            if (this._toggle) {
+                this.add_dom_event_listener('click', () => {
+                    const el = this.dom.el;
+                    if (!el || el.disabled) return;
+                    this._pressed = !this._pressed;
+                    el.setAttribute('aria-pressed', this._pressed ? 'true' : 'false');
+                    if (this._pressed) {
+                        el.classList.add('pressed');
+                    } else {
+                        el.classList.remove('pressed');
+                    }
+                    this.raise('toggle', { pressed: this._pressed });
+                });
+            }
+
+            // Ripple effect on click
+            this.add_dom_event_listener('click', (e) => {
+                const el = this.dom.el;
+                if (!el || el.disabled) return;
+                const rect = el.getBoundingClientRect();
+                const ripple = document.createElement('span');
+                ripple.classList.add('btn-ripple');
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                el.appendChild(ripple);
+                ripple.addEventListener('animationend', () => ripple.remove());
+            });
+        }
     }
 
     /**

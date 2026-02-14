@@ -200,20 +200,21 @@ Resource_Viewer.css = `
 .resource-viewer {
     display: flex;
     flex-direction: column;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--admin-border, #d1d5db);
     border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    background-color: var(--admin-card-bg, #fff);
+    color: var(--admin-text, #1e293b);
+    box-shadow: var(--admin-shadow, 0 1px 2px rgba(0,0,0,0.05));
     overflow: hidden;
     margin-bottom: 8px;
-    font-family: 'Segoe UI', sans-serif;
+    font-family: var(--admin-font, 'Segoe UI', sans-serif);
 }
 
 .resource-header {
     display: flex;
     align-items: center;
     padding: 12px 16px;
-    background-color: #f9fafb;
+    background-color: var(--admin-header-bg, #f9fafb);
     border-bottom: 1px solid transparent;
     transition: background-color 0.2s;
 }
@@ -222,11 +223,11 @@ Resource_Viewer.css = `
     cursor: pointer;
 }
 .resource-header.expandable:hover {
-    background-color: #f3f4f6;
+    background-color: var(--admin-hover-bg, #f3f4f6);
 }
 
 .resource-viewer.expanded .resource-header {
-    border-bottom-color: #e5e7eb;
+    border-bottom-color: var(--admin-border, #e5e7eb);
 }
 
 .resource-icon {
@@ -237,13 +238,13 @@ Resource_Viewer.css = `
 .resource-name {
     font-size: 16px;
     font-weight: 600;
-    color: #111827;
+    color: var(--admin-text, #111827);
     margin-right: 12px;
 }
 
 .resource-badge {
-    background-color: #e5e7eb;
-    color: #374151;
+    background-color: var(--admin-hover-bg, #e5e7eb);
+    color: var(--admin-text-secondary, #374151);
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
@@ -266,15 +267,15 @@ Resource_Viewer.css = `
 
 .resource-description {
     padding: 0 16px 12px 48px; /* Indent under name */
-    background-color: #f9fafb;
-    color: #6b7280;
+    background-color: var(--admin-header-bg, #f9fafb);
+    color: var(--admin-text-muted, #6b7280);
     font-size: 13px;
     margin-top: -8px; /* Pull up closer to header */
 }
 
 .resource-details {
     padding: 16px;
-    background-color: #fff;
+    background-color: var(--admin-card-bg, #fff);
 }
 
 .resource-details.hidden {
@@ -283,28 +284,30 @@ Resource_Viewer.css = `
 
 .resource-actions {
     padding: 12px 16px;
-    background-color: #f9fafb;
-    border-top: 1px solid #e5e7eb;
+    background-color: var(--admin-header-bg, #f9fafb);
+    border-top: 1px solid var(--admin-border, #e5e7eb);
     display: flex;
     gap: 8px;
 }
 
 .resource-action-btn {
     padding: 6px 12px;
-    background-color: #fff;
-    border: 1px solid #d1d5db;
+    background-color: var(--admin-card-bg, #fff);
+    border: 1px solid var(--admin-border, #d1d5db);
     border-radius: 4px;
     font-size: 13px;
     font-weight: 500;
-    color: #374151;
+    color: var(--admin-text-secondary, #374151);
     cursor: pointer;
     transition: all 0.1s;
 }
 
 .resource-action-btn:hover {
-    background-color: #f3f4f6;
-    border-color: #9ca3af;
+    background-color: var(--admin-hover-bg, #f3f4f6);
+    border-color: var(--admin-text-muted, #9ca3af);
 }
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .status-gray { background-color: #6b7280; }
 
 `;
 

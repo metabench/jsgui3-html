@@ -96,8 +96,12 @@ const patch_data_object_set = () => {
                 const new_raw = typeof this.get === 'function' ? this.get(prop_name) : value;
                 const new_val = unwrap_value(new_raw);
 
-                if (typeof this.raise_event === 'function') {
-                    this.raise_event('change', {
+                // Use _emit_change for batch-awareness when available
+                const emit = typeof this._emit_change === 'function'
+                    ? this._emit_change.bind(this)
+                    : (typeof this.raise_event === 'function' ? this.raise_event.bind(this, 'change') : null);
+                if (emit) {
+                    emit({
                         name: prop_name,
                         old: old_val,
                         value: new_val
@@ -163,7 +167,7 @@ const patch_collection_data_model_push = () => {
 
     const original_push = Collection.prototype.push;
 
-    Collection.prototype.push = function(value) {
+    Collection.prototype.push = function (value) {
         const tv = tof(value);
         if (tv === 'data_model') {
             const { silent } = this;
@@ -281,7 +285,7 @@ const detect_needs_patch = () => {
 
     const with_suppressed_console_trace = fn => {
         const orig_trace = console.trace;
-        console.trace = () => {};
+        console.trace = () => { };
         try {
             return fn();
         } finally {

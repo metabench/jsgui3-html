@@ -96,7 +96,7 @@
         --radius-md: 6px;
     }
 
-    .jsgui-dark-mode .rich-text-editor {
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .rich-text-editor {
         --bg-surface: #1f2937;
         --bg-secondary: #374151;
         --bg-hover: #4b5563;

@@ -128,8 +128,9 @@ Pop_Over.css = `
     min-width: 160px;
     padding: 8px 10px;
     border-radius: 6px;
-    background: #fff;
-    border: 1px solid #ddd;
+    background: var(--admin-card-bg, #fff);
+    color: var(--admin-text, #1e293b);
+    border: 1px solid var(--admin-border, #ddd);
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
     opacity: 0;
     pointer-events: none;

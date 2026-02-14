@@ -1,9 +1,9 @@
 
 const Ctrl_Enh = require('./control-enh');
 
-const {Data_Object} = require('lang-tools');
-const {ModelBinder, ComputedProperty, PropertyWatcher, BindingManager} = require('./ModelBinder');
-const {Transformations, Validators} = require('./Transformations');
+const { Data_Object } = require('lang-tools');
+const { ModelBinder, ComputedProperty, PropertyWatcher, BindingManager } = require('./ModelBinder');
+const { Transformations, Validators } = require('./Transformations');
 const {
     apply_theme,
     apply_theme_overrides
@@ -29,7 +29,7 @@ const {
 
 const Control_Data = require('./Control_Data');
 const Control_View = require('./Control_View');
-const {ensure_control_models} = require('./control_model_factory');
+const { ensure_control_models } = require('./control_model_factory');
 
 // Possibly not so much to do here right now???
 
@@ -106,7 +106,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         if (spec.theme_overrides) {
             apply_theme_overrides(this, spec.theme_overrides);
         }
-        
+
         // Initialize binding manager
         this._binding_manager = new BindingManager(this);
         // Possibly set up both models here, but should look out for data and view models in the spec.
@@ -121,7 +121,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         //console.log('construct Data_Model_View_Model_Control');
 
 
-        const {context} = this;
+        const { context } = this;
 
         // spec.view
         // spec.data
@@ -203,7 +203,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                 //console.log('Data_Model_View_Model_Control !!data_model', !!data_model);
 
                 if (data_model) {
-                    this.data = this.data || new Control_Data({context});
+                    this.data = this.data || new Control_Data({ context });
 
                     //console.log('Data_Model_View_Model_Control pre assign this.data.model');
                     //console.log('data_model', data_model);
@@ -228,7 +228,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
             if (this.dom.el.hasAttribute('data-jsgui-view-model')) {
-                this.view = this.view || new Control_View({context});
+                this.view = this.view || new Control_View({ context });
                 const view_model_jsgui_id = this.dom.el.getAttribute('data-jsgui-view-model');
 
                 //console.log('Data_Model_View_Model_Control view_model_jsgui_id:', view_model_jsgui_id);
@@ -247,8 +247,8 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                     //console.log('Data_Model_View_Model_Control missing view_model (not found at this.context.map_controls[view_model_jsgui_id])');
                 }
 
-                
-                
+
+
 
                 // Load the view model at the very beginning???
 
@@ -260,7 +260,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                 //     Then would update the DOM in response to the view model change (would have to be the responsibility of the
                 //       specific control I think???)
 
-                
+
 
 
             } else {
@@ -289,13 +289,13 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
 
 
 
-    // console.log('Data_Model_View_Model_Control pre_activate complete');
+        // console.log('Data_Model_View_Model_Control pre_activate complete');
 
         // should be able to access own data_model???
 
 
     }
-    
+
     /**
      * Create a binding between data model and view model
      * @param {Object} bindings - Property binding definitions
@@ -314,12 +314,12 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
             console.warn('Data_Model_View_Model_Control.bind: No data.model available');
             return null;
         }
-        
+
         if (!this.view || !this.view.data || !this.view.data.model) {
             console.warn('Data_Model_View_Model_Control.bind: No view.data.model available');
             return null;
         }
-        
+
         return this._binding_manager.bind(
             this.data.model,
             this.view.data.model,
@@ -327,23 +327,23 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
             options
         );
     }
-    
+
     /**
      * Create a computed property on a model
      * @param {Object} model - Target model (data.model or view.data.model)
      * @param {Array|string} dependencies - Property names to watch
-     * @param {Function} computeFn - Function to compute the value
-     * @param {Object} options - Options including propertyName
+     * @param {Function} compute_fn - Function to compute the value
+     * @param {Object} options - Options including property_name
      * @example
      * this.computed(this.view.data.model, ['firstName', 'lastName'], 
      *     (first, last) => `${first} ${last}`,
-     *     { propertyName: 'fullName' }
+     *     { property_name: 'fullName' }
      * );
      */
-    computed(model, dependencies, computeFn, options = {}) {
-        return this._binding_manager.createComputed(model, dependencies, computeFn, options);
+    computed(model, dependencies, compute_fn, options = {}) {
+        return this._binding_manager.create_computed(model, dependencies, compute_fn, options);
     }
-    
+
     /**
      * Watch a property for changes
      * @param {Object} model - Model to watch
@@ -358,28 +358,76 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
     watch(model, property, callback, options = {}) {
         return this._binding_manager.watch(model, property, callback, options);
     }
-    
+
+    /**
+     * Create a reactive collection with filter support and granular events.
+     * @param {Array|Collection} source - Source data
+     * @param {Object} options - { filter: fn }
+     * @returns {ReactiveCollection}
+     * @example
+     * const visible = this.reactive_collection(this.data.model.get('rows'), {
+     *     filter: row => row.active
+     * });
+     * visible.on('insert', ({ position, item }) => { ... });
+     */
+    reactive_collection(source, options = {}) {
+        return this._binding_manager.create_reactive_collection(source, options);
+    }
+
+    /**
+     * Bind a single value between models with optional transform/reverse
+     * @param {Object} sourceModel - Source model
+     * @param {string} sourceProp - Source property name
+     * @param {Object} targetModel - Target model
+     * @param {string} targetProp - Target property name (defaults to sourceProp)
+     * @param {Object} options - Binding options (transform, reverse, condition, etc.)
+     * @example
+     * this.bind_value(this.data.model, 'date', this.view.data.model, 'formattedDate', {
+     *     transform: (d) => formatDate(d),
+     *     reverse: (s) => parseDate(s)
+     * });
+     */
+    bind_value(sourceModel, sourceProp, targetModel, targetProp, options) {
+        return this._binding_manager.bind_value(sourceModel, sourceProp, targetModel, targetProp, options);
+    }
+
+    /**
+     * Bind a collection/array between models with optional map transform
+     * @param {Object} sourceModel - Source model
+     * @param {string} sourceProp - Source property name
+     * @param {Object} targetModel - Target model
+     * @param {string} targetProp - Target property name (defaults to sourceProp)
+     * @param {Object} options - Binding options (map, reverse_map, clone, etc.)
+     * @example
+     * this.bind_collection(this.data.model, 'items', this.view.data.model, 'displayItems', {
+     *     map: (item) => ({ ...item, label: item.name.toUpperCase() })
+     * });
+     */
+    bind_collection(sourceModel, sourceProp, targetModel, targetProp, options) {
+        return this._binding_manager.bind_collection(sourceModel, sourceProp, targetModel, targetProp, options);
+    }
+
     /**
      * Get transformations library
      */
     get transforms() {
         return Transformations;
     }
-    
+
     /**
      * Get validators library
      */
     get validators() {
         return Validators;
     }
-    
+
     /**
      * Inspect all bindings for debugging
      */
     inspectBindings() {
         return this._binding_manager.inspect();
     }
-    
+
     /**
      * Cleanup bindings when control is destroyed
      */

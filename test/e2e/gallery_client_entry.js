@@ -35,7 +35,7 @@
             jsgui.activate(context);
             console.log('Gallery Active ✅');
         } catch (e) {
-            console.error('Activation failed:', e);
+            console.error('Activation failed:', e, e.stack || '');
         }
 
         // Expose for debug

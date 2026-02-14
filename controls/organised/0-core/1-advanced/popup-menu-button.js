@@ -95,9 +95,17 @@ class Popup_Menu_Button extends Button {
             });
             root_menu_item.add_class('popup-menu');
 
+            // Create an inner container for the popup menu items
+            var inner_container = new jsgui.Control({
+                'context': context
+            });
+            inner_container.add_class('popup-menu-inner');
+            inner_container.add_class('popup-menu');
+
             this.add(root_menu_item);
-            root_menu_item.inner.add_class('popup-menu');
+            this.add(inner_container);
             this.root_menu_item = root_menu_item;
+            this._inner_container = inner_container;
 
             // Then the inner part / the part that is hidden within the root node.
             // Show / hide the hidden area based on click or hover.
@@ -114,7 +122,7 @@ class Popup_Menu_Button extends Button {
                         'item': item
                     });
                     menu_item.add_class('popup-menu');
-                    root_menu_item.inner.add(menu_item);
+                    inner_container.add(menu_item);
 
                     // Then add a callback event, if we have that.
                     //  Post-activation I suppose.
@@ -159,8 +167,7 @@ class Popup_Menu_Button extends Button {
             // Activating should set the CSS class of the node if necessary.
 
             var root_menu_item = this.root_menu_item;
-
-            //console.log('root_menu_item.inner', root_menu_item.inner);
+            var inner_container = this._inner_container;
 
             //console.log('Popup_Menu_Button activate');
             // Need references?
@@ -202,7 +209,9 @@ class Popup_Menu_Button extends Button {
                 if (val === 'open') {
                     //ui_open();
                     //root_menu_item.open();
-                    root_menu_item.inner.pop_into_body();
+                    if (inner_container.dom && inner_container.dom.el) {
+                        inner_container.dom.el.style.display = 'block';
+                    }
 
                     // Elsewhere could take account for menu being put into the body?
 
@@ -211,11 +220,11 @@ class Popup_Menu_Button extends Button {
                         /*
                         window.requestAnimationFrame(function () {
                             //resolve(func.apply(null, args));
-                            that.i_state = 0;
-                            that.state.set('closed'); // closed
+                            this.i_state = 0;
+                            this.state.set('closed'); // closed
                         });
                         */
-                        setTimeout(function () {
+                        setTimeout(() => {
                             //resolve(func.apply(null, args));
                             this.i_state = 0;
                             this.state.set('closed'); // closed
@@ -228,7 +237,9 @@ class Popup_Menu_Button extends Button {
 
                 // The root menu item needs to pup up into the DOM.
 
-                root_menu_item.state.set(val);
+                if (val === 'closed' && inner_container.dom && inner_container.dom.el) {
+                    inner_container.dom.el.style.display = 'none';
+                }
             });
 
 
@@ -245,13 +256,13 @@ class Popup_Menu_Button extends Button {
 
                 //console.log('tof that.state', tof(that.state));
 
-                var new_i_state = that.i_state + 1;
-                if (new_i_state === that.states.length) {
+                var new_i_state = this.i_state + 1;
+                if (new_i_state === this.states.length) {
                     new_i_state = 0;
                 }
 
                 this.i_state = new_i_state;
-                this.state.set(that.states[new_i_state]);
+                this.state.set(this.states[new_i_state]);
                 //}
 
             });
@@ -271,7 +282,8 @@ class Popup_Menu_Button extends Button {
 
 
             //console.log('root_menu_item.inner.content', root_menu_item.inner.content);
-            root_menu_item.inner.content.each((inner_menu_item) => {
+            if (inner_container.content) {
+                inner_container.content.each((inner_menu_item) => {
                 //console.log('inner_menu_item', inner_menu_item);
                 inner_menu_item.on('click', (e_click) => {
                     //console.log('root_menu_item clicked e_click', e_click);
@@ -286,11 +298,12 @@ class Popup_Menu_Button extends Button {
 
                     //console.log('tof that.state', tof(that.state));
 
-                    root_menu_item.state.set('closed');
+                    this.state.set('closed');
                     this.i_state = 0;
                     //}
                 });
             })
+            } // end if (inner_container.content)
 
             // Listen for the various changes on inner buttons.
             //  Want an easy way to iterate them.

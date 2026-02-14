@@ -214,6 +214,39 @@ class Checkbox extends Control {
     get_checked() {
         return !!this.checked;
     }
+
+    /**
+     * Set the disabled state.
+     * @param {boolean} disabled
+     */
+    set_disabled(disabled) {
+        const html_check = this.check || (this._ctrl_fields && this._ctrl_fields.check);
+        if (disabled) {
+            this.add_class('disabled');
+            if (html_check) {
+                html_check.dom.attributes.disabled = 'disabled';
+                if (html_check.dom.el) html_check.dom.el.disabled = true;
+            }
+        } else {
+            this.remove_class('disabled');
+            if (html_check) {
+                delete html_check.dom.attributes.disabled;
+                if (html_check.dom.el) html_check.dom.el.disabled = false;
+            }
+        }
+    }
+
+    /**
+     * Set the indeterminate state.
+     * @param {boolean} indeterminate
+     */
+    set_indeterminate(indeterminate) {
+        const html_check = this.check || (this._ctrl_fields && this._ctrl_fields.check);
+        this._indeterminate = !!indeterminate;
+        if (html_check && html_check.dom.el) {
+            html_check.dom.el.indeterminate = this._indeterminate;
+        }
+    }
     //'resizable': function() {
     //},
     'activate'() {

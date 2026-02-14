@@ -176,7 +176,7 @@ Inline_Validation_Message.css = `
     align-items: center;
     gap: 4px;
     font-size: 0.85em;
-    color: #444;
+    color: var(--admin-text-secondary, #444);
     min-height: 1.2em;
 }
 
@@ -219,6 +219,30 @@ Inline_Validation_Message.css = `
 
 .inline-validation-message-success .inline-validation-icon {
     color: #388e3c;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message {
+    color: #cbd5e1;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-error,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-error .inline-validation-icon {
+    color: #fca5a5;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-warn,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-warn .inline-validation-icon {
+    color: #fcd34d;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-info,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-info .inline-validation-icon {
+    color: #93c5fd;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-success,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .inline-validation-message-success .inline-validation-icon {
+    color: #6ee7b7;
 }
 `;
 

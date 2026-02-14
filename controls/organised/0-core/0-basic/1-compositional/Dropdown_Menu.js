@@ -228,18 +228,18 @@ Dropdown_Menu.css = `
 .dropdown-menu {
     height: 64px;
     width: 384px;
-    background-color: #FFFFFF;
+    background-color: var(--admin-card-bg, #FFFFFF);
     border-radius: 4px;
-    border: 2px solid #CCCCCC;
+    border: 2px solid var(--admin-border, #CCCCCC);
     padding: 2px;
 }
 
 .dropdown-menu .closed-top {
     height: 56px;
     width: 376px;
-    background-color: #EEEEEE;
+    background-color: var(--admin-header-bg, #EEEEEE);
     border-radius: 4px;
-    border: 2px solid #CCCCCC;
+    border: 2px solid var(--admin-border, #CCCCCC);
     padding: 2px;
     display: flex;
     flex-direction: row;
@@ -248,33 +248,33 @@ Dropdown_Menu.css = `
 .dropdown-menu .closed-top .item-itself {
     height: 53px;
     width: 320px;
-    background-color: #FFFFFF;
+    background-color: var(--admin-card-bg, #FFFFFF);
     border-radius: 4px;
-    border: 2px solid #CCCCCC;
+    border: 2px solid var(--admin-border, #CCCCCC);
 }
 
 .dropdown-menu .closed-top .dropdown-icon {
     height: 53px;
     width: 53px;
-    background-color: #FFFFFF;
+    background-color: var(--admin-card-bg, #FFFFFF);
     border-radius: 4px;
-    border: 2px solid #CCCCCC;
+    border: 2px solid var(--admin-border, #CCCCCC);
     margin-left: 2px;
     font-size: 53px;
     line-height: 53px;
-    color: #888888;
+    color: var(--admin-text-muted, #888888);
 }
 
 .dropdown-menu .closed-top .dropdown-icon.pressed {
-    background-color: #F0F0F0;
+    background-color: var(--admin-hover-bg, #F0F0F0);
 }
 
 .dropdown-menu .open-items {
     width: 376px;
     height: 414px;
-    background-color: #EEEEEE;
+    background-color: var(--admin-header-bg, #EEEEEE);
     border-radius: 4px;
-    border: 2px solid #CCCCCC;
+    border: 2px solid var(--admin-border, #CCCCCC);
     padding: 2px;
 }
 
@@ -285,16 +285,22 @@ Dropdown_Menu.css = `
 .dropdown-menu .open-items .item {
     width: 373px;
     height: 64px;
-    background-color: #FFFFFF;
+    background-color: var(--admin-card-bg, #FFFFFF);
     border-radius: 4px;
-    border: 2px solid #CCCCCC;
+    border: 2px solid var(--admin-border, #CCCCCC);
     text-indent: 12px;
     font-size: 52px;
     line-height: 56px;
+    color: var(--admin-text, #1e293b);
 }
 
 .dropdown-menu .open-items .item:not(:first-child) {
     margin-top: 2px;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .dropdown-menu .closed-top .dropdown-icon,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .dropdown-menu .open-items .item {
+    color: var(--admin-text, #d4d4d4);
 }
 
 

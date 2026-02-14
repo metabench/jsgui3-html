@@ -17,6 +17,7 @@
 const jsgui = require('../../../../html-core/html-core');
 const Control = jsgui.Control;
 const { create_editor } = require('./value_editors/value_editor_registry');
+const collapsible = require('../../../../control_mixins/collapsible');
 
 // Ensure all built-in editors are registered
 require('./value_editors');
@@ -34,6 +35,8 @@ class Property_Grid extends Control {
         this._editors = new Map();
         this._row_controls = new Map();
         this._focused_index = -1;
+        this._group_headers = []; // for collapsible
+        this._group_row_sets = []; // rows associated with each group
 
         if (!spec.el) {
             this.compose();
@@ -58,6 +61,8 @@ class Property_Grid extends Control {
                 header.add(header_label);
 
                 this.add(header);
+                this._group_headers.push(header);
+                this._group_row_sets.push([]);  // will be filled by subsequent rows
                 return;
             }
 
@@ -95,6 +100,10 @@ class Property_Grid extends Control {
             row.add(value_cell);
             this._row_controls.set(field.key, row);
             this.add(row);
+            // Track this row in the current group (if any)
+            if (this._group_row_sets.length > 0) {
+                this._group_row_sets[this._group_row_sets.length - 1].push(row);
+            }
         });
     }
 
@@ -157,6 +166,27 @@ class Property_Grid extends Control {
                     this._handle_grid_keydown(e);
                 });
             }
+
+            // Collapsible group headers
+            this._group_headers.forEach((header, idx) => {
+                const rows = this._group_row_sets[idx];
+                if (header.dom.el) {
+                    header.dom.el.addEventListener('click', () => {
+                        const is_collapsed = header.dom.el.classList.contains('collapsed');
+                        if (is_collapsed) {
+                            header.dom.el.classList.remove('collapsed');
+                            const label_el = header.dom.el.querySelector('.pg-group-label');
+                            if (label_el) label_el.setAttribute('aria-expanded', 'true');
+                            rows.forEach(row => { if (row.dom.el) row.dom.el.style.display = ''; });
+                        } else {
+                            header.dom.el.classList.add('collapsed');
+                            const label_el = header.dom.el.querySelector('.pg-group-label');
+                            if (label_el) label_el.setAttribute('aria-expanded', 'false');
+                            rows.forEach(row => { if (row.dom.el) row.dom.el.style.display = 'none'; });
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -232,4 +262,97 @@ class Property_Grid extends Control {
     }
 }
 
+Property_Grid.css = `
+.property-grid {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--pg-border, var(--admin-border, #e2e8f0));
+    border-radius: 6px;
+    overflow: hidden;
+    font-family: var(--pg-font, var(--admin-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif));
+    font-size: var(--pg-font-size, 13px);
+    color: var(--pg-text, var(--admin-text, #1e293b));
+    background: var(--pg-bg, var(--admin-card-bg, #fff));
+}
+
+/* Group header */
+.pg-group-header {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    background: var(--pg-group-bg, var(--admin-header-bg, #f8fafc));
+    border-bottom: 1px solid var(--pg-border, var(--admin-border, #e2e8f0));
+    cursor: pointer;
+    user-select: none;
+}
+.pg-group-header:not(:first-child) {
+    border-top: 1px solid var(--pg-border, var(--admin-border, #e2e8f0));
+}
+.pg-group-label {
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--pg-group-text, var(--admin-muted, #64748b));
+}
+.pg-group-label::before {
+    content: '▾ ';
+    display: inline-block;
+    transition: transform 0.15s;
+}
+.pg-group-header.collapsed .pg-group-label::before {
+    transform: rotate(-90deg);
+}
+
+/* Rows */
+.pg-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--pg-row-border, #f1f5f9);
+    transition: background 0.1s;
+    outline: none;
+}
+.pg-row:last-child { border-bottom: none; }
+.pg-row:nth-child(even) {
+    background: var(--pg-row-alt, rgba(0,0,0,0.01));
+}
+.pg-row:hover {
+    background: var(--pg-row-hover, var(--admin-hover, #f1f5f9));
+}
+.pg-row:focus {
+    box-shadow: inset 3px 0 0 var(--pg-accent, var(--admin-accent, #3b82f6));
+    background: var(--pg-row-focus, rgba(59,130,246,0.04));
+}
+
+/* Label cell */
+.pg-label {
+    flex: 0 0 var(--pg-label-width, 40%);
+    padding: 6px 10px;
+    font-weight: 500;
+    color: var(--pg-label-text, var(--admin-text, #1e293b));
+    border-right: 1px solid var(--pg-border, var(--admin-border, #e2e8f0));
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Value cell */
+.pg-value {
+    flex: 1;
+    padding: 4px 8px;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+/* Validation error */
+.pg-row-invalid {
+    box-shadow: inset 3px 0 0 var(--pg-error, #ef4444);
+}
+.pg-row-invalid .pg-value {
+    color: var(--pg-error, #ef4444);
+}
+`;
+
 module.exports = Property_Grid;
+

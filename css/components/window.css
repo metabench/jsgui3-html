@@ -171,25 +171,25 @@
    Dark Mode
    ══════════════════════════════════════════ */
 
-.jsgui-dark-mode .jsgui-window {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-window {
     background: var(--j-bg, #1e293b);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
 }
 
-.jsgui-dark-mode .jsgui-window .title.bar {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-window .title.bar {
     background: var(--j-bg-subtle, #0f172a);
     border-bottom-color: var(--j-border, #334155);
 }
 
-.jsgui-dark-mode .jsgui-window .title.bar .button:hover {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-window .title.bar .button:hover {
     background: var(--j-bg-muted, #334155);
 }
 
-.jsgui-dark-mode .jsgui-window[data-variant="glass"] {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-window[data-variant="glass"] {
     background: rgba(15, 23, 42, 0.75);
 }
 
-.jsgui-dark-mode .jsgui-window[data-variant="glass"] .title.bar {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-window[data-variant="glass"] .title.bar {
     border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 

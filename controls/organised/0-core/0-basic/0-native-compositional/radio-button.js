@@ -172,7 +172,7 @@ class Radio_Button extends Control {
             html_label.dom.tagName = 'label';
             //console.log('that._', that._);
 
-            var text_value = this.text + '';
+            var text_value = (this.text != null) ? this.text + '' : '';
 
             //console.log('spec.text', spec.text);
 
@@ -301,6 +301,27 @@ class Radio_Button extends Control {
      */
     get_checked() {
         return !!this.checked;
+    }
+
+    /**
+     * Set the disabled state.
+     * @param {boolean} disabled
+     */
+    set_disabled(disabled) {
+        const html_radio = this.radio || (this._ctrl_fields && this._ctrl_fields.radio);
+        if (disabled) {
+            this.add_class('disabled');
+            if (html_radio) {
+                html_radio.dom.attributes.disabled = 'disabled';
+                if (html_radio.dom.el) html_radio.dom.el.disabled = true;
+            }
+        } else {
+            this.remove_class('disabled');
+            if (html_radio) {
+                delete html_radio.dom.attributes.disabled;
+                if (html_radio.dom.el) html_radio.dom.el.disabled = false;
+            }
+        }
     }
     //'resizable': function() {
     //},

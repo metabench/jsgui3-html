@@ -103,3 +103,12 @@
         transition: none;
     }
 }
+
+.jsgui-tree .tree-node-row,
+.jsgui-tree .tree-label {
+    color: inherit;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-tree {
+    color: var(--j-fg, #e8e8f0);
+}

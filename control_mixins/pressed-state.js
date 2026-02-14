@@ -30,12 +30,15 @@ const pressed_state = (ctrl, options = {}) => {
     ctrl.__mx.pressed_state = cleanup;
 
     const setup_isomorphic = () => {
-        const old_silent = ctrl.view.data.model.mixins.silent;
-        ctrl.view.data.model.mixins.silent = true;
-        ctrl.view.data.model.mixins.push({
-            name: 'pressed-state'
-        });
-        ctrl.view.data.model.mixins.silent = old_silent;
+        const model_mixins = ctrl.view && ctrl.view.data && ctrl.view.data.model && ctrl.view.data.model.mixins;
+        if (model_mixins) {
+            const old_silent = model_mixins.silent;
+            model_mixins.silent = true;
+            model_mixins.push({
+                name: 'pressed-state'
+            });
+            model_mixins.silent = old_silent;
+        }
     }
     setup_isomorphic();
 

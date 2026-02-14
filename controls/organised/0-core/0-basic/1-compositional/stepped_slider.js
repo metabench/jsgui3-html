@@ -46,7 +46,7 @@ class Stepped_Slider extends Control {
 
         this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.range = range_ctrl;
-        this._ctrl_fields.value = value_ctrl;
+        this._ctrl_fields.value_ctrl = value_ctrl;
         this._ctrl_fields.ticks = ticks_ctrl;
 
         this.add(range_ctrl);
@@ -72,7 +72,7 @@ class Stepped_Slider extends Control {
     }
 
     update_value_label() {
-        const value_ctrl = this._ctrl_fields && this._ctrl_fields.value;
+        const value_ctrl = this._ctrl_fields && this._ctrl_fields.value_ctrl;
         if (!value_ctrl) return;
         if (!this.show_value) return;
 

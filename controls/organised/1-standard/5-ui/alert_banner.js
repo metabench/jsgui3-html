@@ -254,6 +254,48 @@ Alert_Banner.css = `
 .alert-banner-hidden {
     display: none;
 }
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-dismiss:hover {
+    background: rgba(255,255,255,0.12);
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-info {
+    background: #1a3352;
+    color: #93c5fd;
+    border-color: #1d4ed8;
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-info .alert-banner-icon {
+    background: #1e3a8a;
+    color: #bfdbfe;
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-success {
+    background: #1e3a2f;
+    color: #6ee7b7;
+    border-color: #047857;
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-success .alert-banner-icon {
+    background: #064e3b;
+    color: #6ee7b7;
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-warn,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-warning {
+    background: #3a3000;
+    color: #fcd34d;
+    border-color: #a16207;
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-warn .alert-banner-icon,
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-warning .alert-banner-icon {
+    background: #422006;
+    color: #fcd34d;
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-error {
+    background: #3a1d1d;
+    color: #fca5a5;
+    border-color: #b91c1c;
+}
+:is(.jsgui-dark-mode, [data-theme="dark"]) .alert-banner-error .alert-banner-icon {
+    background: #451a1a;
+    color: #fca5a5;
+}
 `;
 
 module.exports = Alert_Banner;

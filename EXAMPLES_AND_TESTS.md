@@ -37,6 +37,9 @@ node examples/binding_master_detail.js
 ### 3. Run Tests
 
 ```bash
+# From repository root: run all Playwright E2E suites (aggregate)
+npm run test:playwright:all
+
 cd test
 npm test                    # All tests
 npm run test:core          # Core control tests

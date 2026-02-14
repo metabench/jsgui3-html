@@ -58,7 +58,7 @@ class Scroll_View extends Control {
 
         this._ctrl_fields = this._ctrl_fields || {};
         this._ctrl_fields.viewport = viewport;
-        this._ctrl_fields.content = content;
+        this._ctrl_fields.inner_control = content;
         this._ctrl_fields.h_scrollbar = this.h_scrollbar;
         this._ctrl_fields.v_scrollbar = this.v_scrollbar;
     }
@@ -162,7 +162,7 @@ class Scroll_View extends Control {
                 this.update_scroll_state_from_dom();
             });
 
-            if (this.h_scrollbar) {
+            if (this.h_scrollbar && typeof this.h_scrollbar.on === 'function') {
                 this.h_scrollbar.on('scroll', e_scroll => {
                     const state = this.scroll_state;
                     const scroll_range = Math.max(1, state.scroll_width - state.viewport_width);
@@ -170,7 +170,7 @@ class Scroll_View extends Control {
                     this.set_scroll_position({scroll_left: next_left});
                 });
             }
-            if (this.v_scrollbar) {
+            if (this.v_scrollbar && typeof this.v_scrollbar.on === 'function') {
                 this.v_scrollbar.on('scroll', e_scroll => {
                     const state = this.scroll_state;
                     const scroll_range = Math.max(1, state.scroll_height - state.viewport_height);

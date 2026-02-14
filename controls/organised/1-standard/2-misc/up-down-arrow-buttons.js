@@ -44,20 +44,20 @@ class Up_Down_Arrow_Buttons extends Control {
     'activate'() {
         super.activate();
         var that = this;
-        //that.click(function(e) { that.action_select_only() })
         var btn_up = this.btn_up || this.get('btn_up');
         var btn_down = this.btn_down || this.get('btn_down');
-        var that = this;
 
-        btn_up.on('click', function(e_click) {
-          //console.log('btn_up click');
-          that.raise('up');
-        });
+        if (btn_up && typeof btn_up.on === 'function') {
+            btn_up.on('click', function(e_click) {
+              that.raise('up');
+            });
+        }
 
-        btn_down.on('click', function(e_click) {
-          //console.log('btn_down click');
-          that.raise('down');
-        });
+        if (btn_down && typeof btn_down.on === 'function') {
+            btn_down.on('click', function(e_click) {
+              that.raise('down');
+            });
+        }
     }
 }
 module.exports = Up_Down_Arrow_Buttons;

@@ -19,6 +19,11 @@ npm install
 
 ## Running Tests
 
+### Run All Playwright E2E Suites (from repo root)
+```bash
+npm run test:playwright:all
+```
+
 ### Run All Tests
 ```bash
 npm test

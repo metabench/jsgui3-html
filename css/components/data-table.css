@@ -117,26 +117,26 @@
    Dark Mode
    ══════════════════════════════════════════ */
 
-.jsgui-dark-mode .jsgui-data-table {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-data-table {
     color: var(--j-fg, #e2e8f0);
     background: var(--j-bg, #0f172a);
 }
 
-.jsgui-dark-mode .jsgui-data-table .data-table-header {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-data-table .data-table-header {
     color: var(--j-fg-muted, #94a3b8);
     border-bottom-color: var(--j-border, #334155);
     background: var(--j-bg, #0f172a);
 }
 
-.jsgui-dark-mode .jsgui-data-table .data-table-row {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-data-table .data-table-row {
     border-bottom-color: var(--j-border, #1e293b);
 }
 
-.jsgui-dark-mode .jsgui-data-table .data-table-row:hover {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-data-table .data-table-row:hover {
     background: var(--j-bg-subtle, #1e293b);
 }
 
-.jsgui-dark-mode .jsgui-data-table[data-variant="striped"] .data-table-row:nth-child(even) {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-data-table[data-variant="striped"] .data-table-row:nth-child(even) {
     background: var(--j-bg-subtle, #1e293b);
 }
 
@@ -149,7 +149,7 @@
     background: var(--j-primary-bg-hover, #dbeafe);
 }
 
-.jsgui-dark-mode .jsgui-data-table .data-table-row.is-selected {
+:is(.jsgui-dark-mode, [data-theme="dark"]) .jsgui-data-table .data-table-row.is-selected {
     background: var(--j-primary-bg, #1e3a5f);
 }
 
@@ -159,4 +159,167 @@
     padding: var(--j-space-8, 40px) var(--j-space-4, 16px);
     color: var(--j-fg-muted);
     font-style: italic;
+}
+
+/* ── Selection Enabled Mode ── */
+.jsgui-data-table.selection-enabled .data-table-row {
+    cursor: default;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.jsgui-data-table.selection-enabled .data-table-row:hover {
+    cursor: pointer;
+}
+
+/* ── Column Resizing ── */
+.jsgui-data-table.is-resizing {
+    cursor: col-resize;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.data-table-header {
+    position: relative;
+    /* Ensure handle positioning */
+}
+
+.data-table-resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    cursor: col-resize;
+    z-index: 10;
+    /* Invisible target area by default, visual indicator on hover */
+    background: transparent;
+    transition: background-color 0.2s;
+}
+
+.data-table-resize-handle:hover,
+.data-table-resize-handle.is-active {
+    background: var(--admin-primary, #0078d4);
+}
+
+.data-table-header:hover .data-table-resize-handle {
+    /* Optional hint */
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* ── Selected Rows ── */
+.data-table-row.is-selected {
+    background: var(--admin-selection-bg, rgba(0, 120, 212, 0.12));
+}
+
+.data-table-row.is-selected:hover {
+    background: var(--admin-selection-hover, rgba(0, 120, 212, 0.18));
+}
+
+/* ── Virtual Scroll (Phase 2) ── */
+.jsgui-data-table[data-render-mode="virtual"] tbody {
+    display: block;
+    overflow-y: auto;
+    position: relative;
+}
+
+.jsgui-data-table[data-render-mode="virtual"] thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.jsgui-data-table[data-render-mode="virtual"] tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.data-table-virtual-spacer {
+    display: block;
+    width: 100%;
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* ── Frozen Columns (Phase 2) ── */
+.data-table-frozen-left,
+.data-table-frozen-right {
+    position: sticky;
+    z-index: 2;
+    background: inherit;
+}
+
+.data-table-frozen-left::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 4px;
+    pointer-events: none;
+    box-shadow: inset -4px 0 4px -4px rgba(0, 0, 0, 0.12);
+}
+
+.data-table-frozen-right::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 4px;
+    pointer-events: none;
+    box-shadow: inset 4px 0 4px -4px rgba(0, 0, 0, 0.12);
+}
+
+/* Header frozen columns need higher z-index */
+thead .data-table-frozen-left,
+thead .data-table-frozen-right {
+    z-index: 3;
+}
+
+/* ── Async Loading / Skeleton (Phase 2) ── */
+.jsgui-data-table.data-table-loading {
+    opacity: 0.7;
+    pointer-events: none;
+    position: relative;
+}
+
+.data-table-skeleton-row {
+    animation: skeleton-pulse 1.5s ease-in-out infinite;
+}
+
+.data-table-skeleton-bar {
+    height: 14px;
+    width: 70%;
+    border-radius: 4px;
+    background: linear-gradient(90deg,
+            var(--admin-skeleton-from, #e0e0e0) 25%,
+            var(--admin-skeleton-to, #f0f0f0) 50%,
+            var(--admin-skeleton-from, #e0e0e0) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes skeleton-shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
 }

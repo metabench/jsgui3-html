@@ -619,6 +619,19 @@ Month_View.css = `
     --mv-today-ring: #2563eb;
     --mv-weekend-text: #94a3b8;
 }
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .month-view {
+    --mv-bg: #1f2937;
+    --mv-cell-bg: #111827;
+    --mv-cell-disabled: #374151;
+    --mv-text: #e5e7eb;
+    --mv-header-text: #9ca3af;
+    --mv-accent: #60a5fa;
+    --mv-accent-light: #1e3a8a;
+    --mv-accent-mid: #2563eb;
+    --mv-today-ring: #93c5fd;
+    --mv-weekend-text: #cbd5e1;
+}
 /* --- Range highlighting --- */
 .month-view .cell.range-start {
     background-color: var(--mv-accent) !important;

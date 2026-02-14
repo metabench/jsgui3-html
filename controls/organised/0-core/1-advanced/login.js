@@ -81,12 +81,8 @@ class Login extends Control {
 			// action, method
 
 
-			frm.dom.attrs.set({
-				'action': '/logout/?returnurl=%2F',
-				'method': 'POST'
-			});
-			//frm.set('dom.attributes.action', '/logout/?returnurl=%2F');
-			//frm.set('dom.attributes.method', 'POST');
+			frm.dom.attrs.action = '/logout/?returnurl=%2F';
+			frm.dom.attrs.method = 'POST';
 
 			div_logged_in.add(frm);
 
@@ -94,11 +90,9 @@ class Login extends Control {
 				'context': this.context
 
 			})
-			btn.dom.attrs.set({
-				'type': 'submit',
-				'value': 'submit',
-				'class': 'logout'
-			});
+			btn.dom.attrs.type = 'submit';
+			btn.dom.attrs.value = 'submit';
+			btn.dom.attrs['class'] = 'logout';
 
 			btn.add('Logout');
 			frm.add(btn);
@@ -115,10 +109,8 @@ class Login extends Control {
 			//frm.set('dom.attributes.action', '/login');
 			//frm.set('dom.attributes.method', 'POST');
 
-			frm.dom.attrs.set({
-				'action': '/logout/?returnurl=%2F',
-				'method': 'POST'
-			});
+			frm.dom.attrs.action = '/login/?returnurl=%2F';
+			frm.dom.attrs.method = 'POST';
 
 			this.add(frm);
 			// and composed of two text fields...
@@ -157,11 +149,9 @@ class Login extends Control {
 				'context': this.context
 
 			})
-			btn.dom.attrs.set({
-				'type': 'submit',
-				'value': 'submit',
-				'class': 'login'
-			});
+			btn.dom.attrs.type = 'submit';
+			btn.dom.attrs.value = 'submit';
+			btn.dom.attrs['class'] = 'login';
 
 			btn.add('Login');
 

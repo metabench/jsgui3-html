@@ -184,7 +184,7 @@
         --wiz-success-hover: #15803d;
     }
 
-    .jsgui-dark-mode .wizard {
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .wizard {
         --wiz-text: #f9fafb;
         --wiz-text-muted: #9ca3af;
         --wiz-hover: #1f2937;

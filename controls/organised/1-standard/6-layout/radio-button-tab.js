@@ -50,6 +50,8 @@
     
     
             if (spec.group_name) this.group_name = spec.group_name;
+            if (spec.text) this.text = spec.text;
+            if (spec.label) this.text = spec.label;
     
             //console.log('spec.el', spec.el);
     
@@ -94,7 +96,7 @@
                 html_label.dom.tagName = 'label';
                 //console.log('that._', that._);
     
-                var text_value = this.text + '';
+                var text_value = (this.text != null) ? this.text + '' : '';
     
                 //console.log('spec.text', spec.text);
     

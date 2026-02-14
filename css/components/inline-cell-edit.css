@@ -145,7 +145,7 @@
         --ice-cancel: #dc2626;
     }
 
-    .jsgui-dark-mode .inline-cell-edit {
+    :is(.jsgui-dark-mode, [data-theme="dark"]) .inline-cell-edit {
         --ice-border: #374151;
         --ice-border-hover: #3b82f6;
         --ice-border-active: #60a5fa;

@@ -200,7 +200,7 @@ Tree_View.css = `
     user-select: none;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 14px;
-    color: #333;
+    color: var(--admin-text, #333);
 }
 
 .tree-node {
@@ -218,12 +218,12 @@ Tree_View.css = `
 }
 
 .tree-node-header:hover {
-    background-color: #f0f0f0;
+    background-color: var(--admin-hover-bg, #f0f0f0);
 }
 
 .tree-node.selected > .tree-node-header {
-    background-color: #e0eaff; /* Light blue selection */
-    color: #0066cc;
+    background-color: var(--admin-select-bg, #e0eaff); /* Light blue selection */
+    color: var(--admin-accent, #0066cc);
 }
 
 .tree-chevron {
@@ -233,7 +233,7 @@ Tree_View.css = `
     align-items: center;
     justify-content: center;
     margin-right: 4px;
-    color: #888;
+    color: var(--admin-text-muted, #888);
     transition: transform 0.2s ease;
     cursor: pointer;
     font-size: 10px;
@@ -267,6 +267,19 @@ Tree_View.css = `
 
 .tree-children.hidden {
     display: none;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .tree-view {
+    color: #d4d4d4;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .tree-node-header:hover {
+    background-color: #2a2d2e;
+}
+
+:is(.jsgui-dark-mode, [data-theme="dark"]) .tree-node.selected > .tree-node-header {
+    background-color: #094771;
+    color: #9cdcfe;
 }
 `;
 

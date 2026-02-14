@@ -58,7 +58,7 @@ class Menu_Node extends Control {
                 this.add_class('menu-node');
                 var spec_state = spec.state, state;
 
-                var main_control = make(Control({ 'class': 'main' }));
+                var main_control = new Control({ 'context': this.context, 'class': 'main' });
                 this.add(main_control);
                 this.main_control = main_control;
                 apply_role(main_control, 'menuitem');
@@ -72,7 +72,7 @@ class Menu_Node extends Control {
                     //this.set('text', spec.text);
                     this.text = spec.text;
 
-                    var span = make(jsgui.span({}));
+                    var span = new jsgui.span({ 'context': this.context });
 
                     //var text = this.get('text');
                     //console.log('text', text);
@@ -83,10 +83,10 @@ class Menu_Node extends Control {
                 }
                 var menu = spec.menu;
                 if (menu) {
-                    this.set('menu', menu);
+                    this.menu = menu;
                 }
 
-                var inner_control = this.inner_control = make(Control({ 'class': 'inner hidden' }));
+                var inner_control = this.inner_control = new Control({ 'context': this.context, 'class': 'inner hidden' });
                 inner_control.dom.attributes.role = 'menu';
                 inner_control.dom.attributes.id = inner_control._id();
                 this.add(inner_control);
@@ -116,36 +116,39 @@ class Menu_Node extends Control {
                             if (tv == 'string') {
                                 // new node with text, no inner nodes.
 
-                                var nested_menu_node = make(Menu_Node({
+                                var nested_menu_node = new Menu_Node({
+                                    'context': inner_control.context,
                                     'text': v,
                                     'menu': menu
-                                }));
+                                });
                                 inner_control.add(nested_menu_node);
                             }
                         })
                     }
                 }
 
-                var ctrl_fields = {
-                    'inner_control': inner_control._id(),
-                    'main_control': main_control._id(),
-                    'menu': spec.menu._id()
+                if (spec.menu) {
+                    var ctrl_fields = {
+                        'inner_control': inner_control._id(),
+                        'main_control': main_control._id(),
+                        'menu': spec.menu._id()
+                    }
+
+                    // use different quotes...
+
+                    this.dom.attributes['data-jsgui-ctrl-fields'] = stringify(ctrl_fields).replace(/"/g, "'");
                 }
-
-                // use different quotes...
-
-                this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
 
                 if (spec_state) {
 
                     // open and closed
                     if (spec_state == 'open' || spec_state == 'closed') {
-                        state = this.set('state', spec_state);
+                        this.state = spec_state;
                     } else {
                         throw 'spec.state expects "open" or "closed".';
                     }
                 } else {
-                    state = this.set('state', 'open');
+                    this.state = 'open';
                 }
                 this.update_aria_state();
             }

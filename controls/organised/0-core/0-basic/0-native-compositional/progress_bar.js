@@ -60,6 +60,13 @@ class Progress_Bar extends Control {
 
         // Compose the div-based bar
         if (!spec.el) {
+            // ARIA progressbar role
+            this.dom.attributes.role = 'progressbar';
+            this.dom.attributes['aria-valuemin'] = '0';
+            this.dom.attributes['aria-valuemax'] = String(this.max);
+            if (is_defined(spec.value)) {
+                this.dom.attributes['aria-valuenow'] = String(spec.value);
+            }
             this.compose(spec);
         }
     }
@@ -112,6 +119,12 @@ class Progress_Bar extends Control {
             }
         }
 
+        // Sync ARIA
+        this.dom.attributes['aria-valuenow'] = String(clamped);
+        if (this.dom.el) {
+            this.dom.el.setAttribute('aria-valuenow', String(clamped));
+        }
+
         if (this._label) {
             this._label.clear();
             this._label.add(`${percent}%`);
@@ -137,6 +150,10 @@ class Progress_Bar extends Control {
         const numeric = normalize_number_value(max_value);
         if (is_defined(numeric)) {
             this.max = numeric;
+            this.dom.attributes['aria-valuemax'] = String(numeric);
+            if (this.dom.el) {
+                this.dom.el.setAttribute('aria-valuemax', String(numeric));
+            }
             // Re-render if value exists
             if (is_defined(this.value)) this.set_value(this.value);
         }

@@ -30,9 +30,9 @@ class ModelBinder {
             ] = Array.prototype.slice.call(arguments, 1);
             const normalizedBindings = {
                 [sourceProp]: Object.assign(
-                    {to: targetProp},
-                    legacyOptions.transform ? {transform: legacyOptions.transform} : {},
-                    legacyOptions.reverse ? {reverse: legacyOptions.reverse} : {}
+                    { to: targetProp },
+                    legacyOptions.transform ? { transform: legacyOptions.transform } : {},
+                    legacyOptions.reverse ? { reverse: legacyOptions.reverse } : {}
                 )
             };
             const normalizedOptions = Object.assign({
@@ -51,52 +51,52 @@ class ModelBinder {
             immediate: true,
             debug: false
         }, options);
-        
+
         this._listeners = [];
         this._locks = new Set();
         this._active = false;
-        
+
         if (this.options.immediate) {
             this.activate();
         }
     }
-    
+
     /**
      * Activate all bindings
      */
     activate() {
         if (this._active) return;
         this._active = true;
-        
+
         each(this.bindings, (binding, sourceProp) => {
             this._setupBinding(sourceProp, binding);
         });
-        
+
         if (this.options.debug) {
             console.log('[ModelBinder] Activated bindings:', Object.keys(this.bindings));
         }
     }
-    
+
     /**
      * Deactivate all bindings and cleanup listeners
      */
     deactivate() {
         if (!this._active) return;
         this._active = false;
-        
+
         this._listeners.forEach(({ model, event, handler }) => {
             if (model && model.off) {
                 model.off(event, handler);
             }
         });
-        
+
         this._listeners = [];
-        
+
         if (this.options.debug) {
             console.log('[ModelBinder] Deactivated bindings');
         }
     }
-    
+
     /**
      * Setup a single binding between source and target properties
      * @private
@@ -106,28 +106,28 @@ class ModelBinder {
         const transform = binding.transform;
         const reverse = binding.reverse;
         const condition = binding.condition;
-        
+
         // Initial sync from source to target
         if (this.sourceModel[sourceProp] !== undefined) {
             const value = this.sourceModel[sourceProp];
             const transformedValue = transform ? transform(value) : value;
-            
+
             if (!condition || condition(value)) {
                 this.targetModel[targetProp] = transformedValue;
             }
         }
-        
+
         // Setup source → target binding
         const sourceHandler = (e) => {
             if (e.name === sourceProp) {
                 const value = e.value;
                 const transformedValue = transform ? transform(value) : value;
-                
+
                 if (!condition || condition(value)) {
                     const lock_key = `${sourceProp}->${targetProp}`;
                     if (this._acquire(lock_key)) {
                         this.targetModel[targetProp] = transformedValue;
-                        
+
                         if (this.options.debug) {
                             console.log(`[ModelBinder] ${sourceProp} → ${targetProp}:`, value, '→', transformedValue);
                         }
@@ -136,26 +136,26 @@ class ModelBinder {
                 }
             }
         };
-        
+
         this.sourceModel.on('change', sourceHandler);
         this._listeners.push({
             model: this.sourceModel,
             event: 'change',
             handler: sourceHandler
         });
-        
+
         // Setup target → source binding (if bidirectional)
         if (this.options.bidirectional && reverse) {
             const targetHandler = (e) => {
                 if (e.name === targetProp) {
                     const value = e.value;
                     const reversedValue = reverse(value);
-                    
+
                     if (!condition || condition(reversedValue)) {
                         const lock_key = `${targetProp}->${sourceProp}`;
                         if (this._acquire(lock_key)) {
                             this.sourceModel[sourceProp] = reversedValue;
-                            
+
                             if (this.options.debug) {
                                 console.log(`[ModelBinder] ${targetProp} → ${sourceProp}:`, value, '→', reversedValue);
                             }
@@ -164,7 +164,7 @@ class ModelBinder {
                     }
                 }
             };
-            
+
             this.targetModel.on('change', targetHandler);
             this._listeners.push({
                 model: this.targetModel,
@@ -173,7 +173,7 @@ class ModelBinder {
             });
         }
     }
-    
+
     _acquire(key) {
         if (!key) return true;
         if (this._locks.has(key)) {
@@ -195,28 +195,28 @@ class ModelBinder {
     unbind() {
         this.deactivate();
     }
-    
+
     /**
      * Update a specific binding manually
      */
     updateBinding(sourceProp) {
         const binding = this.bindings[sourceProp];
         if (!binding) return;
-        
+
         const targetProp = typeof binding === 'string' ? binding : binding.to;
         const transform = binding.transform;
-        
+
         const value = this.sourceModel[sourceProp];
         const transformedValue = transform ? transform(value) : value;
         this.targetModel[targetProp] = transformedValue;
     }
-    
+
     /**
      * Get current binding state for inspection
      */
     inspect() {
         const state = {};
-        
+
         each(this.bindings, (binding, sourceProp) => {
             const targetProp = typeof binding === 'string' ? binding : binding.to;
             state[sourceProp] = {
@@ -228,7 +228,7 @@ class ModelBinder {
                 bidirectional: this.options.bidirectional && !!binding.reverse
             };
         });
-        
+
         return state;
     }
 }
@@ -244,20 +244,24 @@ class ModelBinder {
  * );
  */
 class ComputedProperty {
-    constructor(models, dependencies, computeFn, options = {}) {
+    constructor(models, dependencies, compute_fn, options = {}) {
         this.models = Array.isArray(models) ? models : [models];
         this.dependencies = Array.isArray(dependencies) ? dependencies : [dependencies];
-        this.computeFn = computeFn;
+        this.compute_fn = compute_fn;
         this.options = Object.assign({
-            propertyName: 'computed',
+            // property_name: use options.property_name || options.propertyName || 'computed' at resolve time
             immediate: true,
+            defer_initial_compute: false,
             debug: false,
-            target: null
+            target: null,
+            equals: null,     // Custom equality function (a, b) => boolean
+            on_error: null,    // Error callback (err) => void
+            fallback: undefined // Fallback value on error
         }, options);
 
         this._listeners = [];
         this._active = false;
-        this._lastValue = undefined;
+        this._last_value = undefined;
 
         if (this.options.immediate) {
             this.activate();
@@ -288,8 +292,6 @@ class ComputedProperty {
         if (this._active) return;
         this._active = true;
 
-        this.compute();
-
         const handler = (e) => {
             if (this.dependencies.includes(e.name)) {
                 this.compute();
@@ -302,6 +304,13 @@ class ComputedProperty {
                 this._listeners.push({ model, event: 'change', handler });
             }
         });
+
+        // Initial computation: optionally deferred so watchers can be registered first
+        if (this.options.defer_initial_compute) {
+            Promise.resolve().then(() => this.compute());
+        } else {
+            this.compute();
+        }
 
         if (this.options.debug) {
             console.log('[ComputedProperty] Activated for dependencies:', this.dependencies);
@@ -322,32 +331,44 @@ class ComputedProperty {
     }
 
     compute() {
-        const args = this.dependencies.map(dep => this._resolve_dependency(dep));
-        const newValue = this.computeFn(...args);
+        let new_value;
+        try {
+            const args = this.dependencies.map(dep => this._resolve_dependency(dep));
+            new_value = this.compute_fn(...args);
+        } catch (err) {
+            if (this.options.on_error) {
+                this.options.on_error(err);
+            } else if (this.options.debug) {
+                console.error('[ComputedProperty] Compute error:', err);
+            }
+            return this.options.fallback !== undefined ? this.options.fallback : this._last_value;
+        }
 
-        if (newValue !== this._lastValue) {
-            this._lastValue = newValue;
+        const equals = this.options.equals || ((a, b) => a === b);
+        if (!equals(new_value, this._last_value)) {
+            const old_value = this._last_value;
+            this._last_value = new_value;
             const target_model = this.options.target || this.models[0];
-            const property_name = this.options.propertyName || this.options.property_name || 'computed';
+            const property_name = this.options.property_name || this.options.propertyName || 'computed';
 
             if (target_model) {
                 if (typeof target_model.set === 'function') {
-                    target_model.set(property_name, newValue);
+                    target_model.set(property_name, new_value);
                 } else {
-                    target_model[property_name] = newValue;
+                    target_model[property_name] = new_value;
                 }
             }
 
             if (this.options.debug) {
-                console.log('[ComputedProperty] Updated:', property_name, '=', newValue);
+                console.log('[ComputedProperty] Updated:', property_name, old_value, '→', new_value);
             }
         }
 
-        return newValue;
+        return new_value;
     }
 
     get value() {
-        return this._lastValue;
+        return this._last_value;
     }
 
     destroy() {
@@ -373,45 +394,45 @@ class PropertyWatcher {
             deep: false,
             debug: false
         }, options);
-        
+
         this._handler = null;
         this._active = false;
-        
+
         this.activate();
     }
-    
+
     activate() {
         if (this._active) return;
         this._active = true;
-        
+
         // Call immediately if requested
         if (this.options.immediate && this.properties.length > 0) {
             const prop = this.properties[0];
             this.callback(this.model[prop], undefined, prop);
         }
-        
+
         // Setup change listener
         this._handler = (e) => {
             if (this.properties.includes(e.name)) {
                 this.callback(e.value, e.old, e.name);
-                
+
                 if (this.options.debug) {
                     console.log('[PropertyWatcher] Property changed:', e.name, e.old, '→', e.value);
                 }
             }
         };
-        
+
         this.model.on('change', this._handler);
     }
-    
+
     deactivate() {
         if (!this._active) return;
         this._active = false;
-        
+
         if (this._handler && this.model.off) {
             this.model.off('change', this._handler);
         }
-        
+
         this._handler = null;
     }
 
@@ -432,7 +453,7 @@ class BindingManager {
         // Backwards-compatible alias used by older tests/docs.
         this._bindings = this.binders;
     }
-    
+
     /**
      * Create a new binding between models
      */
@@ -445,10 +466,10 @@ class BindingManager {
     bind_value(sourceModel, sourceProp, targetModel, targetProp = sourceProp, options = {}) {
         const bindings = {
             [sourceProp]: Object.assign(
-                {to: targetProp},
-                options.transform ? {transform: options.transform} : {},
-                options.reverse ? {reverse: options.reverse} : {},
-                options.condition ? {condition: options.condition} : {}
+                { to: targetProp },
+                options.transform ? { transform: options.transform } : {},
+                options.reverse ? { reverse: options.reverse } : {},
+                options.condition ? { condition: options.condition } : {}
             )
         };
         const binder_options = {
@@ -480,16 +501,27 @@ class BindingManager {
             bidirectional: options.bidirectional && !!reverse
         }));
     }
-    
+
     /**
      * Create a computed property
      */
-    createComputed(model, dependencies, computeFn, options) {
-        const computed = new ComputedProperty(model, dependencies, computeFn, options);
+    create_computed(model, dependencies, compute_fn, options) {
+        const computed = new ComputedProperty(model, dependencies, compute_fn, options);
         this.computed.push(computed);
         return computed;
     }
-    
+
+    /**
+     * Create a reactive collection with filter support and granular events.
+     */
+    create_reactive_collection(source, options) {
+        const ReactiveCollection = require('./ReactiveCollection');
+        const rc = new ReactiveCollection(source, options);
+        if (!this._reactive_collections) this._reactive_collections = [];
+        this._reactive_collections.push(rc);
+        return rc;
+    }
+
     /**
      * Watch a property for changes
      */
@@ -498,7 +530,7 @@ class BindingManager {
         this.watchers.push(watcher);
         return watcher;
     }
-    
+
     /**
      * Cleanup all bindings
      */
@@ -506,12 +538,16 @@ class BindingManager {
         this.binders.forEach(b => b.deactivate());
         this.computed.forEach(c => c.deactivate());
         this.watchers.forEach(w => w.deactivate());
-        
+        if (this._reactive_collections) {
+            this._reactive_collections.forEach(rc => rc.destroy());
+            this._reactive_collections.length = 0;
+        }
+
         this.binders.length = 0;
         this.computed.length = 0;
         this.watchers.length = 0;
     }
-    
+
     /**
      * Get inspection data for all bindings
      */
@@ -519,7 +555,7 @@ class BindingManager {
         return {
             binders: this.binders.map(b => b.inspect()),
             computed: this.computed.map(c => ({
-                propertyName: c.options.propertyName,
+                property_name: c.options.property_name,
                 dependencies: c.dependencies,
                 value: c.value
             })),
@@ -531,9 +567,25 @@ class BindingManager {
     }
 }
 
+/**
+ * Shallow array equality check — useful as `equals` option for ComputedProperty
+ * when the compute function returns arrays.
+ */
+function shallow_array_equals(a, b) {
+    if (a === b) return true;
+    if (!Array.isArray(a) || !Array.isArray(b)) return false;
+    if (a.length !== b.length) return false;
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+}
+
 module.exports = {
     ModelBinder,
     ComputedProperty,
     PropertyWatcher,
-    BindingManager
+    BindingManager,
+    shallow_array_equals,
+    ReactiveCollection: require('./ReactiveCollection')
 };

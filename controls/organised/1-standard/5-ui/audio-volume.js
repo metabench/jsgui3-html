@@ -26,29 +26,19 @@ class Audio_Volume extends Control {
 		if (!spec.abstract && !spec.el) {
 
 			this.add_class('audio-volume');
-			// the bar at the top.
 
-			// It's going to act as a drag handle for this.
-			//  The drag system will integrate with various bands / window positions.
-			// Maybe a property to say that it's dockable.
-
-			//var top_bar = new Control({
-			//	'context': this.context
-			//})
-			//top_bar.set('dom.attributes.class', 'title bar');
-			//this.add(top_bar);
-
-			var h_slider = add(Horizontal_Slider({
+			var h_slider = new Horizontal_Slider({
+				'context': this.context,
 				'min': 0,
 				'max': 100,
 				'value': 100
-			}));
+			});
+			this.add(h_slider);
 
 			var ctrl_fields = {
 				'h_slider': h_slider._id()
 			}
 
-			//this.set('dom.attributes.data-jsgui-ctrl-fields', stringify(ctrl_fields).replace(/"/g, "'"));
 			this.active();
 		}
 	}
