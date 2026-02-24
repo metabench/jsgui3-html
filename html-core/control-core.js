@@ -76,6 +76,16 @@ var new_obj_style = () => {
 	});
 	return res;
 }
+/**
+ * Reactive attribute bag for a Control's DOM element.
+ *
+ * Wraps a Proxy around the `style` sub-object so that property
+ * assignments (e.g. `attrs.style.width = 120`) auto-append 'px'
+ * and fire a `change` event. Non-style attributes fire `change`
+ * events when set through the Proxy in {@link Control_DOM}.
+ *
+ * @extends Evented_Class
+ */
 class DOM_Attributes extends Evented_Class {
 	constructor(spec) {
 		super(spec);
@@ -90,6 +100,22 @@ class DOM_Attributes extends Evented_Class {
 		})
 	}
 }
+/**
+ * Manages a control's DOM representation on both server and client.
+ *
+ * On the **server** side, `el` is `undefined`; the control renders
+ * to HTML via attribute serialisation. On the **client** side, `el`
+ * is the live DOM element attached during activation / hydration.
+ *
+ * Properties:
+ * - `el`          – the live HTMLElement (client only)
+ * - `tagName`     – the element tag (default `'div'`)
+ * - `attributes`  – {@link DOM_Attributes} Proxy; fires `change` on mutation
+ * - `attrs`       – alias for `attributes`
+ * - `noClosingTag`– when `true`, renders a self-closing tag (e.g. `<input />`)
+ *
+ * @extends Evented_Class
+ */
 class Control_DOM extends Evented_Class {
 	constructor() {
 		super();
@@ -132,6 +158,13 @@ class Control_DOM extends Evented_Class {
 		});
 	}
 }
+/**
+ * Reactive background wrapper. Setting `color` raises a `change`
+ * event that Control_Core listens to in order to sync the
+ * `background-color` CSS property.
+ *
+ * @extends Evented_Class
+ */
 class Control_Background extends Evented_Class {
 	constructor(spec = {}) {
 		super(spec);
@@ -156,6 +189,31 @@ class Control_Background extends Evented_Class {
 	}
 	set(val) { }
 }
+/**
+ * Base class for every jsgui control.
+ *
+ * Provides:
+ * - Isomorphic rendering (server HTML string ↔ client DOM element)
+ * - Reactive `dom.attributes` (style, classes, data-* attributes)
+ * - Child control tree (`add`, `content`, `_ctrl_fields`)
+ * - Event system (`on`, `raise`) inherited from `Evented_Class`
+ * - Layout helpers (`pos`, `size`, `background`, `disabled`)
+ *
+ * Subclass hierarchy:
+ * ```
+ * Control_Core → Control (control-enh.js) → Data_Model_View_Model_Control
+ * ```
+ *
+ * @param {Object}  [spec={}]        - configuration object
+ * @param {string}  [spec.id]        - DOM id for the control
+ * @param {string}  [spec.__type_name] - type discriminator
+ * @param {Object}  [spec.context]   - Page_Context (required)
+ * @param {Array}   [spec.pos]       - [left, top] in px
+ * @param {Array}   [spec.size]      - [width, height] in px
+ * @param {string}  [spec.tagName]   - HTML tag (default 'div')
+ * @param {*}       [fields]         - passed through to Base_Data_Object
+ * @extends Base_Data_Object
+ */
 class Control_Core extends Base_Data_Object {
 	constructor(spec = {}, fields) {
 		spec.__type_name = spec.__type_name || 'control';
@@ -186,6 +244,8 @@ class Control_Core extends Base_Data_Object {
 				value,
 				old
 			} = e_change;
+			// Prevent scalar values meant for sub-controls (e.g. Split_Pane) from crashing
+			if (!Array.isArray(value)) return;
 			let [width, height] = value;
 			const s = this.dom.attrs.style;
 			s.width = width;

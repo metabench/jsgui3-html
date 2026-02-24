@@ -16,8 +16,8 @@ var Control = jsgui.Control;
 const def = jsgui.is_defined;
 
 
-const Item_View = require('./item');
-const List = require('./list');
+const Item_View = require('./Item');
+const List = require('./List');
 
 const mx_popup = require('../../../../../control_mixins/popup');
 

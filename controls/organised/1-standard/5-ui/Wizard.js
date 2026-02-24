@@ -36,7 +36,30 @@ class Wizard extends Control {
         this.on_complete = spec.on_complete || null;
         this.on_step_change = spec.on_step_change || null;
 
+        // ── Adaptive layout options (all overridable) ──
+        // layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
+        this.layout_mode = spec.layout_mode || 'auto';
+        // Breakpoint for compact step indicator
+        this.phone_breakpoint = is_defined(spec.phone_breakpoint) ? Number(spec.phone_breakpoint) : 600;
+        // Whether to show compact indicator on phone (progress bar instead of dots)
+        this.phone_compact_indicator = spec.phone_compact_indicator !== false;
+
         if (!spec.el) this.compose();
+    }
+
+    /**
+     * Resolve the current layout mode.
+     * @returns {'phone'|'tablet'|'desktop'}
+     */
+    resolve_layout_mode() {
+        if (this.layout_mode !== 'auto') return this.layout_mode;
+        if (this.context && this.context.view_environment && this.context.view_environment.layout_mode) {
+            return this.context.view_environment.layout_mode;
+        }
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth < this.phone_breakpoint) return 'phone';
+        }
+        return 'desktop';
     }
 
     compose() {
@@ -146,6 +169,18 @@ class Wizard extends Control {
         if (!this.__active) {
             super.activate();
             if (!this.dom.el) return;
+
+            // Apply initial layout mode
+            const mode = this.resolve_layout_mode();
+            this.dom.el.setAttribute('data-layout-mode', mode);
+
+            // Listen for resize
+            if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
+                this._resize_handler = () => {
+                    this.dom.el.setAttribute('data-layout-mode', this.resolve_layout_mode());
+                };
+                window.addEventListener('resize', this._resize_handler);
+            }
 
             // Step dot clicks
             this.dom.el.querySelectorAll('.wizard-step-dot').forEach(dot => {
@@ -265,19 +300,114 @@ class Wizard extends Control {
 }
 
 Wizard.css = `
-.wizard {
+/* ─── Wizard ─── */
+.jsgui-wizard {
     display: flex;
     flex-direction: column;
+    color: var(--admin-text, #1e1e1e);
 }
 .wizard-indicator {
     display: flex;
     align-items: center;
+    gap: 4px;
+    padding: 12px 8px;
+}
+.wizard-step-dot {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border: 1px solid var(--admin-border, #e0e0e0);
+    border-radius: 20px;
+    background: var(--admin-card-bg, #fff);
+    color: var(--admin-muted, #999);
+    cursor: pointer;
+    min-height: var(--j-touch-target, 36px);
+    font-size: 13px;
+    white-space: nowrap;
+    transition: background 0.15s, border-color 0.15s;
+}
+.wizard-step-dot:hover {
+    background: var(--admin-hover-bg, #f0f0f0);
+}
+.wizard-step-dot.is-active {
+    border-color: var(--admin-accent, #0078d4);
+    background: var(--admin-accent, #0078d4);
+    color: #fff;
+}
+.wizard-step-dot.is-completed {
+    border-color: var(--j-success, #28a745);
+    color: var(--j-success, #28a745);
+}
+.wizard-step-num {
+    font-weight: 600;
+}
+.wizard-connector {
+    flex: 1;
+    height: 2px;
+    min-width: 16px;
+    background: var(--admin-border, #e0e0e0);
+}
+.wizard-panels {
+    flex: 1;
+    padding: 12px 0;
 }
 .wizard-panel.is-hidden {
     display: none;
 }
+.wizard-nav {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    gap: 8px;
+}
+.wizard-btn {
+    padding: 8px 16px;
+    border: 1px solid var(--admin-border, #e0e0e0);
+    border-radius: var(--j-radius, 4px);
+    background: var(--admin-card-bg, #fff);
+    color: var(--admin-text, #333);
+    cursor: pointer;
+    min-height: var(--j-touch-target, 36px);
+    transition: background 0.12s;
+}
+.wizard-btn:hover {
+    background: var(--admin-hover-bg, #f0f0f0);
+}
+.wizard-btn--finish {
+    background: var(--admin-accent, #0078d4);
+    color: #fff;
+    border-color: var(--admin-accent, #0078d4);
+}
+.wizard-btn--finish:hover {
+    opacity: 0.9;
+}
 .wizard-btn.is-hidden {
     visibility: hidden;
+}
+
+/* ── Phone layout: compact indicator ── */
+.jsgui-wizard[data-layout-mode="phone"] .wizard-indicator {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 8px 4px;
+}
+.jsgui-wizard[data-layout-mode="phone"] .wizard-step-label {
+    display: none;
+}
+.jsgui-wizard[data-layout-mode="phone"] .wizard-step-dot {
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+    padding: 6px;
+}
+.jsgui-wizard[data-layout-mode="phone"] .wizard-connector {
+    min-width: 8px;
+}
+.jsgui-wizard[data-layout-mode="phone"] .wizard-btn {
+    min-height: 44px;
+    flex: 1;
 }
 `;
 

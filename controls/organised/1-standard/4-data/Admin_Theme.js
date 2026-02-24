@@ -10,6 +10,8 @@
  *   'vs-dark'     — Dark slate, VS Code dark+
  *   'terminal'    — Green-on-black terminal
  *   'warm'        — Amber/sepia tones
+ *   'vs-classic'  — Old Windows 95/2000 Visual Studio style
+ *   'vs-aero'     — Windows Vista/7 Aero glass Visual Studio style
  *
  * Usage (server-side, wrap page):
  *   page.add_css(Admin_Theme.css);
@@ -143,6 +145,88 @@ const THEMES = {
 
         '--admin-row-height': '32px',
         '--admin-cell-padding': '6px 12px',
+    },
+
+    // ─── VS Classic (old Windows 95/2000 style) ──────────────────────
+    'vs-classic': {
+        '--admin-bg': '#c0c0c0',
+        '--admin-card-bg': '#dfdfdf',
+        '--admin-border': '#808080',
+        '--admin-border-accent': '#000080',
+
+        '--admin-text': '#000000',
+        '--admin-text-secondary': '#404040',
+        '--admin-text-muted': '#808080',
+
+        '--admin-font': "'MS Sans Serif', 'Microsoft Sans Serif', 'Tahoma', 'Arial', sans-serif",
+        '--admin-font-mono': "'Fixedsys', 'Courier New', 'Courier', monospace",
+        '--admin-font-size': '12px',
+
+        '--admin-header-bg': '#000080',
+        '--admin-header-text': '#ffffff',
+        '--admin-stripe-bg': '#d4d0c8',
+        '--admin-hover-bg': '#b6b6b6',
+        '--admin-select-bg': '#000080',
+
+        '--admin-accent': '#000080',
+        '--admin-success': '#008000',
+        '--admin-warning': '#808000',
+        '--admin-danger': '#ff0000',
+        '--admin-info': '#000080',
+
+        '--admin-success-bg': '#c0e0c0',
+        '--admin-warning-bg': '#e0e0a0',
+        '--admin-danger-bg': '#ffc0c0',
+        '--admin-info-bg': '#c0c0e0',
+
+        '--admin-radius': '0px',
+        '--admin-radius-lg': '0px',
+        '--admin-shadow': 'inset -1px -1px 0 #404040, inset 1px 1px 0 #ffffff',
+        '--admin-shadow-lg': 'inset -2px -2px 0 #404040, inset 2px 2px 0 #ffffff',
+
+        '--admin-row-height': '24px',
+        '--admin-cell-padding': '2px 6px',
+    },
+
+    // ─── VS Aero (Windows Vista/7 Aero glass style) ────────────────
+    'vs-aero': {
+        '--admin-bg': '#eef5fd',
+        '--admin-card-bg': 'rgba(255, 255, 255, 0.85)',
+        '--admin-border': '#a0b4d0',
+        '--admin-border-accent': '#3399ff',
+
+        '--admin-text': '#1a1a2e',
+        '--admin-text-secondary': '#4a5568',
+        '--admin-text-muted': '#8a96a8',
+
+        '--admin-font': "'Segoe UI', 'Tahoma', 'Calibri', -apple-system, BlinkMacSystemFont, sans-serif",
+        '--admin-font-mono': "'Consolas', 'Lucida Console', 'Courier New', monospace",
+        '--admin-font-size': '12px',
+
+        '--admin-header-bg': 'linear-gradient(to bottom, #dce6f4 0%, #c4d5ea 45%, #b0c4de 50%, #c4d5ea 100%)',
+        '--admin-header-text': '#1a1a2e',
+        '--admin-stripe-bg': '#f0f5fb',
+        '--admin-hover-bg': '#dcebfc',
+        '--admin-select-bg': '#cbe4f9',
+
+        '--admin-accent': '#3399ff',
+        '--admin-success': '#3aa55d',
+        '--admin-warning': '#d69e2e',
+        '--admin-danger': '#e53e3e',
+        '--admin-info': '#3182ce',
+
+        '--admin-success-bg': '#e6f4ea',
+        '--admin-warning-bg': '#fefcbf',
+        '--admin-danger-bg': '#fee2e2',
+        '--admin-info-bg': '#e0ecf9',
+
+        '--admin-radius': '3px',
+        '--admin-radius-lg': '5px',
+        '--admin-shadow': '0 1px 4px rgba(0,0,0,0.15), 0 0 1px rgba(0,0,0,0.1)',
+        '--admin-shadow-lg': '0 4px 16px rgba(0,0,0,0.18), 0 0 2px rgba(0,0,0,0.12)',
+
+        '--admin-row-height': '30px',
+        '--admin-cell-padding': '4px 8px',
     },
 
     // ─── Warm ──────────────────────────────────────────────────────────

@@ -9,7 +9,7 @@ function(jsgui, Text_Field) {
 
 const jsgui = require('../../../../../html-core/html-core');
 var Text_Field = require('../1-compositional/Text_Field');
-var Button = require('./button');
+var Button = require('./Button');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;

@@ -4,13 +4,17 @@ const {
 } = require('obext');
 const { each, is_array, is_def } = require('lang-mini');
 
-// Listening to a pre-server-side-render or pre-ssr event would help with persisting some things.
-// Maybe want some more specific view data model persistance.
-
-// server-pre-render event I think.
-
-// Being able to say a grid is selectable or has selectableness, ie the grid cells can be selected.
-
+/**
+ * Selectable mixin — adds selection state to a control.
+ *
+ * Tracks `selected` as a boolean reactive property and optionally
+ * applies the `'selected'` CSS class. On the server side the state
+ * is persisted through the view data model so it survives SSR.
+ *
+ * @param {Control} ctrl        - the control to enhance
+ * @param {*}       ctrl_handle - control handle (passed through)
+ * @param {Object}  [opts]      - options
+ */
 const selectable = (ctrl, ctrl_handle, opts) => {
     ctrl._selectable_mixin_state = ctrl._selectable_mixin_state || {};
     const mx_state = ctrl._selectable_mixin_state;

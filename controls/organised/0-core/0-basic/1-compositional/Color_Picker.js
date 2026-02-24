@@ -357,72 +357,8 @@ class Color_Picker extends Control {
         }
     }
 
-    // ── Reconnect DOM refs for hydration (when compose was skipped) ──
-    _reconnect_from_dom() {
-        const el = this.dom.el;
-        if (!el) return;
-
-        const q = (cls) => {
-            const found = el.querySelector('.' + cls);
-            return found ? { dom: { el: found } } : null;
-        };
-
-        // Wheel + SL canvases
-        if (!this._wheel_canvas) this._wheel_canvas = q('cp-wheel-canvas');
-        if (!this._sl_canvas) this._sl_canvas = q('cp-sl-canvas');
-        if (!this._hue_dot) this._hue_dot = q('cp-hue-dot');
-        if (!this._sl_dot) this._sl_dot = q('cp-sl-dot');
-
-        // Sliders: each is { input: Control, val_label: Control }
-        const reconnect_slider = (cls) => {
-            const inp = el.querySelector('.' + cls);
-            if (!inp) return null;
-            const row = inp.closest('.cp-slider-row');
-            const valSpan = row ? row.querySelector('.cp-slider-value') : null;
-            return {
-                input: { dom: { el: inp } },
-                val_label: { dom: { el: valSpan } }
-            };
-        };
-        if (!this._slider_h) this._slider_h = reconnect_slider('cp-slider-h');
-        if (!this._slider_s) this._slider_s = reconnect_slider('cp-slider-s');
-        if (!this._slider_l) this._slider_l = reconnect_slider('cp-slider-l');
-        if (!this._slider_a) this._slider_a = reconnect_slider('cp-slider-a');
-
-        // Hex input
-        if (!this._hex_input) this._hex_input = q('cp-hex-input');
-
-        // Palette
-        if (!this._palette_wrap) this._palette_wrap = q('cp-palette');
-
-        // Preview swatches
-        if (!this._preview_new) this._preview_new = q('cp-preview-new');
-        if (!this._preview_prev) this._preview_prev = q('cp-preview-prev');
-
-        // RGB inputs
-        if (!this._rgb_r) this._rgb_r = q('cp-rgb-r');
-        if (!this._rgb_g) this._rgb_g = q('cp-rgb-g');
-        if (!this._rgb_b) this._rgb_b = q('cp-rgb-b');
-
-        // HSL inputs
-        if (!this._hsl_h) this._hsl_h = q('cp-hsl-h');
-        if (!this._hsl_s) this._hsl_s = q('cp-hsl-s');
-        if (!this._hsl_l) this._hsl_l = q('cp-hsl-l');
-
-        // Read initial state from DOM slider values
-        if (this._slider_h && this._slider_h.input.dom.el) {
-            this._h = +this._slider_h.input.dom.el.value;
-        }
-        if (this._slider_s && this._slider_s.input.dom.el) {
-            this._s = +this._slider_s.input.dom.el.value;
-        }
-        if (this._slider_l && this._slider_l.input.dom.el) {
-            this._l = +this._slider_l.input.dom.el.value;
-        }
-        if (this._slider_a && this._slider_a.input.dom.el) {
-            this._a = +this._slider_a.input.dom.el.value / 100;
-        }
-    }
+    // ── Runtime Wire ──
+    // Handled natively by base Ctrl_Enh._wire_jsgui_ctrls()
 
     // ── Activation (live DOM interactivity) ──
     activate() {
@@ -430,8 +366,32 @@ class Color_Picker extends Control {
         super.activate();
         this._activated = true;
 
-        // Reconnect DOM references if hydrating
-        this._reconnect_from_dom();
+        this._wire_jsgui_ctrls();
+
+        const build_slider = (pref) => {
+            if (this[pref + '_input'] && this[pref + '_val']) {
+                return { input: this[pref + '_input'], val_label: this[pref + '_val'] };
+            }
+            return null;
+        };
+        if (!this._slider_h) this._slider_h = build_slider('_sh');
+        if (!this._slider_s) this._slider_s = build_slider('_ss');
+        if (!this._slider_l) this._slider_l = build_slider('_sl');
+        if (!this._slider_a) this._slider_a = build_slider('_sa');
+
+        // Read initial state from DOM slider values if hydrated
+        if (this._slider_h && this._slider_h.input && this._slider_h.input.dom && this._slider_h.input.dom.el) {
+            this._h = +this._slider_h.input.dom.el.value;
+        }
+        if (this._slider_s && this._slider_s.input && this._slider_s.input.dom && this._slider_s.input.dom.el) {
+            this._s = +this._slider_s.input.dom.el.value;
+        }
+        if (this._slider_l && this._slider_l.input && this._slider_l.input.dom && this._slider_l.input.dom.el) {
+            this._l = +this._slider_l.input.dom.el.value;
+        }
+        if (this._slider_a && this._slider_a.input && this._slider_a.input.dom && this._slider_a.input.dom.el) {
+            this._a = +this._slider_a.input.dom.el.value / 100;
+        }
 
         // Draw the hue wheel on canvas
         if (this._wheel_canvas && this._wheel_canvas.dom.el) {

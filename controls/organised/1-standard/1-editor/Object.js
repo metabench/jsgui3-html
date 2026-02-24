@@ -1,12 +1,12 @@
 // object editor
 var jsgui = require('../../../../html-core/html-core');
 var Object_Viewer = require('../0-viewer/object');
-var Object_KVP_Editor = require('./object-kvp');
+var Object_KVP_Editor = require('./Object_Kvp');
 var factory = require('./factory');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 const Text_Input = require('../../0-core/0-basic/0-native-compositional/Text_Input');
-const Textarea = require('../../0-core/0-basic/0-native-compositional/textarea');
+const Textarea = require('../../0-core/0-basic/0-native-compositional/Textarea');
 const Number_Input = require('../../0-core/0-basic/0-native-compositional/number_input');
 const Array_Editor = require('./array');
 

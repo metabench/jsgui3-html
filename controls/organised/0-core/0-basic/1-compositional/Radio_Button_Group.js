@@ -7,7 +7,7 @@ const jsgui = require('../../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 var group = jsgui.group;
-var Radio_Button = require('../0-native-compositional/radio-button');
+var Radio_Button = require('../0-native-compositional/Radio_Button');
 // And the tab buttons act as radio buttons.
 //  Having a JSGUI radio button replacement would be nice.
 //   Could choose whether to render as a radio button and progressively enhance on the client...

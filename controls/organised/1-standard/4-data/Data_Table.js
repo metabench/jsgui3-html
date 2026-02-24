@@ -86,6 +86,27 @@ const compare_values = (left, right) => {
 // to the active renderer (standard DOM or virtual windowed).
 // ══════════════════════════════════════════════════════════════════
 
+/**
+ * Data_Table — MVVM-driven tabular data control.
+ *
+ * Renders rows with sorting, filtering, pagination, column resizing,
+ * row selection, virtual scrolling, and server-side data bypass.
+ * All interaction features are provided by mixins; rendering is
+ * delegated to standard DOM or virtual windowed renderers.
+ *
+ * **Server-side mode:** When `server_side=true`, the computed pipeline
+ * returns rows as-is — the server already handled filtering, sorting,
+ * and pagination. `total_count` drives pagination calculations instead
+ * of counting filtered rows.
+ *
+ * @extends Data_Model_View_Model_Control
+ *
+ * @fires Data_Table#row_click When a row is clicked.
+ * @fires Data_Table#sort_change When a sortable header is clicked.
+ * @fires Data_Table#selection_change When row selection changes.
+ * @fires Data_Table#column_resize When a column is resized via drag.
+ * @fires Data_Table#page_change When page navigation occurs.
+ */
 class Data_Table extends Data_Model_View_Model_Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'data_table';
@@ -95,13 +116,30 @@ class Data_Table extends Data_Model_View_Model_Control {
         this.dom.tagName = 'table';
         this.dom.attributes.role = 'grid';
         this.dom.attributes.tabindex = '0';
+        this.dom.attributes['aria-label'] = spec.aria_label || 'Data table';
+        // aria-rowcount/colcount set by render_table for accurate values
 
         if (spec.theme) {
             this.dom.attributes['data-admin-theme'] = spec.theme;
         }
-        if (spec.compact) this.add_class('data-table-compact');
+        // Density: comfortable (default), compact, dense
+        this._density = spec.density || 'comfortable';
+        this.dom.attributes['data-density'] = this._density;
+        if (spec.compact) this._density = 'compact';
+        if (spec.compact) this.dom.attributes['data-density'] = 'compact';
         if (spec.bordered) this.add_class('data-table-bordered');
         if (spec.striped !== false) this.add_class('data-table-striped');
+
+        // ── Adaptive layout options (all overridable) ──
+        // layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
+        this.layout_mode = spec.layout_mode || 'auto';
+        // Breakpoint for phone mode
+        this.phone_breakpoint = is_defined(spec.phone_breakpoint) ? Number(spec.phone_breakpoint) : 600;
+        // Whether to enable horizontal scroll wrapper on narrow viewports
+        this.scroll_on_overflow = spec.scroll_on_overflow !== false;
+        // Column priority array — columns with priority > threshold are hidden on phone
+        // Each column can have { priority: 1|2|3 } — lower = always visible
+        this.column_priority_threshold = is_defined(spec.column_priority_threshold) ? spec.column_priority_threshold : null;
 
         // DMVMC's super already calls ensure_control_models
         this.model = this.data.model;
@@ -114,6 +152,8 @@ class Data_Table extends Data_Model_View_Model_Control {
             this.model.set('filters', spec.filters || null);
             this.model.set('page', is_defined(spec.page) ? spec.page : 1);
             this.model.set('page_size', spec.page_size || null);
+            this.model.set('server_side', !!spec.server_side);
+            this.model.set('total_count', spec.total_count || null);
             // Column widths stored in model (survive re-renders)
             const initial_widths = {};
             (spec.columns || []).forEach((col, i) => {
@@ -167,12 +207,13 @@ class Data_Table extends Data_Model_View_Model_Control {
             return this._build_row_ctrl(row, row_index, columns);
         };
 
+        // ── MVVM Computed Pipeline ──
+        // Must run before compose() so visible_rows is populated when render_table() executes
+        this._setup_computed_pipeline();
+
         if (!spec.el) {
             this.compose();
         }
-
-        // ── MVVM Computed Pipeline ──
-        this._setup_computed_pipeline();
     }
 
     // ── Composition ──
@@ -203,12 +244,18 @@ class Data_Table extends Data_Model_View_Model_Control {
         if (!this.model) return;
 
         // Computed: visible_rows = pipeline(rows → filter → sort → page)
+        // In server_side mode, rows are returned as-is (server already processed)
         this.computed(
             this.model,
-            ['rows', 'filters', 'sort_state', 'page', 'page_size', 'columns'],
-            (rows, filters, sort_state, page, page_size, columns) => {
+            ['rows', 'filters', 'sort_state', 'page', 'page_size', 'columns', 'server_side'],
+            (rows, filters, sort_state, page, page_size, columns, server_side) => {
                 rows = Array.isArray(rows) ? rows : [];
                 columns = Array.isArray(columns) ? columns : [];
+
+                if (server_side) {
+                    // Server already filtered/sorted/paged
+                    return rows;
+                }
 
                 const filtered = this._compute_filtered_rows(rows, filters);
                 const sorted = this._compute_sorted_rows(filtered, sort_state, columns);
@@ -222,11 +269,15 @@ class Data_Table extends Data_Model_View_Model_Control {
         );
 
         // Computed: total_rows = count of rows after filtering
+        // In server_side mode, use externally provided total_count
         this.computed(
             this.model,
-            ['rows', 'filters'],
-            (rows, filters) => {
+            ['rows', 'filters', 'server_side', 'total_count'],
+            (rows, filters, server_side, total_count) => {
                 rows = Array.isArray(rows) ? rows : [];
+                if (server_side && total_count != null) {
+                    return Number(total_count);
+                }
                 return this._compute_filtered_rows(rows, filters).length;
             },
             { property_name: 'total_rows' }
@@ -280,14 +331,26 @@ class Data_Table extends Data_Model_View_Model_Control {
         }
     }
 
+    /**
+     * Replace all data rows.
+     * @param {Array<Object>} rows - New row data array.
+     */
     set_rows(rows) {
         this.set_model_value('rows', Array.isArray(rows) ? rows.slice() : []);
     }
 
+    /**
+     * Replace column definitions.
+     * @param {Array<string|Object>} columns - New column definitions.
+     */
     set_columns(columns) {
         this.set_model_value('columns', normalize_columns(columns));
     }
 
+    /**
+     * Set sort state. Resets page to 1.
+     * @param {{key: string, direction: 'asc'|'desc'}|null} sort_state - Sort state.
+     */
     set_sort_state(sort_state) {
         this.model.batch(() => {
             this.set_model_value('sort_state', sort_state ? { ...sort_state } : null);
@@ -295,6 +358,10 @@ class Data_Table extends Data_Model_View_Model_Control {
         });
     }
 
+    /**
+     * Set filter map. Resets page to 1.
+     * @param {Object|null} filters - Column filter map `{column_key: value}`.
+     */
     set_filters(filters) {
         this.model.batch(() => {
             this.set_model_value('filters', filters ? { ...filters } : null);
@@ -302,10 +369,18 @@ class Data_Table extends Data_Model_View_Model_Control {
         });
     }
 
+    /**
+     * Navigate to a specific page (1-based).
+     * @param {number} page - Page number.
+     */
     set_page(page) {
         this.set_model_value('page', Number(page) || 1);
     }
 
+    /**
+     * Set rows per page.
+     * @param {number|null} page_size - Page size, or null for no paging.
+     */
     set_page_size(page_size) {
         this.set_model_value('page_size', page_size ? Number(page_size) : null);
     }
@@ -322,7 +397,21 @@ class Data_Table extends Data_Model_View_Model_Control {
     get total_pages() { return this.model ? this.model.total_pages : 1; }
     get column_widths() { return this.model ? this.model.column_widths : {}; }
     get selected_row_indices() { return this.model ? this.model.selected_row_indices : []; }
+    get server_side() { return this.model ? !!this.model.server_side : false; }
 
+    /**
+     * Enable or disable server-side mode.
+     * @param {boolean} flag - True to bypass client-side filter/sort/page.
+     */
+    set_server_side(flag) {
+        this.set_model_value('server_side', !!flag);
+    }
+
+    /**
+     * Returns the rows currently visible after the computed pipeline.
+     * In server_side mode, these are the raw rows provided.
+     * @returns {Array<Object>}
+     */
     get_visible_rows() {
         return this.visible_rows || [];
     }
@@ -385,6 +474,7 @@ class Data_Table extends Data_Model_View_Model_Control {
         tr_ctrl.add_class('data-table-row');
         tr_ctrl.dom.attributes['data-row-index'] = String(row_index);
         tr_ctrl.dom.attributes.role = 'row';
+        tr_ctrl.dom.attributes['aria-rowindex'] = String(row_index + 2); // +2: 1-based, row 1 is header
 
         const is_selected = this.selected_rows.has(String(row_index));
         if (is_selected) {
@@ -397,6 +487,7 @@ class Data_Table extends Data_Model_View_Model_Control {
         columns.forEach((column, column_index) => {
             const td_ctrl = new Control({ context: this.context, tag_name: 'td' });
             td_ctrl.add_class('data-table-cell');
+            td_ctrl.dom.attributes.role = 'gridcell';
 
             const cell_value = get_cell_value(row, column, column_index);
             if (typeof column.render === 'function') {
@@ -435,11 +526,12 @@ class Data_Table extends Data_Model_View_Model_Control {
         head_ctrl.clear();
         const header_row = new Control({ context: this.context, tag_name: 'tr' });
 
-        columns.forEach(column => {
+        columns.forEach((column, col_idx) => {
             const th_ctrl = new Control({ context: this.context, tag_name: 'th' });
             th_ctrl.add_class('data-table-header');
             th_ctrl.dom.attributes['data-column-key'] = String(column.key);
             th_ctrl.dom.attributes.scope = 'col';
+            th_ctrl.dom.attributes.role = 'columnheader';
 
             if (column.width) {
                 th_ctrl.dom.attributes.style = `width: ${column.width}px`;
@@ -471,6 +563,11 @@ class Data_Table extends Data_Model_View_Model_Control {
 
         head_ctrl.add(header_row);
 
+        // ── ARIA grid counts ──
+        const all_rows = this.model ? (this.model.rows || []) : [];
+        this.dom.attributes['aria-colcount'] = String(columns.length);
+        this.dom.attributes['aria-rowcount'] = String(all_rows.length + 1); // +1 for header
+
         // ── Render Body (delegates to active renderer) ──
 
         if (this.get_render_mode() === 'virtual') {
@@ -493,11 +590,61 @@ class Data_Table extends Data_Model_View_Model_Control {
 
     // ── Activation ──
 
+    /**
+     * Resolve the current layout mode.
+     * @returns {'phone'|'tablet'|'desktop'}
+     */
+    resolve_layout_mode() {
+        if (this.layout_mode !== 'auto') return this.layout_mode;
+        if (this.context && this.context.view_environment && this.context.view_environment.layout_mode) {
+            return this.context.view_environment.layout_mode;
+        }
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth < this.phone_breakpoint) return 'phone';
+        }
+        return 'desktop';
+    }
+
+    /**
+     * Apply adaptive layout mode to the DOM.
+     */
+    _apply_layout_mode() {
+        if (!this.dom.el) return;
+        const mode = this.resolve_layout_mode();
+        this.dom.el.setAttribute('data-layout-mode', mode);
+
+        // Hide low-priority columns on phone if configured
+        if (this.column_priority_threshold !== null && mode === 'phone') {
+            const threshold = this.column_priority_threshold;
+            const columns = this.columns || [];
+            columns.forEach(col => {
+                const priority = col.priority || 1;
+                const cells = this.dom.el.querySelectorAll(`[data-column-key="${col.key}"], td:nth-child(${columns.indexOf(col) + 1})`);
+                cells.forEach(cell => {
+                    if (priority > threshold) {
+                        cell.classList.add('data-table-col-hidden');
+                    } else {
+                        cell.classList.remove('data-table-col-hidden');
+                    }
+                });
+            });
+        }
+    }
+
     activate() {
         if (!this.__active) {
             super.activate();
 
             if (!this.dom.el) return;
+
+            // Apply initial layout mode
+            this._apply_layout_mode();
+
+            // Listen for resize in auto mode
+            if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
+                this._resize_handler = () => this._apply_layout_mode();
+                window.addEventListener('resize', this._resize_handler);
+            }
 
             const find_row_el = target => {
                 let node = target;
@@ -588,21 +735,21 @@ Data_Table.css = `
 .jsgui-data-table {
     width: 100%;
     border-collapse: collapse;
-    font-family: var(--admin-font, 'Segoe UI', -apple-system, sans-serif);
-    font-size: var(--admin-font-size, 13px);
-    color: var(--admin-text, #1e1e1e);
-    background: var(--admin-card-bg, #fff);
+    font-family: var(--j-font-sans, system-ui, sans-serif);
+    font-size: var(--j-text-sm, 0.875rem);
+    color: var(--j-fg, #e0e0e0);
+    background: var(--j-bg-surface, #1e1e2e);
 }
 
 /* Header */
 .data-table-header {
     text-align: left;
     font-weight: 600;
-    padding: var(--admin-cell-padding, 8px 12px);
-    border-bottom: 2px solid var(--admin-border, #e0e0e0);
-    background: var(--admin-header-bg, #f8f8f8);
-    color: var(--admin-header-text, #616161);
-    font-size: 11px;
+    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
+    border-bottom: 2px solid var(--j-border, #333);
+    background: var(--j-bg-elevated, #252535);
+    color: var(--j-fg-muted, #999);
+    font-size: var(--j-text-xs, 0.75rem);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     white-space: nowrap;
@@ -612,13 +759,13 @@ Data_Table.css = `
 .data-table-header.is-sortable {
     cursor: pointer;
     padding-right: 22px;
-    transition: color 0.1s;
+    transition: color 120ms ease-out;
 }
 .data-table-header.is-sortable:hover {
-    color: var(--admin-text, #1e1e1e);
+    color: var(--j-fg, #e0e0e0);
 }
 .data-table-header.is-sortable:focus-visible {
-    outline: 2px solid var(--admin-accent, #0078d4);
+    outline: 2px solid var(--j-primary, #5b9bd5);
     outline-offset: -2px;
     border-radius: 2px;
 }
@@ -627,7 +774,7 @@ Data_Table.css = `
 .data-table-header[aria-sort="ascending"]::after {
     content: ' ▲';
     font-size: 9px;
-    color: var(--admin-accent, #0078d4);
+    color: var(--j-primary, #5b9bd5);
     position: absolute;
     right: 8px;
     top: 50%;
@@ -636,7 +783,7 @@ Data_Table.css = `
 .data-table-header[aria-sort="descending"]::after {
     content: ' ▼';
     font-size: 9px;
-    color: var(--admin-accent, #0078d4);
+    color: var(--j-primary, #5b9bd5);
     position: absolute;
     right: 8px;
     top: 50%;
@@ -645,13 +792,13 @@ Data_Table.css = `
 .data-table-header[aria-sort="none"]::after {
     content: ' ⇅';
     font-size: 9px;
-    color: var(--admin-text-muted, #9e9e9e);
+    color: var(--j-fg-muted, #666);
     position: absolute;
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
     opacity: 0;
-    transition: opacity 0.1s;
+    transition: opacity 120ms ease-out;
 }
 .data-table-header.is-sortable:hover[aria-sort="none"]::after {
     opacity: 0.5;
@@ -659,45 +806,121 @@ Data_Table.css = `
 
 /* Rows */
 .data-table-row {
-    border-bottom: 1px solid var(--admin-border, #e0e0e0);
-    transition: background-color 0.08s;
-    height: var(--admin-row-height, 36px);
+    border-bottom: 1px solid var(--j-border, #333);
+    transition: background-color 80ms ease-out;
+    height: var(--j-row-height, 40px);
 }
 .data-table-row:last-child {
     border-bottom: none;
 }
 .data-table-row:hover {
-    background: var(--admin-hover-bg, #e8e8e8);
+    background: var(--j-bg-hover, rgba(255,255,255,0.04));
+}
+.data-table-row.is-selected {
+    background: var(--j-primary-muted, rgba(91,155,213,0.15));
+}
+.data-table-row:focus-visible {
+    outline: 2px solid var(--j-primary, #5b9bd5);
+    outline-offset: -2px;
 }
 
 /* Striped rows */
 .data-table-striped .data-table-row:nth-child(even) {
-    background: var(--admin-stripe-bg, #f8f8f8);
+    background: var(--j-bg-muted, rgba(255,255,255,0.02));
 }
 .data-table-striped .data-table-row:nth-child(even):hover {
-    background: var(--admin-hover-bg, #e8e8e8);
+    background: var(--j-bg-hover, rgba(255,255,255,0.04));
 }
 
 /* Cells */
 .data-table-cell {
-    padding: var(--admin-cell-padding, 8px 12px);
+    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
     vertical-align: middle;
-    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    border-bottom: 1px solid var(--j-border, #333);
+}
+.data-table-cell:focus-visible {
+    outline: 2px solid var(--j-primary, #5b9bd5);
+    outline-offset: -2px;
 }
 
 /* Bordered variant */
 .data-table-bordered .data-table-cell,
 .data-table-bordered .data-table-header {
-    border: 1px solid var(--admin-border, #e0e0e0);
+    border: 1px solid var(--j-border, #333);
 }
 
-/* Compact variant */
-.data-table-compact .data-table-header,
-.data-table-compact .data-table-cell {
-    padding: 4px 8px;
+/* Density: comfortable (default) */
+.jsgui-data-table[data-density="comfortable"] .data-table-header,
+.jsgui-data-table[data-density="comfortable"] .data-table-cell {
+    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
 }
-.data-table-compact .data-table-row {
-    height: 28px;
+.jsgui-data-table[data-density="comfortable"] .data-table-row {
+    height: var(--j-row-height, 40px);
+}
+
+/* Density: compact */
+.jsgui-data-table[data-density="compact"] .data-table-header,
+.jsgui-data-table[data-density="compact"] .data-table-cell {
+    padding: var(--j-space-1, 4px) var(--j-space-2, 8px);
+}
+.jsgui-data-table[data-density="compact"] .data-table-row {
+    height: 32px;
+}
+
+/* Density: dense */
+.jsgui-data-table[data-density="dense"] .data-table-header,
+.jsgui-data-table[data-density="dense"] .data-table-cell {
+    padding: 2px var(--j-space-1, 4px);
+    font-size: var(--j-text-xs, 0.75rem);
+}
+.jsgui-data-table[data-density="dense"] .data-table-row {
+    height: 24px;
+}
+
+/* Loading overlay */
+.jsgui-data-table[aria-busy="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Column priority hiding */
+.data-table-col-hidden {
+    display: none;
+}
+
+/* Resize handle */
+.data-table-resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    cursor: col-resize;
+    background: transparent;
+    transition: background 120ms ease-out;
+}
+.data-table-resize-handle:hover {
+    background: var(--j-primary, #5b9bd5);
+}
+
+/* ── Phone layout: scrollable + touch sizing ── */
+.jsgui-data-table[data-layout-mode="phone"] {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.jsgui-data-table[data-layout-mode="phone"] .data-table-row {
+    height: var(--j-touch-target, 44px);
+}
+.jsgui-data-table[data-layout-mode="phone"] .data-table-header,
+.jsgui-data-table[data-layout-mode="phone"] .data-table-cell {
+    padding: var(--j-space-2, 8px) var(--j-space-3, 10px);
+    font-size: var(--j-text-xs, 0.75rem);
+}
+
+/* ── Tablet layout: touch row height ── */
+.jsgui-data-table[data-layout-mode="tablet"] .data-table-row {
+    height: var(--j-touch-target, 44px);
 }
 `;
 

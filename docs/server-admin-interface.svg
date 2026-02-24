@@ -1,0 +1,578 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1050" font-family="'Segoe UI', system-ui, -apple-system, sans-serif">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <!-- Card gradient -->
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <!-- Accent gradients -->
+    <linearGradient id="green-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="blue-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="purple-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="amber-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="cyan-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#06b6d4"/>
+      <stop offset="100%" stop-color="#0891b2"/>
+    </linearGradient>
+    <linearGradient id="rose-glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f43f5e"/>
+      <stop offset="100%" stop-color="#e11d48"/>
+    </linearGradient>
+    <!-- Sidebar gradient -->
+    <linearGradient id="sidebar-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#0a0f1a"/>
+    </linearGradient>
+    <!-- Pipeline arrow -->
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#475569"/>
+    </marker>
+    <marker id="arrowhead-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrowhead-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#22c55e"/>
+    </marker>
+    <!-- Drop shadow -->
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+    <filter id="glow-green">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#22c55e" flood-opacity="0.4"/>
+    </filter>
+    <filter id="glow-blue">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#3b82f6" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- BACKGROUND                                  -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect width="1400" height="1050" fill="url(#bg)"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SIDEBAR (220px)                             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="0" y="0" width="220" height="1050" fill="url(#sidebar-bg)" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Logo area -->
+  <rect x="0" y="0" width="220" height="64" fill="#111827"/>
+  <rect x="20" y="18" width="28" height="28" rx="6" fill="url(#blue-glow)"/>
+  <text x="34" y="38" text-anchor="middle" fill="#fff" font-size="14" font-weight="700">js</text>
+  <text x="58" y="40" fill="#e2e8f0" font-size="16" font-weight="600">jsgui3-server</text>
+  <line x1="0" y1="64" x2="220" y2="64" stroke="#1e293b" stroke-width="1"/>
+
+  <!-- Nav items -->
+  <!-- Active item -->
+  <rect x="8" y="80" width="204" height="38" rx="6" fill="#1e3a5f" opacity="0.6"/>
+  <rect x="8" y="80" width="3" height="38" rx="1" fill="url(#blue-glow)"/>
+  <text x="44" y="104" fill="#3b82f6" font-size="13" font-weight="600">⬡ Dashboard</text>
+
+  <text x="44" y="142" fill="#94a3b8" font-size="13">⚙ Processes</text>
+  <text x="44" y="174" fill="#94a3b8" font-size="13">⬡ Resources</text>
+  <text x="44" y="206" fill="#94a3b8" font-size="13">⇄ Routes</text>
+  <text x="44" y="238" fill="#94a3b8" font-size="13">📦 Bundles</text>
+  <text x="44" y="270" fill="#94a3b8" font-size="13">🔌 API Endpoints</text>
+  <text x="44" y="302" fill="#94a3b8" font-size="13">📊 Metrics</text>
+  <text x="44" y="334" fill="#94a3b8" font-size="13">📋 Logs</text>
+
+  <line x1="16" y1="360" x2="204" y2="360" stroke="#1e293b" stroke-width="1"/>
+  <text x="20" y="384" fill="#475569" font-size="10" font-weight="600" letter-spacing="1">HEALTH</text>
+
+  <!-- Health indicator -->
+  <circle cx="36" cy="408" r="5" fill="#22c55e" filter="url(#glow-green)"/>
+  <text x="50" y="413" fill="#94a3b8" font-size="12">Server Online</text>
+  <circle cx="36" cy="434" r="5" fill="#22c55e"/>
+  <text x="50" y="439" fill="#94a3b8" font-size="12">Bundle Ready</text>
+  <circle cx="36" cy="460" r="5" fill="#22c55e"/>
+  <text x="50" y="465" fill="#94a3b8" font-size="12">Resources OK</text>
+  <circle cx="36" cy="486" r="5" fill="#f59e0b"/>
+  <text x="50" y="491" fill="#94a3b8" font-size="12">1 Warning</text>
+
+  <!-- Server info bottom -->
+  <line x1="16" y1="960" x2="204" y2="960" stroke="#1e293b" stroke-width="1"/>
+  <text x="20" y="984" fill="#475569" font-size="10">PORT</text>
+  <text x="20" y="1000" fill="#e2e8f0" font-size="13" font-weight="600">:3000</text>
+  <text x="110" y="984" fill="#475569" font-size="10">UPTIME</text>
+  <text x="110" y="1000" fill="#e2e8f0" font-size="13" font-weight="600">4h 23m</text>
+  <text x="20" y="1028" fill="#475569" font-size="10">v0.0.143</text>
+  <text x="110" y="1028" fill="#475569" font-size="10">Node 20.11</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- HEADER BAR                                  -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="220" y="0" width="1180" height="52" fill="#111827" stroke="#1e293b" stroke-width="1"/>
+  <text x="244" y="32" fill="#e2e8f0" font-size="18" font-weight="600">Server Admin Dashboard</text>
+
+  <!-- Boot status badges -->
+  <rect x="790" y="14" width="110" height="24" rx="12" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+  <circle cx="806" cy="26" r="4" fill="#22c55e"/>
+  <text x="816" y="31" fill="#22c55e" font-size="11" font-weight="500">Cold Boot ✓</text>
+
+  <rect x="910" y="14" width="110" height="24" rx="12" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+  <circle cx="926" cy="26" r="4" fill="#22c55e"/>
+  <text x="936" y="31" fill="#22c55e" font-size="11" font-weight="500">Warm Boot ✓</text>
+
+  <rect x="1030" y="14" width="100" height="24" rx="12" fill="#1e1b4b" stroke="#818cf8" stroke-width="1"/>
+  <text x="1048" y="31" fill="#a5b4fc" font-size="11" font-weight="500">debug: true</text>
+
+  <!-- Refresh / settings buttons -->
+  <rect x="1300" y="12" width="30" height="28" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="1315" y="31" text-anchor="middle" fill="#94a3b8" font-size="14">⟳</text>
+  <rect x="1340" y="12" width="30" height="28" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="1355" y="31" text-anchor="middle" fill="#94a3b8" font-size="14">⚙</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- TOP STATS ROW                               -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Stat card 1: Main Process -->
+  <rect x="240" y="68" width="225" height="88" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="92" fill="#94a3b8" font-size="11" font-weight="500" letter-spacing="0.5">MAIN PROCESS</text>
+  <text x="260" y="122" fill="#e2e8f0" font-size="28" font-weight="700">PID 7824</text>
+  <circle cx="440" cy="108" r="8" fill="#052e16" stroke="#22c55e" stroke-width="2"/>
+  <text x="260" y="144" fill="#22c55e" font-size="11">▲ Running — 128 MB RSS</text>
+
+  <!-- Stat card 2: Child Processes -->
+  <rect x="480" y="68" width="225" height="88" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="500" y="92" fill="#94a3b8" font-size="11" font-weight="500" letter-spacing="0.5">CHILD PROCESSES</text>
+  <text x="500" y="122" fill="#e2e8f0" font-size="28" font-weight="700">3 <tspan font-size="14" fill="#64748b">active</tspan></text>
+  <text x="500" y="144" fill="#3b82f6" font-size="11">Bundler · Compiler · Watcher</text>
+
+  <!-- Stat card 3: Resources -->
+  <rect x="720" y="68" width="225" height="88" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="740" y="92" fill="#94a3b8" font-size="11" font-weight="500" letter-spacing="0.5">RESOURCE POOL</text>
+  <text x="740" y="122" fill="#e2e8f0" font-size="28" font-weight="700">5 <tspan font-size="14" fill="#64748b">loaded</tspan></text>
+  <text x="740" y="144" fill="#a855f7" font-size="11">All requirements met</text>
+
+  <!-- Stat card 4: Routes -->
+  <rect x="960" y="68" width="225" height="88" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="980" y="92" fill="#94a3b8" font-size="11" font-weight="500" letter-spacing="0.5">ACTIVE ROUTES</text>
+  <text x="980" y="122" fill="#e2e8f0" font-size="28" font-weight="700">7 <tspan font-size="14" fill="#64748b">routes</tspan></text>
+  <text x="980" y="144" fill="#06b6d4" font-size="11">3 auto · 2 API · 2 static</text>
+
+  <!-- Stat card 5: Req/min -->
+  <rect x="1200" y="68" width="175" height="88" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="1220" y="92" fill="#94a3b8" font-size="11" font-weight="500" letter-spacing="0.5">REQUESTS</text>
+  <text x="1220" y="122" fill="#e2e8f0" font-size="28" font-weight="700">42<tspan font-size="14" fill="#64748b">/min</tspan></text>
+  <text x="1220" y="144" fill="#22c55e" font-size="11">▲ 12% from last hour</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- PROCESS ARCHITECTURE — Left panel            -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="240" y="172" width="470" height="400" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="198" fill="#e2e8f0" font-size="14" font-weight="600">Process Architecture</text>
+  <text x="595" y="198" fill="#475569" font-size="11">Live View</text>
+
+  <!-- Main Server Process box -->
+  <rect x="260" y="214" width="430" height="64" rx="6" fill="#0c1a2e" stroke="#3b82f6" stroke-width="1.5"/>
+  <rect x="260" y="214" width="430" height="4" rx="2" fill="url(#blue-glow)"/>
+  <text x="280" y="240" fill="#93c5fd" font-size="12" font-weight="600">⬡ Main Server Process</text>
+  <text x="280" y="258" fill="#64748b" font-size="10">HTTP Server · Router · SSR Engine · API Publisher</text>
+  <text x="580" y="240" fill="#22c55e" font-size="10" font-weight="600">● RUNNING</text>
+  <text x="580" y="258" fill="#64748b" font-size="10">PID 7824 · 128 MB</text>
+
+  <!-- Fork arrows down -->
+  <line x1="350" y1="278" x2="350" y2="300" stroke="#475569" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="475" y1="278" x2="475" y2="300" stroke="#475569" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <line x1="600" y1="278" x2="600" y2="300" stroke="#475569" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="460" y="294" fill="#475569" font-size="9" text-anchor="middle">child_process.fork()</text>
+
+  <!-- Child Process 1: Bundle Builder -->
+  <rect x="268" y="304" width="155" height="76" rx="6" fill="#0a1628" stroke="#a855f7" stroke-width="1"/>
+  <rect x="268" y="304" width="155" height="3" rx="1" fill="url(#purple-glow)"/>
+  <circle cx="284" cy="324" r="4" fill="#22c55e"/>
+  <text x="294" y="328" fill="#c4b5fd" font-size="11" font-weight="600">Bundle Builder</text>
+  <text x="284" y="346" fill="#64748b" font-size="9">JS bundling &amp; dep resolution</text>
+  <text x="284" y="360" fill="#64748b" font-size="9">CSS extraction from controls</text>
+  <text x="284" y="374" fill="#475569" font-size="9">PID 7830 · 86 MB</text>
+
+  <!-- Child Process 2: Compiler -->
+  <rect x="434" y="304" width="155" height="76" rx="6" fill="#0a1628" stroke="#f59e0b" stroke-width="1"/>
+  <rect x="434" y="304" width="155" height="3" rx="1" fill="url(#amber-glow)"/>
+  <circle cx="450" cy="324" r="4" fill="#22c55e"/>
+  <text x="460" y="328" fill="#fcd34d" font-size="11" font-weight="600">Compiler Worker</text>
+  <text x="450" y="346" fill="#64748b" font-size="9">Babel transpilation</text>
+  <text x="450" y="360" fill="#64748b" font-size="9">Source map generation</text>
+  <text x="450" y="374" fill="#475569" font-size="9">PID 7836 · 64 MB</text>
+
+  <!-- Child Process 3: File Watcher -->
+  <rect x="600" y="304" width="90" height="76" rx="6" fill="#0a1628" stroke="#06b6d4" stroke-width="1"/>
+  <rect x="600" y="304" width="90" height="3" rx="1" fill="url(#cyan-glow)"/>
+  <circle cx="616" cy="324" r="4" fill="#22c55e"/>
+  <text x="626" y="328" fill="#67e8f9" font-size="11" font-weight="600">Watcher</text>
+  <text x="616" y="346" fill="#64748b" font-size="9">File change</text>
+  <text x="616" y="360" fill="#64748b" font-size="9">detection</text>
+  <text x="616" y="374" fill="#475569" font-size="9">PID 7842</text>
+
+  <!-- SSR Pipeline -->
+  <text x="260" y="410" fill="#94a3b8" font-size="11" font-weight="600" letter-spacing="0.5">SSR PIPELINE</text>
+
+  <!-- Pipeline stages -->
+  <rect x="268" y="420" width="90" height="36" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+  <text x="313" y="443" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="500">Ctrl(spec)</text>
+
+  <line x1="358" y1="438" x2="376" y2="438" stroke="#3b82f6" stroke-width="1" marker-end="url(#arrowhead-blue)"/>
+
+  <rect x="380" y="420" width="90" height="36" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+  <text x="425" y="443" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="500">Build Tree</text>
+
+  <line x1="470" y1="438" x2="488" y2="438" stroke="#3b82f6" stroke-width="1" marker-end="url(#arrowhead-blue)"/>
+
+  <rect x="492" y="420" width="90" height="36" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+  <text x="537" y="443" text-anchor="middle" fill="#93c5fd" font-size="10" font-weight="500">.html render</text>
+
+  <line x1="582" y1="438" x2="600" y2="438" stroke="#3b82f6" stroke-width="1" marker-end="url(#arrowhead-blue)"/>
+
+  <rect x="604" y="420" width="86" height="36" rx="4" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+  <text x="647" y="443" text-anchor="middle" fill="#86efac" font-size="10" font-weight="500">HTTP 200</text>
+
+  <!-- Pipeline label -->
+  <text x="268" y="476" fill="#475569" font-size="9">Page_Context → new Ctrl({context}) → control tree → .html string → response</text>
+
+  <!-- IPC messaging -->
+  <text x="260" y="502" fill="#94a3b8" font-size="11" font-weight="600" letter-spacing="0.5">IPC MESSAGES</text>
+
+  <rect x="268" y="512" width="422" height="20" rx="3" fill="#0a1628"/>
+  <text x="278" y="526" fill="#22c55e" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">← bundle:ready  {js: 245KB, css: 12KB, time: 1.2s}</text>
+
+  <rect x="268" y="536" width="422" height="20" rx="3" fill="#0a1628"/>
+  <text x="278" y="550" fill="#f59e0b" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">← compile:done  {files: 38, errors: 0, warnings: 1}</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- RESOURCE POOL — Right panel                  -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="725" y="172" width="650" height="400" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="745" y="198" fill="#e2e8f0" font-size="14" font-weight="600">Resource Pool</text>
+  <rect x="1230" y="184" width="60" height="20" rx="4" fill="#052e16" stroke="#22c55e" stroke-width="1"/>
+  <text x="1260" y="198" text-anchor="middle" fill="#22c55e" font-size="10">5 / 5</text>
+  <rect x="1300" y="184" width="56" height="20" rx="4" fill="#1e293b" stroke="#334155" stroke-width="1"/>
+  <text x="1328" y="198" text-anchor="middle" fill="#94a3b8" font-size="10">Restart</text>
+
+  <!-- Resource table header -->
+  <rect x="745" y="212" width="610" height="24" rx="0" fill="#111827"/>
+  <text x="760" y="228" fill="#64748b" font-size="10" font-weight="600">RESOURCE</text>
+  <text x="925" y="228" fill="#64748b" font-size="10" font-weight="600">TYPE</text>
+  <text x="1060" y="228" fill="#64748b" font-size="10" font-weight="600">STATUS</text>
+  <text x="1175" y="228" fill="#64748b" font-size="10" font-weight="600">STARTUP</text>
+  <text x="1290" y="228" fill="#64748b" font-size="10" font-weight="600">MEM</text>
+
+  <!-- Resource 1: Compiler_Babel -->
+  <line x1="745" y1="240" x2="1355" y2="240" stroke="#1e293b" stroke-width="1"/>
+  <rect x="760" y="246" width="8" height="8" rx="2" fill="#a855f7"/>
+  <text x="776" y="256" fill="#e2e8f0" font-size="11" font-weight="500">Compiler_Babel</text>
+  <text x="776" y="270" fill="#64748b" font-size="9">ES2024 → ES5 transpilation</text>
+  <text x="925" y="256" fill="#c4b5fd" font-size="10">Compiler_Resource</text>
+  <circle cx="1070" cy="254" r="4" fill="#22c55e"/>
+  <text x="1080" y="258" fill="#86efac" font-size="10">Ready</text>
+  <text x="1175" y="258" fill="#94a3b8" font-size="10">eager</text>
+  <text x="1290" y="258" fill="#94a3b8" font-size="10">42 MB</text>
+
+  <!-- Resource 2: Compilation_Resource -->
+  <line x1="745" y1="280" x2="1355" y2="280" stroke="#1e293b" stroke-width="1"/>
+  <rect x="760" y="286" width="8" height="8" rx="2" fill="#3b82f6"/>
+  <text x="776" y="296" fill="#e2e8f0" font-size="11" font-weight="500">Compilation_Manager</text>
+  <text x="776" y="310" fill="#64748b" font-size="9">Multi-compiler orchestration</text>
+  <text x="925" y="296" fill="#93c5fd" font-size="10">Compilation_Resource</text>
+  <circle cx="1070" cy="294" r="4" fill="#22c55e"/>
+  <text x="1080" y="298" fill="#86efac" font-size="10">Ready</text>
+  <text x="1175" y="298" fill="#94a3b8" font-size="10">eager</text>
+  <text x="1290" y="298" fill="#94a3b8" font-size="10">18 MB</text>
+
+  <!-- Resource 3: Data_KV -->
+  <line x1="745" y1="320" x2="1355" y2="320" stroke="#1e293b" stroke-width="1"/>
+  <rect x="760" y="326" width="8" height="8" rx="2" fill="#22c55e"/>
+  <text x="776" y="336" fill="#e2e8f0" font-size="11" font-weight="500">Session_Store</text>
+  <text x="776" y="350" fill="#64748b" font-size="9">Key-value session data</text>
+  <text x="925" y="336" fill="#86efac" font-size="10">Data_KV_Resource</text>
+  <circle cx="1070" cy="334" r="4" fill="#22c55e"/>
+  <text x="1080" y="338" fill="#86efac" font-size="10">Ready</text>
+  <text x="1175" y="338" fill="#94a3b8" font-size="10">lazy</text>
+  <text x="1290" y="338" fill="#94a3b8" font-size="10">8 MB</text>
+
+  <!-- Resource 4: Data_Transform -->
+  <line x1="745" y1="360" x2="1355" y2="360" stroke="#1e293b" stroke-width="1"/>
+  <rect x="760" y="366" width="8" height="8" rx="2" fill="#f59e0b"/>
+  <text x="776" y="376" fill="#e2e8f0" font-size="11" font-weight="500">Template_Pipeline</text>
+  <text x="776" y="390" fill="#64748b" font-size="9">Data transform / templating</text>
+  <text x="925" y="376" fill="#fcd34d" font-size="10">Data_Transform_Resource</text>
+  <circle cx="1070" cy="374" r="4" fill="#22c55e"/>
+  <text x="1080" y="378" fill="#86efac" font-size="10">Ready</text>
+  <text x="1175" y="378" fill="#94a3b8" font-size="10">lazy</text>
+  <text x="1290" y="378" fill="#94a3b8" font-size="10">4 MB</text>
+
+  <!-- Resource 5: CSS_Extractor -->
+  <line x1="745" y1="400" x2="1355" y2="400" stroke="#1e293b" stroke-width="1"/>
+  <rect x="760" y="406" width="8" height="8" rx="2" fill="#06b6d4"/>
+  <text x="776" y="416" fill="#e2e8f0" font-size="11" font-weight="500">CSS_Extractor</text>
+  <text x="776" y="430" fill="#64748b" font-size="9">Static CSS from control classes</text>
+  <text x="925" y="416" fill="#67e8f9" font-size="10">Resource</text>
+  <circle cx="1070" cy="414" r="4" fill="#22c55e"/>
+  <text x="1080" y="418" fill="#86efac" font-size="10">Ready</text>
+  <text x="1175" y="418" fill="#94a3b8" font-size="10">eager</text>
+  <text x="1290" y="418" fill="#94a3b8" font-size="10">2 MB</text>
+
+  <!-- Resource Pool summary bar -->
+  <rect x="745" y="446" width="610" height="36" rx="4" fill="#0a1628"/>
+  <text x="760" y="467" fill="#94a3b8" font-size="10">Pool Methods:</text>
+  <rect x="848" y="454" width="50" height="18" rx="3" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="873" y="467" text-anchor="middle" fill="#93c5fd" font-size="9">.add()</text>
+  <rect x="905" y="454" width="52" height="18" rx="3" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="931" y="467" text-anchor="middle" fill="#93c5fd" font-size="9">.start()</text>
+  <rect x="964" y="454" width="90" height="18" rx="3" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="1009" y="467" text-anchor="middle" fill="#93c5fd" font-size="9">.get_resource()</text>
+  <rect x="1061" y="454" width="90" height="18" rx="3" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="1106" y="467" text-anchor="middle" fill="#93c5fd" font-size="9">.has_resource()</text>
+  <rect x="1158" y="454" width="108" height="18" rx="3" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="1212" y="467" text-anchor="middle" fill="#93c5fd" font-size="9">.resource_names</text>
+
+  <!-- Dependency diagram -->
+  <text x="745" y="506" fill="#94a3b8" font-size="11" font-weight="600" letter-spacing="0.5">RESOURCE DEPENDENCY GRAPH</text>
+
+  <rect x="760" y="516" width="120" height="30" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="1"/>
+  <text x="820" y="535" text-anchor="middle" fill="#93c5fd" font-size="10">Compilation_Manager</text>
+
+  <line x1="820" y1="546" x2="780" y2="556" stroke="#475569" stroke-width="1" marker-end="url(#arrowhead)"/>
+  <line x1="820" y1="546" x2="860" y2="556" stroke="#475569" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="745" y="558" width="100" height="26" rx="4" fill="#1a0a2e" stroke="#a855f7" stroke-width="1"/>
+  <text x="795" y="575" text-anchor="middle" fill="#c4b5fd" font-size="9">Compiler_Babel</text>
+
+  <rect x="855" y="558" width="100" height="26" rx="4" fill="#1a1a0a" stroke="#f59e0b" stroke-width="1"/>
+  <text x="905" y="575" text-anchor="middle" fill="#fcd34d" font-size="9">Template_Pipeline</text>
+
+  <!-- Standalone resources -->
+  <rect x="980" y="516" width="84" height="30" rx="4" fill="#0a2818" stroke="#22c55e" stroke-width="1"/>
+  <text x="1022" y="535" text-anchor="middle" fill="#86efac" font-size="10">Session_Store</text>
+
+  <rect x="1080" y="516" width="90" height="30" rx="4" fill="#0a2028" stroke="#06b6d4" stroke-width="1"/>
+  <text x="1125" y="535" text-anchor="middle" fill="#67e8f9" font-size="10">CSS_Extractor</text>
+
+  <text x="980" y="565" fill="#475569" font-size="9">standalone — no dependencies</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ROUTES & API — Bottom left                  -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="240" y="588" width="470" height="220" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="614" fill="#e2e8f0" font-size="14" font-weight="600">Router &amp; API Endpoints</text>
+
+  <!-- Route table header -->
+  <rect x="260" y="626" width="430" height="22" rx="0" fill="#111827"/>
+  <text x="275" y="641" fill="#64748b" font-size="10" font-weight="600">METHOD</text>
+  <text x="340" y="641" fill="#64748b" font-size="10" font-weight="600">PATH</text>
+  <text x="520" y="641" fill="#64748b" font-size="10" font-weight="600">HANDLER</text>
+  <text x="635" y="641" fill="#64748b" font-size="10" font-weight="600">TYPE</text>
+
+  <!-- Route: GET / -->
+  <line x1="260" y1="650" x2="690" y2="650" stroke="#1e293b" stroke-width="1"/>
+  <rect x="270" y="655" width="34" height="16" rx="3" fill="#052e16"/>
+  <text x="287" y="667" text-anchor="middle" fill="#22c55e" font-size="9" font-weight="600">GET</text>
+  <text x="340" y="667" fill="#e2e8f0" font-size="10" font-family="'Cascadia Code', 'Consolas', monospace">/</text>
+  <text x="520" y="667" fill="#94a3b8" font-size="10">renderControl → HTML</text>
+  <rect x="635" y="655" width="38" height="16" rx="3" fill="#172554"/>
+  <text x="654" y="667" text-anchor="middle" fill="#93c5fd" font-size="8">auto</text>
+
+  <!-- Route: GET /js/js.js -->
+  <line x1="260" y1="676" x2="690" y2="676" stroke="#1e293b" stroke-width="1"/>
+  <rect x="270" y="681" width="34" height="16" rx="3" fill="#052e16"/>
+  <text x="287" y="693" text-anchor="middle" fill="#22c55e" font-size="9" font-weight="600">GET</text>
+  <text x="340" y="693" fill="#e2e8f0" font-size="10" font-family="'Cascadia Code', 'Consolas', monospace">/js/js.js</text>
+  <text x="520" y="693" fill="#94a3b8" font-size="10">Client JS bundle</text>
+  <rect x="635" y="681" width="38" height="16" rx="3" fill="#172554"/>
+  <text x="654" y="693" text-anchor="middle" fill="#93c5fd" font-size="8">auto</text>
+
+  <!-- Route: GET /css/css.css -->
+  <line x1="260" y1="702" x2="690" y2="702" stroke="#1e293b" stroke-width="1"/>
+  <rect x="270" y="707" width="34" height="16" rx="3" fill="#052e16"/>
+  <text x="287" y="719" text-anchor="middle" fill="#22c55e" font-size="9" font-weight="600">GET</text>
+  <text x="340" y="719" fill="#e2e8f0" font-size="10" font-family="'Cascadia Code', 'Consolas', monospace">/css/css.css</text>
+  <text x="520" y="719" fill="#94a3b8" font-size="10">Extracted CSS bundle</text>
+  <rect x="635" y="707" width="38" height="16" rx="3" fill="#172554"/>
+  <text x="654" y="719" text-anchor="middle" fill="#93c5fd" font-size="8">auto</text>
+
+  <!-- Route: POST /api/validateUser -->
+  <line x1="260" y1="728" x2="690" y2="728" stroke="#1e293b" stroke-width="1"/>
+  <rect x="270" y="733" width="38" height="16" rx="3" fill="#1e1b4b"/>
+  <text x="289" y="745" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="600">POST</text>
+  <text x="340" y="745" fill="#e2e8f0" font-size="10" font-family="'Cascadia Code', 'Consolas', monospace">/api/validateUser</text>
+  <text x="520" y="745" fill="#94a3b8" font-size="10">server.publish()</text>
+  <rect x="635" y="733" width="38" height="16" rx="3" fill="#1a0a2e"/>
+  <text x="654" y="745" text-anchor="middle" fill="#c4b5fd" font-size="8">API</text>
+
+  <!-- Route: POST /api/register -->
+  <line x1="260" y1="754" x2="690" y2="754" stroke="#1e293b" stroke-width="1"/>
+  <rect x="270" y="759" width="38" height="16" rx="3" fill="#1e1b4b"/>
+  <text x="289" y="771" text-anchor="middle" fill="#a78bfa" font-size="9" font-weight="600">POST</text>
+  <text x="340" y="771" fill="#e2e8f0" font-size="10" font-family="'Cascadia Code', 'Consolas', monospace">/api/register</text>
+  <text x="520" y="771" fill="#94a3b8" font-size="10">server.publish()</text>
+  <rect x="635" y="759" width="38" height="16" rx="3" fill="#1a0a2e"/>
+  <text x="654" y="771" text-anchor="middle" fill="#c4b5fd" font-size="8">API</text>
+
+  <!-- Router info -->
+  <text x="268" y="800" fill="#475569" font-size="9">Router: tree-based matching · :param support · error &amp; not-found events</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- BUNDLE STATUS — Bottom right                 -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="725" y="588" width="330" height="220" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="745" y="614" fill="#e2e8f0" font-size="14" font-weight="600">Build &amp; Bundle Status</text>
+
+  <!-- JS Bundle -->
+  <rect x="745" y="630" width="290" height="50" rx="6" fill="#0a1628" stroke="#1e293b" stroke-width="1"/>
+  <text x="760" y="650" fill="#fcd34d" font-size="12" font-weight="600">📦 js/js.js</text>
+  <text x="760" y="668" fill="#64748b" font-size="10">38 modules bundled · source maps enabled</text>
+  <text x="960" y="650" fill="#e2e8f0" font-size="12" font-weight="600" text-anchor="end">245 KB</text>
+  <text x="960" y="668" fill="#22c55e" font-size="10" text-anchor="end">● built 1.2s</text>
+
+  <!-- CSS Bundle -->
+  <rect x="745" y="688" width="290" height="50" rx="6" fill="#0a1628" stroke="#1e293b" stroke-width="1"/>
+  <text x="760" y="708" fill="#67e8f9" font-size="12" font-weight="600">🎨 css/css.css</text>
+  <text x="760" y="726" fill="#64748b" font-size="10">12 controls · static CSS extracted</text>
+  <text x="960" y="708" fill="#e2e8f0" font-size="12" font-weight="600" text-anchor="end">12 KB</text>
+  <text x="960" y="726" fill="#22c55e" font-size="10" text-anchor="end">● built 0.3s</text>
+
+  <!-- Build pipeline -->
+  <text x="745" y="760" fill="#94a3b8" font-size="10" font-weight="600">BUILD PIPELINE</text>
+
+  <rect x="745" y="768" width="66" height="26" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="778" y="785" text-anchor="middle" fill="#93c5fd" font-size="8">client.js</text>
+
+  <text x="818" y="785" fill="#475569" font-size="10">→</text>
+
+  <rect x="830" y="768" width="60" height="26" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="860" y="785" text-anchor="middle" fill="#93c5fd" font-size="8">resolve</text>
+
+  <text x="897" y="785" fill="#475569" font-size="10">→</text>
+
+  <rect x="908" y="768" width="56" height="26" rx="4" fill="#172554" stroke="#3b82f6" stroke-width="0.5"/>
+  <text x="936" y="785" text-anchor="middle" fill="#93c5fd" font-size="8">compile</text>
+
+  <text x="971" y="785" fill="#475569" font-size="10">→</text>
+
+  <rect x="982" y="768" width="50" height="26" rx="4" fill="#052e16" stroke="#22c55e" stroke-width="0.5"/>
+  <text x="1007" y="785" text-anchor="middle" fill="#86efac" font-size="8">serve</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- CONFIGURATION — Bottom far-right             -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="1070" y="588" width="305" height="220" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="1090" y="614" fill="#e2e8f0" font-size="14" font-weight="600">Server Configuration</text>
+
+  <!-- Config code block -->
+  <rect x="1090" y="628" width="265" height="164" rx="4" fill="#0a0f1a" stroke="#1e293b" stroke-width="1"/>
+  <text x="1100" y="648" fill="#475569" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">// server.js</text>
+  <text x="1100" y="663" fill="#c792ea" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">const</text>
+  <text x="1133" y="663" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace"> server = </text>
+  <text x="1210" y="663" fill="#c792ea" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">new</text>
+  <text x="1230" y="663" fill="#82aaff" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace"> Server</text>
+  <text x="1274" y="663" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">({</text>
+
+  <text x="1116" y="678" fill="#82aaff" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">Ctrl</text>
+  <text x="1140" y="678" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">: Demo_UI,</text>
+
+  <text x="1116" y="693" fill="#82aaff" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">src_path_client_js</text>
+  <text x="1248" y="693" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">:</text>
+
+  <text x="1124" y="708" fill="#c3e88d" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">'./client.js'</text>
+  <text x="1218" y="708" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">,</text>
+
+  <text x="1116" y="723" fill="#82aaff" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">debug</text>
+  <text x="1152" y="723" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">: </text>
+  <text x="1164" y="723" fill="#f78c6c" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">true</text>
+  <text x="1188" y="723" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">,</text>
+
+  <text x="1116" y="738" fill="#82aaff" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">port</text>
+  <text x="1144" y="738" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">: </text>
+  <text x="1156" y="738" fill="#f78c6c" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">3000</text>
+  <text x="1180" y="738" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">,</text>
+
+  <text x="1116" y="753" fill="#82aaff" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">static_path</text>
+  <text x="1196" y="753" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">: </text>
+  <text x="1208" y="753" fill="#c3e88d" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">'./public'</text>
+
+  <text x="1100" y="768" fill="#e2e8f0" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">});</text>
+
+  <text x="1100" y="783" fill="#475569" font-size="9" font-family="'Cascadia Code', 'Consolas', monospace">// Events: ready, error</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- BOTTOM BAR — Lifecycle & Events              -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="240" y="824" width="1135" height="90" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="848" fill="#e2e8f0" font-size="14" font-weight="600">Server Lifecycle</text>
+
+  <!-- Lifecycle stages -->
+  <rect x="268" y="860" width="108" height="36" rx="18" fill="#172554" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="322" y="883" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="500">new Server()</text>
+
+  <line x1="376" y1="878" x2="405" y2="878" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowhead-blue)"/>
+
+  <rect x="410" y="860" width="120" height="36" rx="18" fill="#172554" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="470" y="883" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="500">Build Bundle</text>
+
+  <line x1="530" y1="878" x2="559" y2="878" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowhead-blue)"/>
+
+  <rect x="564" y="860" width="120" height="36" rx="18" fill="#172554" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="624" y="883" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="500">emit 'ready'</text>
+
+  <line x1="684" y1="878" x2="713" y2="878" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowhead-blue)"/>
+
+  <rect x="718" y="860" width="120" height="36" rx="18" fill="#172554" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="778" y="883" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="500">.publish() APIs</text>
+
+  <line x1="838" y1="878" x2="867" y2="878" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arrowhead-blue)"/>
+
+  <rect x="872" y="860" width="120" height="36" rx="18" fill="#172554" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="932" y="883" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="500">.start(port)</text>
+
+  <line x1="992" y1="878" x2="1021" y2="878" stroke="#22c55e" stroke-width="1.5" marker-end="url(#arrowhead-green)"/>
+
+  <rect x="1026" y="860" width="120" height="36" rx="18" fill="#052e16" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="1086" y="883" text-anchor="middle" fill="#86efac" font-size="11" font-weight="600">● Listening</text>
+
+  <!-- Error branch -->
+  <line x1="470" y1="860" x2="470" y2="840" stroke="#f43f5e" stroke-width="1" stroke-dasharray="3,3"/>
+  <text x="488" y="845" fill="#f43f5e" font-size="9">emit 'error'</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- FOOTER — Isomorphic rendering diagram        -->
+  <!-- ═══════════════════════════════════════════ -->
+  <rect x="240" y="930" width="1135" height="104" rx="8" fill="url(#card)" stroke="#334155" stroke-width="1" filter="url(#shadow)"/>
+  <text x="260" y="956" fill="#e2e8f0" font-size="14" font-weight="600">Isomorphic Rendering Contract</text>
+
+  <!-- Server side -->
+  <rect x="268" y="968" width="340" height="48" rx="6" fill="#0c1a2e" stroke="#3b82f6" stroke-width="1"/>
+  <text x="288" y="986" fill="#93c5fd" font-size="11" font-weight="600">🖥 Server (Node.js)</text>
+  <text x="288" y="1004" fill="#64748b" font-size="10">constructor() → build control tree → .html string</text>
+
+  <!-- Arrow -->
+  <line x1="608" y1="992" x2="646" y2="992" stroke="#475569" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <text x="627" y="984" text-anchor="middle" fill="#475569" font-size="8">HTTP</text>
+
+  <!-- Client side -->
+  <rect x="650" y="968" width="340" height="48" rx="6" fill="#0a2818" stroke="#22c55e" stroke-width="1"/>
+  <text x="670" y="986" fill="#86efac" font-size="11" font-weight="600">🌐 Client (Browser)</text>
+  <text x="670" y="1004" fill="#64748b" font-size="10">parse_mount() → activate() → event binding</text>
+
+  <!-- Guard reminder -->
+  <rect x="1010" y="968" width="345" height="48" rx="6" fill="#1a0a0a" stroke="#f43f5e" stroke-width="1"/>
+  <text x="1030" y="986" fill="#fca5a5" font-size="11" font-weight="600">⚠ Server-Safety Guards</text>
+  <text x="1030" y="1004" fill="#64748b" font-size="10">if (this.dom.el) · if (typeof document !== 'undefined')</text>
+
+</svg>

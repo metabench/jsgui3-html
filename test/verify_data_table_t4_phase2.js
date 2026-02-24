@@ -38,7 +38,7 @@ console.log('=== Data_Table T4 Phase 2 — Verification ===\n');
 console.log('1. Module loading');
 let Data_Table;
 try {
-    Data_Table = require(path.join(root, 'controls/organised/1-standard/4-data/data_table'));
+    Data_Table = require(path.join(root, 'controls/organised/1-standard/4-data/Data_Table'));
     assert(typeof Data_Table === 'function', 'Data_Table exports a constructor');
 } catch (err) {
     console.error('  ❌ FATAL: Module load failed:', err.message);

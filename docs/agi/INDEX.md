@@ -42,6 +42,15 @@ C:\Users\james\.gemini\antigravity\knowledge\
 | `skills/` | Individual skill definitions |
 | `workflows/` | Operational procedures and best practices |
 
+## Books
+
+- [Device-Adaptive Composition & Styling](../books/device-adaptive-composition/README.md) — multi-chapter guide to responsive composition, theming, MVVM view-state separation, and cross-device implementation strategy.
+- [Adaptive Control Improvements](../books/adaptive-control-improvements/README.md) — implementation-focused playbook for upgrading existing controls and platform functionality for multi-device quality.
+
+## PR Templates
+
+- [Adaptive Tier 1 PR Template](../../.github/pull_request_template_adaptive_tier1.md) — checklist-driven template for Master_Detail, Split_Pane, Tabbed_Panel, and Data_Table adaptive upgrades.
+
 ## Entry Point
 
 Start with `SELF_MODEL.md` to understand agent constraints, then consult `SKILLS.md` for task-specific procedures.

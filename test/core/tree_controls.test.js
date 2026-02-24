@@ -22,7 +22,7 @@ describe('Tree Controls', () => {
             }]
         });
 
-        const root_node = tree.main.content._arr[0];
+        const root_node = tree.get_visible_nodes()[0];
         await root_node.ensure_children_loaded();
 
         expect(root_node.inner_control.content._arr.length).to.equal(1);
@@ -42,8 +42,8 @@ describe('Tree Controls', () => {
         jsgui.pre_activate(context);
         jsgui.activate(context);
 
-        tree.set_active_node(tree.main.content._arr[1], {select: false});
-        const start_id = tree.main.content._arr[1].dom.attributes.id;
+        tree.set_active_node(tree.get_visible_nodes()[1], { select: false });
+        const start_id = tree.get_visible_nodes()[1].dom.attributes.id;
         expect(tree.dom.attributes['aria-activedescendant']).to.equal(start_id);
 
         const event = new window.KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true });

@@ -1,5 +1,5 @@
-const Tree = require('./../../1-standard/5-ui/tree');
-const File_Tree_Node = require('./file-tree-node');
+const Tree = require('./../../1-standard/5-ui/Tree');
+const File_Tree_Node = require('./File_Tree_Node');
 
 class File_Tree extends Tree {
     constructor(spec = {}) {

@@ -1,6 +1,6 @@
 const jsgui = require('./../../../../html-core/html-core');
-const Plus_Minus_Toggle_Button = require('./../../0-core/0-basic/1-compositional/plus-minus-toggle-button');
-const Vertical_Expander = require('./../6-layout/vertical-expander');
+const Plus_Minus_Toggle_Button = require('./../../0-core/0-basic/1-compositional/Plus_Minus_Toggle_Button');
+const Vertical_Expander = require('./../6-layout/Vertical_Expander');
 const mx_selectable = require('./../../../../control_mixins/selectable');
 const { apply_label } = require('../../../../control_mixins/a11y');
 const {field} = require('obext');

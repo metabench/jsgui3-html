@@ -214,13 +214,14 @@ class Drawer extends Control {
 }
 
 Drawer.css = `
+/* ─── Drawer ─── */
 .drawer {
     position: relative;
 }
 .drawer-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: var(--j-overlay, rgba(0, 0, 0, 0.3));
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.2s ease;
@@ -229,13 +230,14 @@ Drawer.css = `
     position: fixed;
     top: 0;
     bottom: 0;
-    width: 280px;
-    background: #fff;
+    width: var(--drawer-width, 280px);
+    background: var(--admin-card-bg, #fff);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
     transform: translateX(-100%);
     transition: transform 0.2s ease;
     display: flex;
     flex-direction: column;
+    color: var(--admin-text, #1e1e1e);
 }
 .drawer-panel-right {
     right: 0;
@@ -251,19 +253,27 @@ Drawer.css = `
 }
 .drawer-header {
     padding: 12px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--admin-border, #eee);
     display: flex;
     justify-content: flex-end;
 }
 .drawer-body {
     padding: 12px;
     overflow: auto;
+    flex: 1;
 }
 .drawer-close {
-    border: 1px solid #ccc;
-    background: #fff;
+    border: 1px solid var(--admin-border, #ccc);
+    background: var(--admin-card-bg, #fff);
+    color: var(--admin-text, #333);
     padding: 6px 10px;
     cursor: pointer;
+    border-radius: var(--j-radius, 4px);
+    min-width: var(--j-touch-target, 36px);
+    min-height: var(--j-touch-target, 36px);
+}
+.drawer-close:hover {
+    background: var(--admin-hover-bg, #f0f0f0);
 }
 .drawer.drawer-docked .drawer-overlay {
     display: none;
@@ -272,7 +282,7 @@ Drawer.css = `
     position: static;
     transform: translateX(0);
     box-shadow: none;
-    width: 240px;
+    width: var(--drawer-docked-width, 240px);
 }
 `;
 

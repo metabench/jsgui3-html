@@ -36,7 +36,7 @@ define(["../../jsgui-html", "./panel"],
 
 var jsgui = require('./../../../../../html-core/html-core');
 var Panel = require('../panel');
-var Tabbed_Panel = require('../tabbed-panel');
+var Tabbed_Panel = require('../Tabbed_Panel');
 
 var stringify = jsgui.stringify,
     each = jsgui.each,

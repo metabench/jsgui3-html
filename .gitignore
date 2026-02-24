@@ -75,21 +75,53 @@ package-lock.json
 .vscode/settings.json
 
 # Test-generated screenshots (E2E / lab output)
-tmp/screenshots/
+tmp/
 lab/screenshots/
 test/e2e/screenshots/
 
 # Fallback for ad-hoc local test runs from repo root
 screenshots/
 
-# Session working files (agent-generated, not for commit)
+# Agent working files and context (NEVER commit these)
+.gemini/
+.agents/
+.agent/
+_agents/
+_agent/
+.github/
 docs/sessions/*/WORKING_NOTES.md
 docs/sessions/*/FOLLOW_UPS.md
-test/audit/*
-tmp/kv-renderings/gallery.html
-tmp/kv-renderings/kv-api-health-dark.svg
-tmp/kv-renderings/kv-database-status-light.svg
-tmp/kv-renderings/kv-env-vars-terminal.svg
-tmp/kv-renderings/kv-process-info-dark.svg
-tmp/kv-renderings/kv-server-config-light.svg
-tmp/kv-renderings/kv-session-warm.svg
+
+# Ad-hoc test and debug outputs
+test/audit/
+out*.txt
+test/*.txt
+test/*_failures.json
+test/out.json
+test/test.json
+test/test_out.json
+test/result.json
+test/missing_results.json
+test-*.js
+fix*.js
+throw-*.js
+test/__snapshots__/
+test/parse_failures.js
+
+# Root-level ad-hoc scripts (agent-generated debug/capture files)
+capture.js
+catch-error.js
+catch-error*.js
+test_rs_tpl.js
+parse-mount-old.js
+
+# Root-level screenshots from E2E / lab runs
+*.png
+
+# Root-level analysis / error outputs
+a11y_violations.json
+stack_trace_actual.txt
+clean_err.txt
+
+# Server / build caches
+.jsgui3-server-cache/

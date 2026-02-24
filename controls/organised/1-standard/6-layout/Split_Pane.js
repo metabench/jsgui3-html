@@ -40,6 +40,16 @@ class Split_Pane extends Control {
         this.set_size(is_defined(spec.size) ? spec.size : spec.initial_size);
         this.handle_size = is_defined(spec.handle_size) ? Number(spec.handle_size) : 6;
 
+        // ── Adaptive layout options (all overridable) ──
+        // layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
+        this.layout_mode = spec.layout_mode || 'auto';
+        // Breakpoint below which panes auto-stack vertically
+        this.stack_breakpoint = is_defined(spec.stack_breakpoint) ? Number(spec.stack_breakpoint) : 600;
+        // Whether to auto-stack on phone (can be disabled)
+        this.auto_stack = spec.auto_stack !== false;
+        // Touch handle hit area (larger than visual size)
+        this.touch_handle_size = is_defined(spec.touch_handle_size) ? Number(spec.touch_handle_size) : 44;
+
         if (!spec.el) {
             this.compose_split_pane(spec);
         }
@@ -273,19 +283,65 @@ class Split_Pane extends Control {
         return size;
     }
 
+    /**
+     * Resolve the current layout mode.
+     * @returns {'phone'|'tablet'|'desktop'}
+     */
+    resolve_layout_mode() {
+        if (this.layout_mode !== 'auto') return this.layout_mode;
+        if (this.context && this.context.view_environment && this.context.view_environment.layout_mode) {
+            return this.context.view_environment.layout_mode;
+        }
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth < this.stack_breakpoint) return 'phone';
+        }
+        return 'desktop';
+    }
+
+    /**
+     * Apply adaptive layout mode to the DOM.
+     */
+    _apply_layout_mode() {
+        if (!this.dom.el) return;
+        const mode = this.resolve_layout_mode();
+        this.dom.el.setAttribute('data-layout-mode', mode);
+        if (mode === 'phone' && this.auto_stack) {
+            this.dom.el.classList.add('split-pane-stacked');
+        } else {
+            this.dom.el.classList.remove('split-pane-stacked');
+        }
+    }
+
     activate() {
         if (!this.__active) {
             super.activate();
             const handle = this._ctrl_fields && this._ctrl_fields.handle;
             if (!handle || !handle.dom.el || typeof document === 'undefined') return;
 
+            // Apply initial layout mode
+            this._apply_layout_mode();
+
+            // Listen for window resize in auto mode
+            if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
+                this._resize_handler = () => this._apply_layout_mode();
+                window.addEventListener('resize', this._resize_handler);
+            }
+
             let dragging = false;
             let start_pos = 0;
             let start_size = 0;
 
+            const get_pos = (e) => {
+                // Unified position extraction for mouse and touch
+                if (e.touches && e.touches.length > 0) {
+                    return this.orientation === 'vertical' ? e.touches[0].clientY : e.touches[0].clientX;
+                }
+                return this.orientation === 'vertical' ? e.clientY : e.clientX;
+            };
+
             const on_move = e_move => {
                 if (!dragging) return;
-                const current_pos = this.orientation === 'vertical' ? e_move.clientY : e_move.clientX;
+                const current_pos = get_pos(e_move);
                 const delta = current_pos - start_pos;
                 const next_size = this.clamp_size(start_size + delta);
                 this.set_size(next_size);
@@ -296,22 +352,34 @@ class Split_Pane extends Control {
                 dragging = false;
                 document.removeEventListener('mousemove', on_move);
                 document.removeEventListener('mouseup', on_up);
+                document.removeEventListener('touchmove', on_move);
+                document.removeEventListener('touchend', on_up);
+                document.removeEventListener('touchcancel', on_up);
                 this.raise('resize', { size: this.size });
             };
 
-            handle.add_dom_event_listener('mousedown', e_down => {
+            const on_start = e_down => {
                 e_down.preventDefault();
                 dragging = true;
-                start_pos = this.orientation === 'vertical' ? e_down.clientY : e_down.clientX;
+                start_pos = get_pos(e_down);
                 start_size = this.resolve_size_px();
                 document.addEventListener('mousemove', on_move);
                 document.addEventListener('mouseup', on_up);
-            });
+                document.addEventListener('touchmove', on_move, { passive: false });
+                document.addEventListener('touchend', on_up);
+                document.addEventListener('touchcancel', on_up);
+            };
+
+            // Mouse events
+            handle.add_dom_event_listener('mousedown', on_start);
+            // Touch events
+            handle.dom.el.addEventListener('touchstart', on_start, { passive: false });
         }
     }
 }
 
 Split_Pane.css = `
+/* ─── Split_Pane ─── */
 .split-pane {
     display: flex;
     width: 100%;
@@ -324,9 +392,46 @@ Split_Pane.css = `
 .split-pane-pane {
     min-width: 0;
     min-height: 0;
+    overflow: auto;
 }
 .split-pane-handle {
-    background: #e2e2e2;
+    background: var(--j-border, #e2e2e2);
+    flex-shrink: 0;
+    position: relative;
+    touch-action: none;
+    z-index: 1;
+}
+/* Expand touch hit area without changing visual size */
+.split-pane-handle::before {
+    content: '';
+    position: absolute;
+    inset: -19px;
+}
+.split-pane-horizontal .split-pane-handle::before {
+    inset: 0 -19px;
+}
+.split-pane-vertical .split-pane-handle::before {
+    inset: -19px 0;
+}
+.split-pane-handle:hover,
+.split-pane-handle:active {
+    background: var(--admin-accent, #0078d4);
+}
+
+/* ── Phone stacked mode ── */
+.split-pane.split-pane-stacked {
+    flex-direction: column;
+}
+.split-pane.split-pane-stacked .split-pane-pane-primary {
+    flex: 1 1 auto !important;
+}
+.split-pane.split-pane-stacked .split-pane-pane-secondary {
+    flex: 1 1 auto !important;
+}
+.split-pane.split-pane-stacked .split-pane-handle {
+    height: 6px;
+    width: 100%;
+    cursor: row-resize;
 }
 `;
 

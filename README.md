@@ -1670,6 +1670,11 @@ npm run lint
 4. Run the test suite: `npm test`
 5. Submit a pull request with detailed description
 
+### Adaptive Control PRs
+For responsive/multi-device Tier 1 control upgrades, use:
+- `docs/books/adaptive-control-improvements/README.md`
+- `.github/pull_request_template_adaptive_tier1.md`
+
 ### Reporting Issues
 When reporting bugs, please include:
 - Minimal code example reproducing the issue

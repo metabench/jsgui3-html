@@ -4,7 +4,7 @@ var stringify = jsgui.stringify,
     tof = jsgui.tof;
 var Control = jsgui.Control;
 
-var Data_Item = require('./data-item');
+var Data_Item = require('./Data_Item');
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
 /*

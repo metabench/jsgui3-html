@@ -1,5 +1,5 @@
 var jsgui = require('./../../../../html-core/html-core');
-var Horizontal_Menu = require('./../../../organised/1-standard/5-ui/horizontal-menu');
+var Horizontal_Menu = require('./../../../organised/1-standard/5-ui/Horizontal_Menu');
 const Button = require('./../../../organised/0-core/0-basic/0-native-compositional/button');
 const { def, each } = jsgui;
 var Control = jsgui.Control;
@@ -7,7 +7,7 @@ var fields = {
 	'title': String
 };
 const { dragable, resizable } = require('../../../../control_mixins/mx');
-const { get_window_manager } = require('./window_manager');
+const { get_window_manager } = require('./Window_Manager');
 const {
 	apply_focus_ring,
 	ensure_sr_text
@@ -55,6 +55,27 @@ class Window extends Control {
 		this.max_size = spec.max_size;
 		this.resize_bounds = spec.resize_bounds || spec.extent_bounds || null;
 		this.manager = spec.window_manager || spec.manager || null;
+
+		// ── Adaptive layout options (all overridable) ──
+		// layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
+		//   'auto' uses breakpoints; set explicitly to force a mode.
+		this.layout_mode = spec.layout_mode || 'auto';
+		// Breakpoints for auto mode
+		this.phone_breakpoint = def(spec.phone_breakpoint) ? spec.phone_breakpoint : 600;
+		this.tablet_breakpoint = def(spec.tablet_breakpoint) ? spec.tablet_breakpoint : 960;
+		// Phone behavior: 'maximize' | 'float' | 'fullscreen'
+		//   'maximize' — auto-maximize to fill parent on phone (default, good for most apps)
+		//   'float'    — keep floating (useful for image editors, tool palettes)
+		//   'fullscreen' — force 100vw × 100vh overlay
+		this.phone_behavior = spec.phone_behavior || 'maximize';
+		// Tablet behavior: 'float' | 'maximize'
+		//   'float' — keep floating (default, tablets have enough space)
+		//   'maximize' — auto-maximize
+		this.tablet_behavior = spec.tablet_behavior || 'float';
+		// Minimum window size on phone/tablet (prevents unusably tiny windows)
+		this.touch_min_size = spec.touch_min_size || [200, 160];
+		// Whether to enlarge title bar buttons for touch on phone/tablet
+		this.touch_buttons = spec.touch_buttons !== false;
 		const show_buttons = def(spec.show_buttons) ? spec.show_buttons : params.show_buttons !== false;
 		if (!spec.abstract && !spec.el) {
 			const { context } = this;
@@ -152,6 +173,73 @@ class Window extends Control {
 			}
 		}
 	}
+	/**
+	 * Resolve the current layout mode from context, viewport, or explicit setting.
+	 * @returns {'phone'|'tablet'|'desktop'}
+	 */
+	resolve_layout_mode() {
+		if (this.layout_mode && this.layout_mode !== 'auto') return this.layout_mode;
+		const env = this.context && this.context.view_environment;
+		if (env && env.layout_mode) return env.layout_mode;
+		if (typeof window !== 'undefined') {
+			const w = window.innerWidth;
+			if (w <= this.phone_breakpoint) return 'phone';
+			if (w <= this.tablet_breakpoint) return 'tablet';
+		}
+		return 'desktop';
+	}
+
+	/**
+	 * Apply adaptive layout mode: sets data-layout-mode attribute,
+	 * enforces touch_min_size, applies phone_behavior / tablet_behavior,
+	 * and toggles touch-buttons class.
+	 */
+	_apply_layout_mode() {
+		const el = this.dom && this.dom.el;
+		if (!el) return;
+		const mode = this.resolve_layout_mode();
+		el.setAttribute('data-layout-mode', mode);
+
+		// Enforce minimum touch-friendly window size on phone/tablet
+		if (mode === 'phone' || mode === 'tablet') {
+			if (this.touch_buttons) {
+				el.classList.add('window-touch-buttons');
+			}
+			const [min_w, min_h] = this.touch_min_size;
+			if (this.min_size) {
+				this.min_size = [
+					Math.max(this.min_size[0], min_w),
+					Math.max(this.min_size[1], min_h)
+				];
+			}
+		} else {
+			el.classList.remove('window-touch-buttons');
+		}
+
+		// Apply phone behavior
+		if (mode === 'phone') {
+			el.setAttribute('data-phone-behavior', this.phone_behavior);
+			if (this.phone_behavior === 'maximize' && !this.has_class('maximized')) {
+				this.maximize();
+			} else if (this.phone_behavior === 'fullscreen') {
+				el.classList.add('window-fullscreen');
+			}
+		} else {
+			el.removeAttribute('data-phone-behavior');
+			el.classList.remove('window-fullscreen');
+		}
+
+		// Apply tablet behavior
+		if (mode === 'tablet') {
+			el.setAttribute('data-tablet-behavior', this.tablet_behavior);
+			if (this.tablet_behavior === 'maximize' && !this.has_class('maximized')) {
+				this.maximize();
+			}
+		} else {
+			el.removeAttribute('data-tablet-behavior');
+		}
+	}
+
 	bring_to_front_z() {
 		if (this.manager && typeof this.manager.bring_to_front === 'function') {
 			this.manager.bring_to_front(this);
@@ -462,6 +550,13 @@ class Window extends Control {
 					this.snap_to_bounds();
 				});
 			}
+
+			// ── Adaptive layout ──
+			this._apply_layout_mode();
+			if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
+				this._resize_handler = () => this._apply_layout_mode();
+				window.addEventListener('resize', this._resize_handler);
+			}
 		}
 	}
 }
@@ -470,9 +565,112 @@ Window.css = `
     position: absolute;
     width: 360px;
     height: 360px;
+    background: var(--admin-card-bg, #fff);
+    border: 1px solid var(--admin-border, #e2e8f0);
+    border-radius: var(--j-radius, 8px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.window .relative {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.window .title.bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    min-height: 36px;
+    background: var(--admin-header-bg, #f8fafc);
+    border-bottom: 1px solid var(--admin-border, #e2e8f0);
+    cursor: default;
+    user-select: none;
+    flex-shrink: 0;
+}
+.window .title.bar h2 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--admin-header-text, #334155);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+.window .button-group {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+.window .button-group button {
+    min-width: 28px;
+    min-height: 28px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 4px;
+    color: var(--admin-muted, #64748b);
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s;
+}
+.window .button-group button:hover {
+    background: var(--admin-hover, #f1f5f9);
+    color: var(--admin-text, #1e293b);
+}
+.window .button-group button.close:hover {
+    background: var(--j-error, #ef4444);
+    color: #fff;
+}
+.window .inner {
+    flex: 1;
+    overflow: auto;
+    padding: var(--j-gap, 8px);
 }
 .window.minimized {
     height: 36px;
+    overflow: hidden;
+}
+.window.maximized {
+    border-radius: 0;
+}
+
+/* ── Touch-sized buttons (phone & tablet) ── */
+.window.window-touch-buttons .button-group button {
+    min-width: var(--j-touch-target, 44px);
+    min-height: var(--j-touch-target, 44px);
+    font-size: 18px;
+}
+.window.window-touch-buttons .title.bar {
+    min-height: var(--j-touch-target, 44px);
+}
+
+/* ── Phone: fullscreen overlay ── */
+.window.window-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0;
+    z-index: 9999;
+    transform: none !important;
+}
+
+/* ── Phone: float mode — keep floating but ensure minimum usability ── */
+.window[data-layout-mode="phone"][data-phone-behavior="float"] {
+    min-width: 200px;
+    min-height: 160px;
+}
+
+/* ── Tablet: float with slightly larger chrome ── */
+.window[data-layout-mode="tablet"] .title.bar {
+    min-height: 40px;
 }
 `;
 module.exports = Window;

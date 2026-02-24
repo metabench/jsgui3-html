@@ -194,6 +194,7 @@ class Time_Picker extends Control {
 
         this._display_time = new Control({ context, tag_name: 'span' });
         this._display_time.add_class('tp-display-time');
+        this._display_time.dom.attributes['data-jsgui-ctrl'] = '_display_time';
         this._display_time.add(this.display_value);
         this._display_wrap.add(this._display_time);
 
@@ -202,6 +203,7 @@ class Time_Picker extends Control {
             this._am_pm_btn = new Control({ context, tag_name: 'button' });
             this._am_pm_btn.add_class('tp-ampm-btn');
             this._am_pm_btn.dom.attributes.type = 'button';
+            this._am_pm_btn.dom.attributes['data-jsgui-ctrl'] = '_am_pm_btn';
             this._am_pm_btn.add(this._hours < 12 ? 'AM' : 'PM');
             this._display_wrap.add(this._am_pm_btn);
         }
@@ -219,6 +221,7 @@ class Time_Picker extends Control {
             this._clock_canvas.add_class('tp-clock-canvas');
             this._clock_canvas.dom.attributes.width = String(sz);
             this._clock_canvas.dom.attributes.height = String(sz);
+            this._clock_canvas.dom.attributes['data-jsgui-ctrl'] = '_clock_canvas';
             this._clock_wrap.add(this._clock_canvas);
 
             this.add(this._clock_wrap);
@@ -229,7 +232,7 @@ class Time_Picker extends Control {
             this._spinners_wrap = new Control({ context, tag_name: 'div' });
             this._spinners_wrap.add_class('tp-spinners');
 
-            const make_spinner = (label, cls) => {
+            const make_spinner = (label, cls, ctrl_prefix) => {
                 const col = new Control({ context, tag_name: 'div' });
                 col.add_class('tp-spinner-col');
 
@@ -242,18 +245,21 @@ class Time_Picker extends Control {
                 up.add_class('tp-spinner-up');
                 up.add_class(cls + '-up');
                 up.dom.attributes.type = 'button';
+                up.dom.attributes['data-jsgui-ctrl'] = ctrl_prefix + '_up';
                 up.add('▲');
                 col.add(up);
 
                 const val = new Control({ context, tag_name: 'span' });
                 val.add_class('tp-spinner-val');
                 val.add_class(cls + '-val');
+                val.dom.attributes['data-jsgui-ctrl'] = ctrl_prefix + '_val';
                 col.add(val);
 
                 const down = new Control({ context, tag_name: 'button' });
                 down.add_class('tp-spinner-down');
                 down.add_class(cls + '-down');
                 down.dom.attributes.type = 'button';
+                down.dom.attributes['data-jsgui-ctrl'] = ctrl_prefix + '_down';
                 down.add('▼');
                 col.add(down);
 
@@ -261,10 +267,10 @@ class Time_Picker extends Control {
                 return { up, down, val };
             };
 
-            this._spinner_h = make_spinner('H', 'tp-h');
-            this._spinner_m = make_spinner('M', 'tp-m');
+            this._spinner_h = make_spinner('H', 'tp-h', '_sh');
+            this._spinner_m = make_spinner('M', 'tp-m', '_sm');
             if (cfg.show_seconds) {
-                this._spinner_s = make_spinner('S', 'tp-s');
+                this._spinner_s = make_spinner('S', 'tp-s', '_ss');
             }
 
             this.add(this._spinners_wrap);
@@ -274,6 +280,7 @@ class Time_Picker extends Control {
         if (cfg.show_presets) {
             this._presets_wrap = new Control({ context, tag_name: 'div' });
             this._presets_wrap.add_class('tp-presets');
+            this._presets_wrap.dom.attributes['data-jsgui-ctrl'] = '_presets_wrap';
 
             cfg.presets.forEach(preset => {
                 const btn = new Control({ context, tag_name: 'button' });
@@ -321,54 +328,7 @@ class Time_Picker extends Control {
     }
 
     // ── Reconnect DOM refs for hydration (when compose was skipped) ──
-    _reconnect_from_dom() {
-        const el = this.dom.el;
-        if (!el) return;
-
-        const q = (cls) => {
-            const found = el.querySelector('.' + cls);
-            return found ? { dom: { el: found } } : null;
-        };
-
-        // Digital display
-        if (!this._display_time) this._display_time = q('tp-display-time');
-
-        // AM/PM button
-        if (!this._am_pm_btn) this._am_pm_btn = q('tp-ampm-btn');
-
-        // Clock canvas
-        if (!this._clock_canvas) this._clock_canvas = q('tp-clock-canvas');
-
-        // Spinners: each is { up, down, val } with dom.el
-        const reconnect_spinner = (cls) => {
-            const upEl = el.querySelector('.' + cls + '-up');
-            const downEl = el.querySelector('.' + cls + '-down');
-            const valEl = el.querySelector('.' + cls + '-val');
-            if (!upEl && !downEl && !valEl) return null;
-            return {
-                up: { dom: { el: upEl } },
-                down: { dom: { el: downEl } },
-                val: { dom: { el: valEl } }
-            };
-        };
-        if (!this._spinner_h) this._spinner_h = reconnect_spinner('tp-h');
-        if (!this._spinner_m) this._spinner_m = reconnect_spinner('tp-m');
-        if (!this._spinner_s) this._spinner_s = reconnect_spinner('tp-s');
-
-        // Presets
-        if (!this._presets_wrap) this._presets_wrap = q('tp-presets');
-
-        // Read initial time from the digital display
-        if (this._display_time && this._display_time.dom.el) {
-            const text = this._display_time.dom.el.textContent.trim();
-            const parsed = Time_Picker.parse_time(text);
-            if (parsed) {
-                this._hours = parsed.hours;
-                this._minutes = parsed.minutes;
-                this._seconds = parsed.seconds;
-            }
-        }
-    }
+    // Handled by base Ctrl_Enh._wire_jsgui_ctrls()
 
     // ── Activation ──
 
@@ -377,8 +337,30 @@ class Time_Picker extends Control {
         super.activate();
         this._activated = true;
 
-        // Reconnect DOM references if hydrating
-        this._reconnect_from_dom();
+        // Auto-wire component DOM/VDOM tagged with data-jsgui-ctrl
+        this._wire_jsgui_ctrls();
+
+        // Reconstruct spinner struct from auto-wired fields
+        const build_spinner = (prefix) => {
+            if (this[prefix + '_up'] && this[prefix + '_down'] && this[prefix + '_val']) {
+                return { up: this[prefix + '_up'], down: this[prefix + '_down'], val: this[prefix + '_val'] };
+            }
+            return null;
+        };
+        if (!this._spinner_h) this._spinner_h = build_spinner('_sh');
+        if (!this._spinner_m) this._spinner_m = build_spinner('_sm');
+        if (!this._spinner_s) this._spinner_s = build_spinner('_ss');
+
+        // Read initial time from the digital display if hydrated
+        if (this._display_time && this._display_time.dom && this._display_time.dom.el) {
+            const text = this._display_time.dom.el.textContent.trim();
+            const parsed = Time_Picker.parse_time(text);
+            if (parsed) {
+                this._hours = parsed.hours;
+                this._minutes = parsed.minutes;
+                this._seconds = parsed.seconds;
+            }
+        }
 
         // Draw initial clock
         if (this._clock_canvas && this._clock_canvas.dom.el) {

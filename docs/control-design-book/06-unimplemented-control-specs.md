@@ -223,9 +223,9 @@ This gives strong validation, clear diffability, and reliable code generation / 
 
 ---
 
-## 6.3 Detailed Specs (Unimplemented Controls)
+## 6.3 Detailed Specs
 
-> Note: Each spec uses `implemented: false` and is intended as implementation-ready input.
+> Note: These controls were originally unimplemented but have since been built. Specs updated to reflect current implementations and define target acceptance criteria.
 
 ### 6.3.1 `Status_Bar`
 
@@ -234,14 +234,17 @@ spec_version: "1.0"
 control:
 	class_name: Status_Bar
 	type_name: status_bar
-	category: 1-standard/6-layout
+	category: 1-standard/5-ui
 	priority: P1
 	target_tier: T3
-	proposed_file: controls/organised/1-standard/6-layout/status_bar.js
+	proposed_file: controls/organised/1-standard/5-ui/status_bar.js
 	dependencies: [Control, Badge, Indicator]
 status:
-	implemented: false
-	notes: Bottom app/status strip shown in SVG admin dashboard and console.
+	implemented: true
+	notes: >
+		104-line implementation with left/right text regions, data-status attribute,
+		themeable mixin. Current tier ~T1. Missing center region, dynamic items,
+		item_click events, keyboard navigation, show_clock, and density variants.
 purpose:
 	summary: Shows compact, persistent runtime status metrics and contextual hints.
 	use_cases:
@@ -262,16 +265,26 @@ composition:
 	default_state: normal
 api:
 	props:
-		- name: items
-			type: array<{id:string,label:string,value:string|number,state?:string,icon?:string}>
-			required: true
-			default: []
-			description: Ordered status entries rendered in center/right regions.
-		- name: left_text
+		- name: text
 			type: string
 			required: false
 			default: "Ready"
 			description: Left-side contextual text.
+		- name: meta_text
+			type: string
+			required: false
+			default: ""
+			description: Right-side metadata text.
+		- name: status
+			type: string
+			required: false
+			default: "info"
+			description: "Visual status: info, success, warning, error."
+		- name: items
+			type: array<{id:string,label:string,value:string|number,state?:string,icon?:string}>
+			required: false
+			default: []
+			description: Ordered status entries rendered in center/right regions.
 		- name: dense
 			type: boolean
 			required: false
@@ -290,12 +303,18 @@ api:
 			payload: "{id:string, previous:any, next:any}"
 			when: An item value/state changes via set_item.
 	methods:
+		- name: set_text
+			signature: set_text(text)
+			description: Updates left-side contextual text.
+		- name: set_meta_text
+			signature: set_meta_text(meta_text)
+			description: Updates right-side metadata text.
+		- name: set_status
+			signature: set_status(status)
+			description: Updates visual status (info/success/warning/error).
 		- name: set_item
 			signature: set_item(id, patch)
 			description: Updates value/state/icon for a single item.
-		- name: set_left_text
-			signature: set_left_text(text)
-			description: Updates contextual left text.
 		- name: clear_item
 			signature: clear_item(id)
 			description: Removes one item safely.
@@ -322,14 +341,14 @@ accessibility:
 		- Roving tabindex for interactive items.
 		- Visible focus ring using theme token.
 styling:
-	css_classes: [status-bar, status-bar-item, status-bar-separator, status-bar-left, status-bar-right]
+	css_classes: [jsgui-status-bar, status-bar-left, status-bar-right, status-bar-item, status-bar-separator]
 	tokens:
-		- --admin-header-bg
-		- --admin-border
-		- --admin-text
-		- --admin-muted
-		- --admin-accent
-		- --admin-danger
+		- --j-bg-muted
+		- --j-border
+		- --j-fg
+		- --j-fg-muted
+		- --j-primary
+		- --j-danger
 	density_support: [comfortable, compact]
 acceptance:
 	e2e:
@@ -357,8 +376,11 @@ control:
 	proposed_file: controls/organised/1-standard/6-layout/group_box.js
 	dependencies: [Control]
 status:
-	implemented: false
-	notes: Equivalent to fieldset/legend visual and semantic grouping from SVG forms.
+	implemented: true
+	notes: >
+		145-line implementation with fieldset/div toggle, legend, content container,
+		invalid/disabled states, legend_click event, themeable mixin. Current tier ~T1.
+		Missing variants (subtle, elevated, win32_classic), density support.
 purpose:
 	summary: Visually and semantically groups related controls with optional legend.
 	use_cases:
@@ -399,7 +421,10 @@ api:
 			description: Updates legend text.
 		- name: set_invalid
 			signature: set_invalid(flag)
-			description: Toggles invalid visual state.
+			description: Toggles invalid visual state and aria-invalid.
+		- name: add_content
+			signature: add_content(content)
+			description: Appends a control or array of controls to the content container.
 interaction:
 	keyboard:
 		- key: Tab
@@ -418,13 +443,13 @@ accessibility:
 		- Group itself is not focusable by default.
 		- Focus ring remains on child controls.
 styling:
-	css_classes: [group-box, group-box-legend, group-box-content, group-box-invalid]
+	css_classes: [jsgui-group-box, group-box-legend, group-box-content, group-box-invalid, group-box-disabled]
 	tokens:
-		- --admin-border
-		- --admin-card-bg
-		- --admin-text
-		- --admin-muted
-		- --admin-danger
+		- --j-border
+		- --j-bg-elevated
+		- --j-fg
+		- --j-fg-muted
+		- --j-danger
 	density_support: [comfortable, compact]
 acceptance:
 	e2e:
@@ -450,8 +475,11 @@ control:
 	proposed_file: controls/organised/0-core/0-basic/1-compositional/separator.js
 	dependencies: [Control]
 status:
-	implemented: false
-	notes: Required for toolbar/menu/form section division.
+	implemented: true
+	notes: >
+		Lightweight implementation in 0-core with horizontal/vertical orientation,
+		aria-orientation support. Current tier ~T1. Missing variant styles (dashed,
+		inset), density support.
 purpose:
 	summary: Provides visual separation in horizontal/vertical orientation.
 	use_cases:
@@ -497,10 +525,10 @@ accessibility:
 	focus:
 		- Not focusable.
 styling:
-	css_classes: [separator, separator-horizontal, separator-vertical, separator-inset]
+	css_classes: [jsgui-separator, separator-horizontal, separator-vertical, separator-inset]
 	tokens:
-		- --admin-border
-		- --admin-muted
+		- --j-border
+		- --j-fg-muted
 	density_support: [comfortable, compact]
 acceptance:
 	e2e:
@@ -524,8 +552,12 @@ control:
 	proposed_file: controls/organised/1-standard/5-ui/split_button.js
 	dependencies: [Button, Popup_Menu_Button, Context_Menu]
 status:
-	implemented: false
-	notes: Primary action + secondary dropdown action list.
+	implemented: true
+	notes: >
+		182-line implementation with primary button, trigger button, popup menu,
+		aria-haspopup/expanded, menu_open_change event, outside-click close.
+		Current tier ~T1. Missing keyboard nav (ArrowDown, Escape), variants
+		(primary, danger, toolbar), focus management.
 purpose:
 	summary: Combines a default action button with adjacent menu trigger.
 	use_cases:
@@ -599,13 +631,13 @@ accessibility:
 	focus:
 		- Segments are individually tabbable or roving (configurable).
 styling:
-	css_classes: [split-button, split-button-primary, split-button-trigger, split-button-open]
+	css_classes: [jsgui-split-button, split-button-primary, split-button-trigger, split-button-menu, split-button-menu-item, split-button-open, split-button-disabled]
 	tokens:
-		- --admin-accent
-		- --admin-border
-		- --admin-text
-		- --admin-hover
-		- --admin-danger
+		- --j-primary
+		- --j-border
+		- --j-fg
+		- --j-bg-hover
+		- --j-danger
 acceptance:
 	e2e:
 		- Primary segment emits default action.
@@ -629,8 +661,11 @@ control:
 	proposed_file: controls/organised/1-standard/5-ui/link_button.js
 	dependencies: [Button]
 status:
-	implemented: false
-	notes: Text-link visual, button semantics.
+	implemented: true
+	notes: >
+		88-line implementation with text, underline modes (none/hover/always),
+		disabled state, action event. Current tier ~T1. Missing variants (subtle,
+		danger), icon support.
 purpose:
 	summary: A button that visually resembles a hyperlink while preserving button behavior.
 	use_cases:
@@ -682,12 +717,12 @@ accessibility:
 	focus:
 		- Visible focus indicator independent of underline.
 styling:
-	css_classes: [link-button, link-button-danger, link-button-disabled]
+	css_classes: [jsgui-link-button, link-button-danger, link-button-disabled]
 	tokens:
-		- --admin-accent
-		- --admin-text
-		- --admin-danger
-		- --admin-muted
+		- --j-primary
+		- --j-fg
+		- --j-danger
+		- --j-fg-muted
 acceptance:
 	e2e:
 		- Enter/Space activation parity with click.
@@ -710,8 +745,12 @@ control:
 	proposed_file: controls/organised/1-standard/5-ui/icon_button.js
 	dependencies: [Button, Icon, Tooltip]
 status:
-	implemented: false
-	notes: Icon-only action button for toolbars and compact actions.
+	implemented: true
+	notes: >
+		122-line implementation with icon, aria-label, tooltip, toggle/pressed
+		state, disabled state, action event. Current tier ~T1. Missing variants
+		(filled, subtle, danger, toolbar), size variants (sm/md/lg), focus-visible
+		styling improvements.
 purpose:
 	summary: Compact icon-only button with mandatory accessible labeling.
 	use_cases:
@@ -776,13 +815,13 @@ accessibility:
 	focus:
 		- Always visible focus ring; not color-only indication.
 styling:
-	css_classes: [icon-button, icon-button-toolbar, icon-button-danger, icon-button-pressed]
+	css_classes: [jsgui-icon-button, icon-button-icon, icon-button-toolbar, icon-button-danger, icon-button-pressed, icon-button-disabled]
 	tokens:
-		- --admin-accent
-		- --admin-border
-		- --admin-text
-		- --admin-hover
-		- --admin-danger
+		- --j-primary
+		- --j-border
+		- --j-fg
+		- --j-bg-hover
+		- --j-danger
 acceptance:
 	e2e:
 		- Fails validation if aria_label missing.
@@ -805,8 +844,11 @@ control:
 	proposed_file: controls/organised/1-standard/1-editor/code_editor.js
 	dependencies: [Control, Scrollbar]
 status:
-	implemented: false
-	notes: Lightweight editor surface for JSON/schema/event tabs in form builder.
+	implemented: true
+	notes: >
+		~130-line implementation with line numbers, value management, language
+		hint, basic selection. Current tier ~T1. Missing syntax highlighting,
+		minimap, undo/redo stack, format_document, cursor_change event.
 purpose:
 	summary: Embedded code editing control with line numbers, selection, and change events.
 	use_cases:
@@ -894,13 +936,13 @@ accessibility:
 	focus:
 		- Single internal focus target for keyboard editing.
 styling:
-	css_classes: [code-editor, code-editor-gutter, code-editor-surface, code-editor-readonly, code-editor-dirty]
+	css_classes: [jsgui-code-editor, code-editor-gutter, code-editor-surface, code-editor-readonly, code-editor-dirty]
 	tokens:
-		- --admin-card-bg
-		- --admin-text
-		- --admin-muted
-		- --admin-border
-		- --admin-accent
+		- --j-bg-elevated
+		- --j-fg
+		- --j-fg-muted
+		- --j-border
+		- --j-primary
 acceptance:
 	e2e:
 		- Typing emits change with source=user.
@@ -919,14 +961,17 @@ spec_version: "1.0"
 control:
 	class_name: Console_Panel
 	type_name: console_panel
-	category: 1-standard/4-data
+	category: 1-standard/5-ui
 	priority: P0
 	target_tier: T3
-	proposed_file: controls/organised/1-standard/4-data/console_panel.js
+	proposed_file: controls/organised/1-standard/5-ui/console_panel.js
 	dependencies: [Control, Scroll_View, Text_Input, Button, Badge]
 status:
-	implemented: false
-	notes: Terminal-like output + command input from admin console SVG.
+	implemented: true
+	notes: >
+		~100-line implementation with output viewport, prompt input,
+		append_line/clear methods, auto-scroll. Current tier ~T1. Missing
+		command history, level-based styling, max_lines cap, batch append.
 purpose:
 	summary: Shows streaming log output and supports command entry/dispatch.
 	use_cases:
@@ -1003,14 +1048,14 @@ accessibility:
 	focus:
 		- Prompt input receives focus on panel activation by default.
 styling:
-	css_classes: [console-panel, console-output, console-line, console-prompt, console-input, console-level-error]
+	css_classes: [jsgui-console-panel, console-output, console-line, console-prompt, console-input, console-level-error, console-level-warn, console-level-info, console-level-debug]
 	tokens:
-		- --admin-card-bg
-		- --admin-text
-		- --admin-muted
-		- --admin-danger
-		- --admin-success
-		- --admin-warning
+		- --j-bg-elevated
+		- --j-fg
+		- --j-fg-muted
+		- --j-danger
+		- --j-success
+		- --j-warning
 acceptance:
 	e2e:
 		- Appending lines respects max_lines cap.
@@ -1035,8 +1080,11 @@ control:
 	proposed_file: controls/organised/1-standard/1-editor/form_designer.js
 	dependencies: [Control, Grid, Split_Pane, Toolbox, Property_Grid, Code_Editor]
 status:
-	implemented: false
-	notes: Composite WYSIWYG builder (canvas + selection handles + properties + source sync).
+	implemented: true
+	notes: >
+		~170-line implementation with canvas region, palette region, properties
+		region, basic drag/drop skeleton. Current tier ~T1. Missing schema sync,
+		undo/redo, resize handles, code preview, snapping, selection_change.
 purpose:
 	summary: Author, edit, and inspect form definitions through visual and source modes.
 	use_cases:
@@ -1129,18 +1177,13 @@ accessibility:
 	focus:
 		- Keyboard selection and movement possible without mouse.
 styling:
-	css_classes:
-		- form-designer
-		- form-designer-canvas
-		- form-designer-node
-		- form-designer-node-selected
-		- form-designer-handle
+	css_classes: [jsgui-form-designer, form-designer-canvas, form-designer-node, form-designer-node-selected, form-designer-handle, form-designer-palette, form-designer-properties]
 	tokens:
-		- --admin-card-bg
-		- --admin-border
-		- --admin-accent
-		- --admin-text
-		- --admin-muted
+		- --j-bg-elevated
+		- --j-border
+		- --j-primary
+		- --j-fg
+		- --j-fg-muted
 acceptance:
 	e2e:
 		- Drag/drop from palette creates expected schema node.
@@ -1168,8 +1211,11 @@ control:
 	proposed_file: controls/organised/1-standard/5-ui/filter_chips.js
 	dependencies: [Chip]
 status:
-	implemented: false
-	notes: Multi/single-select pill filters shown in toolbox icon-grid SVG.
+	implemented: true
+	notes: >
+		~175-line implementation with single/multi-select modes, chip rendering,
+		selection_change event, allow_none support. Current tier ~T1. Missing
+		scrollable variant, roving tabindex keyboard navigation, count badges.
 purpose:
 	summary: Presents compact selectable filter options with optional multi-select behavior.
 	use_cases:
@@ -1238,13 +1284,13 @@ accessibility:
 	focus:
 		- Roving tabindex across chips.
 styling:
-	css_classes: [filter-chips, filter-chip, filter-chip-selected, filter-chip-disabled]
+	css_classes: [jsgui-filter-chips, filter-chip, filter-chip-selected, filter-chip-disabled]
 	tokens:
-		- --admin-accent
-		- --admin-border
-		- --admin-text
-		- --admin-muted
-		- --admin-hover
+		- --j-primary
+		- --j-border
+		- --j-fg
+		- --j-fg-muted
+		- --j-bg-hover
 acceptance:
 	e2e:
 		- Single mode enforces one selected chip unless allow_none=true.

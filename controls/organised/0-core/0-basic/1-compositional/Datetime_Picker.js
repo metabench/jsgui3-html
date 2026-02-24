@@ -1,8 +1,8 @@
 const jsgui = require('../../../../../html-core/html-core');
 const { Control } = jsgui;
 const { is_defined } = jsgui;
-const Month_View = require('./month-view');
-const Time_Picker = require('./time-picker');
+const Month_View = require('./Month_View');
+const Time_Picker = require('./Time_Picker');
 
 const pad2 = n => String(n).padStart(2, '0');
 
@@ -131,81 +131,49 @@ class DateTime_Picker extends Control {
     // ── Composition ──
 
     compose() {
-        const { context } = this;
-        const cfg = this._cfg;
-
-        // ── Header with current selection ──
-        this._header = new Control({ context, tag_name: 'div' });
-        this._header.add_class('dtp-header');
-
-        this._date_display = new Control({ context, tag_name: 'span' });
-        this._date_display.add_class('dtp-date-display');
+        const { context, _cfg: cfg } = this;
+        const { tpl } = jsgui;
         const d = this._date;
-        this._date_display.add(`${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`);
-        this._header.add(this._date_display);
+        const date_str = `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
 
-        this._time_display = new Control({ context, tag_name: 'span' });
-        this._time_display.add_class('dtp-time-display');
-        this._time_display.add(this._time_str);
-        this._header.add(this._time_display);
+        // ── Create Sub-components ──
+        this._month_view = cfg.show_month_view ? new Month_View({
+            context, month: cfg.month, year: cfg.year,
+            min_date: cfg.min_date, max_date: cfg.max_date, selection_mode: 'single',
+        }) : null;
 
-        this.add(this._header);
-
-        // ── Body ──
-        this._body = new Control({ context, tag_name: 'div' });
-        this._body.add_class('dtp-body');
-
-        // ── Month View ──
-        if (cfg.show_month_view) {
-            this._month_view = new Month_View({
-                context,
-                month: cfg.month,
-                year: cfg.year,
-                min_date: cfg.min_date,
-                max_date: cfg.max_date,
-                selection_mode: 'single',
-            });
-            this._body.add(this._month_view);
-        }
-
-        // ── Time Picker ──
         this._time_picker = new Time_Picker({
-            context,
-            value: this._time_str,
-            show_clock: cfg.show_clock,
-            clock_size: cfg.clock_size,
-            clock_style: cfg.clock_style,
-            use_24h: cfg.use_24h,
-            show_seconds: cfg.show_seconds,
-            show_spinners: cfg.show_spinners,
-            step_minutes: cfg.step_minutes,
+            context, value: this._time_str,
+            show_clock: cfg.show_clock, clock_size: cfg.clock_size, clock_style: cfg.clock_style,
+            use_24h: cfg.use_24h, show_seconds: cfg.show_seconds,
+            show_spinners: cfg.show_spinners, step_minutes: cfg.step_minutes,
         });
-        this._body.add(this._time_picker);
 
-        this.add(this._body);
+        // ── Template Segments ──
+        const mv_tpl = this._month_view ? tpl`${this._month_view}` : '';
+        const tp_tpl = tpl`${this._time_picker}`;
 
-        // ── Tabbed layout toggles ──
-        if (cfg.layout === 'tabbed') {
-            this._tabs = new Control({ context, tag_name: 'div' });
-            this._tabs.add_class('dtp-tabs');
+        const tabs_tpl = cfg.layout === 'tabbed' ? tpl`
+            <div class="dtp-tabs">
+                <button class="dtp-tab dtp-tab-active" data-jsgui-ctrl="_tab_date" type="button">📅 Date</button>
+                <button class="dtp-tab" data-jsgui-ctrl="_tab_time" type="button">🕐 Time</button>
+            </div>
+        ` : '';
 
-            this._tab_date = new Control({ context, tag_name: 'button' });
-            this._tab_date.add_class('dtp-tab');
-            this._tab_date.add_class('dtp-tab-active');
-            this._tab_date.dom.attributes.type = 'button';
-            this._tab_date.add('📅 Date');
-            this._tabs.add(this._tab_date);
+        // ── Compose Layout ──
+        this.add(tpl`
+            <div class="dtp-header" data-jsgui-ctrl="_header">
+                <span class="dtp-date-display" data-jsgui-ctrl="_date_display">${date_str}</span>
+                <span class="dtp-time-display" data-jsgui-ctrl="_time_display">${this._time_str}</span>
+            </div>
+            ${tabs_tpl}
+            <div class="dtp-body">
+                ${mv_tpl}
+                ${tp_tpl}
+            </div>
+        `);
 
-            this._tab_time = new Control({ context, tag_name: 'button' });
-            this._tab_time.add_class('dtp-tab');
-            this._tab_time.dom.attributes.type = 'button';
-            this._tab_time.add('🕐 Time');
-            this._tabs.add(this._tab_time);
-
-            // Insert tabs before body
-            // (DOM ordering: header, tabs, body)
-            this.add(this._tabs);
-        }
+        this._wire_jsgui_ctrls();
     }
 
     // ── Change handler ──
@@ -229,42 +197,6 @@ class DateTime_Picker extends Control {
         });
     }
 
-    // ── Reconnect DOM refs for hydration (when compose was skipped) ──
-    _reconnect_from_dom() {
-        const el = this.dom.el;
-        if (!el) return;
-
-        const q = (cls) => {
-            const found = el.querySelector('.' + cls);
-            return found ? { dom: { el: found } } : null;
-        };
-
-        // Header displays
-        if (!this._date_display) this._date_display = q('dtp-date-display');
-        if (!this._time_display) this._time_display = q('dtp-time-display');
-
-        // Tab buttons
-        if (!this._tab_date) this._tab_date = q('dtp-tab');
-        if (!this._tab_time) {
-            const tabs = el.querySelectorAll('.dtp-tab');
-            if (tabs.length > 1) this._tab_time = { dom: { el: tabs[1] } };
-        }
-
-        // Read date from header display
-        if (this._date_display && this._date_display.dom.el) {
-            const text = this._date_display.dom.el.textContent.trim();
-            const m = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-            if (m) {
-                this._date = new Date(+m[1], +m[2] - 1, +m[3]);
-            }
-        }
-
-        // Read time from header display
-        if (this._time_display && this._time_display.dom.el) {
-            this._time_str = this._time_display.dom.el.textContent.trim();
-        }
-    }
-
     // ── Activation ──
 
     activate() {
@@ -272,8 +204,8 @@ class DateTime_Picker extends Control {
         super.activate();
         this._activated = true;
 
-        // Reconnect DOM references if hydrating
-        this._reconnect_from_dom();
+        // Auto-wire component DOM/VDOM tagged with data-jsgui-ctrl
+        this._wire_jsgui_ctrls();
 
         // Wire month view date selection to update our date
         if (this._month_view) {

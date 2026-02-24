@@ -3,14 +3,14 @@
 const jsgui = require('../../../../../html-core/html-core');
 const { Control } = jsgui;
 const Color_Value = require('../../../../../html-core/Color_Value');
-const Tabbed_Panel = require('../../../1-standard/6-layout/tabbed-panel');
+const Tabbed_Panel = require('../../../1-standard/6-layout/Tabbed_Panel');
 
 // Sub-controls
-const HSL_Wheel = require('./hsl-wheel');
-const Gradient_Area = require('./gradient-area');
-const Channel_Sliders = require('./channel-sliders');
-const Hex_Input = require('./hex-input');
-const Swatch_Grid = require('./swatch-grid');
+const HSL_Wheel = require('./Hsl_Wheel');
+const Gradient_Area = require('./Gradient_Area');
+const Channel_Sliders = require('./Channel_Sliders');
+const Hex_Input = require('./Hex_Input');
+const Swatch_Grid = require('./Swatch_Grid');
 
 /**
  * Variant presets — pre-configured mode combinations.

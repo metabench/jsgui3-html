@@ -3,8 +3,8 @@
  * and sanitized paste handling.
  */
 const Control = require('../../../../html-core/control');
-const Rich_Text_Toolbar = require('./rich_text_toolbar');
-const Textarea = require('../../0-core/0-basic/0-native-compositional/textarea');
+const Rich_Text_Toolbar = require('./Rich_Text_Toolbar');
+const Textarea = require('../../0-core/0-basic/0-native-compositional/Textarea');
 const is_defined = value => value !== undefined && value !== null;
 const escape_html = value => String(value || '')
     .replace(/&/g, '&amp;')

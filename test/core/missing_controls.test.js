@@ -105,9 +105,9 @@ describe('Missing Controls', () => {
             });
 
             const html = progress_bar.html;
-            expect(html).to.include('<progress');
-            expect(html).to.include('value="40"');
-            expect(html).to.include('max="100"');
+            expect(html).to.include('role="progressbar"');
+            expect(html).to.include('aria-valuenow="40"');
+            expect(html).to.include('aria-valuemax="100"');
         });
     });
 
@@ -144,7 +144,7 @@ describe('Missing Controls', () => {
             const change_spy = sinon.spy();
             toggle_switch.on('change', change_spy);
 
-            const input_el = document.querySelector('.toggle-switch-input');
+            const input_el = document.querySelector('.jsgui-toggle-input');
             input_el.checked = true;
             triggerEvent(input_el, 'change');
 
@@ -254,9 +254,9 @@ describe('Missing Controls', () => {
                 message: 'Hint'
             });
 
-            tooltip.show();
+            tooltip.show(true);
             expect(tooltip.dom.attributes['aria-hidden']).to.equal('false');
-            tooltip.hide();
+            tooltip.hide(true);
             expect(tooltip.dom.attributes['aria-hidden']).to.equal('true');
         });
     });

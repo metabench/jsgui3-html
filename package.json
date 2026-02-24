@@ -63,5 +63,5 @@
     "jsgui3-server": "^0.0.143",
     "puppeteer": "^24.37.2"
   },
-  "version": "0.0.184"
+  "version": "0.0.185"
 }

@@ -53,6 +53,10 @@ class Data_Filter extends Control {
         this.add_class('jsgui-data-filter');
         this.dom.tagName = 'div';
 
+        // ARIA: group semantics
+        this.dom.attributes.role = 'group';
+        this.dom.attributes['aria-label'] = 'Data filters';
+
         this._fields = cfg_fields.map(f =>
             typeof f === 'string' ? { name: f, label: f, type: 'string' } : {
                 name: f.name,
@@ -141,6 +145,20 @@ class Data_Filter extends Control {
             operator: r.operator,
             value: r.value
         }));
+    }
+
+    /**
+     * Get filters in map format compatible with Data_Grid.set_filters().
+     * @returns {Object} e.g. {name: {op: 'contains', value: 'Alice'}, role: {op: 'equals', value: 'admin'}}
+     */
+    get_filter_map() {
+        const map = {};
+        this._filter_rows.forEach(r => {
+            if (r.field && r.value !== '') {
+                map[r.field] = { op: r.operator, value: r.value };
+            }
+        });
+        return map;
     }
 
     clear() {
@@ -241,15 +259,18 @@ class Data_Filter extends Control {
     _update_empty_state() {
         if (this._empty_msg) {
             if (this._filter_rows.length > 0) {
-                this._empty_msg.dom.attributes.style.display = 'none';
+                this._empty_msg.add_class('data-filter-empty-hidden');
             } else {
-                this._empty_msg.dom.attributes.style.display = '';
+                this._empty_msg.remove_class('data-filter-empty-hidden');
             }
         }
     }
 
     _fire_change() {
-        this.raise('change', { filters: this.get_filters() });
+        const filters = this.get_filters();
+        const filter_map = this.get_filter_map();
+        this.raise('change', { filters });
+        this.raise('filter_change', { filters: filter_map });
     }
 
     _match(item, filter) {
@@ -434,6 +455,9 @@ Data_Filter.css = `
     color: var(--admin-muted, #888);
     font-style: italic;
     padding: 6px 0;
+}
+.data-filter-empty-hidden {
+    display: none;
 }
 `;
 

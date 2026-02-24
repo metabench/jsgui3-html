@@ -30,7 +30,7 @@ const are_equal = jsgui.are_equal || function(a, b) {
 };
 const {Control, Text_Node} = controls;
 
-const Button = require('../0-basic/0-native-compositional/button');
+const Button = require('../0-basic/0-native-compositional/Button');
 
 const {field, prop} = require('obext');
 const press_events = require('./../../../../control_mixins/press-events');

@@ -1,5 +1,5 @@
 const jsgui = require('../../../../../html-core/html-core');
-const Color_Grid = require('./color-grid');
+const Color_Grid = require('./Color_Grid');
 const { v_subtract } = jsgui;
 var Control = jsgui.Control;
 const {

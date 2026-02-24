@@ -23,8 +23,8 @@
 const jsgui = require('../../../../html-core/html-core');
 const { Control } = jsgui;
 const { is_defined } = jsgui;
-const Stat_Card = require('./stat_card');
-const Sparkline = require('./sparkline');
+const Stat_Card = require('./Stat_Card');
+const Sparkline = require('./Sparkline');
 
 class Status_Dashboard extends Control {
     constructor(spec = {}) {
@@ -39,11 +39,41 @@ class Status_Dashboard extends Control {
         this._columns = spec.columns || null;
         this._on_refresh = typeof spec.on_refresh === 'function' ? spec.on_refresh : null;
 
+        // ── Adaptive layout options (all overridable) ──
+        this.layout_mode = spec.layout_mode || 'auto';
+        this.phone_breakpoint = is_defined(spec.phone_breakpoint) ? spec.phone_breakpoint : 600;
+        // Minimum card width — smaller on phone for 2-column fit
+        this.min_card_width = spec.min_card_width || 200;
+        this.phone_min_card_width = spec.phone_min_card_width || 140;
+
         if (spec.theme) {
             this.dom.attributes['data-admin-theme'] = spec.theme;
         }
 
         if (!spec.el) this.compose();
+    }
+
+    /**
+     * Resolve the current layout mode.
+     * @returns {'phone'|'tablet'|'desktop'}
+     */
+    resolve_layout_mode() {
+        if (this.layout_mode && this.layout_mode !== 'auto') return this.layout_mode;
+        const env = this.context && this.context.view_environment;
+        if (env && env.layout_mode) return env.layout_mode;
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth <= this.phone_breakpoint) return 'phone';
+        }
+        return 'desktop';
+    }
+
+    /**
+     * Apply adaptive layout mode attribute.
+     */
+    _apply_layout_mode() {
+        const el = this.dom && this.dom.el;
+        if (!el) return;
+        el.setAttribute('data-layout-mode', this.resolve_layout_mode());
     }
 
     /**
@@ -176,6 +206,13 @@ class Status_Dashboard extends Control {
             super.activate();
             if (!this.dom.el) return;
 
+            // ── Adaptive layout ──
+            this._apply_layout_mode();
+            if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
+                this._resize_handler = () => this._apply_layout_mode();
+                window.addEventListener('resize', this._resize_handler);
+            }
+
             // Refresh button click
             this.add_dom_event_listener('click', e => {
                 let target = e.target;
@@ -261,6 +298,26 @@ Status_Dashboard.css = `
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--admin-muted, #94a3b8);
+}
+
+/* ── Phone: smaller card minimum for 2-column fit, compact padding ── */
+.jsgui-status-dashboard[data-layout-mode="phone"] .sd-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 8px;
+    padding: 10px;
+}
+.jsgui-status-dashboard[data-layout-mode="phone"] .sd-header {
+    padding: 8px 10px;
+}
+.jsgui-status-dashboard[data-layout-mode="phone"] .sd-refresh {
+    min-width: var(--j-touch-target, 44px);
+    min-height: var(--j-touch-target, 44px);
+}
+
+/* ── Tablet: touch-sized refresh button ── */
+.jsgui-status-dashboard[data-layout-mode="tablet"] .sd-refresh {
+    min-width: 36px;
+    min-height: 36px;
 }
 `;
 

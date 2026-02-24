@@ -1,12 +1,17 @@
 const jsgui = require('../../../../html-core/html-core');
+const { Control, tpl, is_defined } = jsgui;
+const Data_Model_View_Model_Control = require('../../../../html-core/Data_Model_View_Model_Control');
 
-const { Control } = jsgui;
-const { is_defined } = jsgui;
+const fields = [
+    ['page', Number],
+    ['page_count', Number],
+    ['page_size', Number]
+];
 
-class Pagination extends Control {
+class Pagination extends Data_Model_View_Model_Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'pagination';
-        super(spec);
+        super(spec, fields);
         this.add_class('pagination');
         this.dom.tagName = 'nav';
         this.dom.attributes['aria-label'] = 'Pagination';
@@ -15,56 +20,54 @@ class Pagination extends Control {
         this.page_count = is_defined(spec.page_count) ? Number(spec.page_count) : 1;
         this.page_size = is_defined(spec.page_size) ? Number(spec.page_size) : undefined;
 
+        this.on('change', e => {
+            if (e.name === 'page' || e.name === 'page_count') {
+                this.render_pages();
+            }
+        });
+
         if (!spec.el) {
             this.compose();
         }
     }
 
     compose() {
-        const { context } = this;
-        const list_ctrl = new Control({ context });
-        list_ctrl.dom.tagName = 'ul';
-        list_ctrl.add_class('pagination-list');
-
-        this._ctrl_fields = this._ctrl_fields || {};
-        this._ctrl_fields.list = list_ctrl;
-
-        this.add(list_ctrl);
+        tpl`<ul class="pagination-list" data-jsgui-ctrl="list"></ul>`.mount(this);
+        this._wire_jsgui_ctrls();
         this.render_pages();
     }
 
     render_pages() {
-        const list_ctrl = this._ctrl_fields && this._ctrl_fields.list;
+        const list_ctrl = this.list;
         if (!list_ctrl) return;
 
         list_ctrl.clear();
-
         const total_pages = Math.max(1, this.page_count || 1);
         const current_page = Math.min(Math.max(1, this.page || 1), total_pages);
-        this.page = current_page;
+
+        // Synchronize state safely without infinite loops
+        if (this.page !== current_page) {
+            this.page = current_page;
+        }
 
         const add_button = (label, page, disabled, is_current) => {
-            const li_ctrl = new Control({ context: this.context });
-            li_ctrl.dom.tagName = 'li';
-            li_ctrl.add_class('pagination-item');
+            const current_class = is_current ? 'is-current' : '';
 
-            const button_ctrl = new Control({ context: this.context });
-            button_ctrl.dom.tagName = 'button';
-            button_ctrl.dom.attributes.type = 'button';
-            button_ctrl.dom.attributes['data-page'] = String(page);
-            button_ctrl.add_class('pagination-button');
+            // Mount the button template onto a temporary fragment, or parse it directly 
+            // 'mount' returns an array of top-level controls instantiated
+            const parsed_controls = tpl`
+                <li class="pagination-item">
+                    <button type="button" data-page="${page}" class="pagination-button ${current_class}">
+                        ${String(label)}
+                    </button>
+                </li>
+            `.mount(list_ctrl);
 
-            if (disabled) {
-                button_ctrl.dom.attributes.disabled = 'disabled';
-            }
-            if (is_current) {
-                button_ctrl.dom.attributes['aria-current'] = 'page';
-                button_ctrl.add_class('is-current');
-            }
+            const li = parsed_controls[0];
+            const btn = li.content._arr[0]; // Retrieve the nested button
 
-            button_ctrl.add(String(label));
-            li_ctrl.add(button_ctrl);
-            list_ctrl.add(li_ctrl);
+            if (disabled) btn.dom.attributes.disabled = 'disabled';
+            if (is_current) btn.dom.attributes['aria-current'] = 'page';
         };
 
         add_button('Prev', current_page - 1, current_page <= 1, false);
@@ -82,7 +85,6 @@ class Pagination extends Control {
         const next_page = Number(page);
         if (!Number.isFinite(next_page)) return;
         this.page = next_page;
-        this.render_pages();
         this.raise('page_change', { page: this.page, page_count: this.page_count });
     }
 
@@ -94,13 +96,12 @@ class Pagination extends Control {
         const next_count = Number(page_count);
         if (!Number.isFinite(next_count)) return;
         this.page_count = Math.max(1, next_count);
-        this.render_pages();
     }
 
     activate() {
         if (!this.__active) {
             super.activate();
-            const list_ctrl = this._ctrl_fields && this._ctrl_fields.list;
+            const list_ctrl = this.list;
             if (!list_ctrl || !list_ctrl.dom.el) return;
 
             list_ctrl.add_dom_event_listener('click', e_click => {

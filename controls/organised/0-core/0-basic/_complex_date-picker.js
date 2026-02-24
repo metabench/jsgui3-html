@@ -23,8 +23,8 @@ const Control = jsgui.Control;
 
 
 
-const Left_Right_Arrows_Selector = require('../../1-standard/2-misc/left-right-arrows-selector');
-const Month_View = require('./1-compositional/month-view');
+const Left_Right_Arrows_Selector = require('../../1-standard/2-misc/Left_Right_Arrows_Selector');
+const Month_View = require('./1-compositional/Month_View');
 
 // Be able to display as the standard HTML date picker control, bearing in mind its relatively recent.
 //  Should be available on all platforms this will be used on. ??

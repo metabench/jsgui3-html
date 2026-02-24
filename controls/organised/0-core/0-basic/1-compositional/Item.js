@@ -7,7 +7,7 @@ const {prop, field} = require('obext');
 //  Expandable
 //  Inner space?
 
-const Icon = require('../0-native-compositional/icon');
+const Icon = require('../0-native-compositional/Icon');
 
 // May move the left_right creator function elsewhere.
 // Control and multi-control creation functions.

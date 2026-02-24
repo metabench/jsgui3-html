@@ -13,7 +13,7 @@ const Text_Node = require('./text-node');
 var Control_Core = require('./control-core');
 const has_window = typeof window !== 'undefined';
 const gfx = require('jsgui3-gfx-core');
-const {Rect} = gfx;
+const { Rect } = gfx;
 
 
 // Or can't load them at the very start?
@@ -43,14 +43,14 @@ const desc = (ctrl, callback) => {
 		var content = ctrl.get('content');
 		if (content) {
 			var t_content = typeof content;
-			if (t_content === 'string' || t_content === 'number') {} else {
+			if (t_content === 'string' || t_content === 'number') { } else {
 				var arr = content._arr;
 				var c, l = arr.length;
 				var item, t_item;
 				for (c = 0; c < l; c++) {
 					item = arr[c];
 					t_item = typeof item;
-					if (t_item === 'string' || t_item === 'numbers') {} else {
+					if (t_item === 'string' || t_item === 'numbers') { } else {
 						callback(arr[c]);
 						desc(arr[c], callback);
 					}
@@ -150,7 +150,7 @@ class Control extends Control_Core {
 				//console.log('props', props);
 				let exempt_prop_names = {}
 				each(props, (v, i) => {
-					if (exempt_prop_names[i]) {} else {
+					if (exempt_prop_names[i]) { } else {
 						//spec[i] = v;
 						this._persisted_fields[i] = v;
 
@@ -172,7 +172,7 @@ class Control extends Control_Core {
 			this.compose_using_compositional_model();
 		}
 		this.view.ui.compositional.on('change', e => {
-			const {name} = e;
+			const { name } = e;
 			if (name === 'model') {
 				this.recompose_using_compositional_model();
 			}
@@ -206,83 +206,83 @@ class Control extends Control_Core {
 		this.content.clear();
 		this.compose_using_compositional_model();
 	}
-		compose_using_compositional_model() {
-			let cm;
-			const {context} = this;
-			if (this.view.ui.compositional.model) {
-				cm = this.view.ui.compositional.model;
-			}
-			const tcm = tof(cm);
-			const compose_from_compositional_model_array = (arr_cm) => {
-				const l = arr_cm.length;
-				if (l > 0) {
-					for (let c = 0; c < l; c++) {
-						const composition_item = arr_cm[c];
-						const tci = tof(composition_item);
-						if (tci === 'function') {
-							const ctrl = new composition_item({context});
-							this.add(ctrl);
-						} else if (tci === 'control') {
-							if (!composition_item.context) composition_item.context = context;
-							this.add(composition_item);
-						} else if (tci === 'string' || tci === 'number' || tci === 'boolean') {
-							this.add('' + composition_item);
-						} else if (tci === 'array') { 
-							if (composition_item.length === 2) {
-								const [t0, t1] = [tof(composition_item[0]), tof(composition_item[1])];
-								if (t0 === 'function' && t1 === 'object') {
-									const ctrl_spec = composition_item[1];
-									ctrl_spec.context = ctrl_spec.context || context;
-									const ctrl = new composition_item[0](ctrl_spec);
-									this.add(ctrl);
-								} else if (t0 === 'string' && t1 === 'function') {
-									const ctrl = new composition_item[1]({context});
-									this.add(ctrl);
-									this._ctrl_fields = this._ctrl_fields || {};
-									this._ctrl_fields[composition_item[0]] = ctrl;
-									this[composition_item[0]] = ctrl;
-								} else if (t0 === 'string' && t1 === 'control') {
-									const ctrl = composition_item[1];
-									if (!ctrl.context) ctrl.context = context;
-									this.add(ctrl);
-									this._ctrl_fields = this._ctrl_fields || {};
-									this._ctrl_fields[composition_item[0]] = ctrl;
-									this[composition_item[0]] = ctrl;
-								} else {
-									throw new Error('compose_using_compositional_model: Unsupported composition item (length 2)');
-								}
-							} else if (composition_item.length === 3) {
-								const [t0, t1, t2] = [tof(composition_item[0]), tof(composition_item[1]), tof(composition_item[2])];
-								if ((t0 === 'string') && (t1 === 'function') && t2 === 'object') {
-									const ctrl_spec = composition_item[2];
-									ctrl_spec.context = ctrl_spec.context || context;
-									const ctrl = new composition_item[1](ctrl_spec);
-									this.add(ctrl);
-									this._ctrl_fields = this._ctrl_fields || {};
-									this._ctrl_fields[composition_item[0]] = ctrl;
-									this[composition_item[0]] = ctrl;
-								} else if ((t0 === 'string') && (t1 === 'control') && t2 === 'object') {
-									const ctrl = composition_item[1];
-									if (!ctrl.context) ctrl.context = context;
-									this.add(ctrl);
-									this._ctrl_fields = this._ctrl_fields || {};
-									this._ctrl_fields[composition_item[0]] = ctrl;
-									this[composition_item[0]] = ctrl;
-								} else {
-									throw new Error('compose_using_compositional_model: Unsupported composition item (length 3)');
-								}
+	compose_using_compositional_model() {
+		let cm;
+		const { context } = this;
+		if (this.view.ui.compositional.model) {
+			cm = this.view.ui.compositional.model;
+		}
+		const tcm = tof(cm);
+		const compose_from_compositional_model_array = (arr_cm) => {
+			const l = arr_cm.length;
+			if (l > 0) {
+				for (let c = 0; c < l; c++) {
+					const composition_item = arr_cm[c];
+					const tci = tof(composition_item);
+					if (tci === 'function') {
+						const ctrl = new composition_item({ context });
+						this.add(ctrl);
+					} else if (tci === 'control') {
+						if (!composition_item.context) composition_item.context = context;
+						this.add(composition_item);
+					} else if (tci === 'string' || tci === 'number' || tci === 'boolean') {
+						this.add('' + composition_item);
+					} else if (tci === 'array') {
+						if (composition_item.length === 2) {
+							const [t0, t1] = [tof(composition_item[0]), tof(composition_item[1])];
+							if (t0 === 'function' && t1 === 'object') {
+								const ctrl_spec = composition_item[1];
+								ctrl_spec.context = ctrl_spec.context || context;
+								const ctrl = new composition_item[0](ctrl_spec);
+								this.add(ctrl);
+							} else if (t0 === 'string' && t1 === 'function') {
+								const ctrl = new composition_item[1]({ context });
+								this.add(ctrl);
+								this._ctrl_fields = this._ctrl_fields || {};
+								this._ctrl_fields[composition_item[0]] = ctrl;
+								this[composition_item[0]] = ctrl;
+							} else if (t0 === 'string' && t1 === 'control') {
+								const ctrl = composition_item[1];
+								if (!ctrl.context) ctrl.context = context;
+								this.add(ctrl);
+								this._ctrl_fields = this._ctrl_fields || {};
+								this._ctrl_fields[composition_item[0]] = ctrl;
+								this[composition_item[0]] = ctrl;
 							} else {
-								throw new Error('compose_using_compositional_model: Unsupported composition item length: ' + composition_item.length);
+								throw new Error('compose_using_compositional_model: Unsupported composition item (length 2)');
 							}
+						} else if (composition_item.length === 3) {
+							const [t0, t1, t2] = [tof(composition_item[0]), tof(composition_item[1]), tof(composition_item[2])];
+							if ((t0 === 'string') && (t1 === 'function') && t2 === 'object') {
+								const ctrl_spec = composition_item[2];
+								ctrl_spec.context = ctrl_spec.context || context;
+								const ctrl = new composition_item[1](ctrl_spec);
+								this.add(ctrl);
+								this._ctrl_fields = this._ctrl_fields || {};
+								this._ctrl_fields[composition_item[0]] = ctrl;
+								this[composition_item[0]] = ctrl;
+							} else if ((t0 === 'string') && (t1 === 'control') && t2 === 'object') {
+								const ctrl = composition_item[1];
+								if (!ctrl.context) ctrl.context = context;
+								this.add(ctrl);
+								this._ctrl_fields = this._ctrl_fields || {};
+								this._ctrl_fields[composition_item[0]] = ctrl;
+								this[composition_item[0]] = ctrl;
+							} else {
+								throw new Error('compose_using_compositional_model: Unsupported composition item (length 3)');
+							}
+						} else {
+							throw new Error('compose_using_compositional_model: Unsupported composition item length: ' + composition_item.length);
 						}
 					}
 				}
 			}
-			if (tcm === 'array') {
+		}
+		if (tcm === 'array') {
 			compose_from_compositional_model_array(cm);
 		}
 	}
-	'ctrls' (obj_ctrls) {
+	'ctrls'(obj_ctrls) {
 		this._ctrl_fields = this._ctrl_fields || {};
 		let cf = this._ctrl_fields;
 		each(obj_ctrls, (ctrl, name) => {
@@ -291,7 +291,7 @@ class Control extends Control_Core {
 		});
 		return this;
 	}
-	'bcr' () {
+	'bcr'() {
 		var a = arguments;
 		a.l = a.length;
 		var sig = get_a_sig(a, 1);
@@ -321,7 +321,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	'add_text' (value) {
+	'add_text'(value) {
 		var tn = new Text_Node({
 			'context': this.context,
 			'text': value + ''
@@ -329,7 +329,7 @@ class Control extends Control_Core {
 		this.add(tn);
 		return tn;
 	}
-	'computed_style' () {
+	'computed_style'() {
 		var a = arguments;
 		a.l = a.length;
 		var sig = get_a_sig(a, 1);
@@ -344,7 +344,7 @@ class Control extends Control_Core {
 			return y;
 		}
 	}
-	'padding' () {
+	'padding'() {
 		var a = arguments;
 		a.l = a.length;
 		var sig = get_a_sig(a, 1);
@@ -363,28 +363,28 @@ class Control extends Control_Core {
 			throw 'Required argument: (array)'
 		}
 	}
-		'border' () {
-			var a = arguments;
-			a.l = arguments.length;
-			var sig = get_a_sig(a, 1);
-			if (sig == '[]') {
-				if (!has_window) return;
-				if (!this.dom.el) return;
-				const parse_px = (value) => {
-					const parsed = parseFloat(value);
-					return Number.isFinite(parsed) ? parsed : 0;
-				};
-				const left = parse_px(this.computed_style('border-left-width') || 0);
-				const top = parse_px(this.computed_style('border-top-width') || 0);
-				const right = parse_px(this.computed_style('border-right-width') || 0);
-				const bottom = parse_px(this.computed_style('border-bottom-width') || 0);
-				return [left, top, right, bottom];
-			} else {
-				console.trace();
-				throw 'Required argument: (array)'
-			}
+	'border'() {
+		var a = arguments;
+		a.l = arguments.length;
+		var sig = get_a_sig(a, 1);
+		if (sig == '[]') {
+			if (!has_window) return;
+			if (!this.dom.el) return;
+			const parse_px = (value) => {
+				const parsed = parseFloat(value);
+				return Number.isFinite(parsed) ? parsed : 0;
+			};
+			const left = parse_px(this.computed_style('border-left-width') || 0);
+			const top = parse_px(this.computed_style('border-top-width') || 0);
+			const right = parse_px(this.computed_style('border-right-width') || 0);
+			const bottom = parse_px(this.computed_style('border-bottom-width') || 0);
+			return [left, top, right, bottom];
+		} else {
+			console.trace();
+			throw 'Required argument: (array)'
 		}
-	'border_thickness' () {
+	}
+	'border_thickness'() {
 		var a = arguments;
 		a.l = arguments.length;
 		var sig = get_a_sig(a, 1);
@@ -397,7 +397,7 @@ class Control extends Control_Core {
 			return thickness;
 		}
 	}
-	'activate_recursive' () {
+	'activate_recursive'() {
 		var el = this.dom.el;
 		var context = this.context;
 		var map_controls = context.map_controls;
@@ -413,7 +413,48 @@ class Control extends Control_Core {
 			}
 		})
 	}
-	'add_dom_event_listener' (event_name, fn_handler) {
+	'_wire_jsgui_ctrls'() {
+		// Scans Content_Elements (VDOM) and connected map_controls to wire properties tagged with data-jsgui-ctrl
+		// Works smoothly isomorphic across client SSR hydration and server renders
+
+		const traverse = (ctrl) => {
+			if (!ctrl) return;
+			// Wire if the control itself has the tag
+			if (ctrl.dom && ctrl.dom.attributes) {
+				const ctrlName = ctrl.dom.attributes['data-jsgui-ctrl'];
+				if (ctrlName) {
+					this[ctrlName] = ctrl;
+				}
+			}
+
+			// Recurse down children
+			if (ctrl.content && ctrl.content._arr) {
+				ctrl.content._arr.forEach(child => traverse(child));
+			}
+		};
+
+		// If hydrating client-side from DOM, we can search the exact elements natively.
+		// Since parse_mount creates Controls and puts them in map_controls, we might as well scan native querySelector and pull from context.
+		if (typeof document !== 'undefined' && this.dom && this.dom.el) {
+			const els = Array.from(this.dom.el.querySelectorAll('[data-jsgui-ctrl]'));
+			els.forEach(el => {
+				const id = el.getAttribute('data-jsgui-id');
+				const ctrl_name = el.getAttribute('data-jsgui-ctrl');
+				if (id && this.context && this.context.map_controls[id]) {
+					this[ctrl_name] = this.context.map_controls[id];
+				} else if (ctrl_name) {
+					// Minimal stub fallback if map_controls missed it (e.g. no spec.el hydration setup)
+					this[ctrl_name] = { dom: { el } };
+				}
+			});
+		} else {
+			// Server-side or pure VDOM, traverse the content array
+			if (this.content && this.content._arr) {
+				this.content._arr.forEach(child => traverse(child));
+			}
+		}
+	}
+	'add_dom_event_listener'(event_name, fn_handler) {
 		if (has_window) {
 			const {
 				context
@@ -441,7 +482,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	'remove_dom_event_listener' (event_name, fn_handler) {
+	'remove_dom_event_listener'(event_name, fn_handler) {
 		if (has_window) {
 			const m = this.map_handlers_to_outer_handlers;
 			let outer_handler;
@@ -457,7 +498,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	'remove_event_listener' () {
+	'remove_event_listener'() {
 		const a = arguments;
 		const sig = get_a_sig(a, 1);
 		if (sig === '[s,f]') {
@@ -472,7 +513,7 @@ class Control extends Control_Core {
 			});
 		}
 	}
-	'add_event_listener' () {
+	'add_event_listener'() {
 		const a = arguments;
 		const l = a.length;
 		const sig = get_a_sig(a, 1);
@@ -499,7 +540,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	'once_active' (cb) {
+	'once_active'(cb) {
 		if (typeof document !== 'undefined') {
 			return prom_or_cb((solve, jettison) => {
 				if (this.__active) {
@@ -524,7 +565,7 @@ class Control extends Control_Core {
 					this.dom.el = found_el;
 				}
 			}
-			if (!this.dom.el) {} else {
+			if (!this.dom.el) { } else {
 				this.load_dom_attributes_from_dom();
 
 				//  reconstruct a special .view.data.model.mixins collection from the dom attributes.
@@ -532,7 +573,7 @@ class Control extends Control_Core {
 
 				if (this.dom.attributes["data-jsgui-mixins"] !== undefined) {
 					const str_mixins = this.dom.attributes["data-jsgui-mixins"]?.replace(/'/g, '"');
-					if(str_mixins) {
+					if (str_mixins) {
 						const o_mixins = JSON.parse(str_mixins);
 						//this.view.data.model.mixins.clear();
 						//each(mixins, mixin => {
@@ -552,8 +593,8 @@ class Control extends Control_Core {
 						//});
 						//console.log('o_mixins', o_mixins);
 
-							each(o_mixins, (mixin) => {
-							const {name, options} = mixin;
+						each(o_mixins, (mixin) => {
+							const { name, options } = mixin;
 
 							const converted_name = name.replace(/-/g, '_');
 
@@ -567,8 +608,8 @@ class Control extends Control_Core {
 								model_mixins.push(mixin);
 							}
 
-								const mixins = this.context && this.context.mixins;
-								const the_mixin = mixins ? mixins[converted_name] : undefined;
+							const mixins = this.context && this.context.mixins;
+							const the_mixin = mixins ? mixins[converted_name] : undefined;
 
 							//console.log('!!the_mixin', !!the_mixin);
 
@@ -609,9 +650,9 @@ class Control extends Control_Core {
 				this.add_content_change_event_listener();
 				this.add_dom_attributes_changes_listener();
 			}
-		} else {}
+		} else { }
 	}
-	'activate' (el) {
+	'activate'(el) {
 		if (typeof document !== 'undefined' && !this.__active) {
 			this.__active = true;
 			if (!this.dom.el) {
@@ -620,16 +661,16 @@ class Control extends Control_Core {
 					this.dom.el = found_el;
 				}
 			}
-			if (!this.dom.el) {} else {
+			if (!this.dom.el) { } else {
 				this.activate_content_controls();
 
 				// activate / load the mixins from the view model of them...???
 
 				this.raise('activate');
 			}
-		} else {}
+		} else { }
 	}
-	'add_dom_attributes_changes_listener' () {
+	'add_dom_attributes_changes_listener'() {
 		var dom_attributes = this.dom.attributes;
 		var el = this.dom.el;
 		dom_attributes.on('change', (e_change) => {
@@ -640,14 +681,14 @@ class Control extends Control_Core {
 			}
 		});
 	}
-	'activate_this_and_subcontrols' () {
+	'activate_this_and_subcontrols'() {
 		this.iterate_this_and_subcontrols((ctrl) => {
 			if (ctrl.dom.el) {
 				ctrl.activate();
 			}
 		});
 	}
-	'add_content_change_event_listener' () {
+	'add_content_change_event_listener'() {
 		const {
 			context
 		} = this;
@@ -696,7 +737,7 @@ class Control extends Control_Core {
 				if (t_item_dom_el === 'string') {
 					itemDomEl = document.createTextNode(itemDomEl);
 				}
-				if (!itemDomEl) {}
+				if (!itemDomEl) { }
 				if (itemDomEl) {
 					el.appendChild(itemDomEl);
 					e_change.item.register_this_and_subcontrols();
@@ -705,58 +746,58 @@ class Control extends Control_Core {
 				if (el) {
 					el.innerHTML = '';
 				}
-				} else if (type === 'remove') {
-					if (e_change.value.dom.el) {
-						e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
-					}
-				} else {
-					if (el) {
-						el.innerHTML = '';
-						this.content.each(item => {
-							let item_dom_el;
-							if (item instanceof Text_Node) {
-								item_dom_el = document.createTextNode(item.text || '');
-								item.dom.el = item_dom_el;
-							} else {
-								const retrieved_item_dom_el = item.dom && item.dom.el;
-								if (retrieved_item_dom_el) {
-									item_dom_el = retrieved_item_dom_el;
-								} else if (item && typeof item.all_html_render === 'function') {
-									let item_tag_name = 'div';
-									const dv_tag_name = item.dom && item.dom.tagName;
-									if (dv_tag_name) item_tag_name = dv_tag_name;
-									let temp_el;
-									if (item_tag_name === 'circle' || item_tag_name === 'line' || item_tag_name === 'polyline') {
-										const temp_svg_container = context.document.createElement('div');
-										temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + item.all_html_render() + '</svg>';
-										item_dom_el = temp_svg_container.childNodes[0].childNodes[0];
-									} else {
-										temp_el = context.document.createElement('div');
-										temp_el.innerHTML = item.all_html_render();
-										item_dom_el = temp_el.childNodes[0];
-									}
-									item.dom.el = item_dom_el;
-									if (item._id && typeof item._id === 'function') {
-										context.map_els[item._id()] = item_dom_el;
-									}
-								}
-							}
-							const t_item_dom_el = tof(item_dom_el);
-							if (t_item_dom_el === 'string') {
-								item_dom_el = document.createTextNode(item_dom_el);
-							}
-							if (item_dom_el) {
-								el.appendChild(item_dom_el);
-								if (item && typeof item.register_this_and_subcontrols === 'function') {
-									item.register_this_and_subcontrols();
-								}
-							}
-						});
-					}
+			} else if (type === 'remove') {
+				if (e_change.value.dom.el) {
+					e_change.value.dom.el.parentNode.removeChild(e_change.value.dom.el);
 				}
-			});
-		}
-	'rec_desc_ensure_ctrl_el_refs' (el) {
+			} else {
+				if (el) {
+					el.innerHTML = '';
+					this.content.each(item => {
+						let item_dom_el;
+						if (item instanceof Text_Node) {
+							item_dom_el = document.createTextNode(item.text || '');
+							item.dom.el = item_dom_el;
+						} else {
+							const retrieved_item_dom_el = item.dom && item.dom.el;
+							if (retrieved_item_dom_el) {
+								item_dom_el = retrieved_item_dom_el;
+							} else if (item && typeof item.all_html_render === 'function') {
+								let item_tag_name = 'div';
+								const dv_tag_name = item.dom && item.dom.tagName;
+								if (dv_tag_name) item_tag_name = dv_tag_name;
+								let temp_el;
+								if (item_tag_name === 'circle' || item_tag_name === 'line' || item_tag_name === 'polyline') {
+									const temp_svg_container = context.document.createElement('div');
+									temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + item.all_html_render() + '</svg>';
+									item_dom_el = temp_svg_container.childNodes[0].childNodes[0];
+								} else {
+									temp_el = context.document.createElement('div');
+									temp_el.innerHTML = item.all_html_render();
+									item_dom_el = temp_el.childNodes[0];
+								}
+								item.dom.el = item_dom_el;
+								if (item._id && typeof item._id === 'function') {
+									context.map_els[item._id()] = item_dom_el;
+								}
+							}
+						}
+						const t_item_dom_el = tof(item_dom_el);
+						if (t_item_dom_el === 'string') {
+							item_dom_el = document.createTextNode(item_dom_el);
+						}
+						if (item_dom_el) {
+							el.appendChild(item_dom_el);
+							if (item && typeof item.register_this_and_subcontrols === 'function') {
+								item.register_this_and_subcontrols();
+							}
+						}
+					});
+				}
+			}
+		});
+	}
+	'rec_desc_ensure_ctrl_el_refs'(el) {
 		el = el || this.dom.el;
 		var context = this.context;
 		if (el) {
@@ -779,14 +820,14 @@ class Control extends Control_Core {
 					if (map_els[id]) {
 						if (ctrl.dom.el !== map_els[id]) {
 							ctrl.dom.el = map_els[id];
-						} else {}
+						} else { }
 					}
 					ctrl.activate();
 				}
 			});
 		}
 	}
-	'rec_desc_activate' () {
+	'rec_desc_activate'() {
 		desc(this, ctrl => {
 			const t_ctrl = tof(ctrl);
 			if (t_ctrl === 'control') {
@@ -794,7 +835,7 @@ class Control extends Control_Core {
 			}
 		});
 	}
-	'activate_content_controls' () {
+	'activate_content_controls'() {
 		const do_activation = () => {
 			if (!this.dom.el) {
 				let found_el = this.context.get_ctrl_el(this);
@@ -831,14 +872,14 @@ class Control extends Control_Core {
 		}
 		do_activation();
 	}
-	'pre_activate_content_controls' () {
+	'pre_activate_content_controls'() {
 		// Reserved property names that must not be overwritten by _ctrl_fields hydration.
 		// These are getters, setters, or critical infrastructure on Control.
 		const _RESERVED_CTRL_KEYS = {
-			'left':1,'top':1,'html':1,'color':1,'size':1,'dom':1,'content':1,
-			'background':1,'disabled':1,'pos':1,'value':1,'context':1,'parent':1,
-			'style':1,'data':1,'view':1,'el':1,'tag':1,'internal_relative_div':1,
-			'this_and_descendents':1,'descendents':1,'siblings':1
+			'left': 1, 'top': 1, 'html': 1, 'color': 1, 'size': 1, 'dom': 1, 'content': 1,
+			'background': 1, 'disabled': 1, 'pos': 1, 'value': 1, 'context': 1, 'parent': 1,
+			'style': 1, 'data': 1, 'view': 1, 'el': 1, 'tag': 1, 'internal_relative_div': 1,
+			'this_and_descendents': 1, 'descendents': 1, 'siblings': 1
 		};
 		const do_pre_activation = () => {
 			if (!this.dom.el) {
@@ -926,7 +967,7 @@ class Control extends Control_Core {
 		}
 		do_pre_activation();
 	}
-	'load_dom_attributes_from_dom' () {
+	'load_dom_attributes_from_dom'() {
 		const el = this.dom.el;
 		const dom_attributes = this.dom.attributes;
 		let item, name, value, i;
@@ -954,7 +995,7 @@ class Control extends Control_Core {
 			}
 		}
 	}
-	'_search_descendents' (search) {
+	'_search_descendents'(search) {
 		const recursive_iterate = (ctrl, item_callback) => {
 			const content = ctrl.content,
 				t_content = tof(content);
@@ -972,11 +1013,11 @@ class Control extends Control_Core {
 			const item_type = item.__type_name;
 			if (item_type === search) {
 				arr_matching.push(item);
-			} else {}
+			} else { }
 		});
 		return arr_matching;
 	}
-	'_search_ancestor' (search) {
+	'_search_ancestor'(search) {
 		const parent = this.parent;
 		if (parent) {
 			if (parent === search) {
@@ -990,7 +1031,7 @@ class Control extends Control_Core {
 			return false;
 		}
 	}
-	'add' (new_content) {
+	'add'(new_content) {
 		const {
 			context
 		} = this;
@@ -1023,7 +1064,7 @@ class Control extends Control_Core {
 		}
 		return super.add(new_content);
 	}
-	'clear' () {
+	'clear'() {
 		const {
 			context
 		} = this;

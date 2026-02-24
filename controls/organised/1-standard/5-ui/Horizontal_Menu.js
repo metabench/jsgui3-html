@@ -16,7 +16,7 @@
 //   Can choose various things to do with appearance using .view
 
 var jsgui = require('../../../../html-core/html-core');
-var Menu_Node = require('../../0-core/0-basic/1-compositional/menu-node');
+var Menu_Node = require('../../0-core/0-basic/1-compositional/Menu_Node');
 const keyboard_navigation = require('../../../../control_mixins/keyboard_navigation');
 const {
 	apply_label,

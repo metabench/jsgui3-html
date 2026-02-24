@@ -44,6 +44,7 @@ Demonstrate MVVM data binding with server-side rendering:
 - **data-controls/** - Data table, data grid, virtualization, and collection controls
 - **layout-controls/** - Layout and navigation controls (split pane, tabs, drawer, stepper)
 - **form_editor_features/** - Form container, validation, input masks, autosize, rich text, object editor
+- **showcase_app/** - Polished control showcase with live Theme Studio (preset + token editor)
 
 ### Progressive Enhancement (`progressive/`)
 Demonstrates Activation tiers for native controls:

@@ -6,7 +6,7 @@ const { register_value_editor } = require('./value_editor_registry');
 // Compact picker for popup
 let Color_Picker_Tabbed;
 try {
-    Color_Picker_Tabbed = require('../../0-core/0-basic/1-compositional/color-picker-tabbed');
+    Color_Picker_Tabbed = require('../../0-core/0-basic/1-compositional/Color_Picker_Tabbed');
 } catch (e) {
     Color_Picker_Tabbed = null;
 }

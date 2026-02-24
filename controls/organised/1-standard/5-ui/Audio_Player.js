@@ -2,8 +2,8 @@
 
 var jsgui = require('../../../../html-core/html-core');
 
-var Audio_Volume = require('./audio-volume');
-var Media_Scrubber = require('./media-scrubber');
+var Audio_Volume = require('./Audio_Volume');
+var Media_Scrubber = require('./Media_Scrubber');
 
 var Control = jsgui.Control;
 

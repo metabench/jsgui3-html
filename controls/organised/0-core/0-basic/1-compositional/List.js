@@ -3,7 +3,7 @@
 */
 
 const jsgui = require('../../../../../html-core/html-core');
-const Item = require('./item');
+const Item = require('./Item');
 const { each } = jsgui;
 const { prop } = require('lang-tools');
 const { field } = require('obext');
@@ -13,6 +13,7 @@ const {
     filter_items
 } = require('../item_utils');
 const { Control, Control_Data, Control_View, Data_Object } = jsgui;
+const Data_Model_View_Model_Control = require('../../../../../html-core/Data_Model_View_Model_Control');
 const mx_selectable = require('../../../../../control_mixins/selectable');
 const keyboard_navigation = require('../../../../../control_mixins/keyboard_navigation');
 const {
@@ -40,7 +41,7 @@ const { apply_token_map, SPACING_TOKENS } = require('../../../../../themes/token
  * new List({ variant: 'divided', items: ['Item 1', 'Item 2'] });
  */
 
-class List extends Control {
+class List extends Data_Model_View_Model_Control {
     constructor(spec = {}) {
         super(spec);
         this.__type_name = 'list';
@@ -108,56 +109,25 @@ class List extends Control {
     }
 
     construct_synchronised_data_and_view_models(spec) {
-        const { context } = this;
-        this.data = new Control_Data({ context });
-        if (spec.data && spec.data.model) {
-            this.data.model = spec.data.model;
-        } else {
-            this.data.model = new Data_Object({ context });
-        }
-        field(this.data.model, 'items');
-        field(this.data.model, 'selected_item');
-        field(this.data.model, 'filter_text');
+        const {context} = this;
+        
+        if (!this.data) this.data = new Control_Data({context});
+        if (!this.data.model) this.data.model = new Data_Object({context});
+        
+        if (!this.view) this.view = new Control_View({context});
+        if (!this.view.data) this.view.data = new Control_Data({context});
+        if (!this.view.data.model) this.view.data.model = new Data_Object({context});
 
-        this.view = new Control_View({ context });
-        if (spec.view && spec.view.data && spec.view.data.model) {
-            this.view.data.model = spec.view.data.model;
-        } else {
-            this.view.data.model = new Data_Object({ context });
-        }
-        field(this.view.data.model, 'items');
-        field(this.view.data.model, 'selected_item');
-        field(this.view.data.model, 'filter_text');
-
-        this.data.model.on('change', e => {
-            const { name, value, old } = e;
-            if (value === old) return;
-            if (name === 'items') {
-                this.view.data.model.items = value;
-                this.set_items(value, { from_model: true });
-            } else if (name === 'selected_item') {
-                this.view.data.model.selected_item = value;
-                this.set_selected_item(value, { from_model: true });
-            } else if (name === 'filter_text') {
-                this.view.data.model.filter_text = value;
-                this.set_filter_text(value, { from_model: true });
-            }
+        const fields = ['items', 'selected_item', 'filter_text'];
+        fields.forEach(f => {
+            field(this.data.model, f);
+            field(this.view.data.model, f);
+            this._binding_manager.bind_value(this.data.model, f, this.view.data.model, f, { bidirectional: true });
         });
 
-        this.view.data.model.on('change', e => {
-            const { name, value, old } = e;
-            if (value === old) return;
-            if (name === 'items') {
-                this.data.model.items = value;
-                this.set_items(value, { from_model: true });
-            } else if (name === 'selected_item') {
-                this.data.model.selected_item = value;
-                this.set_selected_item(value, { from_model: true });
-            } else if (name === 'filter_text') {
-                this.data.model.filter_text = value;
-                this.set_filter_text(value, { from_model: true });
-            }
-        });
+        this._binding_manager.watch(this.data.model, 'items', val => this.set_items(val, {from_model: true}));
+        this._binding_manager.watch(this.data.model, 'selected_item', val => this.set_selected_item(val, {from_model: true}));
+        this._binding_manager.watch(this.data.model, 'filter_text', val => this.set_filter_text(val, {from_model: true}));
     }
 
     /**

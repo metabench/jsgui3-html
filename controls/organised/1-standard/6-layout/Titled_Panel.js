@@ -4,10 +4,10 @@ var jsgui = require('./../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 
-var Panel = require('./panel');
+var Panel = require('./Panel');
 // Panel with a titlebar inside
 
-var Title_Bar = require('./title-bar');
+var Title_Bar = require('./Title_Bar');
 var fields = {
     'title': String
 }

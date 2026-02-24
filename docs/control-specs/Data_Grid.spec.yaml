@@ -1,0 +1,214 @@
+spec_version: "1.0"
+
+control:
+  class_name: Data_Grid
+  type_name: data_grid
+  category: connected
+  priority: P0
+  target_tier: T4
+  proposed_file: controls/connected/data-grid.js
+  dependencies: [Control, Data_Table, Data_Filter]
+
+status:
+  implemented: true
+  notes: >
+    330-line implementation with async data source support, {rows, total_count}
+    response handling, loading/error states, auto server_side delegation to
+    Data_Table, refresh() alias, CSS spinner overlay. Current tier ~T2.
+    Missing: empty state, exhaustive JSDoc, density forwarding, pagination UI,
+    debounced refresh on rapid param changes, retry on error.
+
+purpose:
+  summary: >
+    High-level connected data component that wires a data source (static array,
+    async function, or data adapter) to a Data_Table. Manages loading/error
+    states, pagination parameters, sort/filter state, and server-side mode
+    handoff. This is the primary control for building data viewer pages.
+  use_cases:
+    - Server-paginated admin entity listing (users, orders, logs).
+    - REST API data browser with sort/filter/page params forwarded to server.
+    - Local array viewer with client-side filtering and sorting.
+    - Dashboard widget with periodic refresh and loading indicator.
+  non_goals:
+    - Not a spreadsheet editor (no cell editing).
+    - Not a chart or visualization component.
+    - Does not render filter UI (use Data_Filter alongside).
+
+composition:
+  children:
+    - data_grid_table (Data_Table instance)
+    - error_message_div (shown on data source rejection)
+    - empty_state_div (shown when 0 rows and not loading)
+  variants: [default]
+  states: [idle, loading, error, empty]
+  default_variant: default
+  default_state: idle
+
+api:
+  props:
+    - name: columns
+      type: "array<{key:string, label:string, sortable?:boolean, width?:number, frozen?:boolean, render?:function, accessor?:function}>"
+      required: true
+      description: Column definitions forwarded to inner Data_Table.
+    - name: data_source
+      type: "array|function|{get_rows:function}|{rows:array}"
+      required: true
+      description: >
+        Data source. If a function, called with {columns, sort_state, filters,
+        page, page_size}. May return an array, a Promise<array>, or a
+        Promise<{rows:array, total_count:number}> for server-side mode.
+    - name: rows
+      type: "array<object>"
+      required: false
+      default: []
+      description: Alias for data_source when providing a static array.
+    - name: page
+      type: number
+      required: false
+      default: 1
+      description: Current 1-based page number.
+    - name: page_size
+      type: "number|null"
+      required: false
+      default: null
+      description: Rows per page. Null = no paging.
+    - name: sort_state
+      type: "{key:string, direction:'asc'|'desc'}|null"
+      required: false
+      default: null
+      description: Initial sort state.
+    - name: filters
+      type: "object|null"
+      required: false
+      default: null
+      description: Filter map {column_key: filter_value_or_{op,value}}.
+    - name: selection
+      type: "object|null"
+      required: false
+      default: null
+      description: Current selection state {row_index, row_data}.
+    - name: empty_text
+      type: string
+      required: false
+      default: "No data available"
+      description: Message shown when data source returns 0 rows.
+    - name: retry_text
+      type: string
+      required: false
+      default: "Retry"
+      description: Button text shown in error state.
+  events:
+    - name: selection_change
+      payload: "{selection: {row_index:number, row_data:object}}"
+      when: User clicks a row in the data table.
+    - name: sort_change
+      payload: "{sort_state: {key:string, direction:string}}"
+      when: Sort state changes (forwarded from Data_Table header click).
+    - name: page_change
+      payload: "{page:number}"
+      when: Page navigation occurs.
+    - name: error
+      payload: "{message:string, error:Error}"
+      when: Data source promise rejects.
+    - name: load_complete
+      payload: "{rows:array, total_count:number|null}"
+      when: Data source promise resolves successfully.
+  methods:
+    - name: refresh
+      signature: refresh()
+      description: Triggers a data reload from the data source with current params.
+    - name: refresh_rows
+      signature: refresh_rows()
+      description: Alias for refresh(). Triggers data reload.
+    - name: set_data_source
+      signature: set_data_source(data_source)
+      description: Replaces the data source and triggers refresh.
+    - name: set_columns
+      signature: set_columns(columns)
+      description: Replaces column definitions.
+    - name: set_sort_state
+      signature: set_sort_state(sort_state)
+      description: Sets sort state and triggers refresh.
+    - name: set_filters
+      signature: set_filters(filters)
+      description: Sets filter map and triggers refresh.
+    - name: set_page
+      signature: set_page(page)
+      description: Navigates to page and triggers refresh.
+    - name: set_page_size
+      signature: set_page_size(page_size)
+      description: Changes page size and triggers refresh.
+    - name: set_selection
+      signature: set_selection(selection)
+      description: Programmatically sets row selection.
+    - name: get_selection
+      signature: get_selection()
+      description: Returns current selection object.
+
+interaction:
+  keyboard:
+    - key: ArrowUp / ArrowDown
+      behavior: Navigate rows (delegated to Data_Table).
+    - key: Enter
+      behavior: Activate selected row or sortable header.
+    - key: Tab
+      behavior: Move focus into/out of grid.
+  pointer:
+    - Click header to sort (delegated to Data_Table).
+    - Click row to select and emit selection_change.
+    - Click retry button in error state to refresh.
+
+accessibility:
+  roles:
+    - role="region" on root with aria-label
+    - All Data_Table ARIA roles preserved inside
+  aria:
+    - aria-busy="true" during loading state
+    - aria-live="polite" on error message area
+    - aria-label="Data grid" on root
+  focus:
+    - Root not focusable; focus managed by inner Data_Table.
+    - Retry button focusable in error state.
+
+styling:
+  css_classes:
+    - data-grid
+    - data-grid.loading
+    - data-grid.error
+    - data-grid.empty
+    - data-grid-table
+    - data-grid-error
+    - data-grid-empty
+  tokens:
+    - --j-primary
+    - --j-border
+    - --j-danger
+    - --j-fg
+    - --j-fg-muted
+    - --j-bg-surface
+    - --j-text-sm
+  density_support: [comfortable, compact, dense]
+
+acceptance:
+  e2e:
+    - Static array data source renders all rows correctly.
+    - Async data source shows loading class during pending promise.
+    - Loading class and spinner removed after resolve.
+    - "{rows, total_count}" response stores total_count and sets server_side.
+    - Error state shows error message when promise rejects.
+    - Retry button in error state re-invokes refresh.
+    - Empty state shown when resolved rows array is empty.
+    - sort_change event propagated when header clicked.
+    - selection_change event emitted when row clicked.
+    - set_page triggers new data fetch with updated page param.
+    - set_filters triggers new data fetch.
+    - Stale request handling — rapid calls only apply latest result.
+    - refresh() method triggers new load.
+    - CSS spinner animation visible during loading.
+    - ARIA busy state set during loading.
+  done_definition:
+    - All loading/error/empty states render correctly.
+    - Server-side mode auto-detected from total_count.
+    - CSS spinner, error, and empty state visually verified.
+    - Full Puppeteer E2E suite passing.
+    - JSDoc on all public methods and events.

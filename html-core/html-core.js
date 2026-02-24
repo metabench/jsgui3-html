@@ -1,3 +1,21 @@
+/**
+ * html-core — the jsgui3-html rendering engine.
+ *
+ * This module assembles all core primitives and re-exports them as
+ * a single namespace object (`jsgui`). It is the primary import for
+ * both server-side rendering and client-side activation.
+ *
+ * Exported surface:
+ * - `Control`        — enhanced control base (Data_Model_View_Model_Control)
+ * - `Page_Context`   — per-page rendering context
+ * - `parse_mount`    — client-side DOM-to-control hydration
+ * - `Selection_Scope`— scoped selection tracking
+ * - `Control_Data`   — data-model wrapper
+ * - `Control_View`   — view-model wrapper
+ * - Native HTML elements as subclasses (div, span, input, etc.)
+ *
+ * @module html-core
+ */
 const jsgui = require('lang-tools');
 const { patch_lang_tools } = require('./lang_tools_compat');
 patch_lang_tools();
@@ -6,8 +24,8 @@ const Page_Context = require('./page-context');
 const Selection_Scope = require('./selection-scope');
 const Control_Data = require('./Control_Data');
 const Control_View = require('./Control_View');
-const {parse_mount, parse} = require('./parse-mount');
-const {str_arr_mapify, get_a_sig, each, prop} = jsgui;
+const { parse_mount, parse, tpl } = require('./parse-mount');
+const { str_arr_mapify, get_a_sig, each, prop } = jsgui;
 //const Control = jsgui.Control = require('./control-enh');
 
 const Control = jsgui.Control = require('./Data_Model_View_Model_Control');
@@ -24,7 +42,7 @@ var core_extension = str_arr_mapify(function (tagName) {
                 str = spec;
                 spec = {
                     __type_name: tagName
-                } 
+                }
             } else {
                 if (typeof spec === 'object') {
                     spec.__type_name = tagName;
@@ -210,39 +228,39 @@ jsgui.controls.span = jsgui.span = class span extends Control {
         this.dom.tagName = 'span';
         spec = spec || {};
         prop(this, 'text', spec.text || '');
-	        this.on('change', e_change => {
-	            const {name} = e_change;
-	            if (name === 'text') {
-	                const new_text = typeof e_change.value === 'undefined' || e_change.value === null ? '' : String(e_change.value);
-	                const content_arr = this.content._arr;
+        this.on('change', e_change => {
+            const { name } = e_change;
+            if (name === 'text') {
+                const new_text = typeof e_change.value === 'undefined' || e_change.value === null ? '' : String(e_change.value);
+                const content_arr = this.content._arr;
 
-	                if (content_arr.length === 1 && content_arr[0] instanceof Text_Node) {
-	                    content_arr[0].text = new_text;
-	                } else {
-	                    let existing_text_node;
-	                    for (let idx = 0; idx < content_arr.length; idx++) {
-	                        if (content_arr[idx] instanceof Text_Node) {
-	                            existing_text_node = content_arr[idx];
-	                            break;
-	                        }
-	                    }
-	                    if (existing_text_node) {
-	                        existing_text_node.text = new_text;
-	                    } else {
-	                        const tn = new Text_Node({
-	                            context: this.context,
-	                            text: new_text
-	                        });
-	                        if (this.content && typeof this.content.insert === 'function') {
-	                            this.content.insert(tn, 0);
-	                        } else {
-	                            this.add(tn);
-	                        }
-	                        this.tn = this.text_node = tn;
-	                    }
-	                }
-	            }
-	        })
+                if (content_arr.length === 1 && content_arr[0] instanceof Text_Node) {
+                    content_arr[0].text = new_text;
+                } else {
+                    let existing_text_node;
+                    for (let idx = 0; idx < content_arr.length; idx++) {
+                        if (content_arr[idx] instanceof Text_Node) {
+                            existing_text_node = content_arr[idx];
+                            break;
+                        }
+                    }
+                    if (existing_text_node) {
+                        existing_text_node.text = new_text;
+                    } else {
+                        const tn = new Text_Node({
+                            context: this.context,
+                            text: new_text
+                        });
+                        if (this.content && typeof this.content.insert === 'function') {
+                            this.content.insert(tn, 0);
+                        } else {
+                            this.add(tn);
+                        }
+                        this.tn = this.text_node = tn;
+                    }
+                }
+            }
+        })
         if (!spec.el) {
             this.compose_span();
         }
@@ -412,4 +430,5 @@ jsgui.Selection_Scope = Selection_Scope
 jsgui.Intersection_Finder = Intersection_Finder;
 jsgui.parse_mount = parse_mount;
 jsgui.parse = parse;
+jsgui.tpl = tpl;
 module.exports = jsgui;

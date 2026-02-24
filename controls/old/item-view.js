@@ -2,8 +2,8 @@
 
 //define(["../../jsgui-html", "./plus-minus-toggle-button", "./vertical-expander"],
 var jsgui = require('../../html-core/html-core');
-var Plus_Minus_Toggle_Button = require('../plus-minus-toggle-button');
-var Vertical_Expander = require('../layout/vertical-expander');
+var Plus_Minus_Toggle_Button = require('../Plus_Minus_Toggle_Button');
+var Vertical_Expander = require('../layout/Vertical_Expander');
 
 //function(jsgui, Plus_Minus_Toggle_Button, Vertical_Expander) {
 

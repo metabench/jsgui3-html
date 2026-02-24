@@ -1,3 +1,20 @@
+/**
+ * jsgui3-html — main entry point.
+ *
+ * Re-exports the full framework surface: core engine (`html-core`),
+ * all registered controls, mixins, router, resource system, and
+ * the `jsgui3-gfx-core` graphics bridge.
+ *
+ * @module jsgui3-html
+ *
+ * @example
+ * const jsgui = require('jsgui3-html');
+ * const { Page_Context, Control, Button, Panel } = jsgui;
+ *
+ * const ctx  = new Page_Context();
+ * const btn  = new Button({ context: ctx, text: 'Hello' });
+ * console.log(btn.html);  // server-rendered HTML string
+ */
 const jsgui = require('./html-core/html-core');
 jsgui.Router = require('./router/router');
 jsgui.Resource = require('./resource/resource');
@@ -39,5 +56,6 @@ jsgui.controls = jsgui.controls || {};
 //jsgui.controls.Active_HTML_Document = jsgui.Active_HTML_Document = require('./controls/organised/1-standard/5-ui/Active_HTML_Document');
 Object.assign(jsgui.controls, require('./controls/controls'));
 Object.assign(jsgui, jsgui.controls);
+if (jsgui.parse_mount) jsgui.parse_mount.default_control_set = jsgui.controls;
 jsgui.mixins = jsgui.mx = require('./control_mixins/mx');
 module.exports = jsgui;

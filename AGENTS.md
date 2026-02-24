@@ -10,6 +10,7 @@
 2.  **Session Discipline:** Follow the [`session-discipline`](docs/agi/skills/session-discipline/SKILL.md) skill. Use templates from `docs/sessions/_templates/`.
 3.  **UI Decisions:** Use `node tools/dev/ui-pick.js` when you need to ask the user a choice (A vs B).
 4.  **Self-Correction:** If you find a pattern, document it in `docs/agi/PATTERNS.md`.
+5.  **Adaptive PR Checklist:** For responsive/multi-device Tier 1 control upgrades, use `.github/pull_request_template_adaptive_tier1.md` and the book at `docs/books/adaptive-control-improvements/`.
 
 ## Knowledge & Memory Architecture
 

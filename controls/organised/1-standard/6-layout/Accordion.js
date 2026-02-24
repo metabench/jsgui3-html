@@ -1,9 +1,8 @@
 const jsgui = require('../../../../html-core/html-core');
 
-const { Control } = jsgui;
-const { is_defined } = jsgui;
+const { Control, tpl, is_defined } = jsgui;
 const { ensure_control_models } = require('../../../../html-core/control_model_factory');
-const Vertical_Expander = require('./vertical-expander');
+const Vertical_Expander = require('./Vertical_Expander');
 
 const normalize_sections = sections => {
     if (!Array.isArray(sections)) return [];
@@ -135,31 +134,34 @@ class Accordion extends Control {
         this.section_controls = [];
 
         (this.sections || []).forEach((section, index) => {
-            const header_ctrl = new Control({ context: this.context, tag_name: 'button' });
-            header_ctrl.add_class('accordion-header');
-            header_ctrl.dom.attributes.type = 'button';
-            header_ctrl.dom.attributes['data-section-id'] = section.id;
-            header_ctrl.add(section.title);
+            const is_open = !!section.open;
 
             const expander_ctrl = new Vertical_Expander({
                 context: this.context,
-                state: section.open ? 'open' : 'closed'
+                state: is_open ? 'open' : 'closed'
             });
             expander_ctrl.add_class('accordion-expander');
             expander_ctrl.dom.attributes['data-section-id'] = section.id;
 
-            const content_ctrl = new Control({ context: this.context, tag_name: 'div' });
-            content_ctrl.add_class('accordion-content');
+            const content_ctrl = tpl`<div class="accordion-content"></div>`.mount(expander_ctrl)[0];
             if (is_defined(section.content)) {
                 content_ctrl.add(section.content);
             }
 
-            expander_ctrl.add(content_ctrl);
+            const header_class = `accordion-header ${is_open ? 'is-open' : ''}`;
+            const section_class = `accordion-section ${is_open ? 'is-open' : ''}`;
 
-            const section_ctrl = new Control({ context: this.context, tag_name: 'div' });
-            section_ctrl.add_class('accordion-section');
-            section_ctrl.add(header_ctrl);
-            section_ctrl.add(expander_ctrl);
+            const parsed = tpl`
+                <div class="${section_class}">
+                    <button type="button" class="${header_class}" data-section-id="${section.id}">
+                        ${String(section.title)}
+                    </button>
+                    ${expander_ctrl}
+                </div>
+            `.mount(this);
+
+            const section_ctrl = parsed[0];
+            const header_ctrl = section_ctrl.content._arr[0];
 
             this.section_controls.push({
                 id: section.id,
@@ -167,8 +169,6 @@ class Accordion extends Control {
                 expander: expander_ctrl,
                 section: section_ctrl
             });
-
-            this.add(section_ctrl);
         });
 
         this.sync_open_state();

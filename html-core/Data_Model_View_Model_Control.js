@@ -89,6 +89,33 @@ const { ensure_control_models } = require('./control_model_factory');
 
 
 
+/**
+ * MVVM base class for data-bound controls.
+ *
+ * Adds a **data model** (`this.data.model`) and a **view data model**
+ * (`this.view.data.model`) on top of {@link Ctrl_Enh}. Controls that
+ * display or edit application data should extend this class.
+ *
+ * Key features provided by the constructor:
+ * - Applies theme tokens (`spec.theme`, `spec.theme_tokens`, `spec.theme_overrides`)
+ * - Initialises a {@link BindingManager} (`this._binding_manager`)
+ * - Calls `ensure_control_models()` to set up `data.model` / `view.data.model`
+ * - Syncs model IDs to `data-jsgui-data-model` / `data-jsgui-view-data-model`
+ *   DOM attributes for client-side activation
+ *
+ * Binding helpers (available on instances):
+ * - `this.bind(prop, model, opts, target)` — one-way or two-way binding
+ * - `this.computed(model, deps, fn, opts)` — derived values
+ * - `this.watch(model, prop, cb)` — change callbacks
+ *
+ * @param {Object} [spec={}]              - spec passed through to Ctrl_Enh
+ * @param {Object} [spec.theme]           - theme context or token set
+ * @param {Object} [spec.theme_tokens]    - direct token overrides
+ * @param {Object} [spec.theme_overrides] - alias for theme_tokens
+ * @param {Object} [spec.data]            - initial data model state
+ * @param {Object} [spec.view]            - initial view model state
+ * @extends Ctrl_Enh
+ */
 class Data_Model_View_Model_Control extends Ctrl_Enh {
     constructor(...a) {
         super(...a);
@@ -297,6 +324,25 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
     }
 
     /**
+     * Shorthand for creating a model binding tuple/config.
+     * Without options returns [this.data.model, property_name].
+     * With options returns { model, prop, options }.
+     * @param {string} property_name - The model property to bind.
+     * @param {Object} [options] - Optional binding options (transform, reverse, bidirectional).
+     * @returns {Array|Object} Binding tuple or config object.
+     */
+    mbind(property_name, options) {
+        if (!options) {
+            return [this.data.model, property_name];
+        }
+        return {
+            model: this.data.model,
+            prop: property_name,
+            options: options
+        };
+    }
+
+    /**
      * Create a binding between data model and view model
      * @param {Object} bindings - Property binding definitions
      * @param {Object} options - Binding options
@@ -426,6 +472,162 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
      */
     inspectBindings() {
         return this._binding_manager.inspect();
+    }
+
+    /**
+     * Restore model state from a serialized data-jsgui-model-state DOM attribute.
+     * Called during activation (when tpl.mount detects an already-active DOM element).
+     */
+    _restore_model_state_from_dom() {
+        if (!this.dom || !this.dom.el) return;
+        const raw = this.dom.el.getAttribute('data-jsgui-model-state');
+        if (!raw || !this.data || !this.data.model) return;
+        try {
+            const state = JSON.parse(raw);
+            const keys = Object.keys(state);
+            for (let i = 0; i < keys.length; i++) {
+                if (this.data.model.set) {
+                    this.data.model.set(keys[i], state[keys[i]]);
+                }
+            }
+        } catch (e) {
+            console.error('[jsgui] Failed to restore model state:', e);
+        }
+    }
+
+    /**
+     * Activate tpl-declared bindings from serialized DOM data attributes.
+     *
+     * During SSR, parse-mount serializes binding metadata as data-jsgui-bind-*
+     * attributes on child elements. This method re-establishes those bindings
+     * against this control's data.model using direct DOM manipulation.
+     *
+     * Supports: bind-text, bind-value, bind-class, on-click (and other on-* events).
+     */
+    _activate_tpl_bindings() {
+        if (!this.dom || !this.dom.el) return;
+        if (this.__tpl_activated) return;
+        this.__tpl_activated = true;
+
+        const my_id = this._id();
+        const el = this.dom.el;
+        const model = this.data && this.data.model;
+        if (!model) return;
+
+        const unwrap = (v) => {
+            if (!v) return v;
+            if (typeof v.value === 'function') return v.value();
+            if (v.value !== undefined) return v.value;
+            if (v.get) return v.get();
+            return v;
+        };
+
+        // Find all descendant elements whose bindings belong to this control
+        const bound_elements = el.querySelectorAll('[data-jsgui-bind-owner="' + my_id + '"]');
+        const self = this;
+
+        for (let idx = 0; idx < bound_elements.length; idx++) {
+            const bound_el = bound_elements[idx];
+
+            // ── bind-text: one-way model → DOM textContent ──
+            const bind_text_prop = bound_el.getAttribute('data-jsgui-bind-text');
+            if (bind_text_prop) {
+                const _update_text = () => {
+                    const val = unwrap(model.get ? model.get(bind_text_prop) : model[bind_text_prop]);
+                    bound_el.textContent = (val !== undefined && val !== null) ? String(val) : '';
+                };
+                _update_text();
+                model.on('change', (e) => {
+                    if (e.name === bind_text_prop) _update_text();
+                });
+            }
+
+            // ── bind-value: two-way model ↔ DOM value ──
+            const bind_value_prop = bound_el.getAttribute('data-jsgui-bind-value');
+            if (bind_value_prop) {
+                const tag_lower = bound_el.tagName.toLowerCase();
+                const is_native_input = (tag_lower === 'input' || tag_lower === 'textarea' || tag_lower === 'select');
+
+                // Find the actual input element (could be the element itself or nested)
+                const input_el = is_native_input ? bound_el : bound_el.querySelector('input, textarea, select');
+
+                if (input_el) {
+                    const _update_value = () => {
+                        const val = unwrap(model.get ? model.get(bind_value_prop) : model[bind_value_prop]);
+                        input_el.value = (val !== undefined && val !== null) ? String(val) : '';
+                    };
+                    _update_value();
+                    model.on('change', (e) => {
+                        if (e.name === bind_value_prop) _update_value();
+                    });
+                    // DOM → Model (two-way)
+                    const _on_input = (e) => {
+                        let new_val = e.target.value;
+                        if (input_el.type === 'number') {
+                            const n = Number(new_val);
+                            if (!isNaN(n)) new_val = n;
+                        }
+                        if (model.set) model.set(bind_value_prop, new_val);
+                    };
+                    input_el.addEventListener('input', _on_input);
+                    input_el.addEventListener('change', _on_input);
+                }
+            }
+
+            // ── bind-class: one-way model → DOM classList ──
+            const bind_class_str = bound_el.getAttribute('data-jsgui-bind-class');
+            if (bind_class_str) {
+                const pairs = bind_class_str.split(',');
+                for (let p = 0; p < pairs.length; p++) {
+                    const sep_idx = pairs[p].indexOf(':');
+                    if (sep_idx <= 0) continue;
+                    const cls = pairs[p].substring(0, sep_idx);
+                    const raw_prop = pairs[p].substring(sep_idx + 1);
+                    const negate = raw_prop.charAt(0) === '!';
+                    const prop = negate ? raw_prop.substring(1) : raw_prop;
+                    (function (_cls, _prop, _negate) {
+                        const _update_cls = () => {
+                            let val = unwrap(model.get ? model.get(_prop) : model[_prop]);
+                            if (_negate) val = !val;
+                            if (val) bound_el.classList.add(_cls);
+                            else bound_el.classList.remove(_cls);
+                        };
+                        _update_cls();
+                        model.on('change', (e) => {
+                            if (e.name === _prop) _update_cls();
+                        });
+                    })(cls, prop, negate);
+                }
+            }
+
+            // ── on-* event handlers ──
+            const attrs = bound_el.attributes;
+            for (let a = 0; a < attrs.length; a++) {
+                const attr_name = attrs[a].name;
+                if (attr_name.startsWith('data-jsgui-on-')) {
+                    const event_name = attr_name.substring(14); // after 'data-jsgui-on-'
+                    const method_name = attrs[a].value;
+                    if (self[method_name] && typeof self[method_name] === 'function') {
+                        (function (_evt, _method) {
+                            bound_el.addEventListener(_evt, (e) => {
+                                self[_method]();
+                            });
+                        })(event_name, method_name);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Override activate to restore tpl bindings when present.
+     */
+    activate(el) {
+        super.activate(el);
+        if (this._needs_tpl_activation) {
+            this._activate_tpl_bindings();
+            this._needs_tpl_activation = false;
+        }
     }
 
     /**

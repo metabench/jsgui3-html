@@ -95,6 +95,21 @@ class Rating_Stars extends Control {
         }
     }
 
+    _reconnect_from_dom() {
+        // Hydration logic: reconstruct the _stars array if compose() was skipped during SSR mounting
+        if (this._stars.length === this._max) return; // Already populated by compose()
+
+        if (this.dom.el) {
+            const els = Array.from(this.dom.el.querySelectorAll('.star'));
+            this._stars = els.map((el, i) => {
+                // Adopt existing DOM nodes into basic Control instances for API parity
+                const star = new Control({ context: this.context, el });
+                star._star_index = i;
+                return star;
+            });
+        }
+    }
+
     _update_display() {
         const display_value = this._hover_value !== null ? this._hover_value : this._value;
 
@@ -147,6 +162,8 @@ class Rating_Stars extends Control {
         if (this._activated) return;
         super.activate();
         this._activated = true;
+
+        this._reconnect_from_dom();
 
         if (this._readonly) return;
 

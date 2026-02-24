@@ -1,0 +1,214 @@
+spec_version: "1.0"
+
+control:
+  class_name: Data_Filter
+  type_name: data_filter
+  category: 1-standard/4-data
+  priority: P1
+  target_tier: T4
+  proposed_file: controls/organised/1-standard/4-data/data-filter.js
+  dependencies: [Control]
+
+status:
+  implemented: true
+  notes: >
+    460-line implementation with dynamic filter rows (field selector, operator
+    selector, value input, remove button), add/remove/clear API, apply() for
+    client-side filtering, filter_change event with map-format payload,
+    get_filter_map() for Data_Grid integration. Current tier ~T1.
+    Missing: theme token usage (uses --admin-* instead of --j-*), date range
+    picker, select/dropdown filter type, compose() pattern modernization,
+    ensure_control_models, ARIA improvements, keyboard nav between rows,
+    density variants.
+
+purpose:
+  summary: >
+    Dynamic filter builder that lets users create one or more filter conditions
+    (field + operator + value), combine them, and apply them to a data array
+    or emit them for server-side filtering via Data_Grid integration.
+  use_cases:
+    - Admin data table toolbar filter for searching/narrowing rows.
+    - Server-side filter parameter builder for API queries.
+    - Report filter panel with multiple conditions.
+    - Log viewer with field-specific search.
+  non_goals:
+    - Not a search bar (single-input full-text search).
+    - Not a saved filter / view manager.
+
+composition:
+  children:
+    - filter_header (title + add button)
+    - filter_rows_container (dynamic list of filter row controls)
+    - filter_row (field_select + operator_select + value_input + remove_button)
+    - empty_state (shown when no filters applied)
+    - actions_bar (apply/clear buttons)
+  variants: [default, compact, inline]
+  states: [empty, has_filters, applying]
+  default_variant: default
+  default_state: empty
+
+api:
+  props:
+    - name: fields
+      type: "array<string|{name:string, label?:string, type?:string, options?:array}>"
+      required: true
+      description: >
+        Filterable field definitions. String shorthand auto-creates
+        {name, label, type:'string'}. type determines operator set and
+        input widget: 'string' (text input), 'number' (number input),
+        'boolean' (checkbox/select), 'select' (dropdown with options),
+        'date' (date picker), 'date_range' (dual date pickers).
+    - name: filters
+      type: "array<{field:string, operator:string, value:string}>"
+      required: false
+      default: []
+      description: Initial filter conditions to populate on construction.
+    - name: operators
+      type: "object"
+      required: false
+      default: null
+      description: >
+        Custom operator map keyed by field type. Default provides operators
+        for string (contains, equals, starts_with, ends_with, not_equals),
+        number (equals, not_equals, >, <, >=, <=), and boolean (equals).
+    - name: filter_types
+      type: "object"
+      required: false
+      default: null
+      description: >
+        Map of field names to input types. Overrides the field's type
+        for specific fields. E.g. {role: 'select', joined: 'date_range'}.
+    - name: columns
+      type: "array"
+      required: false
+      default: null
+      description: >
+        Alternative to fields — accepts Data_Table column format. Columns
+        with options get 'select' type; others get type based on first
+        row value detection.
+    - name: theme
+      type: string
+      required: false
+      description: Admin theme name (data-admin-theme attribute).
+  events:
+    - name: change
+      payload: "{filters: array<{field, operator, value}>}"
+      when: Any filter is added, modified, or removed. Array format.
+    - name: filter_change
+      payload: "{filters: {column_key: {op:string, value:string}}}"
+      when: >
+        Same as change but map format compatible with Data_Grid.set_filters().
+        Only includes filters with non-empty values.
+  methods:
+    - name: add_filter
+      signature: add_filter()
+      description: Adds a blank filter row with first field and default operator.
+    - name: remove_filter
+      signature: remove_filter(index)
+      description: Removes a filter row by its current index.
+    - name: get_filters
+      signature: get_filters()
+      description: Returns array of {field, operator, value} descriptors.
+    - name: get_filter_map
+      signature: get_filter_map()
+      description: >
+        Returns filters as {field_name: {op, value}} map. Excludes entries
+        with empty values. Compatible with Data_Grid.set_filters().
+    - name: clear
+      signature: clear()
+      description: Removes all filter rows and fires change/filter_change.
+    - name: apply
+      signature: apply(data)
+      description: >
+        Client-side filter application. Filters an array of objects using
+        current filter conditions. Returns matching subset.
+
+interaction:
+  keyboard:
+    - key: Tab
+      behavior: Move between field, operator, value, and remove button within a row.
+    - key: Shift+Tab
+      behavior: Reverse tab within row.
+    - key: Enter
+      behavior: In value input, fires change (apply filter).
+    - key: Escape
+      behavior: Clear value input in focused row.
+    - key: ArrowUp / ArrowDown
+      behavior: Navigate between filter rows (when focus on row-level).
+  pointer:
+    - Click "+ Add Filter" to add a new row.
+    - Click "×" to remove a row.
+    - Select field/operator from dropdowns.
+    - Type in value input — fires change on each keystroke (input event).
+
+accessibility:
+  roles:
+    - role="group" on root with aria-label="Data filters"
+    - role="listbox" semantics on field and operator selects
+  aria:
+    - aria-label="Filter field" on field select
+    - aria-label="Filter operator" on operator select
+    - aria-label="Filter value" on value input
+    - aria-label="Remove filter" on remove button
+    - aria-label="Add filter" on add button
+    - aria-live="polite" on filter count / empty state
+  focus:
+    - All interactive elements focusable via Tab.
+    - Focus ring on active element.
+    - New row receives focus after add_filter().
+
+styling:
+  css_classes:
+    - jsgui-data-filter
+    - data-filter-header
+    - data-filter-title
+    - data-filter-add-btn
+    - data-filter-rows
+    - data-filter-row
+    - data-filter-field
+    - data-filter-operator
+    - data-filter-value
+    - data-filter-remove-btn
+    - data-filter-empty
+    - data-filter-empty-hidden
+  tokens:
+    - --j-bg-surface (replacing --admin-card-bg)
+    - --j-bg-elevated (replacing --admin-header-bg)
+    - --j-border (replacing --admin-border)
+    - --j-fg (replacing --admin-text)
+    - --j-fg-muted (replacing --admin-muted)
+    - --j-primary (replacing --admin-accent)
+    - --j-danger (replacing --admin-danger)
+    - --j-font-sans (replacing --admin-font)
+    - --j-radius-md (replacing --admin-radius-lg)
+    - --j-radius-sm (replacing --admin-radius)
+    - --j-space-2
+    - --j-space-3
+  density_support: [comfortable, compact]
+
+acceptance:
+  e2e:
+    - Renders with header title and "Add Filter" button.
+    - Empty state message visible when no filters.
+    - Add filter creates row with field/operator/value inputs.
+    - Field selector lists all provided fields.
+    - Operator selector changes based on field type.
+    - Value input updates filter value on type.
+    - Remove button removes the correct row.
+    - Change event fires with array format on every mutation.
+    - filter_change event fires with map format on every mutation.
+    - get_filter_map() excludes empty-value filters.
+    - apply() correctly filters data array for all operator types.
+    - clear() removes all rows and shows empty state.
+    - Multiple filter conditions combine with AND logic.
+    - Keyboard Tab navigates through row fields correctly.
+    - ARIA labels present on all interactive elements.
+    - CSS uses --j-* tokens (not --admin-*).
+    - Compact variant reduces padding.
+  done_definition:
+    - All operator types tested (contains, equals, starts_with, etc.).
+    - Integration with Data_Grid.set_filters() verified end-to-end.
+    - Theme token migration from --admin-* to --j-* complete.
+    - Full Puppeteer E2E suite passing.
+    - Complete JSDoc on all public methods and events.
+    - Visual verification screenshots for empty/populated/compact states.

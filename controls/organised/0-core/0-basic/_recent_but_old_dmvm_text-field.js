@@ -4,8 +4,8 @@
 // This will be more about text or string editor in the future.
 
 const jsgui = require('../../../../html-core/html-core');
-const Text_Input = require('./__recent_but_old_text-input');
-const Text_Item = require('./text-item');
+const Text_Input = require('./__Recent_But_Old_Text_Input');
+const Text_Item = require('./Text_Item');
 /*
 var stringify = jsgui.stringify,
 	each = jsgui.each,

@@ -12,7 +12,7 @@ var jsgui = require('../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 var group = jsgui.group;
-var Button = require('../../0-core/0-basic/0-native-compositional/button');
+var Button = require('../../0-core/0-basic/0-native-compositional/Button');
 
 class Up_Down_Arrow_Buttons extends Control {
     // Maybe should put this into a form, so that it does a form post.

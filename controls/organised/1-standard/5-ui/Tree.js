@@ -7,7 +7,7 @@ var stringify = jsgui.stringify,
     tof = jsgui.tof;
 var Control = jsgui.Control;
 */
-const {stringify, each, tof, def, Control} = jsgui;
+const { stringify, each, tof, def, Control } = jsgui;
 
 // Registration of controls within jsgui.
 //  where it adds it to the map of controls.
@@ -45,8 +45,8 @@ const {stringify, each, tof, def, Control} = jsgui;
 
 
 const Panel = require('./../6-layout/panel');
-const Title_Bar = require('./../6-layout/title-bar');
-const Tree_Node = require('./tree-node');
+const Title_Bar = require('./../6-layout/Title_Bar');
+const Tree_Node = require('./Tree_Node');
 const keyboard_navigation = require('../../../../control_mixins/keyboard_navigation');
 const {
     apply_focus_ring,
@@ -55,7 +55,7 @@ const {
 } = require('../../../../control_mixins/a11y');
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.
-const {prop, field} = require('obext');
+const { prop, field } = require('obext');
 //var fields = [
 //    ['text', String]
 //];
@@ -96,7 +96,7 @@ class Tree extends Control {
         //  don't do it when connecting to an existing DOM.
 
         if (!spec.el) {
-        //if (!window) {
+            //if (!window) {
             this.compose_tree(spec);
         }
 
@@ -143,7 +143,11 @@ class Tree extends Control {
                 });
                 const Node_Class = this.node_class;
                 const tn = node instanceof Control ? node : new Node_Class(node_spec);
-                this.main.add(tn);
+                if (typeof this.main.add_content === 'function') {
+                    this.main.add_content(tn);
+                } else {
+                    this.main.add(tn);
+                }
             }
         }
         this._ctrl_fields = Object.assign(this._ctrl_fields || {}, {
@@ -164,7 +168,7 @@ class Tree extends Control {
         if (!this.selection_scope) {
             this.selection_scope = this.context.new_selection_scope(this);
         }
-        apply_role(this, 'tree', {force: true});
+        apply_role(this, 'tree', { force: true });
         this.dom.attributes.tabindex = '0';
         if (this.multi_select) {
             this.dom.attributes['aria-multiselectable'] = 'true';
@@ -208,11 +212,11 @@ class Tree extends Control {
             },
             on_home: () => {
                 const nodes = this.get_visible_nodes();
-                if (nodes.length) this.set_active_node(nodes[0], {select: false});
+                if (nodes.length) this.set_active_node(nodes[0], { select: false });
             },
             on_end: () => {
                 const nodes = this.get_visible_nodes();
-                if (nodes.length) this.set_active_node(nodes[nodes.length - 1], {select: false});
+                if (nodes.length) this.set_active_node(nodes[nodes.length - 1], { select: false });
             },
             on_activate: () => {
                 const active_node = this.active_node;
@@ -230,7 +234,7 @@ class Tree extends Control {
         if (this.active_node) return;
         const nodes = this.get_visible_nodes();
         if (nodes.length) {
-            this.set_active_node(nodes[0], {select: false});
+            this.set_active_node(nodes[0], { select: false });
         }
     }
 
@@ -247,8 +251,9 @@ class Tree extends Control {
                 children.forEach(child => traverse(child));
             }
         };
-        if (this.main && this.main.content) {
-            this.main.content.each(ctrl => {
+        const container = (this.main && this.main.content_container) ? this.main.content_container : this.main;
+        if (container && container.content) {
+            container.content.each(ctrl => {
                 if (ctrl instanceof Tree_Node) {
                     traverse(ctrl);
                 }

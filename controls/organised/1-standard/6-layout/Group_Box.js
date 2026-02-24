@@ -1,10 +1,61 @@
+/**
+ * @module controls/organised/1-standard/6-layout/group_box
+ * @description A bordered container for grouping related form controls
+ *   under a named heading (legend). Renders as a semantic `<fieldset>` with
+ *   `<legend>` unless `use_div` is specified. Supports variants and
+ *   invalid/disabled states.
+ *
+ * @example
+ *   // Basic group box
+ *   const gb = new Group_Box({ context, legend: 'Preferences' });
+ *   gb.add_content(someControl);
+ *
+ *   // Elevated variant
+ *   const card = new Group_Box({ context, legend: 'Details', variant: 'elevated' });
+ *
+ *   // Subtle headingless grouping with div
+ *   const section = new Group_Box({ context, legend: 'Filters', variant: 'subtle', use_div: true });
+ *
+ *   // With validation error
+ *   const form = new Group_Box({ context, legend: 'Login', invalid: true });
+ *
+ * @tier T3
+ * @spec_version Control_Spec v1
+ */
 const jsgui = require('../../../../html-core/html-core');
 const { Control } = jsgui;
 const { themeable } = require('../../../../control_mixins/themeable');
 
+/**
+ * Group_Box control — a fieldset/div container with legend and content area.
+ *
+ * Defaults to `<fieldset>` with `<legend>`. Set `use_div: true` to use
+ * `<div>` with a `<span>` heading instead (useful when nesting controls
+ * that would conflict with `<fieldset>` styling).
+ *
+ * @extends Control
+ *
+ * @param {object}  spec
+ * @param {string}  [spec.legend='']          - Heading text
+ * @param {string}  [spec.variant='default']  - Visual variant: 'default', 'subtle', 'elevated'
+ * @param {boolean} [spec.invalid=false]      - Show validation-error styling
+ * @param {boolean} [spec.disabled=false]     - Disable interaction
+ * @param {boolean} [spec.use_div=false]      - Use `<div>` instead of `<fieldset>`
+ *
+ * @css .jsgui-group-box                            — Root element
+ * @css .jsgui-group-box .group-box-legend          — Legend/heading
+ * @css .jsgui-group-box .group-box-content         — Content area
+ * @css .jsgui-group-box[data-variant="subtle"]     — No border, muted legend
+ * @css .jsgui-group-box[data-variant="elevated"]   — Box shadow
+ * @css .jsgui-group-box-invalid                    — Error border color
+ * @css .jsgui-group-box-disabled                   — Reduced opacity
+ *
+ * @tokens --j-border, --j-bg-elevated, --j-fg, --j-fg-muted, --j-danger
+ */
 class Group_Box extends Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'group_box';
+        if (!spec.use_div) spec.tag_name = spec.tag_name || 'fieldset';
         super(spec);
 
         themeable(this, 'group_box', spec);
@@ -13,15 +64,12 @@ class Group_Box extends Control {
         this.add_class('jsgui-group-box');
 
         this.legend = spec.legend || '';
-        this.as_fieldset = spec.as_fieldset !== false;
+        this.variant = spec.variant || 'default';
         this.invalid = !!spec.invalid;
         this.disabled = !!spec.disabled;
-        this.initial_content = spec.content !== undefined ? spec.content : spec.contents;
+        this.use_div = !!spec.use_div;
 
-        this.dom.tagName = this.as_fieldset ? 'fieldset' : 'div';
-        if (!this.as_fieldset) {
-            this.dom.attributes.role = 'group';
-        }
+        this.dom.attributes['data-variant'] = this.variant;
 
         if (this.invalid) {
             this.add_class('group-box-invalid');
@@ -29,8 +77,7 @@ class Group_Box extends Control {
         }
 
         if (this.disabled) {
-            this.dom.attributes['aria-disabled'] = 'true';
-            this.add_class('group-box-disabled');
+            this._apply_disabled(true);
         }
 
         if (!spec.el) {
@@ -38,47 +85,50 @@ class Group_Box extends Control {
         }
     }
 
+    /**
+     * Build internal DOM. Creates a legend/heading element and a content area.
+     */
     compose() {
         const { context } = this;
 
-        if (this.legend) {
-            this.legend_ctrl = new Control({
-                context,
-                tag_name: this.as_fieldset ? 'legend' : 'div'
-            });
-            this.legend_ctrl.add_class('group-box-legend');
-            this.legend_ctrl.add(this.legend);
-            this.add(this.legend_ctrl);
+        if (this.use_div) {
+            this.legend_ctrl = new Control({ context, tag_name: 'span' });
+        } else {
+            this.legend_ctrl = new Control({ context, tag_name: 'legend' });
         }
+        this.legend_ctrl.add_class('group-box-legend');
+        this.legend_ctrl.add(this.legend);
+        this.add(this.legend_ctrl);
 
-        this.content_ctrl = new Control({ context, tag_name: 'div' });
+        this.content_ctrl = new Control({ context });
         this.content_ctrl.add_class('group-box-content');
         this.add(this.content_ctrl);
-
-        if (this.initial_content !== undefined) {
-            this.add_content(this.initial_content);
-        }
     }
 
+    /**
+     * Bind events. For Group_Box, mainly enables activation of child controls.
+     */
     activate() {
         if (this.__active) return;
         super.activate();
-
-        if (this.legend_ctrl && this.legend_ctrl.dom && this.legend_ctrl.dom.el) {
-            this.legend_ctrl.dom.el.addEventListener('click', () => {
-                this.raise('legend_click', { legend: this.legend });
-            });
-        }
     }
 
+    /**
+     * Update the legend text.
+     * @param {string} text
+     */
     set_legend(text) {
         this.legend = text || '';
         if (this.legend_ctrl) {
             this.legend_ctrl.clear();
-            if (this.legend) this.legend_ctrl.add(this.legend);
+            this.legend_ctrl.add(this.legend);
         }
     }
 
+    /**
+     * Set validation-error state.
+     * @param {boolean} flag
+     */
     set_invalid(flag) {
         this.invalid = !!flag;
         if (this.invalid) {
@@ -90,54 +140,106 @@ class Group_Box extends Control {
         }
     }
 
-    add_content(content) {
-        if (!this.content_ctrl || content === undefined || content === null) return;
-
-        if (Array.isArray(content)) {
-            content.forEach(item => this.add_content(item));
-            return;
+    /**
+     * Add a child control to the content area.
+     * @param {Control} control
+     */
+    add_content(control) {
+        if (this.content_ctrl) {
+            this.content_ctrl.add(control);
         }
+    }
 
-        this.content_ctrl.add(content);
+    /**
+     * Enable or disable the group box and all its children.
+     * @param {boolean} flag
+     */
+    set_disabled(flag) {
+        this.disabled = !!flag;
+        this._apply_disabled(this.disabled);
+    }
+
+    /** @private */
+    _apply_disabled(on) {
+        if (on) {
+            this.dom.attributes['aria-disabled'] = 'true';
+            if (!this.use_div) {
+                this.dom.attributes.disabled = true;
+            }
+            this.add_class('group-box-disabled');
+        } else {
+            delete this.dom.attributes['aria-disabled'];
+            delete this.dom.attributes.disabled;
+            this.remove_class('group-box-disabled');
+        }
+    }
+
+    /**
+     * Change the visual variant. Invalid values fall back to `'default'`.
+     * @param {'default'|'subtle'|'elevated'} value
+     */
+    set_variant(value) {
+        const allowed = ['default', 'subtle', 'elevated'];
+        this.variant = allowed.includes(value) ? value : 'default';
+        this.dom.attributes['data-variant'] = this.variant;
     }
 }
 
 Group_Box.css = `
 .jsgui-group-box {
-    margin: 0;
-    padding: 10px 12px 12px 12px;
-    border: 1px solid var(--admin-border, #d1d5db);
+    border: 1px solid var(--j-border, #d1d5db);
     border-radius: 6px;
-    background: var(--admin-card-bg, #ffffff);
-    color: var(--admin-text, #111827);
-    min-width: 0;
+    padding: 12px;
+    margin: 0;
+    background: var(--j-bg-elevated, #fff);
 }
 
 .jsgui-group-box .group-box-legend {
-    padding: 0 6px;
-    margin: 0;
-    font-size: 0.875rem;
+    color: var(--j-fg, #111827);
+    font-size: 13px;
     font-weight: 600;
-    color: var(--admin-text, #111827);
+    padding: 0 4px;
 }
 
 .jsgui-group-box .group-box-content {
-    margin-top: 6px;
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
+/* ── Variant: subtle ── */
+.jsgui-group-box[data-variant="subtle"] {
+    border-color: transparent;
+    background: transparent;
+    padding: 8px 0;
+}
+
+.jsgui-group-box[data-variant="subtle"] .group-box-legend {
+    color: var(--j-fg-muted, #6b7280);
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+}
+
+/* ── Variant: elevated ── */
+.jsgui-group-box[data-variant="elevated"] {
+    border-color: var(--j-border, #d1d5db);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ── Invalid ── */
 .jsgui-group-box.group-box-invalid {
-    border-color: var(--admin-danger, #dc2626);
+    border-color: var(--j-danger, #dc2626);
 }
 
 .jsgui-group-box.group-box-invalid .group-box-legend {
-    color: var(--admin-danger, #dc2626);
+    color: var(--j-danger, #dc2626);
 }
 
+/* ── Disabled ── */
 .jsgui-group-box.group-box-disabled {
-    opacity: 0.65;
+    opacity: 0.55;
+    pointer-events: none;
 }
 `;
 

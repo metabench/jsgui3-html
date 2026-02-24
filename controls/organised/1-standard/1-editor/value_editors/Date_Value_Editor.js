@@ -41,7 +41,7 @@ class Date_Value_Editor extends Value_Editor_Base {
         this._popup_container.dom.attributes.style = 'display:none';
 
         // Month_View inside popup
-        const Month_View = require('../../../../organised/0-core/0-basic/1-compositional/month-view');
+        const Month_View = require('../../../../organised/0-core/0-basic/1-compositional/Month_View');
         this._month_view = new Month_View({
             context: this.context,
             selection_mode: 'single',

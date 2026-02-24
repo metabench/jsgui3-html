@@ -9,12 +9,24 @@
 // It's appropriate to make this before making the Business Suite controls.
 
 // Mount content into a control - meaning the control itself would need to be changed.
+//const htmlparser = require('htmlparser');
+
+// htmlparser2
+//  faster? used in cheerio (like jQuery)
+
+// page_context.map_Ctrls
+//  then it will create the controls using the appropriate constructors.
+
+// It's appropriate to make this before making the Business Suite controls.
+
+// Mount content into a control - meaning the control itself would need to be changed.
 
 // parse_mount function will just create the controls.
 //  they could then be put into a DOM.
 
 const { Default_Handler, Html_Parser } = require('./html_parser');
-const {tof, each} = require('lang-tools');
+const { tof, each } = require('lang-tools');
+const Text_Node = require('./text-node');
 
 const map_jsgui_attr_names = {
     'name': true,
@@ -32,8 +44,142 @@ const map_jsgui_attr_names = {
 // Parse and instantiate?
 // Parse and construct?
 
-const log = () => {}
-const parse = function(str_content, context, control_set, callback) {
+let __tpl_id = 0;
+
+const tpl = function (strings, ...values) {
+    const values_map = {};
+    let str_content = '';
+
+    strings.forEach((str, i) => {
+        str_content += str;
+        if (i < values.length) {
+            const val = values[i];
+            const placeholder = `__JSGUI_VAL_${__tpl_id++}__`;
+            values_map[placeholder] = val;
+            str_content += placeholder;
+        }
+    });
+
+    return {
+        str_content,
+        values_map,
+        mount: function (target, control_set) {
+            // Activation mode: target already has a DOM element (client-side activation)
+            if (target.dom && target.dom.el && typeof target._activate_tpl_bindings === 'function') {
+                if (typeof target._restore_model_state_from_dom === 'function') {
+                    target._restore_model_state_from_dom();
+                }
+                target._needs_tpl_activation = true;
+                return [];
+            }
+
+            let cs = control_set || parse_mount.default_control_set || (target.context ? target.context.map_Controls : undefined);
+            if (!cs || !cs.span) {
+                // If it's still missing core HTML elements, try to get them from the global html-core exports to prevent lacking control exceptions
+                try {
+                    cs = require('./html-core').controls || {};
+                } catch (err) {
+                    cs = typeof jsgui !== 'undefined' ? jsgui.controls : {};
+                }
+            }
+
+            // Store owner ID for binding serialization (activation support)
+            const owner_id = target._id ? target._id() : null;
+            if (owner_id) {
+                values_map.__tpl_owner_id__ = owner_id;
+            }
+
+            let sync_err, sync_res;
+            parse(str_content, target.context, cs, values_map, (err, res_parse) => {
+                sync_err = err;
+                sync_res = res_parse;
+            });
+
+            if (sync_err) throw sync_err;
+            if (!sync_res) throw new Error("parse did not complete synchronously");
+
+            const [depth_0_ctrls, res_controls] = sync_res;
+
+            each(res_controls.named, (ctrl, name) => {
+                target[name] = ctrl;
+            });
+
+            const is_active_context = target.context && target.context.__is_active;
+
+            each(depth_0_ctrls, new_ctrl => {
+                target.add(new_ctrl);
+                if (is_active_context) {
+                    setTimeout(() => {
+                        new_ctrl.activate();
+                    }, 0);
+                }
+            });
+
+            // Serialize model state for activation
+            if (owner_id && target.data && target.data.model) {
+                const _bound_props = new Set();
+                const _collect_bound = (ctrl) => {
+                    if (ctrl && ctrl.dom && ctrl.dom.attributes) {
+                        const attrs = ctrl.dom.attributes;
+                        const attr_keys = Object.keys(attrs);
+                        for (let i = 0; i < attr_keys.length; i++) {
+                            const k = attr_keys[i];
+                            if (k.startsWith('data-jsgui-bind-') && k !== 'data-jsgui-bind-owner' && k !== 'data-jsgui-bind-class') {
+                                _bound_props.add(attrs[k]);
+                            }
+                            if (k === 'data-jsgui-bind-class') {
+                                const pairs = String(attrs[k]).split(',');
+                                for (let j = 0; j < pairs.length; j++) {
+                                    const sep = pairs[j].indexOf(':');
+                                    if (sep > 0) _bound_props.add(pairs[j].substring(sep + 1));
+                                }
+                            }
+                        }
+                    }
+                    if (ctrl && ctrl.content && ctrl.content._arr) {
+                        for (let i = 0; i < ctrl.content._arr.length; i++) {
+                            _collect_bound(ctrl.content._arr[i]);
+                        }
+                    }
+                };
+                each(depth_0_ctrls, c => _collect_bound(c));
+
+                if (_bound_props.size > 0) {
+                    const _state = {};
+                    const _unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : v)) : v;
+                    for (const p of _bound_props) {
+                        const raw = target.data.model.get ? target.data.model.get(p) : target.data.model[p];
+                        const val = _unwrap(raw);
+                        if (val !== undefined && typeof val !== 'function') {
+                            if (typeof val === 'object' && val !== null) {
+                                // Skip complex objects; only serialize primitives
+                            } else {
+                                _state[p] = val;
+                            }
+                        }
+                    }
+                    if (Object.keys(_state).length > 0) {
+                        // Use &quot; encoding for safe HTML attribute embedding
+                        const json = JSON.stringify(_state).replace(/"/g, '&quot;');
+                        target.dom.attributes['data-jsgui-model-state'] = json;
+                    }
+                }
+            }
+
+            return depth_0_ctrls;
+        }
+    };
+};
+
+const log = () => { }
+const parse = function (str_content, context, control_set, values_map_or_callback, callback) {
+    let values_map = {};
+    if (typeof values_map_or_callback === 'function') {
+        callback = values_map_or_callback;
+    } else if (values_map_or_callback) {
+        values_map = values_map_or_callback;
+    }
+
     //console.log('Parsing');
     //console.log('-------');
     //console.log('');
@@ -43,10 +189,10 @@ const parse = function(str_content, context, control_set, callback) {
         if (error) {
             log('parse error', error);
         }
-            //[...do something for errors...]
+        //[...do something for errors...]
         else {
             log('dom', dom);
-            
+
             let recurse = (dom, depth, callback) => {
                 let tdom = tof(dom);
                 let res;
@@ -81,7 +227,7 @@ const parse = function(str_content, context, control_set, callback) {
                 // Not so sure we can give it the parent right here.
                 //  Can only reconnect it once it's been put into the DOM.
 
-                let tn = new control_set.Text_Node({
+                let tn = new Text_Node({
                     text: text,
                     context: context,
                     sibling_index: sibling_index
@@ -148,17 +294,339 @@ const parse = function(str_content, context, control_set, callback) {
                             res_controls.unnamed = res_controls.unnamed || [];
                             res_controls.unnamed.push(ctrl);
                         }
-                        
+
+                        const resolve_val = (v) => {
+                            if (typeof v === 'string') {
+                                const trimmed = v.trim();
+                                if (trimmed.startsWith('__JSGUI_VAL_') && trimmed.endsWith('__')) {
+                                    if (values_map && trimmed in values_map) {
+                                        return values_map[trimmed];
+                                    }
+                                }
+                            }
+                            return v;
+                        };
+
                         const arr_dom_attrs = [];
                         each(a, (a_value, a_name) => {
                             if (!map_jsgui_attr_names[a_name]) {
-                                arr_dom_attrs.push([a_name, a_value])
+                                // Resolve placeholder if necessary
+                                const resolved_val = resolve_val(a_value);
+                                arr_dom_attrs.push([a_name, resolved_val])
                             }
                         })
                         each(arr_dom_attrs, attr => {
                             const [name, value] = attr;
-                            ctrl.dom.attributes[name] = value;
+
+                            // Advanced `bind-class` attribute
+                            if (name === 'bind-class') {
+                                if (value && typeof value === 'object') {
+                                    const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
+                                    const _bcm_parts = [];
+                                    each(value, (binding_val, class_name) => {
+                                        let source_model, source_prop, transform_fn;
+                                        if (Array.isArray(binding_val) && binding_val.length >= 2) {
+                                            source_model = binding_val[0];
+                                            source_prop = binding_val[1];
+                                            if (binding_val.length >= 3 && typeof binding_val[2] === 'function') {
+                                                transform_fn = binding_val[2];
+                                            }
+                                        } else if (binding_val && typeof binding_val === 'object' && binding_val.model) {
+                                            source_model = binding_val.model;
+                                            source_prop = binding_val.prop;
+                                        }
+
+                                        // Collect for activation serialization
+                                        if (source_prop) {
+                                            let part = class_name + ':' + source_prop;
+                                            if (transform_fn) {
+                                                // Detect simple negation: v => !v
+                                                const fn_str = transform_fn.toString();
+                                                if (/^\s*\(?\s*\w+\s*\)?\s*=>\s*!\s*\w+\s*$/.test(fn_str) ||
+                                                    /^function\s*\(\w+\)\s*\{\s*return\s+!\w+\s*;?\s*\}$/.test(fn_str)) {
+                                                    part = class_name + ':!' + source_prop;
+                                                }
+                                            }
+                                            _bcm_parts.push(part);
+                                        }
+
+                                        if (source_model && source_prop && ctrl.watch) {
+                                            const update_class = (val) => {
+                                                const resolved = transform_fn ? transform_fn(unwrap(val)) : unwrap(val);
+                                                if (resolved) ctrl.add_class(class_name);
+                                                else ctrl.remove_class(class_name);
+                                            };
+                                            const init_val = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
+                                            update_class(init_val);
+
+                                            ctrl.watch(source_model, source_prop, (e) => {
+                                                update_class((e && e.value !== undefined) ? e.value : e);
+                                            });
+                                        }
+                                    });
+                                    // Serialize bind-class for activation
+                                    if (_bcm_parts.length > 0) {
+                                        ctrl.dom.attributes['data-jsgui-bind-class'] = _bcm_parts.join(',');
+                                        if (values_map && values_map.__tpl_owner_id__) {
+                                            ctrl.dom.attributes['data-jsgui-bind-owner'] = values_map.__tpl_owner_id__;
+                                        }
+                                    }
+                                }
+                                return; // Skip standard attribute mapping
+                            }
+
+                            // Advanced `bind-style` attribute
+                            if (name === 'bind-style') {
+                                if (value && typeof value === 'object') {
+                                    const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
+                                    each(value, (binding_val, style_prop) => {
+                                        let source_model, source_prop;
+                                        if (Array.isArray(binding_val) && binding_val.length === 2) {
+                                            [source_model, source_prop] = binding_val;
+                                        } else if (binding_val && typeof binding_val === 'object' && binding_val.model) {
+                                            source_model = binding_val.model;
+                                            source_prop = binding_val.prop;
+                                        }
+
+                                        if (source_model && source_prop && ctrl.watch) {
+                                            const update_style = (raw_val) => {
+                                                const val = unwrap(raw_val);
+                                                ctrl.dom.attributes.style = ctrl.dom.attributes.style || {};
+
+                                                if (val === null || val === undefined || val === false) {
+                                                    delete ctrl.dom.attributes.style[style_prop];
+                                                    if (ctrl.dom.el) {
+                                                        if (style_prop.startsWith('--')) ctrl.dom.el.style.setProperty(style_prop, '');
+                                                        else ctrl.dom.el.style[style_prop] = '';
+                                                    }
+                                                } else {
+                                                    ctrl.dom.attributes.style[style_prop] = val;
+                                                    if (ctrl.dom.el) {
+                                                        if (style_prop.startsWith('--')) ctrl.dom.el.style.setProperty(style_prop, val);
+                                                        else ctrl.dom.el.style[style_prop] = val;
+                                                    }
+                                                }
+                                            };
+                                            const init_val = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
+                                            update_style(init_val);
+
+                                            ctrl.watch(source_model, source_prop, (e) => {
+                                                update_style((e && e.value !== undefined) ? e.value : e);
+                                            });
+                                        }
+                                    });
+                                }
+                                return; // Skip standard attribute mapping
+                            }
+
+                            // Advanced `bind-visible` attribute
+                            if (name === 'bind-visible') {
+                                let source_model, source_prop;
+                                if (Array.isArray(value) && value.length === 2) {
+                                    [source_model, source_prop] = value;
+                                } else if (value && typeof value === 'object' && value.model) {
+                                    source_model = value.model;
+                                    source_prop = value.prop;
+                                }
+
+                                if (source_model && source_prop && ctrl.watch) {
+                                    const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
+                                    const update_visible = (raw_val) => {
+                                        const is_visible = !!unwrap(raw_val);
+                                        ctrl.dom.attributes.style = ctrl.dom.attributes.style || {};
+
+                                        if (is_visible) {
+                                            if (ctrl.dom.attributes.style.display === 'none') {
+                                                delete ctrl.dom.attributes.style.display;
+                                            }
+                                            if (ctrl.dom.el && ctrl.dom.el.style.display === 'none') {
+                                                ctrl.dom.el.style.display = '';
+                                            }
+                                        } else {
+                                            ctrl.dom.attributes.style.display = 'none';
+                                            if (ctrl.dom.el) ctrl.dom.el.style.display = 'none';
+                                        }
+                                    };
+
+                                    const init_val = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
+                                    update_visible(init_val);
+
+                                    ctrl.watch(source_model, source_prop, (e) => {
+                                        update_visible((e && e.value !== undefined) ? e.value : e);
+                                    });
+                                }
+                                return; // Skip standard attribute mapping
+                            }
+
+                            // Advanced `bind-list` attribute
+                            if (name === 'bind-list') {
+                                const template_func = a.template ? resolve_val(a.template) : null;
+                                let source_model, source_prop;
+                                if (Array.isArray(value) && value.length === 2) {
+                                    [source_model, source_prop] = value;
+                                } else if (value && typeof value === 'object' && value.model) {
+                                    source_model = value.model;
+                                    source_prop = value.prop;
+                                }
+
+                                if (source_model && source_prop && template_func) {
+                                    const render_list = () => {
+                                        ctrl.clear();
+                                        const list = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
+                                        const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
+                                        const arr = unwrap(list);
+
+                                        if (arr && Array.isArray(arr)) {
+                                            arr.forEach((item, i) => {
+                                                const child_layout = template_func(item, i);
+                                                if (child_layout && child_layout.mount) child_layout.mount(ctrl);
+                                                else if (child_layout.add_class) ctrl.add(child_layout); // is a Control
+                                            });
+                                        } else if (arr && arr.each) { // Data_Object Collection
+                                            let i = 0;
+                                            arr.each(item => {
+                                                const child_layout = template_func(item, i++);
+                                                if (child_layout && child_layout.mount) child_layout.mount(ctrl);
+                                                else if (child_layout.add_class) ctrl.add(child_layout);
+                                            });
+                                        }
+                                    };
+
+                                    if (ctrl.watch) {
+                                        ctrl.watch(source_model, source_prop, () => render_list());
+                                        const current_list = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
+                                        if (current_list && current_list.on) current_list.on('change', () => render_list());
+                                    }
+                                    render_list();
+                                }
+                                return;
+                            }
+
+                            // Normal `bind-*` properties
+                            if (name.startsWith('bind-')) {
+                                const dest_prop = name.substring(5);
+                                let source_model, source_prop, opts = { bidirectional: true };
+
+                                if (Array.isArray(value) && value.length === 2) {
+                                    [source_model, source_prop] = value;
+                                } else if (value && typeof value === 'object' && value.model) {
+                                    source_model = value.model;
+                                    source_prop = value.prop;
+                                    opts = value.options || opts;
+                                }
+
+                                if (source_model && source_prop) {
+                                    // Serialize binding for activation
+                                    ctrl.dom.attributes['data-jsgui-bind-' + dest_prop] = source_prop;
+                                    if (values_map && values_map.__tpl_owner_id__) {
+                                        ctrl.dom.attributes['data-jsgui-bind-owner'] = values_map.__tpl_owner_id__;
+                                    }
+
+                                    if (dest_prop === 'text') {
+                                        // BIND-TEXT: set SSR text content + watch for changes
+                                        const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
+                                        const init_val = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
+                                        const text_str = unwrap(init_val);
+                                        if (text_str !== undefined && text_str !== null) {
+                                            ctrl.add(String(text_str));
+                                        }
+                                        if (ctrl.watch) {
+                                            ctrl.watch(source_model, source_prop, (e) => {
+                                                const new_val = unwrap((e && e.value !== undefined) ? e.value : e);
+                                                const str = (new_val === undefined || new_val === null) ? '' : String(new_val);
+                                                if (ctrl.dom.el) {
+                                                    ctrl.dom.el.textContent = str;
+                                                }
+                                            });
+                                        }
+                                        return;
+                                    }
+
+                                    if ((tag.name === 'input' || tag.name === 'textarea' || tag.name === 'select') && dest_prop === 'value') {
+                                        // NATIVE HTML INPUT INTERCEPTION
+                                        const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
+
+                                        const update_dom = (val) => {
+                                            const uval = unwrap(val);
+                                            const str_val = (uval === undefined || uval === null) ? '' : String(uval);
+                                            ctrl.dom.attributes.value = str_val;
+                                            if (ctrl.dom.el) ctrl.dom.el.value = str_val;
+                                        };
+                                        const init_val = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
+                                        update_dom(init_val);
+
+                                        if (ctrl.watch) {
+                                            ctrl.watch(source_model, source_prop, (e) => {
+                                                update_dom((e && e.value !== undefined) ? e.value : e);
+                                            });
+                                        }
+
+                                        if (opts.bidirectional !== false) {
+                                            const on_dom_change = (e) => {
+                                                const new_val = e.target ? e.target.value : (e.value || '');
+                                                let typed_val = new_val;
+                                                if (ctrl.dom.attributes.type === 'number') {
+                                                    const n = Number(new_val);
+                                                    if (!isNaN(n)) typed_val = n;
+                                                }
+                                                if (source_model.set) source_model.set(source_prop, typed_val);
+                                                else source_model[source_prop] = typed_val;
+                                            };
+                                            if (ctrl.on) {
+                                                ctrl.on('input', on_dom_change);
+                                                ctrl.on('change', on_dom_change);
+                                            }
+                                        }
+                                    } else if (ctrl._binding_manager) {
+                                        ctrl._binding_manager.bind_value(
+                                            source_model, source_prop,
+                                            ctrl.data.model, dest_prop,
+                                            opts
+                                        );
+                                    } else if (ctrl.data && ctrl.data.model) {
+                                        ctrl.data.model.set(dest_prop, source_model.get ? source_model.get(source_prop) : source_model[source_prop]);
+                                        // TODO: watch
+                                    }
+                                }
+                                return;
+                            }
+
+                            if (name.startsWith('on-')) {
+                                const event_name = name.substring(3);
+                                if (typeof value === 'function') {
+                                    ctrl.on(event_name, value);
+                                    // Serialize for activation - extract method name from function source
+                                    if (values_map && values_map.__tpl_owner_id__) {
+                                        const fn_str = value.toString();
+                                        const method_match = fn_str.match(/this\.(\w+)\s*\(/);
+                                        if (method_match) {
+                                            ctrl.dom.attributes['data-jsgui-on-' + event_name] = method_match[1];
+                                            ctrl.dom.attributes['data-jsgui-bind-owner'] = values_map.__tpl_owner_id__;
+                                        }
+                                    }
+                                }
+                                return;
+                            }
+
+                            if (name === 'template') {
+                                // Ignore template property entirely for DOM layout strings, it's consumed by bind-list
+                                return;
+                            }
+
+                            if (name === 'data-model') {
+                                if (!ctrl.data) ctrl.data = {};
+                                ctrl.data.model = value;
+                                return;
+                            }
+
+                            if (typeof value === 'string') {
+                                ctrl.dom.attributes[name] = value;
+                            } else {
+                                ctrl.dom.attributes[name] = value;
+                                ctrl[name] = value;
+                            }
                         });
+
                         return ctrl;
                     } else {
                         // The app's controls need to be loaded / registered previous to this.
@@ -198,28 +666,33 @@ const parse = function(str_content, context, control_set, callback) {
             }
             // goes depth-first.
             //  want the item's sibling index too.
-            recurse(dom, 0, (item, depth, sibling_index) => {
-                if (item.type === 'text') {
-                    let trimmed = item.data.trim();
-                    //log('trimmed', trimmed);
-                    //log('trimmed.length', trimmed.length);
-                    if (trimmed.length > 0) {
-                        handle_text(item.raw, depth, sibling_index);
+            try {
+                recurse(dom, 0, (item, depth, sibling_index) => {
+                    if (item.type === 'text') {
+                        let trimmed = item.data.trim();
+                        //log('trimmed', trimmed);
+                        //log('trimmed.length', trimmed.length);
+                        if (trimmed.length > 0) {
+                            handle_text(item.raw, depth, sibling_index);
+                        }
+                        // Need to rapidly 
+                    } else if (item.type === 'tag' || item.type === 'script' || item.type === 'style') {
+                        // does it have children?
+                        // if not, create a control from the children.
+                        // then if it does, what are its control children?
+                        //log('tag item', item);
+                        //log('item.children.length', item.children.length);
+                        handle_tag(item, depth, sibling_index);
                     }
-                    // Need to rapidly 
-                } else if (item.type === 'tag' || item.type === 'script' || item.type === 'style') {
-                    // does it have children?
-                    // if not, create a control from the children.
-                    // then if it does, what are its control children?
-                    //log('tag item', item);
-                    //log('item.children.length', item.children.length);
-                    handle_tag(item, depth, sibling_index);
-                }
-            });
-            const depth_0_ctrls = map_siblings_at_depth[0];
-            callback(null, [depth_0_ctrls, res_controls]);
+                });
+                const depth_0_ctrls = map_siblings_at_depth[0] || [];
+                callback(null, [depth_0_ctrls, res_controls]);
+            } catch (e) {
+                console.error("Error in parse recurse:", e.stack);
+                callback(e);
+            }
         }
-            //[...parsing done, do something...]
+        //[...parsing done, do something...]
     });
     var parser = new Html_Parser(handler);
     parser.parse_complete(str_content);
@@ -232,29 +705,30 @@ const parse = function(str_content, context, control_set, callback) {
 // Maybe change back to old parse_mount and fix tomorrow?
 //  Or parse function will always / just use a callback?
 
-const parse_mount = function(str_content, target, control_set) {
+const parse_mount = function (str_content, target, control_set, values_map = {}) {
     // And this should be a promise too, it seems.
     //  Not so sure though.
     //  Promise puts in some kind of a delay.
 
     // Maybe this fn would be better with a callback too.
-    return new Promise(async(solve, jettison) => {
+    return new Promise(async (solve, jettison) => {
         let container;
         let a = arguments;
         let l = a.length;
-        if (l === 4) {
+        if (l >= 3 && a[2] && typeof a[2].add === 'function') {
             container = a[2];
             control_set = a[3];
+            values_map = a[4] || {};
         } else {
             container = target;
         }
-        const {context} = target;
+        const { context } = target;
         // And make it async to announce when it's complete?
         //  Won't take long though.
 
         //const [depth_0_ctrls, res_controls] = await parse(str_content, context, control_set);
 
-        parse(str_content, context, control_set, (err, res_parse) => {
+        parse(str_content, context, control_set, values_map, (err, res_parse) => {
             if (err) {
                 jettison(err);
             } else {
@@ -297,7 +771,7 @@ const parse_mount = function(str_content, target, control_set) {
                         }, 0);
                     }
                 });
-                
+
                 //log('res_controls', res_controls);
                 //log('Object.keys(res_controls)', Object.keys(res_controls));
                 //console.log('Object.keys(res_controls.named)', Object.keys(res_controls.named));
@@ -323,14 +797,14 @@ const parse_mount = function(str_content, target, control_set) {
 
 
 
-        
+
 
 
     })
 
 
-    
-    
+
+
 
 }
 
@@ -340,7 +814,7 @@ const parse_mount = function(str_content, target, control_set) {
 
 // with 4 params - have a target, and a container
 
-const ____old_parse_mount = function(str_content, target, control_set) {
+const ____old_parse_mount = function (str_content, target, control_set) {
 
     let container;
     let a = arguments;
@@ -371,7 +845,7 @@ const ____old_parse_mount = function(str_content, target, control_set) {
 
     str_content = str_content.trim();
 
-    const {context} = target;
+    const { context } = target;
 
     //log('parse_mount str_content', str_content);
     //log('target._id()', target._id());
@@ -384,7 +858,7 @@ const ____old_parse_mount = function(str_content, target, control_set) {
         if (error) {
             log('parse error', error);
         }
-            //[...do something for errors...]
+        //[...do something for errors...]
         else {
             log('dom', dom);
             // Then can recurse through the dom object.
@@ -557,9 +1031,9 @@ const ____old_parse_mount = function(str_content, target, control_set) {
                 const create_ctrl = (tag, content) => {
                     if (control_set[tag.name]) {
                         //log('has jsgui control for ' + tag.name);
-    
+
                         // need to look into if there are child jsgui controls within this.
-    
+
                         let Ctrl = control_set[tag.name];
                         // work out the spec as well.
                         log('tag', tag);
@@ -588,7 +1062,7 @@ const ____old_parse_mount = function(str_content, target, control_set) {
                         //log('!!target', !!target);
                         //log('!!target.context', !!target.context);
                         a.context = context;
-    
+
                         let ctrl = new Ctrl(a);
                         if (a.name) {
                             res_controls.named = res_controls.named || {};
@@ -604,10 +1078,10 @@ const ____old_parse_mount = function(str_content, target, control_set) {
                         }
                         // and unnamed controls
                         //  an array of them...
-    
+
                         // The name property - possibly name could be stored by the control itself.
                         //  Different to its id.
-    
+
                         //log('!!ctrl', !!ctrl);
                         //log('depth', depth);
 
@@ -639,7 +1113,7 @@ const ____old_parse_mount = function(str_content, target, control_set) {
                     //  The fix I put in got lost before.
                     //  It does not need to do that much where there are no child nodes.
 
-                    
+
 
                     ctrl = create_ctrl(tag_with_no_children);
                     //map_siblings_at_depth[depth] = map_siblings_at_depth[depth] || [];
@@ -653,11 +1127,6 @@ const ____old_parse_mount = function(str_content, target, control_set) {
 
                     // Not sure how this will happen as the depth should move outwards?
                     //  Will need to check / measure recursion order.
-
-                    // depth increase.
-                    //  means moving to new child.
-                    //   this does depth first, but starting from the first.
-                    //    not sure that makes sense, need to check that it works.
 
                     // 
                     map_siblings_at_depth[depth] = [];
@@ -838,7 +1307,7 @@ const ____old_parse_mount = function(str_content, target, control_set) {
 
             //throw 'stop';
         }
-            //[...parsing done, do something...]
+        //[...parsing done, do something...]
     });
     var parser = new Html_Parser(handler);
     parser.parse_complete(str_content);
@@ -847,7 +1316,8 @@ const ____old_parse_mount = function(str_content, target, control_set) {
 
 const res = {
     parse: parse,
-    parse_mount: parse_mount
+    parse_mount: parse_mount,
+    tpl: tpl
 }
 
 module.exports = res;

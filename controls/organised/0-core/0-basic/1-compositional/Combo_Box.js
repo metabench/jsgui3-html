@@ -1,8 +1,9 @@
 const jsgui = require('../../../../../html-core/html-core');
-const {Control, Control_Data, Control_View, Data_Object} = jsgui;
-const {field} = require('obext');
+const { Control, Control_Data, Control_View, Data_Object } = jsgui;
+const Data_Model_View_Model_Control = require('../../../../../html-core/Data_Model_View_Model_Control');
+const { field } = require('obext');
 const Text_Input = require('../0-native-compositional/Text_Input');
-const List = require('./list');
+const List = require('./List');
 const {
     normalize_items,
     find_item_by_value,
@@ -13,7 +14,7 @@ const {
     apply_label
 } = require('../../../../../control_mixins/a11y');
 
-class Combo_Box extends Control {
+class Combo_Box extends Data_Model_View_Model_Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'combo_box';
         super(spec);
@@ -36,19 +37,19 @@ class Combo_Box extends Control {
         this.construct_synchronised_data_and_view_models(spec);
 
         if (spec.items) {
-            this.set_items(spec.items, {from_model: true});
+            this.set_items(spec.items, { from_model: true });
         }
         if (spec.filter_text !== undefined) {
-            this.set_filter_text(spec.filter_text, {from_model: true});
+            this.set_filter_text(spec.filter_text, { from_model: true });
         }
         if (spec.value !== undefined) {
-            this.set_selected_value(spec.value, {from_model: true});
+            this.set_selected_value(spec.value, { from_model: true });
         }
         if (spec.selected_item !== undefined) {
-            this.set_selected_item(spec.selected_item, {from_model: true});
+            this.set_selected_item(spec.selected_item, { from_model: true });
         }
         if (spec.open !== undefined) {
-            this.set_open(!!spec.open, {from_model: true});
+            this.set_open(!!spec.open, { from_model: true });
         }
 
         if (!spec.el) {
@@ -58,75 +59,33 @@ class Combo_Box extends Control {
 
     construct_synchronised_data_and_view_models(spec) {
         const {context} = this;
-        this.data = new Control_Data({context});
-        if (spec.data && spec.data.model) {
-            this.data.model = spec.data.model;
-        } else {
-            this.data.model = new Data_Object({context});
-        }
-        field(this.data.model, 'value');
-        field(this.data.model, 'items');
-        field(this.data.model, 'filter_text');
-        field(this.data.model, 'selected_item');
-        field(this.data.model, 'open');
+        
+        if (!this.data) this.data = new Control_Data({context});
+        if (!this.data.model) this.data.model = new Data_Object({context});
+        
+        if (!this.view) this.view = new Control_View({context});
+        if (!this.view.data) this.view.data = new Control_Data({context});
+        if (!this.view.data.model) this.view.data.model = new Data_Object({context});
 
-        this.view = new Control_View({context});
-        if (spec.view && spec.view.data && spec.view.data.model) {
-            this.view.data.model = spec.view.data.model;
-        } else {
-            this.view.data.model = new Data_Object({context});
-        }
-        field(this.view.data.model, 'value');
-        field(this.view.data.model, 'items');
-        field(this.view.data.model, 'filter_text');
-        field(this.view.data.model, 'selected_item');
-        field(this.view.data.model, 'open');
-
-        this.data.model.on('change', e => {
-            const {name, value, old} = e;
-            if (value === old) return;
-            if (name === 'value') {
-                this.view.data.model.value = value;
-                this.set_selected_value(value, {from_model: true});
-            } else if (name === 'items') {
-                this.view.data.model.items = value;
-                this.set_items(value, {from_model: true});
-            } else if (name === 'filter_text') {
-                this.view.data.model.filter_text = value;
-                this.set_filter_text(value, {from_model: true});
-            } else if (name === 'selected_item') {
-                this.view.data.model.selected_item = value;
-                this.set_selected_item(value, {from_model: true});
-            } else if (name === 'open') {
-                this.view.data.model.open = value;
-                this.set_open(!!value, {from_model: true});
-            }
+        const fields = ['value', 'items', 'filter_text', 'selected_item', 'open'];
+        fields.forEach(f => {
+            field(this.data.model, f);
+            field(this.view.data.model, f);
+            
+            // Bidirectional binding between models
+            this._binding_manager.bind_value(this.data.model, f, this.view.data.model, f, { bidirectional: true });
         });
 
-        this.view.data.model.on('change', e => {
-            const {name, value, old} = e;
-            if (value === old) return;
-            if (name === 'value') {
-                this.data.model.value = value;
-                this.set_selected_value(value, {from_model: true});
-            } else if (name === 'items') {
-                this.data.model.items = value;
-                this.set_items(value, {from_model: true});
-            } else if (name === 'filter_text') {
-                this.data.model.filter_text = value;
-                this.set_filter_text(value, {from_model: true});
-            } else if (name === 'selected_item') {
-                this.data.model.selected_item = value;
-                this.set_selected_item(value, {from_model: true});
-            } else if (name === 'open') {
-                this.data.model.open = value;
-                this.set_open(!!value, {from_model: true});
-            }
-        });
+        // Watch data model to trigger internal setters
+        this._binding_manager.watch(this.data.model, 'value', val => this.set_selected_value(val, {from_model: true}));
+        this._binding_manager.watch(this.data.model, 'items', val => this.set_items(val, {from_model: true}));
+        this._binding_manager.watch(this.data.model, 'filter_text', val => this.set_filter_text(val, {from_model: true}));
+        this._binding_manager.watch(this.data.model, 'selected_item', val => this.set_selected_item(val, {from_model: true}));
+        this._binding_manager.watch(this.data.model, 'open', val => this.set_open(!!val, {from_model: true}));
     }
 
     compose_combo_box() {
-        const {context} = this;
+        const { context } = this;
 
         const input_ctrl = new Text_Input({
             context,
@@ -184,7 +143,7 @@ class Combo_Box extends Control {
      * @param {Object} [options] - Optional settings.
      */
     set_items(items, options = {}) {
-        this.items = normalize_items(items, {id_prefix: this.item_id_prefix});
+        this.items = normalize_items(items, { id_prefix: this.item_id_prefix });
         this.filtered_items = filter_items(this.items, this.filter_text);
         if (!options.from_model) {
             this.set_model_value('items', items);
@@ -195,9 +154,9 @@ class Combo_Box extends Control {
                 label: item.label,
                 id: item.id,
                 disabled: item.disabled
-            })), {from_model: true});
+            })), { from_model: true });
             if (this.list.set_filter_text) {
-                this.list.set_filter_text(this.filter_text, {from_model: true});
+                this.list.set_filter_text(this.filter_text, { from_model: true });
             }
         }
         this.update_aria_active_descendant();
@@ -215,7 +174,7 @@ class Combo_Box extends Control {
             this.set_model_value('filter_text', this.filter_text);
         }
         if (this.list && this.list.set_filter_text) {
-            this.list.set_filter_text(this.filter_text, {from_model: true});
+            this.list.set_filter_text(this.filter_text, { from_model: true });
         }
     }
 
@@ -372,7 +331,7 @@ class Combo_Box extends Control {
         }
         this.active_index = next_index;
         if (this.list && this.list.set_active_index) {
-            this.list.set_active_index(next_index, {from_model: true});
+            this.list.set_active_index(next_index, { from_model: true });
         }
         const active_item = this.filtered_items[next_index];
         if (active_item) {

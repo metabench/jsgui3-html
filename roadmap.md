@@ -1,247 +1,111 @@
+# jsgui3-html Roadmap
+
+This roadmap outlines the development priorities for jsgui3-html, organized by phase. For detailed improvement checklists, see `docs/jsgui3_html_improvement_plan.md`.
+
+## Phase 1: Core & Reliability (Foundation)
+
+**Goal:** Ensure all basic controls are correct, accessible, and well-tested.
 
-JSGUI3-HTML Improvements Roadmap
-===============================
-
-This section translates `docs/jsgui3_html_improvement_plan.md` into phased milestones.
-
-Phase 1: Core and reliability
------------------------------
-- Add missing native inputs: textarea, number, range, progress, meter.
-- Add compositional basics: toggle switch, badge, inline validation message.
-- Fix known control bugs (checkbox `el_radio` typo, `checked` sync).
-- Baseline a11y on core inputs (roles, labels, focus states).
-- Normalize naming duplicates with deprecation aliases.
-
-Phase 2: Data and forms
------------------------
-- Data table with sort, filter, pagination, and a11y semantics.
-- Virtual list/grid for large datasets with windowed rendering.
-- Form container with validation routing and inline errors.
-- Tag/chip input and object editor improvements (schema-driven).
-- Reconnect or replace `controls/connected/data-grid.js` with a modern API.
-
-Phase 3: Layout and advanced UX
--------------------------------
-- Split pane, accordion, drawer, stepper.
-- Window/panel enhancements: snap, dock, resize, z-index management.
-- Tree and file tree: lazy loading, multi-select, drag reparent.
-- Theming tokens and theme context; improve swaps approach.
-
-Documentation and tests
------------------------
-- Add docs entries for new controls and update README.
-- Add dev-examples for complex controls (data table, virtual list, form).
-- Add E2E tests for interactive examples; add unit tests for helpers.
-
-
-Make the current controls use parse_mount to save code.
-Will be clearer and simpler to code in.
-More complex underlying system.
-
-
-
-
-
-Observable features
-    Doing more on the underlying ofp system could help jsgui3 to work in a more standardised way.
-    
-
-Examples and tests
-Interested in getting screenshot-type renderings of controls. This could be tested against.
-See where appearance regressions occurr on a wide variety of controls.
-
-Want to improve styling / theming /rendering.
-
-Smaller examples with controls.
-Styling / theming properties set.
-
-Creation of / interaction with stylesheet(s)?
-Want flexible system for styles, but also sensible defaults.
-
-Themes definitely make sense.
-Also different layouts / css for different devices / screen sizes.
-
-Want it to be easy to create / adapt a theme for an app.
-
-Controls having different rendering for different outputs?
-Sizes as small, medium, large, also taking into account the device.
-    And possibly heirachy within document?
-
-tiny, small, medium, large, huge
-// easy enough scale for sizing
-//  could be done with some kinds of sizing table(s).
-
-
-Icons
------
-
-Being able to make access to icons very easy will be very useful.
-Load / register icons on the server
-Be able to reference and use them on both the server and the client.
-    Serving with auto-resizing too?
-        Would make sense.
-
-So will have more capabilities within jsgui server for the moment.
-
-
-
-changes
-ctrl.changes({obj change functions})
-Would be a useful API lower down.
-such as in evented_class?
-//  so if there is a 'change' call it checks aganst a specific changes map
-    Seems like it would be fastest.
-  
-
-
-0.0.92 onwards:
-Will make jsgui3-server work as a standalone command line app.
-Various pieces of functionality useful for web servers will be available.
-Could even operate as an FTP server?
-Want it so that when an empty server is started, it's possible to configure it from a server admin console.
-Maybe not to do all that much to start with
-Things like compiling code, or viewing through an admin interface what code has compiled.
-A file viewer perhaps, viewing files in that directory from where jsgui-server was called.
-Installing it to run from the command line.
-    probably npm install jsgui3-server -g
-
-Even showing it within a WebView type window, packaged maybe with Electron.
-
-The jsgui3-server app, through its admin interface, should have some place where compilation can be done and monitored.
-A file manager type interface would help with directories and items on the FS to be compiled.
-Also want compilations that work in memory without needed into access the FS. I think Babel can do this once the
-references are loaded, and it outputs as one file.
-
-
-Babel may become a dev dependency?
-Lightweight code deployments will remain a priority, may even increase.
-Allowing for compilation of other langs' code to WASM seems very important too.
-
-
-
-Could do with examples
-    Rendering a few pages of HTML?
-    Does that need to be on the server?
-    Can it happen within the HTML module?
-    Maybe just rendering the HTML would be enough here.
-
-
-Examples within server could make most sense.
-Integration of CSS seems important here...
-
-Want to make a few decent examples on the server.
-
-Multiple available models per Control should be supported - meaning its only using one model at once (or not... could be interesting, could code active_models_limit = 1 and then do other coding in the future to support multiple active models)
-
-Control_Models extends Collection
-Control_Views extends Collection
-
-Definitely seems as though building a new Control class from scratch makes the most sense for the MMMVC or MultiModelMultiViewControl class.
-
-MultiModelMultiViewViewModelControl even
-  Each view has 1 viewmodel
-    Could it have the standard properties model as well as extended properties model?
-      Or make the extended properties model extend the standard properties model?
-        Will do model extension code if necessary in the future.
-
-May be worth making separate module for these multi-model multi-view (view view-model) controls.
-  Get back to breaking some functionality (incl new and upgraded) out of jsgui3?
-
-mmmv-control module perhaps
-  The core of it will / should be separated from HTML DOM assumptions?
-  And have a specific type of View which gets rendered as HTML.
-  Other View type could be rendered as React-Native for example.
-
-A View supporting multiple ViewModels?
-  Kind of, in that a model can support different data types?
-  Could make sense with both general and control-specific properties. Each model could be or be like an interface.
-
-  Multiple (active) models could work for comparer controls for example. 
-
-Model supporting being substituted for other models?
-Multiple signifiers - 'calendar' is an English word, it could be signified in other languages.
-  And then a simple text definition of a calendar? Text explanation of it?
-  Could (later) involve AI for code writing, which learns how to do the conversions / syntaxes from training data.
-
-srtypes works as a name because there will be a system to register these SR_Types (or SRTypes)
-
-Signifier being a type of representation.
-  Symbolic (signifier) representation
-Consider compositional representation (eg a large red car), large and red being adjectives that describe the composition of the object.
-  Consider adjective use....
-    Adjective as descriptive
-
-Compositional / descriptive representation
-  Signifiers of those types of representation as well.
-
-Exact composition?
-Composition rules?
-Definition being part of a system to identify it?
-When is the definition built into the word being used?
-
-String names for various types, but put in a framework where it knows the context, and that those names are themselves symbolic representations.
-
-Types being compositional...
-  Or the representations being compositional
-
-  Maybe it's all representations, or almost...
-
-  A type definition?
-    Though it's more of a definition of the type in one sort of representation or system.
-
-  Different systems may be a good word. As in there are different calendar systems.
-    The calendar system could be named, and also have programmatic and/or logical rules.
-
-Sooner or later, want to make a GUI app for dealing with these types.
-
-Type signifiers will generally be words, or programming words and phrases.
-Maybe the signifier could be (much more like) a simple English sentence that expresses what it is.
-Type notations... these notations are themselves different systems to represent them.
-
-Don't want to get stuck in definitions - want to get stuck into definitions.
-
-Does look like making this elsewhere and putting the core and/or basics into lang-mini would work best.
-Lang-types may be best even.
-
-Different types in different languages...
-
-lang-types uses lang-mini
-and lang-tools uses / has lang-types
-
-So lang-types won't be in lang-mini for a while at least.
-Perhaps lang-mini can be adapted for compatability in a few places.
-
-Full lang-types could be quite complex.
-A simple lang-mini implementation would be nice.
-
-Worth doing a little work on a lang-types repo and package though.
-Would use lang-mini platform.
-Would be nice to have an answer / system for an overall type having different subtypes / ways of expressing it.
-  Dates being a common and somewhat complex example.
-    But often that complexity is ignored / has convenient coding conventions already.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-multimodel-multiview-viewmodel-control
-
-
-
-
-
+- [x] Native input controls: textarea, number, range, progress, meter, email, password, tel, url
+- [x] Compositional basics: toggle switch, badge, spinner, skeleton loader, inline validation message
+- [x] Baseline a11y on core inputs (ARIA roles, labels, focus states, keyboard navigation mixin)
+- [x] Fix known control bugs (checkbox sync, naming normalization)
+- [x] Deprecation aliases for renamed controls (`FormField` → `Form_Field`)
+- [ ] Comprehensive unit tests for all core controls (target: >80% coverage)
+- [ ] Complete `parse_mount` adoption across controls to reduce composition code
+
+## Phase 2: Data & Forms
+
+**Goal:** First-class data display and form building.
+
+- [x] Data_Table with sort, filter, pagination, column priority hiding
+- [x] Virtual_List / Virtual_Grid for large datasets with windowed rendering
+- [x] Form_Container with validation routing and inline errors
+- [x] Tag_Input and Object_Editor (schema-driven)
+- [x] Inline_Cell_Edit for in-place table cell editing
+- [ ] Complete validation framework integration across all editor controls
+- [ ] Schema-driven form generation from JSON definitions
+
+## Phase 3: Layout & Advanced UX
+
+**Goal:** Rich layout primitives and interactive components.
+
+- [x] Split_Pane, Accordion, Drawer, Stepper, Wizard
+- [x] Window/panel enhancements: snap, dock, resize, z-index management (Window_Manager)
+- [x] Tree and File_Tree with lazy loading, multi-select
+- [x] Sidebar_Nav with collapse/overlay modes
+- [ ] Tree drag reparenting
+- [ ] Multi-document interface (MDI) with tiling
+
+## Phase 4: Theming & Styling
+
+**Goal:** Flexible, complete theming system.
+
+- [x] CSS custom property tokens (`--admin-*`, `--j-*`)
+- [x] Token maps for size/spacing/density (`themes/token_maps.js`)
+- [x] Theme parameter system (`control_mixins/theme_params.js`, `themeable.js`)
+- [x] Admin theme with consistent token usage across all controls
+- [ ] Theme profiles (light, dark, high-contrast)
+- [ ] Dynamic theme switching at runtime
+- [ ] Per-control token override API
+- [ ] Theme kitchen-sink showcase page
+
+## Phase 5: Device-Adaptive Composition
+
+**Goal:** Controls work naturally on phone, tablet, and desktop.
+
+- [x] Adaptive layout infrastructure: `layout_mode`, `resolve_layout_mode()`, `_apply_layout_mode()`
+- [x] 12 controls upgraded: Master_Detail, Split_Pane, Form_Container, Modal, Toolbar, Sidebar_Nav, Drawer, Wizard, Data_Table, Window, Tabbed_Panel, Status_Dashboard
+- [x] Touch target sizing via `--j-touch-target` token
+- [x] `[data-layout-mode]` attribute selectors (not scattered `@media` queries)
+- [x] Design book: `docs/books/device-adaptive-composition/` (8 chapters)
+- [ ] View_Environment service (centralized `layout_mode`, `density_mode`, `interaction_mode`)
+- [ ] Container-aware breakpoints (ResizeObserver-based, not just viewport)
+- [ ] Touch swipe gestures for Tabbed_Panel and Drawer
+- [ ] Viewport-matrix Playwright test harness
+
+## Phase 6: Charts & Visualization
+
+**Goal:** Rich, interactive data visualization.
+
+- [x] Line_Chart, Bar_Chart, Pie_Chart, Area_Chart (SVG-based)
+- [x] Sparkline (inline mini-chart)
+- [x] Gauge (radial meter)
+- [x] Status_Dashboard (auto-layout metric cards)
+- [ ] Chart interactivity: tooltips, click handlers, zoom
+- [ ] Real-time chart data streaming
+- [ ] Responsive chart sizing
+
+## Phase 7: Documentation & Testing
+
+**Goal:** Comprehensive documentation and test coverage.
+
+- [x] Framework README with architecture, API, examples
+- [x] MVVM architecture guide
+- [x] Data binding API documentation
+- [x] Mixin catalog (39 mixins documented)
+- [x] Device-adaptive composition book
+- [x] Test suite (160+ tests across core, MVVM, mixins, integration)
+- [x] Control catalog README with full inventory
+- [ ] Per-control API reference documentation
+- [ ] Interactive examples gallery (browser-based)
+- [ ] Migration guide for breaking changes
+- [ ] Contributing guide with architecture walkthrough
+
+## Future Exploration
+
+These are longer-term ideas being considered:
+
+- **Icons system** — server-side icon registration, auto-resizing, easy referencing on both server and client
+- **Observable feature parity** — deeper OFP (observable function programming) integration from lang-tools
+- **Multi-model controls** — controls supporting multiple simultaneous data models (comparers, diffs)
+- **WASM compilation** — tooling for compiling other languages' code to WebAssembly
+- **React Native views** — alternative view renderers beyond HTML DOM
+
+## Related Documents
+
+- [docs/jsgui3_html_improvement_plan.md](docs/jsgui3_html_improvement_plan.md) — Detailed improvement plan
+- [docs/jsgui3_html_improvement_priorities.md](docs/jsgui3_html_improvement_priorities.md) — Prioritized improvements
+- [docs/jsgui3_html_improvement_checklists.md](docs/jsgui3_html_improvement_checklists.md) — Implementation checklists
+- [docs/controls_expansion_ideas.md](docs/controls_expansion_ideas.md) — New control ideas
+- [docs/books/device-adaptive-composition/](docs/books/device-adaptive-composition/) — Adaptive UI book

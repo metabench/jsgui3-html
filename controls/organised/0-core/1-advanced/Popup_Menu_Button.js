@@ -5,8 +5,8 @@ var jsgui = require('./../../../../html-core/html-core');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 //var Control = jsgui.Control;
 
-var Button = require('../0-basic/0-native-compositional/button');
-var Item = require('../0-basic/1-compositional/item');
+var Button = require('../0-basic/0-native-compositional/Button');
+var Item = require('../0-basic/1-compositional/Item');
 var Collection = jsgui.Collection;
 var Data_Value = jsgui.Data_Value;
 

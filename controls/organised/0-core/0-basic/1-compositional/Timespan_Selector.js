@@ -3,7 +3,7 @@ var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof;
 var Control = jsgui.Control;
-const Date_Picker = require('../0-native-compositional/date-picker');
+const Date_Picker = require('../0-native-compositional/Date_Picker');
 
 // Extending, with field values being set?
 //  Setting field values in definitions may be a useful thing.

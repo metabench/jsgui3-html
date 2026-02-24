@@ -8,7 +8,7 @@
 'use strict';
 
 const { create_deprecated_alias } = require('../../../../utils/deprecation');
-const Property_Editor = require('./property_editor');
+const Property_Editor = require('./Property_Editor');
 
 module.exports = create_deprecated_alias(
     Property_Editor,

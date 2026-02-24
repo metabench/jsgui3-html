@@ -1,0 +1,301 @@
+spec_version: "1.0"
+
+control:
+  class_name: Data_Table
+  type_name: data_table
+  category: 1-standard/4-data
+  priority: P0
+  target_tier: T4
+  proposed_file: controls/organised/1-standard/4-data/data_table.js
+  dependencies:
+    - Control
+    - Data_Model_View_Model_Control
+    - grid_selection (mixin)
+    - grid_keyboard_nav (mixin)
+    - column_resize (mixin)
+    - grid_render_mode (mixin)
+    - frozen_columns (mixin)
+    - async_data_source (mixin)
+    - Data_Table_Virtual_Renderer
+
+status:
+  implemented: true
+  notes: >
+    870-line implementation with MVVM computed pipeline, virtual rendering,
+    sort/filter/paginate, column resize, row selection, frozen columns,
+    server_side mode, adaptive layout (phone/tablet/desktop), density variants.
+    Current tier ~T2+. Missing: empty state rendering, inline cell editing hooks,
+    exhaustive JSDoc, card-row phone layout, tfoot pagination slot.
+
+purpose:
+  summary: >
+    Renders tabular data with sorting, filtering, pagination, column resizing,
+    row selection, virtual scrolling, server-side data bypass, and adaptive
+    layout. The core data rendering engine used by Data_Grid.
+  use_cases:
+    - Admin entity listing (users, orders, logs, audit trails).
+    - Server monitoring dashboards with sortable metric columns.
+    - Data export preview with column visibility toggles.
+    - Server-paginated views where filter/sort/page is handled remotely.
+  non_goals:
+    - Not a spreadsheet (no formula engine).
+    - Not a pivot table (use a dedicated BI control).
+
+composition:
+  children:
+    - thead (header row with sort indicators + resize handles)
+    - tbody (data rows — standard DOM or virtual-rendered)
+    - tfoot (optional summary/pagination row)
+    - column_resize_handles (overlay via mixin)
+    - empty_state_slot
+  variants: [default, compact, striped, bordered, card_rows]
+  states: [idle, loading, empty, error, selecting, editing]
+  default_variant: default
+  default_state: idle
+
+api:
+  props:
+    - name: columns
+      type: "array<{key:string, label:string, sortable?:boolean, width?:number, resizable?:boolean, frozen?:boolean, render?:function, accessor?:function, priority?:number}>"
+      required: true
+      description: Column definitions. Each must have a stable key.
+    - name: rows
+      type: "array<object>"
+      required: true
+      default: []
+      description: Data rows keyed by column keys.
+    - name: page
+      type: number
+      required: false
+      default: 1
+      description: Current 1-based page number.
+    - name: page_size
+      type: "number|null"
+      required: false
+      default: null
+      description: Rows per page. Null = no paging.
+    - name: sort_state
+      type: "{key:string, direction:'asc'|'desc'}|null"
+      required: false
+      default: null
+      description: Active sort column and direction.
+    - name: filters
+      type: "object|null"
+      required: false
+      default: null
+      description: Column filter map {column_key: filter_value}.
+    - name: server_side
+      type: boolean
+      required: false
+      default: false
+      description: >
+        When true, skip client-side filter/sort/page pipeline — rows are
+        returned as-is. Server already handled data processing.
+    - name: total_count
+      type: "number|null"
+      required: false
+      default: null
+      description: >
+        Total row count from server. Used with server_side=true to calculate
+        total_pages for pagination UI.
+    - name: selection_mode
+      type: string
+      required: false
+      default: "none"
+      description: "Row selection mode: none, single, multi."
+    - name: render_mode
+      type: string
+      required: false
+      default: "auto"
+      description: "Render mode: standard, virtual, auto."
+    - name: virtual_threshold
+      type: number
+      required: false
+      default: 1000
+      description: Row count above which auto mode switches to virtual.
+    - name: row_height
+      type: number
+      required: false
+      default: 36
+      description: Row height in px (required for virtual mode).
+    - name: density
+      type: string
+      required: false
+      default: "comfortable"
+      description: "Density: comfortable, compact, dense."
+    - name: striped
+      type: boolean
+      required: false
+      default: true
+      description: Enables striped row backgrounds.
+    - name: bordered
+      type: boolean
+      required: false
+      default: false
+      description: Enables bordered cell style.
+    - name: empty_text
+      type: string
+      required: false
+      default: "No data"
+      description: Text shown when rows array is empty.
+    - name: frozen_left
+      type: number
+      required: false
+      default: 0
+      description: Number of columns frozen on left.
+    - name: frozen_right
+      type: number
+      required: false
+      default: 0
+      description: Number of columns frozen on right.
+    - name: layout_mode
+      type: string
+      required: false
+      default: "auto"
+      description: "Layout mode: auto, phone, tablet, desktop."
+  events:
+    - name: row_click
+      payload: "{row_index:number, row_data:object, original_event:Event}"
+      when: User clicks a data row.
+    - name: sort_change
+      payload: "{sort_state: {key:string, direction:'asc'|'desc'}}"
+      when: User clicks a sortable column header.
+    - name: selection_change
+      payload: "{selected:array<number>}"
+      when: Row selection changes via click, Space, or Ctrl+A.
+    - name: column_resize
+      payload: "{column:{key:string}, width:number}"
+      when: User resizes a column via drag handle.
+    - name: page_change
+      payload: "{page:number}"
+      when: Page navigation occurs.
+  methods:
+    - name: set_rows
+      signature: set_rows(rows)
+      description: Replaces all data rows.
+    - name: set_columns
+      signature: set_columns(columns)
+      description: Replaces column definitions.
+    - name: set_sort_state
+      signature: set_sort_state(sort_state)
+      description: Programmatically sort by column. Resets page to 1.
+    - name: set_filters
+      signature: set_filters(filters)
+      description: Programmatically apply filters. Resets page to 1.
+    - name: set_page
+      signature: set_page(page)
+      description: Navigate to a specific page.
+    - name: set_page_size
+      signature: set_page_size(page_size)
+      description: Change rows per page.
+    - name: set_server_side
+      signature: set_server_side(flag)
+      description: Enable/disable server-side mode.
+    - name: get_visible_rows
+      signature: get_visible_rows()
+      description: Returns rows after computed pipeline (or as-is in server_side).
+    - name: render_table
+      signature: render_table()
+      description: Force re-render of header and body.
+
+interaction:
+  keyboard:
+    - key: ArrowUp / ArrowDown
+      behavior: Move focus between rows.
+    - key: ArrowLeft / ArrowRight
+      behavior: Move focus between cells in a row.
+    - key: Enter
+      behavior: Activate row (emits row_click).
+    - key: Space
+      behavior: Toggle row selection when selection_mode != none.
+    - key: Ctrl+A
+      behavior: Select all rows when selection_mode == multi.
+    - key: Home / End
+      behavior: Focus first/last row.
+    - key: Tab
+      behavior: Enter/exit grid; focus moves to sortable headers first.
+    - key: Escape
+      behavior: Clear selection.
+  pointer:
+    - Click header to sort (toggles asc → desc).
+    - Click row to select or emit row_click.
+    - Drag column border to resize.
+    - Shift+click for range selection.
+    - Ctrl+click for additive selection.
+
+accessibility:
+  roles:
+    - table element with role="grid" when interactive
+    - role="row" on tr elements
+    - role="columnheader" on th elements with aria-sort
+    - role="gridcell" on td elements
+  aria:
+    - aria-sort="ascending|descending|none" on sortable headers
+    - aria-selected on selected rows
+    - aria-rowcount and aria-colcount on grid
+    - aria-rowindex on each row (1-based, offset for virtual)
+    - aria-busy="true" during loading state
+    - aria-label on table
+  focus:
+    - Roving tabindex across cells (row-major order).
+    - Focus ring visible on active cell.
+    - Tab enters grid, arrow keys navigate within.
+
+styling:
+  css_classes:
+    - jsgui-data-table
+    - data-table-header
+    - data-table-row
+    - data-table-cell
+    - data-table-row.is-selected
+    - data-table-striped
+    - data-table-bordered
+    - data-table-resize-handle
+    - data-table-col-hidden
+  tokens:
+    - --j-bg-surface
+    - --j-bg-elevated
+    - --j-bg-muted
+    - --j-bg-hover
+    - --j-fg
+    - --j-fg-muted
+    - --j-border
+    - --j-primary
+    - --j-primary-muted
+    - --j-font-sans
+    - --j-text-sm
+    - --j-text-xs
+    - --j-space-1
+    - --j-space-2
+    - --j-space-3
+    - --j-row-height
+    - --j-touch-target
+  density_support: [comfortable, compact, dense]
+
+acceptance:
+  e2e:
+    - Renders column headers from definitions with correct labels.
+    - Clicking a sortable header emits sort_change and toggles sort indicator.
+    - Second click on same header reverses direction.
+    - Client-side filtering reduces visible rows correctly.
+    - Client-side sorting reorders rows by column value.
+    - Client-side paging shows correct page of rows.
+    - server_side=true bypasses filter/sort/page (rows returned as-is).
+    - server_side total_count drives total_rows and total_pages.
+    - set_server_side() dynamically toggles mode.
+    - Row click emits row_click with correct row_data.
+    - Keyboard navigation works (arrows, Enter, Space).
+    - Column resize drag updates width and emits column_resize.
+    - Density variants render with correct padding/height.
+    - Striped rows alternate backgrounds.
+    - Empty state shown when rows=[].
+    - Virtual mode renders only visible rows (DOM count << total).
+    - aria-sort reflects current sort state.
+    - Phone layout adds horizontal scroll.
+  done_definition:
+    - All density/variant combinations render correctly.
+    - Virtual mode handles 10,000+ rows without visible lag.
+    - Full keyboard grid navigation per WAI-ARIA grid pattern.
+    - Server-side mode verified with async data source.
+    - Comprehensive Puppeteer E2E suite.
+    - Complete JSDoc coverage.

@@ -8,7 +8,7 @@
 'use strict';
 
 const { create_deprecated_alias } = require('../../../../utils/deprecation');
-const Form_Field = require('./form_field');
+const Form_Field = require('./Form_Field');
 
 module.exports = create_deprecated_alias(
     Form_Field,

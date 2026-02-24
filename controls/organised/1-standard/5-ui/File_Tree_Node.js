@@ -1,4 +1,4 @@
-const Tree_Node = require('./tree-node');
+const Tree_Node = require('./Tree_Node');
 
 class File_Tree_Node extends Tree_Node {
     constructor(spec = {}) {

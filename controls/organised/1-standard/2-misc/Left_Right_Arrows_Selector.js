@@ -1,10 +1,10 @@
 const jsgui = require('../../../../html-core/html-core');
 const Control = jsgui.Control;
 const def = jsgui.is_defined;
-const Arrow_Button = require('../../0-core/1-advanced/vector/arrow-button');
+const Arrow_Button = require('../../0-core/1-advanced/vector/Arrow_Button');
 
 
-const Item_Selector = require('../../0-core/0-basic/1-compositional/item-selector');
+const Item_Selector = require('../../0-core/0-basic/1-compositional/Item_Selector');
 // Maybe give Item_Selector a more specific name, or involk it in terms of more explicit behaviours?
 
 /*

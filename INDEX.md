@@ -34,6 +34,40 @@ Start here if you're new to jsgui3-html:
   - Validators (required, email, URL, range, pattern)
   - Usage examples, advanced patterns, migration guide
 
+### Controls & Components
+- **[controls/README.md](controls/README.md)** — Full control catalogue (120+ controls)
+  - Directory map, usage examples, stability tiers
+  - Adaptive-layout reference for responsive controls
+- **[controls/organised/AGENT.md](controls/organised/AGENT.md)** — Control creation guide for AI agents
+- **[docs/Control_Dom.md](docs/Control_Dom.md)** — Control_DOM / DOM_Attributes internals
+
+### Theming & Styling
+- **[themes/README.md](themes/README.md)** — Token maps, size tables, variants, CSS architecture
+- **[docs/theming_and_styling_system.md](docs/theming_and_styling_system.md)** — Theming overview
+- **[css/jsgui-tokens.css](css/jsgui-tokens.css)** — Framework-level CSS custom properties
+
+### Validation
+- **[validation/README.md](validation/README.md)** — Validation_Engine, Error_Summary, format_message
+
+### Device-Adaptive Composition
+- **[docs/books/device-adaptive-composition/](docs/books/device-adaptive-composition/)** — 8-chapter book
+  - Platform audit, responsive composition model, data vs view model
+  - Styling & breakpoints, showcase assessment, implementation patterns
+  - Testing harness, roadmap & adoption plan
+
+### Mixins
+- **[control_mixins/README.md](control_mixins/README.md)** — Mixin overview & catalogue
+- **[docs/books/mixins-book.md](docs/books/mixins-book.md)** — Deep-dive mixin guide
+
+### Utilities
+- **[utils/README.md](utils/README.md)** — Deprecation helpers
+
+### Configuration & Factories
+- **[cfn/readme.md](cfn/readme.md)** — Control factory functions
+
+### Roadmap
+- **[roadmap.md](roadmap.md)** — 7-phase development roadmap with progress tracking
+
 ## 📖 Examples
 
 ### Examples Documentation
@@ -177,43 +211,80 @@ jsgui3-html/
 ├── Documentation
 │   ├── README.md                           # Main docs
 │   ├── MVVM.md                            # Architecture
-│   ├── EXAMPLES_AND_TESTS.md              # Quick start
-│   ├── EXAMPLES_AND_TESTS_SUMMARY.md      # Complete summary
-│   └── INDEX.md                           # This file
+│   ├── INDEX.md                           # This file
+│   ├── roadmap.md                         # 7-phase roadmap
+│   ├── AGENTS.md                          # AI agent guide
+│   └── EXAMPLES_AND_TESTS.md              # Quick start
+│
+├── Core Framework (html-core/)
+│   ├── README.md                          # Engine overview
+│   ├── DATA_BINDING.md                    # Binding docs
+│   ├── control-core.js                    # Control_Core base
+│   ├── Data_Model_View_Model_Control.js   # MVVM base
+│   ├── ModelBinder.js                     # Binding system
+│   ├── Transformations.js                 # Transforms
+│   └── BindingDebugger.js                 # Debug tools
+│
+├── Controls (controls/)
+│   ├── README.md                          # 120+ control catalogue
+│   ├── controls.js                        # Re-exports
+│   └── organised/                         # By tier & category
+│       ├── AGENT.md                       # Control creation guide
+│       ├── 0-core/                        # Native & compositional
+│       └── 1-standard/                    # Editor, Data, UI, Layout
+│
+├── Mixins (control_mixins/)
+│   ├── README.md                          # Mixin overview
+│   └── *.js                               # 39 behavior mixins
+│
+├── Themes (themes/)
+│   ├── README.md                          # Tokens, variants, CSS arch
+│   ├── token_maps.js                      # Size / shadow / radius tokens
+│   └── variants.js                        # Per-control variant defs
+│
+├── Validation (validation/)
+│   ├── README.md                          # Engine & Error_Summary
+│   ├── validation_engine.js               # Rule runner
+│   └── error_summary.js                   # Error display control
+│
+├── CSS (css/)
+│   ├── jsgui-tokens.css                   # Framework tokens
+│   ├── jsgui-reset.css                    # Reset styles
+│   └── jsgui-utilities.css                # Utility classes
+│
+├── Utilities (utils/)
+│   ├── README.md                          # Deprecation helpers
+│   └── deprecation.js
+│
+├── Configuration Factories (cfn/)
+│   └── readme.md                          # Factory functions
 │
 ├── Examples (examples/)
 │   ├── README.md                          # Examples guide
-│   ├── binding_simple_counter.js          # Beginner
-│   ├── binding_date_picker.js             # Intermediate
-│   ├── binding_user_form.js               # Intermediate
-│   ├── binding_data_grid.js               # Advanced
-│   └── binding_master_detail.js           # Advanced
+│   └── binding_*.js                       # 5 binding examples
+│
+├── Dev Examples (dev-examples/)
+│   └── README.md                          # Development examples
 │
 ├── Tests (test/)
 │   ├── README.md                          # Testing guide
-│   ├── setup.js                           # Test config
-│   ├── core/control.test.js               # Core tests
-│   ├── mvvm/data-binding.test.js          # MVVM tests
-│   ├── mvvm/transformations.test.js       # Transform tests
-│   ├── mixins/control-mixins.test.js      # Mixin tests
-│   └── integration/complex-scenarios.test.js # Integration
+│   ├── core/                              # Core control tests
+│   ├── mvvm/                              # MVVM & transform tests
+│   ├── mixins/                            # Mixin tests
+│   └── integration/                       # Complex scenarios
 │
-├── Core Framework (html-core/)
-│   ├── ModelBinder.js                     # Binding system
-│   ├── Transformations.js                 # Transformations
-│   ├── BindingDebugger.js                 # Debug tools
-│   ├── Data_Model_View_Model_Control.js   # MVVM base
-│   ├── DATA_BINDING.md                    # Binding docs
-│   └── [other core files]
+├── Docs (docs/)
+│   ├── agi/INDEX.md                       # AGI knowledge hub
+│   ├── books/                             # Deep-dive guides
+│   │   ├── device-adaptive-composition/   # 8-chapter adaptive book
+│   │   ├── adaptive-control-improvements/ # Improvement patterns
+│   │   └── mixins-book.md                 # Mixin deep-dive
+│   ├── accessibility_and_semantics.md
+│   ├── theming_and_styling_system.md
+│   └── Control_Dom.md                     # DOM internals
 │
-├── Mixins (control_mixins/)
-│   ├── selectable.js
-│   ├── draggable.js
-│   ├── resizable.js
-│   └── [other mixins]
-│
-└── Controls (controls/)
-    └── [pre-built controls]
+└── Tools (tools/)
+    └── dev/                               # Dev utilities
 ```
 
 ## 🎯 Quick Reference by Task
@@ -266,11 +337,27 @@ jsgui3-html/
 2. Use `BindingDebugTools.inspect(control)`
 3. Use `BindingDebugTools.monitor(control, duration)`
 
+### I want to theme controls
+1. Read [themes/README.md](themes/README.md) for token maps & variants
+2. Review [docs/theming_and_styling_system.md](docs/theming_and_styling_system.md)
+3. Check [css/jsgui-tokens.css](css/jsgui-tokens.css) for available tokens
+
+### I want to validate user input
+1. Read [validation/README.md](validation/README.md)
+2. Study the Validation_Engine API and default rules
+3. See Error_Summary for displaying validation errors
+
+### I want to make a control responsive
+1. Read the [device-adaptive composition book](docs/books/device-adaptive-composition/)
+2. Study Chapter 6 — Implementation Patterns & APIs
+3. Follow the `resolve_layout_mode()` / `_apply_layout_mode()` pattern
+4. Use `[data-layout-mode]` CSS selectors
+
 ### I'm an AI agent
-1. Start with [EXAMPLES_AND_TESTS.md](EXAMPLES_AND_TESTS.md) - AI agent checklist
-2. Index all test files for API coverage
-3. Study example patterns for code generation
-4. Reference tests for validation
+1. Start with [AGENTS.md](AGENTS.md) — conventions, testing, coding style
+2. Read [controls/organised/AGENT.md](controls/organised/AGENT.md) for control creation
+3. Study example patterns in [examples/README.md](examples/README.md)
+4. Reference [test/README.md](test/README.md) for testing
 
 ## 📞 Support
 
@@ -283,10 +370,13 @@ jsgui3-html/
 ## 🔄 Version Information
 
 - **Framework**: jsgui3-html
-- **Documentation Version**: 1.0 (October 2025)
-- **Examples Count**: 5 binding examples + 2 legacy
-- **Tests Count**: 160+ tests across 6 test files
+- **Documentation Version**: 2.0 (June 2025)
+- **Controls**: 120+ across 6 tiers
+- **Mixins**: 39 behaviour mixins
+- **Examples**: 5 binding examples + 2 legacy + dev-examples
+- **Tests**: 160+ tests across 6 test files
 - **Test Coverage Target**: >80%
+- **Adaptive Controls**: 12 controls with device-adaptive layout
 
 ## 📝 License
 
@@ -294,5 +384,5 @@ Same as jsgui3-html framework.
 
 ---
 
-**Last Updated**: October 3, 2025  
+**Last Updated**: June 2025  
 **Maintained By**: jsgui3-html contributors

@@ -1,7 +1,14 @@
-// Will make this more clearly view position binding.
-//  May have other / better ways to do this...?
-//   Consider docking as well.
-
+/**
+ * Bind mixin — positional / layout binding between controls.
+ *
+ * Allows a control to be bound to a location or another control
+ * so its position and/or size update reactively when the reference
+ * changes (e.g. on window resize).
+ *
+ * **Status:** work-in-progress; the public API may change.
+ *
+ * @module control_mixins/bind
+ */
 
 const bind = (ctrl, location) => {
 

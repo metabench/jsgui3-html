@@ -2,7 +2,7 @@ const jsgui = require('../../../../../html-core/html-core');
 
 const { Control } = jsgui;
 const { is_defined } = jsgui;
-const Range_Input = require('../0-native-compositional/range_input');
+const Range_Input = require('../0-native-compositional/Range_Input');
 
 class Stepped_Slider extends Control {
     constructor(spec = {}) {

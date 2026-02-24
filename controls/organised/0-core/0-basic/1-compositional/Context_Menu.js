@@ -1,5 +1,5 @@
 const jsgui = require('../../../../../html-core/html-core');
-const Menu_Node = require('./menu-node');
+const Menu_Node = require('./Menu_Node');
 const { each, tof } = jsgui;
 const Control = jsgui.Control;
 const { themeable } = require('../../../../../control_mixins/themeable');

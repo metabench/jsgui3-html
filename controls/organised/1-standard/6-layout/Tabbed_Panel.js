@@ -2,10 +2,10 @@ const jsgui = require('./../../../../html-core/html-core');
 const Control = jsgui.Control;
 const mx_selectable = require('./../../../../control_mixins/selectable');
 const { each, is_array, tof } = jsgui;
-const Panel = require('./panel');
-const List = require('../../0-core/0-basic/1-compositional/list');
-const Radio_Button_Group = require('../../0-core/0-basic/1-compositional/radio-button-group');
-const Radio_Button = require('../../0-core/0-basic/0-native-compositional/radio-button');
+const Panel = require('./Panel');
+const List = require('../../0-core/0-basic/1-compositional/List');
+const Radio_Button_Group = require('../../0-core/0-basic/1-compositional/Radio_Button_Group');
+const Radio_Button = require('../../0-core/0-basic/0-native-compositional/Radio_Button');
 const keyboard_navigation = require('../../../../control_mixins/keyboard_navigation');
 const {
     apply_focus_ring,
@@ -117,12 +117,40 @@ class Tabbed_Panel extends Panel {
         // Apply token mappings (size -> CSS variables)
         apply_token_map(this, 'tab', params);
 
+        // ── Adaptive layout options (all overridable) ──
+        // layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
+        this.layout_mode = spec.layout_mode || 'auto';
+        this.phone_breakpoint = jsgui.def(spec.phone_breakpoint) ? spec.phone_breakpoint : 600;
+
         this.add_class('tab-container');
         this.add_class('jsgui-tabs');
         this.tabs = spec.tabs;
         this.tab_bar = spec.tab_bar || {};
         this.aria_label = spec.aria_label;
         if (!spec.el) { this.compose_tabbed_panel(spec.tabs, this.tab_bar); }
+    }
+
+    /**
+     * Resolve the current layout mode.
+     * @returns {'phone'|'tablet'|'desktop'}
+     */
+    resolve_layout_mode() {
+        if (this.layout_mode && this.layout_mode !== 'auto') return this.layout_mode;
+        const env = this.context && this.context.view_environment;
+        if (env && env.layout_mode) return env.layout_mode;
+        if (typeof window !== 'undefined') {
+            if (window.innerWidth <= this.phone_breakpoint) return 'phone';
+        }
+        return 'desktop';
+    }
+
+    /**
+     * Apply adaptive layout: sets data-layout-mode attribute on the element.
+     */
+    _apply_layout_mode() {
+        const el = this.dom && this.dom.el;
+        if (!el) return;
+        el.setAttribute('data-layout-mode', this.resolve_layout_mode());
     }
     compose_tabbed_panel(tabs_def, tab_bar = {}) {
         const { context } = this;
@@ -371,6 +399,13 @@ class Tabbed_Panel extends Panel {
             const tab_inputs = tab_controls.tab_inputs;
             const tab_labels = tab_controls.tab_labels;
             const tab_pages = tab_controls.tab_pages;
+
+            // ── Adaptive layout ──
+            this._apply_layout_mode();
+            if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
+                this._resize_handler = () => this._apply_layout_mode();
+                window.addEventListener('resize', this._resize_handler);
+            }
             if (Array.isArray(tab_inputs) && tab_inputs.length) {
                 const initial_index = tab_inputs.findIndex(input_ctrl => {
                     const attrs_checked = input_ctrl.dom.attributes.checked;
@@ -414,15 +449,16 @@ class Tabbed_Panel extends Panel {
     }
 }
 Tabbed_Panel.css = `
+/* ─── Tabbed Panel Container ─── */
 .tab-container {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     position: relative;
-    font-family: var(--admin-font, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
-    background: var(--admin-card-bg, #fff);
-    border: 1px solid var(--admin-border, #e2e8f0);
-    border-radius: 8px;
+    font-family: var(--j-font-sans, system-ui, sans-serif);
+    background: var(--j-bg-surface, #1e1e2e);
+    border: 1px solid var(--j-border, #333);
+    border-radius: var(--j-radius-md, 8px);
     overflow: hidden;
 }
 .tabbed-panel-vertical {
@@ -434,36 +470,52 @@ Tabbed_Panel.css = `
 .tab-input {
     display: none;
 }
+
+/* ─── Tab Label ─── */
 .tab-label {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: 10px 16px;
+    gap: var(--j-space-1, 6px);
+    padding: var(--j-space-2, 10px) var(--j-space-4, 16px);
     cursor: pointer;
-    font-size: 13px;
+    font-size: var(--j-text-sm, 0.8125rem);
     font-weight: 500;
-    color: var(--admin-muted, #64748b);
+    color: var(--j-fg-muted, #94a3b8);
     border-bottom: 2px solid transparent;
-    background: var(--admin-header-bg, #f8fafc);
-    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    background: var(--j-bg-elevated, #252535);
+    transition: color 150ms ease-out, border-color 150ms ease-out, background 150ms ease-out;
     user-select: none;
 }
 .tab-label:hover {
-    color: var(--admin-text, #1e293b);
-    background: var(--admin-hover, #f1f5f9);
+    color: var(--j-fg, #e0e0e0);
+    background: var(--j-bg-hover, rgba(255,255,255,0.06));
+}
+.tab-label:focus-visible {
+    outline: 2px solid var(--j-primary, #5b9bd5);
+    outline-offset: -2px;
+    z-index: 1;
 }
 .tab-input:checked + .tab-label {
-    color: var(--admin-accent, #3b82f6);
-    border-bottom-color: var(--admin-accent, #3b82f6);
-    background: var(--admin-card-bg, #fff);
+    color: var(--j-primary, #5b9bd5);
+    border-bottom-color: var(--j-primary, #5b9bd5);
+    background: var(--j-bg-surface, #1e1e2e);
 }
+.tab-label.tab-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* ─── Tab Icon ─── */
 .tab-icon {
-    font-size: 14px;
+    font-size: var(--j-text-sm, 0.875rem);
     line-height: 1;
 }
 .tab-text {
     line-height: 1.4;
 }
+
+/* ─── Tab Badge ─── */
 .tab-badge {
     display: inline-flex;
     align-items: center;
@@ -474,37 +526,109 @@ Tabbed_Panel.css = `
     border-radius: 9px;
     font-size: 11px;
     font-weight: 600;
-    background: var(--admin-muted, #94a3b8);
-    color: #fff;
+    background: var(--j-fg-muted, #94a3b8);
+    color: var(--j-fg-on-status, #fff);
     line-height: 1;
 }
 .tab-input:checked + .tab-label .tab-badge {
-    background: var(--admin-accent, #3b82f6);
+    background: var(--j-primary, #5b9bd5);
 }
+
+/* ─── Tab Close ─── */
+.tab-close {
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    opacity: 0.5;
+    padding: 0 2px;
+    font-size: 1em;
+    line-height: 1;
+    border-radius: var(--j-radius-sm, 3px);
+    transition: opacity 120ms ease-out;
+}
+.tab-close:hover { opacity: 1; }
+.tab-close:focus-visible {
+    outline: 2px solid var(--j-primary, #5b9bd5);
+    outline-offset: 1px;
+}
+
 .tab-label-hidden {
     display: none;
 }
+
+/* ─── Tab Page ─── */
 .tab-page {
     display: none;
     width: 100%;
-    padding: 14px;
-    color: var(--admin-text, #1e293b);
+    padding: var(--j-space-4, 14px);
+    color: var(--j-fg, #e0e0e0);
 }
 .tab-input:checked + .tab-label + .tab-page {
     display: block;
 }
+
+/* ─── Break ─── */
 .break {
     flex-basis: 100%;
     height: 0;
-    border-top: 1px solid var(--admin-border, #e2e8f0);
+    border-top: 1px solid var(--j-border, #333);
 }
-/* Vertical tabs */
+
+/* ─── Vertical Tabs ─── */
 .tabbed-panel-vertical .tab-label {
     border-bottom: none;
     border-right: 2px solid transparent;
 }
 .tabbed-panel-vertical .tab-input:checked + .tab-label {
-    border-right-color: var(--admin-accent, #3b82f6);
+    border-right-color: var(--j-primary, #5b9bd5);
+}
+
+/* ── Phone: scrollable tab strip, touch-sized targets ── */
+.tab-container[data-layout-mode="phone"] {
+    flex-wrap: nowrap;
+    overflow: visible;
+}
+.tab-container[data-layout-mode="phone"] .tab-label {
+    min-height: var(--j-touch-target, 44px);
+    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
+    font-size: var(--j-text-xs, 0.75rem);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.tab-container[data-layout-mode="phone"] .tab-page {
+    padding: var(--j-space-2, 10px);
+    width: 100%;
+}
+/* Phone: convert vertical tabs to top tabs for narrow screens */
+.tab-container[data-layout-mode="phone"].tabbed-panel-vertical {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.tab-container[data-layout-mode="phone"].tabbed-panel-vertical .tab-label {
+    border-right: none;
+    border-bottom: 2px solid transparent;
+}
+.tab-container[data-layout-mode="phone"].tabbed-panel-vertical .tab-input:checked + .tab-label {
+    border-right-color: transparent;
+    border-bottom-color: var(--j-primary, #5b9bd5);
+}
+
+/* ── Tablet: slightly larger touch targets ── */
+.tab-container[data-layout-mode="tablet"] .tab-label {
+    min-height: 40px;
+    padding: var(--j-space-2, 8px) var(--j-space-3, 14px);
+}
+
+/* ── Overflow select ── */
+.tab-overflow-select {
+    font-family: inherit;
+    font-size: var(--j-text-sm, 0.8125rem);
+    padding: var(--j-space-1, 4px) var(--j-space-2, 8px);
+    background: var(--j-bg-elevated, #252535);
+    color: var(--j-fg, #e0e0e0);
+    border: 1px solid var(--j-border, #333);
+    border-radius: var(--j-radius-sm, 4px);
 }
 `;
 module.exports = Tabbed_Panel;

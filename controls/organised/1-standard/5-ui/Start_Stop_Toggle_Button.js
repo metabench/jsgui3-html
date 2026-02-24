@@ -1,5 +1,5 @@
 var jsgui = require('./../../../../html-core/html-core');
-var Toggle_Button = require('../../0-core/0-basic/1-compositional/toggle-button');
+var Toggle_Button = require('../../0-core/0-basic/1-compositional/Toggle_Button');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;

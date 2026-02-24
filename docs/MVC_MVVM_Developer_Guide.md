@@ -257,6 +257,189 @@ const card = new UserCard({
 card.data.model.set('firstName', 'Jane');
 ```
 
+### Step 3: Modern Declarative MVVM Composition (Using `jsgui.html`)
+
+While manually instantiating controls and mapping bindings via `this.setupBindings()` in `activate()` is fully supported, the modern, recommended approach is to leverage the `jsgui.html` template parser to map UI directly into bindings natively.
+
+Using the `tpl` tagged template literal and `this.mbind('property_name')`, you can deeply skip the standard `this.add(new Control(...))` and `this.watch(...)` boilerplate.
+
+```javascript
+const { tpl } = require('jsgui3-html');
+
+class ModernUserCard extends Data_Model_View_Model_Control {
+    constructor(spec = {}) {
+        super(spec);
+        ensure_control_models(this, spec);
+
+        // Raw models
+        this.data.model.set('firstName', spec.firstName || '');
+        this.data.model.set('lastName', spec.lastName || '');
+
+        // Generate full-name transparently
+        this.computed(this.view.data.model, ['firstName', 'lastName'],
+            (first, last) => `${first || ''} ${last || ''}`.trim(),
+            { propertyName: 'fullName' }
+        );
+
+        this.compose_card();
+    }
+
+    compose_card() {
+        // Build the layout entirely declaratively, intercepting 
+        // the view model bindings automatically! 
+        tpl`
+            <div class="user-card-panel">
+                <h2 bind-text=${[this.view.data.model, 'fullName']}>Unknown</h2>
+                
+                <div class="edit-actions">
+                    <!-- Bidirectional bind to the model -->
+                    <text_input bind-value=${this.mbind('firstName')} />
+                    <text_input bind-value=${this.mbind('lastName')} />
+                    
+                    <!-- Native event listener routing -->
+                    <button on-click=${() => this.saveProfile()}>Save</button>
+                </div>
+            </div>
+        `.mount(this);
+    }
+    
+    saveProfile() {
+        console.log("Saved: ", this.view.data.model.get('fullName'));
+    }
+}
+```
+
+By leveraging `bind-*` and `on-*`, `jsgui3-html` automatically delegates state to `ModelBinder` and `this.on()` without any lifecycle spaghetti!
+
+### Advanced Declarative Attributes
+
+Beyond `bind-value` and `on-click`, the template parser supports three advanced declarative syntaxes for common UI patterns.
+
+#### `bind-class` — Reactive CSS Class Toggling
+
+Toggle CSS classes based on model state. Replaces imperative `add_class`/`remove_class` patterns.
+
+```javascript
+// BEFORE (imperative):
+set_loading(v) {
+    this._loading = !!v;
+    if (this._loading) this.add_class('loading');
+    else this.remove_class('loading');
+}
+
+// AFTER (declarative):
+compose() {
+    tpl`
+        <div class="search-bar"
+            bind-class=${{
+                'loading': this.mbind('loading'),
+                'has-value': this.mbind('has_value'),
+                'disabled': this.mbind('disabled')
+            }} />
+    `.mount(this);
+}
+
+// Toggling is now automatic:
+this.data.model.set('loading', true);  // adds 'loading' class
+this.data.model.set('loading', false); // removes 'loading' class
+```
+
+Each key in the object is a CSS class name; each value is an `mbind()` binding or `[model, 'prop']` tuple. The class is added when the model value is truthy and removed when falsy.
+
+#### `bind-list` — Reactive Array Rendering
+
+Render a list of child controls from a collection, re-rendering when the collection changes.
+
+```javascript
+compose() {
+    this.data.model.set('users', new Collection([
+        { id: 1, name: 'Alice' },
+        { id: 2, name: 'Bob' }
+    ]));
+
+    tpl`
+        <ul name="userList"
+            bind-list=${this.mbind('users')}
+            template=${(user, i) => tpl`
+                <li class="user-row" data-id=${user.id}>${user.name}</li>
+            `} />
+    `.mount(this);
+}
+```
+
+The `template` attribute receives a function called for each item. Adding/removing items from the collection triggers an automatic re-render.
+
+#### `bind-style` — Dynamic Inline Styles
+
+Similar to `bind-class`, this attribute intelligently maps a data model property to inline CSS properties. 
+
+```javascript
+compose() {
+    tpl`
+        <div class="progress-bar-fill"
+            bind-style=${{
+                'width': this.mbind('progress_percent'),
+                'background-color': this.mbind('status_color')
+            }} />
+    `.mount(this);
+}
+```
+
+The object keys map directly to CSS properties. When the bound model value becomes `undefined` or `null`, the inline style property is automatically removed.
+
+#### `bind-visible` — Conditional Rendering
+
+Instead of manually toggling `display: none` from your JavaScript methods, `bind-visible` directly links a model boolean to element visibility.
+
+```javascript
+compose() {
+    tpl`
+        <div class="error-banner" bind-visible=${this.mbind('has_error')}>
+            An error occurred!
+        </div>
+    `.mount(this);
+}
+
+// Automatically styles with `display: none`
+this.data.model.set('has_error', false); 
+```
+
+#### Native HTML Input Interception (`bind-value`)
+
+In `jsgui3-html`, creating basic data-entry points previously required wrapping inputs in `jsgui`'s custom components like `<text_input>` or `<number_input>`. Our parser now natively intercepts `bind-value` on basic HTML form fields (`<input>`, `<textarea>`, `<select>`), providing seamless bidirectional MVVM on native tags without component overhead.
+
+```javascript
+compose() {
+    tpl`
+        <div class="simple-form">
+            <label>Username</label>
+            <!-- Native HTML input, fully bidirectional! -->
+            <input type="text" bind-value=${this.mbind('username')} />
+            
+            <label>Age</label>
+            <!-- Automatically casts numeric changes back to the model! -->
+            <input type="number" bind-value=${this.mbind('age')} />
+        </div>
+    `.mount(this);
+}
+```
+
+#### `data-model` — Contextual Data Scoping
+
+Pass a `Data_Object` model down to child controls via attribute, enabling a React-like context pattern.
+
+```javascript
+compose() {
+    tpl`
+        <div data-model=${this.data.model}>
+            <text_input bind-value=${this.mbind('first_name')} />
+            <text_input bind-value=${this.mbind('last_name')} />
+        </div>
+    `.mount(this);
+}
+```
+
+
 ---
 
 ## 5. Transformations and Validation

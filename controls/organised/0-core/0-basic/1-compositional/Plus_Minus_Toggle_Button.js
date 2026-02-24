@@ -1,7 +1,7 @@
 
 
 const jsgui = require('../../../../../html-core/html-core');
-var Toggle_Button = require('./toggle-button');
+var Toggle_Button = require('./Toggle_Button');
 //if (typeof define !== 'function') { var define = require('amdefine')(module) }
 
 //define(["../../jsgui-html", "./toggle-button"],

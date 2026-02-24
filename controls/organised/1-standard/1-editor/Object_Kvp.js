@@ -14,7 +14,7 @@ define(["../../../jsgui-html-enh", "../viewer/object-kvp", "./factory", "./basic
 */
 
 var jsgui = require('../../../_core');
-var Object_KVP_Viewer = require('../0-viewer/object-kvp');
+var Object_KVP_Viewer = require('../0-viewer/Object_Kvp');
 var factory = require('./factory');
 var String_Editor = require('./string');
 var Number_Editor = require('./number');

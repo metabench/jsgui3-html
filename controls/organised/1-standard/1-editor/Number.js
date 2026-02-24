@@ -37,7 +37,7 @@ var Control = jsgui.Control;
 // Could have arrows to adjust the numbers
 //  Could also listen to the scroll wheel on the mouse.
 
-var Up_Down_Arrow_Buttons = require('../2-misc/up-down-arrow-buttons');
+var Up_Down_Arrow_Buttons = require('../2-misc/Up_Down_Arrow_Buttons');
 
 class Number_Editor extends Number_Viewer {
     // Maybe should put this into a form, so that it does a form post.

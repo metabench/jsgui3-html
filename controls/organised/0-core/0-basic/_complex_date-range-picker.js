@@ -1,7 +1,7 @@
 const jsgui = require('../../../../html-core/html-core');
 const { Control, Control_Data, Control_View, Data_Object } = jsgui;
 const { field } = require('obext');
-const Month_View = require('./1-compositional/month-view');
+const Month_View = require('./1-compositional/Month_View');
 const { apply_full_input_api } = require('../../../../control_mixins/input_api');
 
 // --- Icons ---

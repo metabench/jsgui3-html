@@ -1,6 +1,6 @@
 const jsgui = require('../../../../../html-core/html-core');
 const {Control} = jsgui;
-const Scrollbar = require('./scrollbar');
+const Scrollbar = require('./Scrollbar');
 const H_Scrollbar = Scrollbar.H;
 const V_Scrollbar = Scrollbar.V;
 

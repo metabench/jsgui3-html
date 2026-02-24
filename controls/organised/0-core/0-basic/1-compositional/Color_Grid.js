@@ -1,5 +1,5 @@
 const jsgui = require('../../../../../html-core/html-core');
-var Grid = require('./grid');
+var Grid = require('./Grid');
 var stringify = jsgui.stringify,
     each = jsgui.each,
     tof = jsgui.tof,

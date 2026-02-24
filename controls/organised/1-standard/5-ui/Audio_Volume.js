@@ -2,7 +2,7 @@
 const jsgui = require('./../../../../html-core/html-core');
 
 
-var Horizontal_Slider = require('./horizontal-slider');
+var Horizontal_Slider = require('./Horizontal_Slider');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof;
 var Control = jsgui.Control;
 var v_subtract = jsgui.v_subtract;

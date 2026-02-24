@@ -107,26 +107,37 @@ class ModelBinder {
         const reverse = binding.reverse;
         const condition = binding.condition;
 
+        const unwrap = (v) => v && v.value !== undefined ? v.value : v;
+
         // Initial sync from source to target
-        if (this.sourceModel[sourceProp] !== undefined) {
-            const value = this.sourceModel[sourceProp];
+        if ((this.sourceModel.get && this.sourceModel.get(sourceProp) !== undefined) || this.sourceModel[sourceProp] !== undefined) {
+            const rawValue = this.sourceModel.get ? this.sourceModel.get(sourceProp) : this.sourceModel[sourceProp];
+            const value = unwrap(rawValue);
             const transformedValue = transform ? transform(value) : value;
 
             if (!condition || condition(value)) {
-                this.targetModel[targetProp] = transformedValue;
+                if (typeof this.targetModel.set === 'function') {
+                    this.targetModel.set(targetProp, transformedValue);
+                } else {
+                    this.targetModel[targetProp] = transformedValue;
+                }
             }
         }
 
         // Setup source → target binding
         const sourceHandler = (e) => {
             if (e.name === sourceProp) {
-                const value = e.value;
+                const value = unwrap(e.value);
                 const transformedValue = transform ? transform(value) : value;
 
                 if (!condition || condition(value)) {
                     const lock_key = `${sourceProp}->${targetProp}`;
                     if (this._acquire(lock_key)) {
-                        this.targetModel[targetProp] = transformedValue;
+                        if (typeof this.targetModel.set === 'function') {
+                            this.targetModel.set(targetProp, transformedValue);
+                        } else {
+                            this.targetModel[targetProp] = transformedValue;
+                        }
 
                         if (this.options.debug) {
                             console.log(`[ModelBinder] ${sourceProp} → ${targetProp}:`, value, '→', transformedValue);
@@ -145,16 +156,21 @@ class ModelBinder {
         });
 
         // Setup target → source binding (if bidirectional)
-        if (this.options.bidirectional && reverse) {
+        if (this.options.bidirectional) {
+            const safeReverse = reverse || (v => v);
             const targetHandler = (e) => {
                 if (e.name === targetProp) {
-                    const value = e.value;
-                    const reversedValue = reverse(value);
+                    const value = unwrap(e.value);
+                    const reversedValue = safeReverse(value);
 
                     if (!condition || condition(reversedValue)) {
                         const lock_key = `${targetProp}->${sourceProp}`;
                         if (this._acquire(lock_key)) {
-                            this.sourceModel[sourceProp] = reversedValue;
+                            if (typeof this.sourceModel.set === 'function') {
+                                this.sourceModel.set(sourceProp, reversedValue);
+                            } else {
+                                this.sourceModel[sourceProp] = reversedValue;
+                            }
 
                             if (this.options.debug) {
                                 console.log(`[ModelBinder] ${targetProp} → ${sourceProp}:`, value, '→', reversedValue);

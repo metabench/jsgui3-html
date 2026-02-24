@@ -7,7 +7,7 @@ module.exports = {
     run(tools) {
         const assert = tools.assert;
         const ctx = tools.create_lab_context();
-        const Data_Table = require('../../controls/organised/1-standard/4-data/data_table');
+        const Data_Table = require('../../controls/organised/1-standard/4-data/Data_Table');
 
         const make_rows = (n) => Array.from({ length: n }, (_, i) => ({ id: i, name: `Row ${i}`, active: i % 2 === 0 }));
 

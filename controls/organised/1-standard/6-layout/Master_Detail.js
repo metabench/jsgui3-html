@@ -29,6 +29,22 @@ class Master_Detail extends Control {
         this.detail_renderer = spec.detail_renderer;
         this.master_renderer = spec.master_renderer;
 
+        // ── Adaptive layout options (all overridable) ──
+        // layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
+        //   'auto' uses breakpoints to determine mode at runtime
+        this.layout_mode = spec.layout_mode || 'auto';
+        // Breakpoints for auto mode (overridable)
+        this.phone_breakpoint = is_defined(spec.phone_breakpoint) ? spec.phone_breakpoint : 600;
+        this.tablet_breakpoint = is_defined(spec.tablet_breakpoint) ? spec.tablet_breakpoint : 960;
+        // Whether phone mode shows stacked master/detail with back nav
+        this.phone_stacked = spec.phone_stacked !== false;
+        // Minimum touch target height for items (px)
+        this.touch_item_height = spec.touch_item_height || 44;
+        // Whether to show back button in phone stacked mode
+        this.show_back_button = spec.show_back_button !== false;
+        // Track which panel is visible in stacked mode
+        this._showing_detail = false;
+
         this.set_items(spec.items || []);
         this.set_selected_id(is_defined(spec.selected_id) ? spec.selected_id : null);
 
@@ -39,19 +55,49 @@ class Master_Detail extends Control {
         this.bind_model();
     }
 
+    /**
+     * Resolve the current layout mode.
+     * @returns {'phone'|'tablet'|'desktop'}
+     */
+    resolve_layout_mode() {
+        if (this.layout_mode !== 'auto') return this.layout_mode;
+        // Check context.view_environment first
+        if (this.context && this.context.view_environment && this.context.view_environment.layout_mode) {
+            return this.context.view_environment.layout_mode;
+        }
+        // Fall back to window width at runtime
+        if (typeof window !== 'undefined') {
+            const w = window.innerWidth;
+            if (w < this.phone_breakpoint) return 'phone';
+            if (w < this.tablet_breakpoint) return 'tablet';
+        }
+        return 'desktop';
+    }
+
     compose_master_detail() {
         const { context } = this;
 
+        // Back button for phone stacked mode
+        const back_ctrl = new Control({ context, tag_name: 'button' });
+        back_ctrl.dom.attributes.type = 'button';
+        back_ctrl.add_class('master-detail-back');
+        back_ctrl.dom.attributes['aria-label'] = 'Back to list';
+        back_ctrl.add('← Back');
+
         const master_ctrl = new Control({ context, tag_name: 'div' });
         master_ctrl.add_class('master-detail-master');
+        master_ctrl.dom.attributes.role = 'listbox';
+        master_ctrl.dom.attributes['aria-label'] = 'Items';
 
         const detail_ctrl = new Control({ context, tag_name: 'div' });
         detail_ctrl.add_class('master-detail-detail');
 
         this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.back = back_ctrl;
         this._ctrl_fields.master = master_ctrl;
         this._ctrl_fields.detail = detail_ctrl;
 
+        this.add(back_ctrl);
         this.add(master_ctrl);
         this.add(detail_ctrl);
 
@@ -149,10 +195,13 @@ class Master_Detail extends Control {
             const item_ctrl = new Control({ context: this.context, tag_name: 'button' });
             item_ctrl.dom.attributes.type = 'button';
             item_ctrl.add_class('master-detail-item');
+            item_ctrl.dom.attributes.role = 'option';
             item_ctrl.dom.attributes['data-item-id'] = String(item.id);
             const is_selected = String(item.id) === String(selected_id);
             if (is_selected) item_ctrl.add_class('is-selected');
             item_ctrl.dom.attributes['aria-selected'] = is_selected ? 'true' : 'false';
+            // Roving tabindex: selected item gets 0, rest -1
+            item_ctrl.dom.attributes.tabindex = is_selected ? '0' : '-1';
 
             if (typeof this.master_renderer === 'function') {
                 const rendered = this.master_renderer(item, index);
@@ -167,6 +216,12 @@ class Master_Detail extends Control {
 
             master_ctrl.add(item_ctrl);
         });
+        // Ensure at least one item has tabindex=0
+        if (items.length > 0 && !items.some(i => String(i.id) === String(selected_id))) {
+            const first_item = master_ctrl.content && master_ctrl.content._arr &&
+                master_ctrl.content._arr.find(c => c.has_class && c.has_class('master-detail-item'));
+            if (first_item) first_item.dom.attributes.tabindex = '0';
+        }
     }
 
     render_detail() {
@@ -191,11 +246,62 @@ class Master_Detail extends Control {
         if (is_defined(detail_text)) detail_ctrl.add(String(detail_text));
     }
 
+    /**
+     * Apply the resolved layout mode to the DOM.
+     * Called on activate and on window resize.
+     */
+    _apply_layout_mode() {
+        if (!this.dom.el) return;
+        const mode = this.resolve_layout_mode();
+        this.dom.el.setAttribute('data-layout-mode', mode);
+
+        // Phone stacked: show/hide master vs detail
+        if (mode === 'phone' && this.phone_stacked) {
+            this.dom.el.classList.toggle('showing-detail', this._showing_detail);
+        } else {
+            this.dom.el.classList.remove('showing-detail');
+            this._showing_detail = false;
+        }
+    }
+
+    /**
+     * Navigate to detail pane in phone stacked mode.
+     */
+    show_detail() {
+        this._showing_detail = true;
+        this._apply_layout_mode();
+        this.raise('panel_change', { panel: 'detail' });
+    }
+
+    /**
+     * Navigate back to master list in phone stacked mode.
+     */
+    show_master() {
+        this._showing_detail = false;
+        this._apply_layout_mode();
+        this.raise('panel_change', { panel: 'master' });
+    }
+
     activate() {
         if (!this.__active) {
             super.activate();
             const master_ctrl = this._ctrl_fields && this._ctrl_fields.master;
+            const back_ctrl = this._ctrl_fields && this._ctrl_fields.back;
             if (!master_ctrl || !master_ctrl.dom.el) return;
+
+            // Apply initial layout mode
+            this._apply_layout_mode();
+
+            // Listen for window resize in auto mode
+            if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
+                this._resize_handler = () => this._apply_layout_mode();
+                window.addEventListener('resize', this._resize_handler);
+            }
+
+            // Back button handler
+            if (back_ctrl && back_ctrl.dom.el) {
+                back_ctrl.add_dom_event_listener('click', () => this.show_master());
+            }
 
             const find_item_el = target => {
                 let node = target;
@@ -213,53 +319,156 @@ class Master_Detail extends Control {
                 if (!is_defined(item_id)) return;
                 this.set_selected_id(item_id);
                 this.raise('selection_change', { selected_id: item_id });
+                // In phone stacked mode, auto-navigate to detail
+                const mode = this.resolve_layout_mode();
+                if (mode === 'phone' && this.phone_stacked) {
+                    this.show_detail();
+                }
             });
 
+            // Keyboard navigation (listbox pattern)
             master_ctrl.add_dom_event_listener('keydown', e_key => {
                 const item_el = find_item_el(e_key.target);
                 if (!item_el) return;
-                const key = e_key.key || e_key.keyCode;
-                if (key !== 'Enter' && key !== ' ' && key !== 13 && key !== 32) return;
-                e_key.preventDefault();
-                const item_id = item_el.getAttribute('data-item-id');
-                if (!is_defined(item_id)) return;
-                this.set_selected_id(item_id);
-                this.raise('selection_change', { selected_id: item_id });
+                const key = e_key.key;
+
+                if (key === 'Enter' || key === ' ') {
+                    e_key.preventDefault();
+                    const item_id = item_el.getAttribute('data-item-id');
+                    if (!is_defined(item_id)) return;
+                    this.set_selected_id(item_id);
+                    this.raise('selection_change', { selected_id: item_id });
+                    const mode = this.resolve_layout_mode();
+                    if (mode === 'phone' && this.phone_stacked) {
+                        this.show_detail();
+                    }
+                    return;
+                }
+
+                const all_items = Array.from(
+                    master_ctrl.dom.el.querySelectorAll('.master-detail-item')
+                );
+                const current_idx = all_items.indexOf(item_el);
+                let next_idx = -1;
+
+                if (key === 'ArrowDown') {
+                    e_key.preventDefault();
+                    next_idx = (current_idx + 1) % all_items.length;
+                } else if (key === 'ArrowUp') {
+                    e_key.preventDefault();
+                    next_idx = (current_idx - 1 + all_items.length) % all_items.length;
+                } else if (key === 'Home') {
+                    e_key.preventDefault();
+                    next_idx = 0;
+                } else if (key === 'End') {
+                    e_key.preventDefault();
+                    next_idx = all_items.length - 1;
+                }
+
+                if (next_idx >= 0 && next_idx < all_items.length) {
+                    item_el.setAttribute('tabindex', '-1');
+                    all_items[next_idx].setAttribute('tabindex', '0');
+                    all_items[next_idx].focus();
+                }
             });
         }
     }
 }
 
 Master_Detail.css = `
+/* ─── Master_Detail ─── */
 .master-detail {
     display: grid;
     grid-template-columns: minmax(180px, 240px) 1fr;
-    gap: 16px;
+    gap: var(--j-space-4, 16px);
     align-items: start;
+    font-family: var(--j-font-sans, system-ui, sans-serif);
+}
+.master-detail-back {
+    display: none;
 }
 .master-detail-master {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--j-space-2, 8px);
 }
 .master-detail-item {
     text-align: left;
-    padding: 8px 10px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    background: #fff;
+    padding: var(--j-space-2, 8px) var(--j-space-3, 10px);
+    border: 1px solid var(--j-border, #333);
+    border-radius: var(--j-radius-md, 6px);
+    background: var(--j-bg-surface, #1e1e2e);
+    color: var(--j-fg, #e0e0e0);
     cursor: pointer;
+    min-height: var(--j-touch-target, 36px);
+    transition: background 120ms ease-out, border-color 120ms ease-out;
+    font-size: var(--j-text-sm, 0.875rem);
+}
+.master-detail-item:hover {
+    background: var(--j-bg-hover, rgba(255,255,255,0.06));
+}
+.master-detail-item:focus-visible {
+    outline: 2px solid var(--j-primary, #5b9bd5);
+    outline-offset: -2px;
+    z-index: 1;
 }
 .master-detail-item.is-selected {
-    border-color: #888;
-    background: #f5f5f5;
+    border-color: var(--j-primary, #5b9bd5);
+    background: var(--j-primary-muted, rgba(91,155,213,0.15));
 }
 .master-detail-detail {
-    padding: 12px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    background: #fafafa;
+    padding: var(--j-space-3, 12px);
+    border: 1px solid var(--j-border, #333);
+    border-radius: var(--j-radius-lg, 8px);
+    background: var(--j-bg-elevated, #252535);
+    color: var(--j-fg, #e0e0e0);
     min-height: 120px;
+}
+
+/* ── Phone layout: stacked with back button ── */
+.master-detail[data-layout-mode="phone"] {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.master-detail[data-layout-mode="phone"] .master-detail-back {
+    display: none;
+    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
+    border: none;
+    background: var(--j-bg-elevated, #252535);
+    border-bottom: 1px solid var(--j-border, #333);
+    cursor: pointer;
+    text-align: left;
+    font-size: var(--j-text-sm, 0.875rem);
+    color: var(--j-primary, #5b9bd5);
+    min-height: var(--j-touch-target, 44px);
+}
+.master-detail[data-layout-mode="phone"].showing-detail .master-detail-back {
+    display: block;
+}
+.master-detail[data-layout-mode="phone"].showing-detail .master-detail-master {
+    display: none;
+}
+.master-detail[data-layout-mode="phone"]:not(.showing-detail) .master-detail-detail {
+    display: none;
+}
+.master-detail[data-layout-mode="phone"] .master-detail-item {
+    min-height: var(--j-touch-target, 44px);
+    display: flex;
+    align-items: center;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+}
+
+/* ── Tablet layout: narrower master rail ── */
+.master-detail[data-layout-mode="tablet"] {
+    grid-template-columns: minmax(140px, 200px) 1fr;
+}
+.master-detail[data-layout-mode="tablet"] .master-detail-item {
+    min-height: var(--j-touch-target, 44px);
+    display: flex;
+    align-items: center;
 }
 `;
 

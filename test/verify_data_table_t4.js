@@ -1,4 +1,4 @@
-const Data_Table = require('../controls/organised/1-standard/4-data/data_table');
+const Data_Table = require('../controls/organised/1-standard/4-data/Data_Table');
 const assert = require('assert');
 
 // Mock DOM logic

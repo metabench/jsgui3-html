@@ -1,8 +1,8 @@
 const jsgui = require('../../../../../html-core/html-core');
 const clone = jsgui.clone;
 const each = jsgui.each, is_defined = jsgui.is_defined;
-const Grid = require('./grid');
-const Tile_Slider = require('../../../1-standard/6-layout/tile-slide');
+const Grid = require('./Grid');
+const Tile_Slider = require('../../../1-standard/6-layout/Tile_Slide');
 const ALL_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 let bgc_disabled = '#DDDDDD';
 let bgc_enabled = 'inherit';
