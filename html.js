@@ -56,6 +56,5 @@ jsgui.controls = jsgui.controls || {};
 //jsgui.controls.Active_HTML_Document = jsgui.Active_HTML_Document = require('./controls/organised/1-standard/5-ui/Active_HTML_Document');
 Object.assign(jsgui.controls, require('./controls/controls'));
 Object.assign(jsgui, jsgui.controls);
-if (jsgui.parse_mount) jsgui.parse_mount.default_control_set = jsgui.controls;
 jsgui.mixins = jsgui.mx = require('./control_mixins/mx');
 module.exports = jsgui;

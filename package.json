@@ -12,6 +12,9 @@
     },
     "./types/*": {
       "types": "./types/*.d.ts"
+    },
+    "./control_mixins/*": {
+      "default": "./control_mixins/*.js"
     }
   },
   "scripts": {
@@ -63,5 +66,5 @@
     "jsgui3-server": "^0.0.143",
     "puppeteer": "^24.37.2"
   },
-  "version": "0.0.186"
+  "version": "0.0.187"
 }

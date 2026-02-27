@@ -11,11 +11,10 @@ const { is_defined } = jsgui;
  * @param {string} [spec.size] — Size: sm, md (default), lg, xl, full
  * @param {boolean} [spec.closable=true] — Show close button
  * @param {boolean} [spec.close_on_overlay=true] — Close when clicking overlay
- * @param {Function} [spec.before_close] — Async guard: return false to cancel close
  *
  * Events:
  *   'open' — Fired when modal opens
- *   'close' — Fired when modal closes, { trigger: 'button'|'escape'|'overlay'|'api' }
+ *   'close' — Fired when modal closes
  */
 class Modal extends Control {
     constructor(spec = {}) {
@@ -32,14 +31,16 @@ class Modal extends Control {
         this._size = spec.size || '';
         this._closable = is_defined(spec.closable) ? !!spec.closable : true;
         this._close_on_overlay = is_defined(spec.close_on_overlay) ? !!spec.close_on_overlay : true;
-        this._before_close = typeof spec.before_close === 'function' ? spec.before_close : null;
         this._is_open = false;
-        this._previous_focus = null;
 
-        // ── Adaptive layout options ──
+        // ── Adaptive layout options (all overridable) ──
+        // layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
         this.layout_mode = spec.layout_mode || 'auto';
+        // Breakpoint for phone mode
         this.phone_breakpoint = is_defined(spec.phone_breakpoint) ? Number(spec.phone_breakpoint) : 600;
+        // Whether to auto-fullscreen on phone (default true, overridable)
         this.phone_fullscreen = spec.phone_fullscreen !== false;
+        // Whether to trap focus inside the modal (default true)
         this.trap_focus_enabled = spec.trap_focus !== false;
 
         if (!spec.el) {
@@ -63,13 +64,8 @@ class Modal extends Control {
 
         this._title_ctrl = new Control({ context, tag_name: 'h2' });
         this._title_ctrl.add_class('jsgui-modal-title');
-        const title_id = this._id() + '-title';
-        this._title_ctrl.dom.attributes.id = title_id;
         if (this._title) this._title_ctrl.add(this._title);
         this._header.add(this._title_ctrl);
-
-        // Link dialog to its title
-        this.dom.attributes['aria-labelledby'] = title_id;
 
         if (this._closable) {
             this._close_btn = new Control({ context, tag_name: 'button' });
@@ -123,6 +119,7 @@ class Modal extends Control {
         const mode = this.resolve_layout_mode();
         this.dom.el.setAttribute('data-layout-mode', mode);
 
+        // Apply phone fullscreen if configured
         if (this._box && this._box.dom && this._box.dom.el) {
             if (mode === 'phone' && this.phone_fullscreen) {
                 this._box.dom.el.setAttribute('data-size', 'full');
@@ -136,53 +133,22 @@ class Modal extends Control {
 
     /** Open the modal */
     open() {
-        if (this._is_open) return;
-
-        // Save current focus for restoration on close
-        if (typeof document !== 'undefined') {
-            this._previous_focus = document.activeElement;
-        }
-
         this._is_open = true;
         this.add_class('is-open');
         this._apply_layout_mode();
         this.raise('open');
-
         if (typeof document !== 'undefined') {
             document.addEventListener('keydown', this._handle_keydown);
         }
-
-        // Focus the close button (or first focusable) after open
-        if (this._close_btn && this._close_btn.dom && this._close_btn.dom.el) {
-            this._close_btn.dom.el.focus();
-        }
     }
 
-    /**
-     * Close the modal — runs before_close guard if configured.
-     * @param {string} [trigger='api'] — What caused the close.
-     */
-    async close(trigger = 'api') {
-        if (!this._is_open) return;
-
-        // before_close guard — return false to cancel
-        if (this._before_close) {
-            const allowed = await this._before_close({ trigger });
-            if (allowed === false) return;
-        }
-
+    /** Close the modal */
+    close() {
         this._is_open = false;
         this.remove_class('is-open');
-        this.raise('close', { trigger });
-
+        this.raise('close');
         if (typeof document !== 'undefined') {
             document.removeEventListener('keydown', this._handle_keydown);
-        }
-
-        // Restore focus to the element that had it before open
-        if (this._previous_focus && typeof this._previous_focus.focus === 'function') {
-            this._previous_focus.focus();
-            this._previous_focus = null;
         }
     }
 
@@ -190,11 +156,6 @@ class Modal extends Control {
     toggle() {
         if (this._is_open) this.close();
         else this.open();
-    }
-
-    /** Set a before_close guard function */
-    set_before_close(fn) {
-        this._before_close = typeof fn === 'function' ? fn : null;
     }
 
     /** Set the modal title */
@@ -272,13 +233,13 @@ class Modal extends Control {
 
             // Close button
             if (this._close_btn && this._close_btn.dom.el) {
-                this._close_btn.dom.el.addEventListener('click', () => this.close('button'));
+                this._close_btn.dom.el.addEventListener('click', () => this.close());
             }
 
             // Overlay click
             if (this._close_on_overlay) {
                 this.dom.el.addEventListener('click', (e) => {
-                    if (e.target === this.dom.el) this.close('overlay');
+                    if (e.target === this.dom.el) this.close();
                 });
             }
 
@@ -295,51 +256,38 @@ class Modal extends Control {
 
     _handle_keydown = (e) => {
         if (e.key === 'Escape' && this._is_open && this._closable) {
-            this.close('escape');
+            this.close();
         }
     }
 }
 
+// Full adaptive CSS
 Modal.css = `
-/* ─── Modal Overlay ─── */
+/* ─── Modal ─── */
 .modal {
     display: none;
     position: fixed;
     inset: 0;
     z-index: 1000;
-    background: var(--j-overlay, rgba(0, 0, 0, 0.5));
+    background: var(--j-overlay, rgba(0, 0, 0, 0.4));
     align-items: center;
     justify-content: center;
 }
 .modal.is-open {
     display: flex;
-    animation: modal-fade-in 200ms ease-out;
 }
-@keyframes modal-fade-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}
-
-/* ─── Modal Box ─── */
 .jsgui-modal {
-    background: var(--j-bg-surface, #1e1e2e);
+    background: var(--admin-card-bg, #fff);
     border-radius: var(--j-radius-lg, 8px);
-    box-shadow: var(--j-shadow-xl, 0 8px 32px rgba(0, 0, 0, 0.3));
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     max-width: 90vw;
     max-height: 90vh;
     display: flex;
     flex-direction: column;
     min-width: 320px;
     overflow: hidden;
-    color: var(--j-fg, #e0e0e0);
-    animation: modal-scale-in 200ms ease-out;
+    color: var(--admin-text, #1e1e1e);
 }
-@keyframes modal-scale-in {
-    from { transform: scale(0.95); opacity: 0; }
-    to   { transform: scale(1);    opacity: 1; }
-}
-
-/* ─── Size Variants ─── */
 .jsgui-modal[data-size="sm"] {
     min-width: 280px;
     max-width: 400px;
@@ -359,70 +307,55 @@ Modal.css = `
     max-height: 100vh;
     border-radius: 0;
 }
-
-/* ─── Header ─── */
 .jsgui-modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--j-space-3, 12px) var(--j-space-4, 16px);
-    border-bottom: 1px solid var(--j-border, #333);
-    background: var(--j-bg-elevated, #252535);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    background: var(--admin-header-bg, #f8f8f8);
 }
 .jsgui-modal-title {
     margin: 0;
-    font-size: var(--j-text-base, 1rem);
+    font-size: 16px;
     font-weight: 600;
-    color: var(--j-fg, #e0e0e0);
-    font-family: var(--j-font-sans, system-ui, sans-serif);
+    color: var(--admin-text, #1e1e1e);
 }
-
-/* ─── Close Button ─── */
 .jsgui-modal-close {
     border: none;
-    background: transparent;
-    font-size: var(--j-text-lg, 1.25rem);
+    background: none;
+    font-size: 20px;
     cursor: pointer;
-    padding: var(--j-space-1, 4px) var(--j-space-2, 8px);
-    border-radius: var(--j-radius-sm, 4px);
-    color: var(--j-fg-muted, #888);
+    padding: 4px 8px;
+    border-radius: 4px;
+    color: var(--admin-muted, #666);
     min-width: var(--j-touch-target, 36px);
     min-height: var(--j-touch-target, 36px);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 120ms ease-out, color 120ms ease-out;
 }
 .jsgui-modal-close:hover {
-    background: var(--j-bg-hover, rgba(255,255,255,0.08));
-    color: var(--j-fg, #e0e0e0);
+    background: var(--admin-hover-bg, #eee);
+    color: var(--admin-text, #1e1e1e);
 }
-.jsgui-modal-close:focus-visible {
-    outline: 2px solid var(--j-primary, #5b9bd5);
-    outline-offset: 2px;
-}
-
-/* ─── Body ─── */
 .jsgui-modal-body {
-    padding: var(--j-space-4, 16px);
+    padding: 16px;
     overflow: auto;
     flex: 1;
-    font-family: var(--j-font-sans, system-ui, sans-serif);
 }
-
-/* ─── Footer ─── */
 .jsgui-modal-footer {
-    padding: var(--j-space-3, 12px) var(--j-space-4, 16px);
-    border-top: 1px solid var(--j-border, #333);
+    padding: 12px 16px;
+    border-top: 1px solid var(--admin-border, #e0e0e0);
     display: flex;
     justify-content: flex-end;
-    gap: var(--j-space-2, 8px);
+    gap: 8px;
 }
 .jsgui-modal-footer:empty {
     display: none;
 }
 
-/* ── Phone layout: auto-fullscreen, larger touch targets ── */
+/* ── Phone layout: auto-fullscreen ── */
 .modal[data-layout-mode="phone"] .jsgui-modal-close {
     min-width: 44px;
     min-height: 44px;

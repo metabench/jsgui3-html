@@ -244,8 +244,6 @@ class Control_Core extends Base_Data_Object {
 				value,
 				old
 			} = e_change;
-			// Prevent scalar values meant for sub-controls (e.g. Split_Pane) from crashing
-			if (!Array.isArray(value)) return;
 			let [width, height] = value;
 			const s = this.dom.attrs.style;
 			s.width = width;

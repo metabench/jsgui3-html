@@ -86,8 +86,6 @@ class Master_Detail extends Control {
 
         const master_ctrl = new Control({ context, tag_name: 'div' });
         master_ctrl.add_class('master-detail-master');
-        master_ctrl.dom.attributes.role = 'listbox';
-        master_ctrl.dom.attributes['aria-label'] = 'Items';
 
         const detail_ctrl = new Control({ context, tag_name: 'div' });
         detail_ctrl.add_class('master-detail-detail');
@@ -195,13 +193,10 @@ class Master_Detail extends Control {
             const item_ctrl = new Control({ context: this.context, tag_name: 'button' });
             item_ctrl.dom.attributes.type = 'button';
             item_ctrl.add_class('master-detail-item');
-            item_ctrl.dom.attributes.role = 'option';
             item_ctrl.dom.attributes['data-item-id'] = String(item.id);
             const is_selected = String(item.id) === String(selected_id);
             if (is_selected) item_ctrl.add_class('is-selected');
             item_ctrl.dom.attributes['aria-selected'] = is_selected ? 'true' : 'false';
-            // Roving tabindex: selected item gets 0, rest -1
-            item_ctrl.dom.attributes.tabindex = is_selected ? '0' : '-1';
 
             if (typeof this.master_renderer === 'function') {
                 const rendered = this.master_renderer(item, index);
@@ -216,12 +211,6 @@ class Master_Detail extends Control {
 
             master_ctrl.add(item_ctrl);
         });
-        // Ensure at least one item has tabindex=0
-        if (items.length > 0 && !items.some(i => String(i.id) === String(selected_id))) {
-            const first_item = master_ctrl.content && master_ctrl.content._arr &&
-                master_ctrl.content._arr.find(c => c.has_class && c.has_class('master-detail-item'));
-            if (first_item) first_item.dom.attributes.tabindex = '0';
-        }
     }
 
     render_detail() {
@@ -326,49 +315,19 @@ class Master_Detail extends Control {
                 }
             });
 
-            // Keyboard navigation (listbox pattern)
             master_ctrl.add_dom_event_listener('keydown', e_key => {
                 const item_el = find_item_el(e_key.target);
                 if (!item_el) return;
-                const key = e_key.key;
-
-                if (key === 'Enter' || key === ' ') {
-                    e_key.preventDefault();
-                    const item_id = item_el.getAttribute('data-item-id');
-                    if (!is_defined(item_id)) return;
-                    this.set_selected_id(item_id);
-                    this.raise('selection_change', { selected_id: item_id });
-                    const mode = this.resolve_layout_mode();
-                    if (mode === 'phone' && this.phone_stacked) {
-                        this.show_detail();
-                    }
-                    return;
-                }
-
-                const all_items = Array.from(
-                    master_ctrl.dom.el.querySelectorAll('.master-detail-item')
-                );
-                const current_idx = all_items.indexOf(item_el);
-                let next_idx = -1;
-
-                if (key === 'ArrowDown') {
-                    e_key.preventDefault();
-                    next_idx = (current_idx + 1) % all_items.length;
-                } else if (key === 'ArrowUp') {
-                    e_key.preventDefault();
-                    next_idx = (current_idx - 1 + all_items.length) % all_items.length;
-                } else if (key === 'Home') {
-                    e_key.preventDefault();
-                    next_idx = 0;
-                } else if (key === 'End') {
-                    e_key.preventDefault();
-                    next_idx = all_items.length - 1;
-                }
-
-                if (next_idx >= 0 && next_idx < all_items.length) {
-                    item_el.setAttribute('tabindex', '-1');
-                    all_items[next_idx].setAttribute('tabindex', '0');
-                    all_items[next_idx].focus();
+                const key = e_key.key || e_key.keyCode;
+                if (key !== 'Enter' && key !== ' ' && key !== 13 && key !== 32) return;
+                e_key.preventDefault();
+                const item_id = item_el.getAttribute('data-item-id');
+                if (!is_defined(item_id)) return;
+                this.set_selected_id(item_id);
+                this.raise('selection_change', { selected_id: item_id });
+                const mode = this.resolve_layout_mode();
+                if (mode === 'phone' && this.phone_stacked) {
+                    this.show_detail();
                 }
             });
         }
@@ -380,9 +339,8 @@ Master_Detail.css = `
 .master-detail {
     display: grid;
     grid-template-columns: minmax(180px, 240px) 1fr;
-    gap: var(--j-space-4, 16px);
+    gap: var(--j-gap, 16px);
     align-items: start;
-    font-family: var(--j-font-sans, system-ui, sans-serif);
 }
 .master-detail-back {
     display: none;
@@ -390,38 +348,32 @@ Master_Detail.css = `
 .master-detail-master {
     display: flex;
     flex-direction: column;
-    gap: var(--j-space-2, 8px);
+    gap: 8px;
 }
 .master-detail-item {
     text-align: left;
-    padding: var(--j-space-2, 8px) var(--j-space-3, 10px);
-    border: 1px solid var(--j-border, #333);
-    border-radius: var(--j-radius-md, 6px);
-    background: var(--j-bg-surface, #1e1e2e);
-    color: var(--j-fg, #e0e0e0);
+    padding: 8px 10px;
+    border: 1px solid var(--admin-border, #ddd);
+    border-radius: 6px;
+    background: var(--admin-card-bg, #fff);
+    color: var(--admin-text, #1e1e1e);
     cursor: pointer;
     min-height: var(--j-touch-target, 36px);
-    transition: background 120ms ease-out, border-color 120ms ease-out;
-    font-size: var(--j-text-sm, 0.875rem);
+    transition: background 0.12s, border-color 0.12s;
 }
 .master-detail-item:hover {
-    background: var(--j-bg-hover, rgba(255,255,255,0.06));
-}
-.master-detail-item:focus-visible {
-    outline: 2px solid var(--j-primary, #5b9bd5);
-    outline-offset: -2px;
-    z-index: 1;
+    background: var(--admin-hover-bg, #f0f0f0);
 }
 .master-detail-item.is-selected {
-    border-color: var(--j-primary, #5b9bd5);
-    background: var(--j-primary-muted, rgba(91,155,213,0.15));
+    border-color: var(--admin-accent, #0078d4);
+    background: var(--admin-selected-bg, #f5f5f5);
 }
 .master-detail-detail {
-    padding: var(--j-space-3, 12px);
-    border: 1px solid var(--j-border, #333);
-    border-radius: var(--j-radius-lg, 8px);
-    background: var(--j-bg-elevated, #252535);
-    color: var(--j-fg, #e0e0e0);
+    padding: 12px;
+    border: 1px solid var(--admin-border, #eee);
+    border-radius: 8px;
+    background: var(--admin-surface, #fafafa);
+    color: var(--admin-text, #1e1e1e);
     min-height: 120px;
 }
 
@@ -433,14 +385,14 @@ Master_Detail.css = `
 }
 .master-detail[data-layout-mode="phone"] .master-detail-back {
     display: none;
-    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
+    padding: 8px 12px;
     border: none;
-    background: var(--j-bg-elevated, #252535);
-    border-bottom: 1px solid var(--j-border, #333);
+    background: var(--admin-header-bg, #f8f8f8);
+    border-bottom: 1px solid var(--admin-border, #ddd);
     cursor: pointer;
     text-align: left;
-    font-size: var(--j-text-sm, 0.875rem);
-    color: var(--j-primary, #5b9bd5);
+    font-size: 14px;
+    color: var(--admin-accent, #0078d4);
     min-height: var(--j-touch-target, 44px);
 }
 .master-detail[data-layout-mode="phone"].showing-detail .master-detail-back {

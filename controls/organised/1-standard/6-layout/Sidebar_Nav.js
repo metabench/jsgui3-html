@@ -7,7 +7,7 @@
  *   active_id    — Initially active item id
  *   on_navigate  — Callback when item is clicked
  *
- * Events: navigate({ id, item }), collapse({ collapsed })
+ * Events: navigate({ id, item })
  */
 const Control = require('../../../../html-core/control');
 const { is_defined } = require('../../../../html-core/html-core');
@@ -19,7 +19,6 @@ class Sidebar_Nav extends Control {
         this.add_class('sidebar-nav');
         this.add_class('jsgui-sidebar-nav');
         this.dom.tagName = 'nav';
-        this.dom.attributes['aria-label'] = spec.aria_label || 'Sidebar navigation';
 
         this.items = spec.items || [];
         this.active_id = spec.active_id || null;
@@ -27,11 +26,16 @@ class Sidebar_Nav extends Control {
         this.on_navigate = spec.on_navigate || null;
         this._expanded_groups = new Set();
 
-        // ── Adaptive layout options ──
+        // ── Adaptive layout options (all overridable) ──
+        // layout_mode: 'auto' | 'phone' | 'tablet' | 'desktop'
         this.layout_mode = spec.layout_mode || 'auto';
+        // Breakpoint for auto-collapse to icon-only rail
         this.collapse_breakpoint = is_defined(spec.collapse_breakpoint) ? Number(spec.collapse_breakpoint) : 768;
+        // Breakpoint for phone overlay mode
         this.overlay_breakpoint = is_defined(spec.overlay_breakpoint) ? Number(spec.overlay_breakpoint) : 600;
+        // Whether auto-collapse is enabled (default true)
         this.auto_collapse = spec.auto_collapse !== false;
+        // Whether phone overlay mode is enabled (default true)
         this.auto_overlay = spec.auto_overlay !== false;
 
         if (this.collapsed) {
@@ -47,14 +51,13 @@ class Sidebar_Nav extends Control {
         this._toggle_btn.add_class('sidebar-toggle');
         this._toggle_btn.dom.attributes.type = 'button';
         this._toggle_btn.dom.attributes['aria-label'] = 'Toggle sidebar';
-        this._toggle_btn.dom.attributes['aria-expanded'] = this.collapsed ? 'false' : 'true';
         this._toggle_btn.add('☰');
         this.add(this._toggle_btn);
 
-        // Nav tree (ARIA tree pattern)
+        // Nav list
         this._nav_list = new Control({ context: this.context, tag_name: 'ul' });
         this._nav_list.add_class('sidebar-list');
-        this._nav_list.dom.attributes.role = 'tree';
+        this._nav_list.dom.attributes.role = 'list';
 
         this._render_items(this.items, this._nav_list, 0);
         this.add(this._nav_list);
@@ -66,40 +69,29 @@ class Sidebar_Nav extends Control {
             li.add_class('sidebar-item');
             if (depth > 0) li.add_class('sidebar-item--nested');
             li.dom.attributes['data-nav-id'] = item.id;
-            li.dom.attributes.role = 'none'; // li is presentational, treeitem is on the link
 
             const has_children = Array.isArray(item.items) && item.items.length > 0;
 
-            // Item link/button — this is the treeitem
+            // Item link/button
             const link = new Control({ context: this.context, tag_name: item.href ? 'a' : 'button' });
             link.add_class('sidebar-link');
             link.dom.attributes['data-nav-id'] = item.id;
-            link.dom.attributes.role = 'treeitem';
-            link.dom.attributes.tabindex = '-1'; // Managed by roving tabindex
-
             if (item.href) {
                 link.dom.attributes.href = item.href;
             } else {
                 link.dom.attributes.type = 'button';
             }
-
-            // Active item
             if (item.id === this.active_id) {
                 link.add_class('is-active');
-                link.dom.attributes['aria-current'] = 'page';
-                link.dom.attributes.tabindex = '0'; // Active item is focusable
             }
-
             if (has_children) {
                 link.add_class('has-children');
-                link.dom.attributes['aria-expanded'] = 'false';
             }
 
             // Icon
             if (item.icon) {
                 const icon_span = new Control({ context: this.context, tag_name: 'span' });
                 icon_span.add_class('sidebar-icon');
-                icon_span.dom.attributes['aria-hidden'] = 'true';
                 icon_span.add(item.icon);
                 link.add(icon_span);
             }
@@ -114,7 +106,6 @@ class Sidebar_Nav extends Control {
             if (is_defined(item.badge)) {
                 const badge_span = new Control({ context: this.context, tag_name: 'span' });
                 badge_span.add_class('sidebar-badge');
-                badge_span.dom.attributes['aria-label'] = `${item.badge} notifications`;
                 badge_span.add(String(item.badge));
                 link.add(badge_span);
             }
@@ -123,7 +114,6 @@ class Sidebar_Nav extends Control {
             if (has_children) {
                 const chevron = new Control({ context: this.context, tag_name: 'span' });
                 chevron.add_class('sidebar-chevron');
-                chevron.dom.attributes['aria-hidden'] = 'true';
                 chevron.add('›');
                 link.add(chevron);
             }
@@ -141,30 +131,6 @@ class Sidebar_Nav extends Control {
 
             parent.add(li);
         });
-
-        // Ensure first treeitem gets tabindex=0 if no active item at depth 0
-        if (depth === 0) {
-            const all_links = [];
-            this._collect_links(parent, all_links);
-            const has_active = all_links.some(l => l.dom.attributes.tabindex === '0');
-            if (!has_active && all_links.length > 0) {
-                all_links[0].dom.attributes.tabindex = '0';
-            }
-        }
-    }
-
-    _collect_links(ctrl, result) {
-        if (ctrl.has_class && ctrl.has_class('sidebar-link')) {
-            result.push(ctrl);
-        }
-        const children = ctrl.content && ctrl.content._arr;
-        if (Array.isArray(children)) {
-            for (const child of children) {
-                if (child && typeof child === 'object' && child.dom) {
-                    this._collect_links(child, result);
-                }
-            }
-        }
     }
 
     /**
@@ -192,9 +158,12 @@ class Sidebar_Nav extends Control {
         const mode = this.resolve_layout_mode();
         this.dom.el.setAttribute('data-layout-mode', mode);
 
+        // Auto-collapse on tablet
         if (mode === 'tablet' && this.auto_collapse && !this.collapsed) {
             this.toggle_collapse(true);
         }
+
+        // Phone overlay mode
         if (mode === 'phone' && this.auto_overlay) {
             this.dom.el.classList.add('sidebar-overlay-mode');
         } else {
@@ -207,8 +176,10 @@ class Sidebar_Nav extends Control {
             super.activate();
             if (!this.dom.el) return;
 
+            // Apply initial layout mode
             this._apply_layout_mode();
 
+            // Listen for resize in auto mode
             if (this.layout_mode === 'auto' && typeof window !== 'undefined') {
                 this._resize_handler = () => this._apply_layout_mode();
                 window.addEventListener('resize', this._resize_handler);
@@ -230,93 +201,26 @@ class Sidebar_Nav extends Control {
                 const id = link.getAttribute('data-nav-id');
                 if (!id) return;
 
+                // If has children, toggle expand
                 if (link.classList.contains('has-children')) {
                     e.preventDefault();
                     this._toggle_group(id, link);
                     return;
                 }
 
+                // Navigate
                 this.set_active(id);
                 this.raise('navigate', { id, item: this._find_item(id) });
                 if (this.on_navigate) {
                     this.on_navigate(id, this._find_item(id));
                 }
 
+                // Auto-close overlay on phone after navigation
                 const mode = this.resolve_layout_mode();
                 if (mode === 'phone' && this.auto_overlay) {
                     this.toggle_collapse(true);
                 }
             });
-
-            // Keyboard navigation (tree pattern)
-            this.dom.el.addEventListener('keydown', e => {
-                const target = e.target;
-                if (!target || !target.classList.contains('sidebar-link')) return;
-
-                const all_links = Array.from(this.dom.el.querySelectorAll('.sidebar-link'));
-                // Filter to visible links only
-                const visible_links = all_links.filter(el => {
-                    let parent = el.closest('.sidebar-sublist');
-                    while (parent) {
-                        const parent_item = parent.closest('.sidebar-item');
-                        if (parent_item && !parent_item.classList.contains('is-expanded')) {
-                            return false;
-                        }
-                        parent = parent_item ? parent_item.parentElement.closest('.sidebar-sublist') : null;
-                    }
-                    return true;
-                });
-
-                const current_idx = visible_links.indexOf(target);
-
-                if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    const next_idx = (current_idx + 1) % visible_links.length;
-                    this._focus_link(visible_links, current_idx, next_idx);
-                } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    const prev_idx = (current_idx - 1 + visible_links.length) % visible_links.length;
-                    this._focus_link(visible_links, current_idx, prev_idx);
-                } else if (e.key === 'ArrowRight') {
-                    // Expand group
-                    if (target.classList.contains('has-children')) {
-                        const expanded = target.getAttribute('aria-expanded') === 'true';
-                        if (!expanded) {
-                            e.preventDefault();
-                            const id = target.getAttribute('data-nav-id');
-                            this._toggle_group(id, target);
-                        }
-                    }
-                } else if (e.key === 'ArrowLeft') {
-                    // Collapse group or move to parent
-                    if (target.classList.contains('has-children') &&
-                        target.getAttribute('aria-expanded') === 'true') {
-                        e.preventDefault();
-                        const id = target.getAttribute('data-nav-id');
-                        this._toggle_group(id, target);
-                    }
-                } else if (e.key === 'Home') {
-                    e.preventDefault();
-                    this._focus_link(visible_links, current_idx, 0);
-                } else if (e.key === 'End') {
-                    e.preventDefault();
-                    this._focus_link(visible_links, current_idx, visible_links.length - 1);
-                } else if (e.key === 'Enter' || e.key === ' ') {
-                    // Activate item
-                    e.preventDefault();
-                    target.click();
-                }
-            });
-        }
-    }
-
-    _focus_link(links, old_idx, new_idx) {
-        if (old_idx >= 0 && old_idx < links.length) {
-            links[old_idx].setAttribute('tabindex', '-1');
-        }
-        if (new_idx >= 0 && new_idx < links.length) {
-            links[new_idx].setAttribute('tabindex', '0');
-            links[new_idx].focus();
         }
     }
 
@@ -329,11 +233,9 @@ class Sidebar_Nav extends Control {
         if (this._expanded_groups.has(id)) {
             this._expanded_groups.delete(id);
             li.classList.remove('is-expanded');
-            link_el.setAttribute('aria-expanded', 'false');
         } else {
             this._expanded_groups.add(id);
             li.classList.add('is-expanded');
-            link_el.setAttribute('aria-expanded', 'true');
         }
     }
 
@@ -342,26 +244,15 @@ class Sidebar_Nav extends Control {
         if (!this.dom.el) return;
         this.dom.el.querySelectorAll('.sidebar-link.is-active').forEach(el => {
             el.classList.remove('is-active');
-            el.removeAttribute('aria-current');
         });
         const target = this.dom.el.querySelector(`.sidebar-link[data-nav-id="${id}"]`);
-        if (target) {
-            target.classList.add('is-active');
-            target.setAttribute('aria-current', 'page');
-        }
+        if (target) target.classList.add('is-active');
     }
 
     toggle_collapse(force) {
         this.collapsed = typeof force === 'boolean' ? force : !this.collapsed;
         if (this.dom.el) {
             this.dom.el.classList.toggle('is-collapsed', this.collapsed);
-        }
-        // Update toggle button's aria-expanded
-        if (this._toggle_btn) {
-            this._toggle_btn.dom.attributes['aria-expanded'] = this.collapsed ? 'false' : 'true';
-            if (this._toggle_btn.dom.el) {
-                this._toggle_btn.dom.el.setAttribute('aria-expanded', this.collapsed ? 'false' : 'true');
-            }
         }
         this.raise('collapse', { collapsed: this.collapsed });
     }
@@ -389,18 +280,15 @@ Sidebar_Nav.css = `
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: var(--j-bg-surface, #1e1e2e);
-    border-right: 1px solid var(--j-border, #333);
+    background: var(--admin-card-bg, #fff);
+    border-right: 1px solid var(--admin-border, #e0e0e0);
     width: var(--sidebar-width, 240px);
-    transition: width 200ms ease-out;
+    transition: width 0.2s ease;
     overflow: hidden;
-    font-family: var(--j-font-sans, system-ui, sans-serif);
 }
 .jsgui-sidebar-nav.is-collapsed {
     width: var(--sidebar-collapsed-width, 48px);
 }
-
-/* ─── Lists ─── */
 .sidebar-list, .sidebar-sublist {
     list-style: none;
     margin: 0;
@@ -412,97 +300,75 @@ Sidebar_Nav.css = `
 .sidebar-item.is-expanded > .sidebar-sublist {
     display: block;
 }
-
-/* ─── Toggle Button ─── */
 .sidebar-toggle {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: var(--j-space-2, 8px);
+    padding: 8px;
     border: none;
-    border-bottom: 1px solid var(--j-border, #333);
-    background: var(--j-bg-elevated, #252535);
+    border-bottom: 1px solid var(--admin-border, #e0e0e0);
+    background: var(--admin-header-bg, #f8f8f8);
     cursor: pointer;
     min-height: var(--j-touch-target, 36px);
-    color: var(--j-fg, #e0e0e0);
-    font-size: var(--j-text-base, 1rem);
-    transition: background 120ms ease-out;
+    color: var(--admin-text, #1e1e1e);
+    font-size: 16px;
 }
 .sidebar-toggle:hover {
-    background: var(--j-bg-hover, rgba(255,255,255,0.08));
+    background: var(--admin-hover-bg, #eee);
 }
-.sidebar-toggle:focus-visible {
-    outline: 2px solid var(--j-primary, #5b9bd5);
-    outline-offset: -2px;
-}
-
-/* ─── Nav Link / TreeItem ─── */
 .sidebar-link {
     display: flex;
     align-items: center;
     width: 100%;
-    padding: var(--j-space-2, 8px) var(--j-space-3, 12px);
-    gap: var(--j-space-2, 8px);
+    padding: 8px 12px;
+    gap: 8px;
     text-decoration: none;
     cursor: pointer;
     border: none;
-    background: transparent;
+    background: none;
     text-align: left;
-    color: var(--j-fg, #e0e0e0);
+    color: var(--admin-text, #333);
     min-height: var(--j-touch-target, 36px);
-    transition: background 120ms ease-out, color 120ms ease-out;
-    font-size: var(--j-text-sm, 0.875rem);
+    transition: background 0.1s;
+    font-size: 14px;
 }
 .sidebar-link:hover {
-    background: var(--j-bg-hover, rgba(255,255,255,0.06));
-}
-.sidebar-link:focus-visible {
-    outline: 2px solid var(--j-primary, #5b9bd5);
-    outline-offset: -2px;
-    z-index: 1;
+    background: var(--admin-hover-bg, #f0f0f0);
 }
 .sidebar-link.is-active {
-    background: var(--j-primary-muted, rgba(91,155,213,0.15));
-    color: var(--j-primary, #5b9bd5);
+    background: var(--admin-selected-bg, #e8f0fe);
+    color: var(--admin-accent, #0078d4);
     font-weight: 600;
 }
-
-/* ─── Icon ─── */
 .sidebar-icon {
     flex-shrink: 0;
     width: 20px;
     text-align: center;
 }
-
-/* ─── Badge ─── */
 .sidebar-badge {
     margin-left: auto;
-    font-size: var(--j-text-xs, 0.6875rem);
-    background: var(--j-primary, #5b9bd5);
-    color: var(--j-fg-on-status, #fff);
+    font-size: 11px;
+    background: var(--admin-accent, #0078d4);
+    color: #fff;
     padding: 1px 6px;
     border-radius: 10px;
 }
-
-/* ─── Chevron ─── */
 .sidebar-chevron {
     margin-left: auto;
-    transition: transform 150ms ease-out;
-    color: var(--j-fg-muted, #888);
+    transition: transform 0.15s;
+    color: var(--admin-muted, #999);
 }
 .sidebar-item.is-expanded > .sidebar-link .sidebar-chevron {
     transform: rotate(90deg);
 }
-
-/* ─── Collapsed State ─── */
 .jsgui-sidebar-nav.is-collapsed .sidebar-label,
 .jsgui-sidebar-nav.is-collapsed .sidebar-badge,
 .jsgui-sidebar-nav.is-collapsed .sidebar-chevron {
     display: none;
 }
 .sidebar-item--nested .sidebar-link {
-    padding-left: var(--j-space-8, 36px);
+    padding-left: 36px;
 }
 
 /* ── Phone overlay mode ── */
@@ -512,7 +378,7 @@ Sidebar_Nav.css = `
     left: 0;
     bottom: 0;
     z-index: 999;
-    box-shadow: var(--j-shadow-xl, 4px 0 16px rgba(0, 0, 0, 0.25));
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.15);
     width: var(--sidebar-width, 240px);
 }
 .jsgui-sidebar-nav.sidebar-overlay-mode.is-collapsed {

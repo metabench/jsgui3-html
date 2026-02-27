@@ -4,10 +4,10 @@ const { Control, Data_Object } = jsgui;
 const { is_defined } = jsgui;
 const { ensure_control_models } = require('../../../../html-core/control_model_factory');
 const apply_field_status = require('../../../../control_mixins/field_status').apply_field_status;
-const Inline_Validation_Message = require('./Inline_Validation_Message');
+const Inline_Validation_Message = require('./inline_validation_message');
 const Badge = require('../../0-core/0-basic/1-compositional/badge');
 const Text_Input = require('../../0-core/0-basic/0-native-compositional/Text_Input');
-const Textarea = require('../../0-core/0-basic/0-native-compositional/Textarea');
+const Textarea = require('../../0-core/0-basic/0-native-compositional/textarea');
 
 const normalize_fields = fields => (Array.isArray(fields) ? fields.slice() : []);
 
@@ -28,7 +28,6 @@ class Form_Container extends Control {
         super(spec);
         this.add_class('form-container');
         this.dom.tagName = 'form';
-        this.dom.attributes.novalidate = 'novalidate'; // Use custom validation, not browser's
 
         ensure_control_models(this, spec);
         this.model = this.data.model;
@@ -202,26 +201,9 @@ class Form_Container extends Control {
         if (validation.valid) {
             this.raise('submit', { values: this.get_values() });
         } else {
-            this.raise('invalid', { errors: validation.errors, summary: this.get_error_summary() });
+            this.raise('invalid', { errors: validation.errors });
         }
         return validation;
-    }
-
-    /**
-     * Get a summary of all current validation errors.
-     * @returns {Array<{field: string, message: string}>}
-     */
-    get_error_summary() {
-        const summary = [];
-        this.fields.forEach((field, index) => {
-            const field_name = get_field_name(field, index);
-            const err = this.errors && typeof this.errors.get === 'function'
-                ? this.errors.get(field_name) : null;
-            if (err) {
-                summary.push({ field: field_name, label: get_field_label(field), message: String(err) });
-            }
-        });
-        return summary;
     }
 
     compose() {
@@ -252,19 +234,12 @@ class Form_Container extends Control {
                 input_ctrl.dom.attributes['aria-required'] = 'true';
             }
 
-            const message_id = `${field_name}-msg`;
             const message_ctrl = new Inline_Validation_Message({
                 context,
                 message: '',
                 status: ''
             });
             message_ctrl.add_class('form-container-message');
-            message_ctrl.dom.attributes.id = message_id;
-            message_ctrl.dom.attributes.role = 'alert';
-            message_ctrl.dom.attributes['aria-live'] = 'polite';
-
-            // Link input to its validation message
-            input_ctrl.dom.attributes['aria-describedby'] = message_id;
 
             let badge_ctrl = null;
             if (this.show_status_badge) {
@@ -465,40 +440,33 @@ Form_Container.css = `
 .form-container {
     display: flex;
     flex-direction: column;
-    gap: var(--j-space-3, 12px);
-    font-family: var(--j-font-sans, system-ui, sans-serif);
+    gap: 12px;
 }
 .form-container-field {
     display: grid;
     grid-template-columns: var(--form-label-width, 160px) 1fr auto;
-    gap: var(--j-space-2, 8px);
+    gap: 8px;
     align-items: center;
 }
 .form-container-label {
     font-weight: 600;
-    color: var(--j-fg, #e0e0e0);
-    font-size: var(--j-text-sm, 0.875rem);
+    color: var(--admin-text, inherit);
 }
 .form-container-input {
     min-width: 0;
     min-height: var(--j-touch-target, 36px);
 }
-.form-container-input:focus-visible {
-    outline: 2px solid var(--j-primary, #5b9bd5);
-    outline-offset: -1px;
-}
 .form-container-message {
     grid-column: 2 / -1;
-    font-size: var(--j-text-xs, 0.75rem);
 }
 .form-container-badge {
     justify-self: end;
 }
 .field-status-error .form-container-input {
-    border-color: var(--j-danger, #b71c1c);
+    border-color: var(--j-error, #b71c1c);
 }
 .field-status-error .form-container-message {
-    color: var(--j-danger, #b71c1c);
+    color: var(--j-error, #b71c1c);
 }
 .field-status-success .form-container-input {
     border-color: var(--j-success, #1b5e20);
