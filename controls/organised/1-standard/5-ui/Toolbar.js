@@ -67,6 +67,7 @@ class Toolbar extends Control {
     }
     
     /**
+    /**
      * Add a button to the toolbar
      */
     addButton(config) {
@@ -75,9 +76,26 @@ class Toolbar extends Control {
         button.add_class('toolbar-button');
         apply_focus_ring(button);
         
+        if (config.id) {
+            button.dom.attributes['data-toolbar-id'] = config.id;
+        }
+
+        if (config.disabled) {
+            button.dom.attributes.disabled = '';
+            button.dom.attributes['aria-disabled'] = 'true';
+        }
+
+        if (config.toggle) {
+            button.dom.attributes['aria-pressed'] = String(!!config.pressed);
+        }
+
+        const has_other_buttons = this._item_configs.some(item => item.type === 'button');
+        button.dom.attributes.tabindex = has_other_buttons ? '-1' : '0';
+
         if (config.icon) {
             const icon = new Control({ context, tag_name: 'span' });
             icon.add_class('toolbar-button-icon');
+            icon.dom.attributes['aria-hidden'] = 'true';
             icon.add(config.icon);
             button.add(icon);
         }
@@ -120,6 +138,8 @@ class Toolbar extends Control {
         const { context } = this;
         const separator = new Control({ context, tag_name: 'div' });
         separator.add_class('toolbar-separator');
+        separator.dom.attributes.role = 'separator';
+        separator.dom.attributes['aria-orientation'] = this._orientation === 'vertical' ? 'horizontal' : 'vertical';
         this.add(separator);
         this.items.push(separator);
         this._item_configs.push({ type: 'separator', ctrl: separator });
@@ -150,6 +170,45 @@ class Toolbar extends Control {
         return control;
     }
     
+    /**
+     * Disable or enable an item by its ID
+     */
+    set_item_disabled(id, disabled) {
+        const item = this._item_configs.find(e => e.type === 'button' && e.config.id === id);
+        if (item) {
+            item.config.disabled = disabled;
+            if (disabled) {
+                item.ctrl.dom.attributes.disabled = '';
+                item.ctrl.dom.attributes['aria-disabled'] = 'true';
+                if (item.ctrl.dom.el) {
+                    item.ctrl.dom.el.setAttribute('disabled', '');
+                    item.ctrl.dom.el.setAttribute('aria-disabled', 'true');
+                }
+            } else {
+                delete item.ctrl.dom.attributes.disabled;
+                delete item.ctrl.dom.attributes['aria-disabled'];
+                if (item.ctrl.dom.el) {
+                    item.ctrl.dom.el.removeAttribute('disabled');
+                    item.ctrl.dom.el.removeAttribute('aria-disabled');
+                }
+            }
+        }
+    }
+
+    /**
+     * Set the pressed state of a toggle item by its ID
+     */
+    set_item_pressed(id, pressed) {
+        const item = this._item_configs.find(e => e.type === 'button' && e.config.id === id);
+        if (item) {
+            item.config.pressed = pressed;
+            item.ctrl.dom.attributes['aria-pressed'] = String(pressed);
+            if (item.ctrl.dom.el) {
+                item.ctrl.dom.el.setAttribute('aria-pressed', String(pressed));
+            }
+        }
+    }
+
     /**
      * Clear all items
      */
@@ -226,8 +285,8 @@ Toolbar.css = `
     align-items: center;
     gap: var(--toolbar-gap, 4px);
     padding: var(--toolbar-padding, 4px 8px);
-    background: var(--admin-card-bg, #fff);
-    border: 1px solid var(--admin-border, #e0e0e0);
+    background: var(--j-bg-surface, #ffffff);
+    border: 1px solid var(--j-border, #e0e0e0);
     border-radius: var(--j-radius, 4px);
 }
 .toolbar-vertical {
@@ -242,7 +301,7 @@ Toolbar.css = `
     border: 1px solid transparent;
     border-radius: var(--j-radius, 4px);
     background: transparent;
-    color: var(--admin-text, #1e1e1e);
+    color: var(--j-fg, #1e1e1e);
     cursor: pointer;
     min-width: var(--j-touch-target, 36px);
     min-height: var(--j-touch-target, 36px);
@@ -251,16 +310,16 @@ Toolbar.css = `
     transition: background 0.12s, border-color 0.12s;
 }
 .toolbar-button:hover {
-    background: var(--admin-hover-bg, #f0f0f0);
-    border-color: var(--admin-border, #e0e0e0);
+    background: var(--j-bg-hover, #f0f0f0);
+    border-color: var(--j-border, #e0e0e0);
 }
 .toolbar-button:active {
-    background: var(--admin-active-bg, #e4e4e4);
+    background: var(--j-bg-active, #e4e4e4);
 }
 .toolbar-separator {
     width: 1px;
     height: 20px;
-    background: var(--admin-border, #e0e0e0);
+    background: var(--j-border, #e0e0e0);
     flex-shrink: 0;
 }
 .toolbar-vertical .toolbar-separator {

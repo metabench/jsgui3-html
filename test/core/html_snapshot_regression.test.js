@@ -2,9 +2,9 @@ const { expect } = require('chai');
 const jsgui = require('../../html-core/html-core');
 const controls = require('../../controls/controls');
 const { htmlSnapshot } = require('../helpers/snapshot');
-const Rating_Stars = require('../../controls/organised/0-core/0-basic/1-compositional/rating-stars');
+const Rating_Stars = require('../../controls/organised/0-core/0-basic/1-compositional/Rating_Stars');
 const Chart_Base = require('../../controls/charts/Chart_Base');
-const DateTime_Picker = require('../../controls/organised/0-core/0-basic/1-compositional/datetime-picker');
+const DateTime_Picker = require('../../controls/organised/0-core/0-basic/1-compositional/Datetime_Picker');
 
 describe('HTML Snapshot Regression Tests - Core Controls', () => {
     let context;

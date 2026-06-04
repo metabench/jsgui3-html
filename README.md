@@ -1096,7 +1096,7 @@ app.get('/', (req, res) => {
 ```
 
 ### Client-Side Activation
-This activation step is often called "Hydration" in other UI frameworks.
+Activation is the process of connecting server-rendered HTML to live, event-driven JavaScript controls in the browser. Other frameworks (React, Vue) call a similar concept "hydration" — in jsgui3, the correct term is always **activation**.
 ```javascript
 // client.js
 const jsgui = require('jsgui3-html');
@@ -1871,3 +1871,13 @@ class ManagedControl extends Control {
     }
 }
 ```
+
+---
+
+## Ecosystem Coordination
+
+This repository is a core component of the **jsgui3 ecosystem**. 
+
+For cross-repo architecture maps, coding standards, coordination workflows, and orientation guides, see the ecosystem coordination headquarters:
+👉 **[jsgui3-ecosystem](https://github.com/metabench/jsgui3-ecosystem)**
+

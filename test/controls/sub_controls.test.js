@@ -4,11 +4,11 @@ const assert = require('assert');
 const Color_Value = require('../../html-core/Color_Value');
 
 // Sub-controls
-const Swatch_Grid = require('../../controls/organised/0-core/0-basic/1-compositional/swatch-grid');
-const Channel_Sliders = require('../../controls/organised/0-core/0-basic/1-compositional/channel-sliders');
-const Hex_Input = require('../../controls/organised/0-core/0-basic/1-compositional/hex-input');
-const Gradient_Area = require('../../controls/organised/0-core/0-basic/1-compositional/gradient-area');
-const HSL_Wheel = require('../../controls/organised/0-core/0-basic/1-compositional/hsl-wheel');
+const Swatch_Grid = require('../../controls/organised/0-core/0-basic/1-compositional/Swatch_Grid');
+const Channel_Sliders = require('../../controls/organised/0-core/0-basic/1-compositional/Channel_Sliders');
+const Hex_Input = require('../../controls/organised/0-core/0-basic/1-compositional/Hex_Input');
+const Gradient_Area = require('../../controls/organised/0-core/0-basic/1-compositional/Gradient_Area');
+const HSL_Wheel = require('../../controls/organised/0-core/0-basic/1-compositional/Hsl_Wheel');
 
 // ── Helpers ──
 

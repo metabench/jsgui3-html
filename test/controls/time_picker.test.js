@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const jsgui = require('../../html-core/html-core');
-const Time_Picker = require('../../controls/organised/0-core/0-basic/1-compositional/time-picker');
+const Time_Picker = require('../../controls/organised/0-core/0-basic/1-compositional/Time_Picker');
 
 // Setup JSDOM
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');

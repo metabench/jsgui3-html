@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const jsgui = require('../../html-core/html-core');
-const Skeleton_Loader = require('../../controls/organised/0-core/0-basic/1-compositional/skeleton-loader');
+const Skeleton_Loader = require('../../controls/organised/0-core/0-basic/1-compositional/Skeleton_Loader');
 
 // Setup JSDOM
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');

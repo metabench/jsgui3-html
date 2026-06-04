@@ -56,6 +56,8 @@ class Group_Box extends Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'group_box';
         if (!spec.use_div) spec.tag_name = spec.tag_name || 'fieldset';
+        const content = spec.content;
+        delete spec.content;
         super(spec);
 
         themeable(this, 'group_box', spec);
@@ -82,6 +84,10 @@ class Group_Box extends Control {
 
         if (!spec.el) {
             this.compose();
+        }
+
+        if (content) {
+            this.add_content(content);
         }
     }
 

@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const jsgui = require('../../html-core/html-core');
-const Sidebar_Nav = require('../../controls/organised/1-standard/6-layout/sidebar_nav');
+const Sidebar_Nav = require('../../controls/organised/1-standard/6-layout/Sidebar_Nav');
 
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
 global.window = dom.window;

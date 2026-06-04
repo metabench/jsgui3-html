@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const jsgui = require('../../html-core/html-core');
-const Rating_Stars = require('../../controls/organised/0-core/0-basic/1-compositional/rating-stars');
+const Rating_Stars = require('../../controls/organised/0-core/0-basic/1-compositional/Rating_Stars');
 
 // Setup JSDOM
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');

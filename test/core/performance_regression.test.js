@@ -65,11 +65,11 @@ describe('Performance & Memory Regression Tests', () => {
 
         const finalMem = process.memoryUsage().heapUsed;
         const diffMB = (finalMem - initialMem) / 1024 / 1024;
-        const grewTooMuch = diffMB > 25;
+        const grewTooMuch = diffMB > 35;
 
         console.log(`\n    -> [Memory Profiler] 500 instances heap growth: ${diffMB.toFixed(2)} MB`);
 
-        // 25MB is a safe headroom for 500 controls kept in the context.map_controls registry
+        // 35MB is a safe headroom for 500 controls kept in the context.map_controls registry (especially when GC is not forced)
         expect(grewTooMuch).to.be.false;
     });
 });

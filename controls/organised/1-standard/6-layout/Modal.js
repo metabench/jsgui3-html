@@ -43,6 +43,8 @@ class Modal extends Control {
         // Whether to trap focus inside the modal (default true)
         this.trap_focus_enabled = spec.trap_focus !== false;
 
+        this._before_close = spec.before_close || null;
+
         if (!spec.el) {
             this.compose(spec);
         }
@@ -65,6 +67,11 @@ class Modal extends Control {
         this._title_ctrl = new Control({ context, tag_name: 'h2' });
         this._title_ctrl.add_class('jsgui-modal-title');
         if (this._title) this._title_ctrl.add(this._title);
+        
+        const title_id = this._title_ctrl._id();
+        this._title_ctrl.dom.attributes.id = title_id;
+        this.dom.attributes['aria-labelledby'] = title_id;
+
         this._header.add(this._title_ctrl);
 
         if (this._closable) {
@@ -143,13 +150,24 @@ class Modal extends Control {
     }
 
     /** Close the modal */
-    close() {
+    async close(trigger = 'api') {
+        if (typeof this._before_close === 'function') {
+            const allowed = await this._before_close(trigger);
+            if (allowed === false) return false;
+        }
+
         this._is_open = false;
         this.remove_class('is-open');
-        this.raise('close');
+        this.raise('close', { trigger });
         if (typeof document !== 'undefined') {
             document.removeEventListener('keydown', this._handle_keydown);
         }
+        return true;
+    }
+
+    /** Set the before_close guard function */
+    set_before_close(fn) {
+        this._before_close = fn;
     }
 
     /** Toggle open/close */
@@ -277,7 +295,7 @@ Modal.css = `
     display: flex;
 }
 .jsgui-modal {
-    background: var(--admin-card-bg, #fff);
+    background: var(--j-bg-elevated, #fff);
     border-radius: var(--j-radius-lg, 8px);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     max-width: 90vw;
@@ -286,7 +304,7 @@ Modal.css = `
     flex-direction: column;
     min-width: 320px;
     overflow: hidden;
-    color: var(--admin-text, #1e1e1e);
+    color: var(--j-fg, #1e1e1e);
 }
 .jsgui-modal[data-size="sm"] {
     min-width: 280px;
@@ -312,14 +330,14 @@ Modal.css = `
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    border-bottom: 1px solid var(--admin-border, #e0e0e0);
-    background: var(--admin-header-bg, #f8f8f8);
+    border-bottom: 1px solid var(--j-border, #e0e0e0);
+    background: var(--j-bg-header, #f8f8f8);
 }
 .jsgui-modal-title {
     margin: 0;
     font-size: 16px;
     font-weight: 600;
-    color: var(--admin-text, #1e1e1e);
+    color: var(--j-fg, #1e1e1e);
 }
 .jsgui-modal-close {
     border: none;
@@ -328,7 +346,7 @@ Modal.css = `
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
-    color: var(--admin-muted, #666);
+    color: var(--j-fg-muted, #666);
     min-width: var(--j-touch-target, 36px);
     min-height: var(--j-touch-target, 36px);
     display: flex;
@@ -336,8 +354,12 @@ Modal.css = `
     justify-content: center;
 }
 .jsgui-modal-close:hover {
-    background: var(--admin-hover-bg, #eee);
-    color: var(--admin-text, #1e1e1e);
+    background: var(--j-bg-hover, #eee);
+    color: var(--j-fg, #1e1e1e);
+}
+.jsgui-modal-close:focus-visible {
+    outline: 2px solid var(--j-primary, #0078d4);
+    outline-offset: -2px;
 }
 .jsgui-modal-body {
     padding: 16px;
@@ -346,7 +368,7 @@ Modal.css = `
 }
 .jsgui-modal-footer {
     padding: 12px 16px;
-    border-top: 1px solid var(--admin-border, #e0e0e0);
+    border-top: 1px solid var(--j-border, #e0e0e0);
     display: flex;
     justify-content: flex-end;
     gap: 8px;
@@ -359,6 +381,15 @@ Modal.css = `
 .modal[data-layout-mode="phone"] .jsgui-modal-close {
     min-width: 44px;
     min-height: 44px;
+}
+
+@keyframes modal-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes modal-scale-in {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 `;
 

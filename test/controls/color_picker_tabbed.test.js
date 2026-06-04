@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 const Color_Value = require('../../html-core/Color_Value');
-const Color_Picker_Tabbed = require('../../controls/organised/0-core/0-basic/1-compositional/color-picker-tabbed');
+const Color_Picker_Tabbed = require('../../controls/organised/0-core/0-basic/1-compositional/Color_Picker_Tabbed');
 
 // ── Tests ──
 

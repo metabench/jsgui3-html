@@ -115,7 +115,7 @@ describe('Integration Tests', () => {
                 super(spec);
                 
                 this.data.model = new Data_Object({
-                    items: spec.items || []
+                    listItems: spec.listItems || []
                 });
                 
                 this.children = [];
@@ -149,7 +149,7 @@ describe('Integration Tests', () => {
         it('should communicate between parent and children', (done) => {
             const parent = new ParentControl({
                 context,
-                items: [1, 2, 3]
+                listItems: [1, 2, 3]
             });
             
             const child1 = new ChildControl({ context, value: 'test' });
@@ -166,7 +166,7 @@ describe('Integration Tests', () => {
         it('should propagate data changes to all children', (done) => {
             const parent = new ParentControl({
                 context,
-                items: [1, 2, 3]
+                listItems: [1, 2, 3]
             });
             
             const children = [
@@ -181,7 +181,7 @@ describe('Integration Tests', () => {
             children.forEach(child => {
                 child.watch(
                     parent.data.model,
-                    'items',
+                    'listItems',
                     (new_items) => {
                         const arr = Array.isArray(new_items) ? new_items : [];
                         child.data.model.value = arr[0];
@@ -189,7 +189,7 @@ describe('Integration Tests', () => {
                 );
             });
             
-            parent.data.model.items = [100, 2, 3];
+            parent.data.model.listItems = [100, 2, 3];
             
             setTimeout(() => {
                 // All children should have updated
@@ -207,7 +207,7 @@ describe('Integration Tests', () => {
                 super(spec);
                 
                 this.data.model = new Data_Object({
-                    items: spec.items || []
+                    listItems: spec.listItems || []
                 });
                 
                 this.view.data.model = new Data_Object({
@@ -221,10 +221,10 @@ describe('Integration Tests', () => {
             setupFiltering() {
                 this.computed(
                     [this.data.model, this.view.data.model],
-                    ['items', 'filterText'],
-                    (items, filter) => {
-                        if (!filter) return items;
-                        return items.filter(item => 
+                    ['listItems', 'filterText'],
+                    (listItems, filter) => {
+                        if (!filter) return listItems;
+                        return listItems.filter(item => 
                             item.toLowerCase().includes(filter.toLowerCase())
                         );
                     },
@@ -259,7 +259,7 @@ describe('Integration Tests', () => {
         it('should render all items initially', (done) => {
             const list = new DynamicList({
                 context,
-                items: ['Apple', 'Banana', 'Cherry']
+                listItems: ['Apple', 'Banana', 'Cherry']
             });
             
             setTimeout(() => {
@@ -271,7 +271,7 @@ describe('Integration Tests', () => {
         it('should filter items dynamically', (done) => {
             const list = new DynamicList({
                 context,
-                items: ['Apple', 'Banana', 'Cherry', 'Apricot']
+                listItems: ['Apple', 'Banana', 'Cherry', 'Apricot']
             });
             
             setTimeout(() => {
@@ -287,12 +287,12 @@ describe('Integration Tests', () => {
         it('should update when items are added', (done) => {
             const list = new DynamicList({
                 context,
-                items: ['Apple', 'Banana']
+                listItems: ['Apple', 'Banana']
             });
             
             setTimeout(() => {
-                list.data.model.items.push('Cherry');
-                list.data.model.items = [...list.data.model.items]; // Trigger change
+                list.data.model.listItems.push('Cherry');
+                list.data.model.listItems = [...list.data.model.listItems]; // Trigger change
                 
                 setTimeout(() => {
                     expect(list.content._arr.length).to.equal(3);
@@ -308,7 +308,7 @@ describe('Integration Tests', () => {
                 super(spec);
                 
                 this.data.model = new Data_Object({
-                    items: spec.items || [],
+                    listItems: spec.listItems || [],
                     selectedId: null
                 });
                 
@@ -322,10 +322,10 @@ describe('Integration Tests', () => {
             setupSelection() {
                 this.computed(
                     this.data.model,
-                    ['items', 'selectedId'],
-                    (items, id) => {
-                        if (!id || !items) return null;
-                        return items.find(item => item.id === id);
+                    ['listItems', 'selectedId'],
+                    (listItems, id) => {
+                        if (!id || !listItems) return null;
+                        return listItems.find(item => item.id === id);
                     },
                     { propertyName: 'selectedItem', target: this.view.data.model }
                 );
@@ -342,7 +342,7 @@ describe('Integration Tests', () => {
                 { id: 2, name: 'Item 2', description: 'Second item' }
             ];
             
-            const view = new MasterDetail({ context, items });
+            const view = new MasterDetail({ context, listItems: items });
             
             setTimeout(() => {
                 view.selectItem(1);
@@ -361,7 +361,7 @@ describe('Integration Tests', () => {
                 { id: 2, name: 'Item 2' }
             ];
             
-            const view = new MasterDetail({ context, items });
+            const view = new MasterDetail({ context, listItems: items });
             
             setTimeout(() => {
                 view.selectItem(1);

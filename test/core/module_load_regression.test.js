@@ -68,18 +68,18 @@ describe('Module Load Regression Tests', () => {
 
     it('should require key viewer/editor modules without throwing', () => {
         const module_paths = [
-            '../../controls/organised/1-standard/0-viewer/array',
+            '../../controls/organised/1-standard/0-viewer/Array',
             '../../controls/organised/1-standard/0-viewer/factory',
-            '../../controls/organised/1-standard/0-viewer/number',
-            '../../controls/organised/1-standard/0-viewer/object',
-            '../../controls/organised/1-standard/0-viewer/object-kvp',
-            '../../controls/organised/1-standard/0-viewer/string',
-            '../../controls/organised/1-standard/1-editor/array',
-            '../../controls/organised/1-standard/1-editor/number',
-            '../../controls/organised/1-standard/1-editor/object',
-            '../../controls/organised/1-standard/1-editor/object-kvp',
-            '../../controls/organised/1-standard/1-editor/string',
-            '../../controls/organised/1-standard/2-misc/up-down-arrow-buttons'
+            '../../controls/organised/1-standard/0-viewer/Number',
+            '../../controls/organised/1-standard/0-viewer/Object',
+            '../../controls/organised/1-standard/0-viewer/Object_Kvp',
+            '../../controls/organised/1-standard/0-viewer/String',
+            '../../controls/organised/1-standard/1-editor/Array',
+            '../../controls/organised/1-standard/1-editor/Number',
+            '../../controls/organised/1-standard/1-editor/Object',
+            '../../controls/organised/1-standard/1-editor/Object_Kvp',
+            '../../controls/organised/1-standard/1-editor/String',
+            '../../controls/organised/1-standard/2-misc/Up_Down_Arrow_Buttons'
         ];
 
         module_paths.forEach(module_path => {

@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="920" viewBox="0 0 1400 920" role="img" aria-labelledby="title desc">
+  <title id="title">Tpl Activation Flow</title>
+  <desc id="desc">Diagram showing the tpl public API, SSR serialization in parse-mount, and client activation in Data_Model_View_Model_Control.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f7f1e3"/>
+      <stop offset="100%" stop-color="#eef5f7"/>
+    </linearGradient>
+    <linearGradient id="panelA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff8e8"/>
+      <stop offset="100%" stop-color="#ffe2a8"/>
+    </linearGradient>
+    <linearGradient id="panelB" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef8ff"/>
+      <stop offset="100%" stop-color="#b7dfff"/>
+    </linearGradient>
+    <linearGradient id="panelC" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eefcf3"/>
+      <stop offset="100%" stop-color="#b8efc7"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity="0.15"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#274c5e"/>
+    </marker>
+    <style>
+      .title { font: 700 34px 'Segoe UI', Arial, sans-serif; fill: #1f2a30; }
+      .subtitle { font: 400 16px 'Segoe UI', Arial, sans-serif; fill: #47606d; }
+      .panel-title { font: 700 22px 'Segoe UI', Arial, sans-serif; fill: #21333c; }
+      .light-title { font: 700 22px 'Segoe UI', Arial, sans-serif; fill: #f5fbff; }
+      .section { font: 700 16px 'Segoe UI', Arial, sans-serif; fill: #25424f; }
+      .body { font: 400 15px 'Segoe UI', Arial, sans-serif; fill: #24424c; }
+      .mono { font: 600 15px 'Consolas', 'Courier New', monospace; fill: #1b2b34; }
+      .small { font: 400 13px 'Segoe UI', Arial, sans-serif; fill: #4b6570; }
+      .light-small { font: 400 13px 'Segoe UI', Arial, sans-serif; fill: #d6e6ed; }
+      .chip { font: 700 13px 'Segoe UI', Arial, sans-serif; fill: #17303b; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1400" height="920" fill="url(#bg)"/>
+  <rect x="36" y="28" width="1328" height="864" rx="28" fill="#ffffff" opacity="0.72"/>
+
+  <text x="70" y="92" class="title">Tpl Activation Pipeline</text>
+  <text x="70" y="122" class="subtitle">Public export, SSR metadata, and client activation for declarative bindings in jsgui3-html.</text>
+
+  <rect x="70" y="170" width="360" height="430" rx="28" fill="url(#panelA)" stroke="#d7b45f" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="520" y="170" width="360" height="430" rx="28" fill="url(#panelB)" stroke="#78afda" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="970" y="170" width="360" height="430" rx="28" fill="url(#panelC)" stroke="#63b07f" stroke-width="2" filter="url(#shadow)"/>
+
+  <text x="100" y="220" class="panel-title">1. Public API</text>
+  <text x="100" y="258" class="body">
+    <tspan x="100" dy="0">Import the declarative template entry point</tspan>
+    <tspan x="100" dy="22">from either namespace:</tspan>
+  </text>
+  <rect x="100" y="284" width="300" height="72" rx="16" fill="#fffef8" stroke="#d9c16d"/>
+  <text x="120" y="314" class="mono">const { tpl } = require('jsgui3-html');</text>
+  <text x="120" y="340" class="mono">const { template } = jsgui;</text>
+  <text x="100" y="395" class="section">Key feature</text>
+  <text x="100" y="425" class="body">`tpl` preserves object, array, and function references while</text>
+  <text x="100" y="447" class="body">building the control tree. `template` is an alias.</text>
+  <text x="100" y="490" class="section">Important note</text>
+  <text x="100" y="520" class="body">`jsgui.html` still names the native `&lt;html&gt;` control.</text>
+  <text x="100" y="542" class="body">Use `tpl` as the canonical declarative API.</text>
+
+  <text x="550" y="220" class="panel-title">2. SSR in parse-mount.js</text>
+  <text x="550" y="258" class="body">
+    <tspan x="550" dy="0">Server render composes controls and writes</tspan>
+    <tspan x="550" dy="22">activation metadata.</tspan>
+  </text>
+  <rect x="550" y="286" width="298" height="210" rx="18" fill="#f9fdff" stroke="#8fb9dd"/>
+  <text x="570" y="320" class="section">Serialized attributes</text>
+  <text x="570" y="352" class="mono">data-jsgui-bind-owner</text>
+  <text x="570" y="378" class="mono">data-jsgui-bind-text / -value / -class</text>
+  <text x="570" y="404" class="mono">data-jsgui-bind-style / -visible / -list</text>
+  <text x="570" y="430" class="mono">data-jsgui-on-*</text>
+  <text x="570" y="456" class="mono">data-jsgui-model-state</text>
+  <text x="550" y="540" class="body">`bind-list` also records runtime metadata so activation can</text>
+  <text x="550" y="562" class="body">reuse the original template function on the client.</text>
+
+  <text x="1000" y="220" class="panel-title">3. Client Activation</text>
+  <text x="1000" y="258" class="body">
+    <tspan x="1000" dy="0">Data_Model_View_Model_Control restores</tspan>
+    <tspan x="1000" dy="22">behavior against existing DOM.</tspan>
+  </text>
+  <rect x="1000" y="286" width="300" height="232" rx="18" fill="#f8fff9" stroke="#81c497"/>
+  <text x="1020" y="320" class="section">Internal helpers</text>
+  <text x="1020" y="354" class="mono">_register_tpl_runtime_metadata(meta)</text>
+  <text x="1020" y="382" class="mono">_restore_model_state_from_dom()</text>
+  <text x="1020" y="410" class="mono">_activate_tpl_bindings()</text>
+  <text x="1020" y="450" class="body">Instance-method handlers such as</text>
+  <text x="1020" y="472" class="mono">this.save.bind(this)</text>
+  <text x="1020" y="498" class="body">or</text>
+  <text x="1050" y="498" class="mono">() =&gt; this.save()</text>
+  <text x="1020" y="524" class="body">serialize cleanly for `on-*` activation.</text>
+
+  <line x1="430" y1="385" x2="520" y2="385" stroke="#274c5e" stroke-width="4" marker-end="url(#arrow)"/>
+  <line x1="880" y1="385" x2="970" y2="385" stroke="#274c5e" stroke-width="4" marker-end="url(#arrow)"/>
+
+  <rect x="70" y="650" width="1260" height="192" rx="28" fill="#17303b" filter="url(#shadow)"/>
+  <text x="100" y="700" class="light-title">Restored Directives and Runtime Guarantees</text>
+
+  <rect x="100" y="730" width="150" height="38" rx="19" fill="#ffd77a"/>
+  <text x="132" y="755" class="chip">bind-text</text>
+  <rect x="265" y="730" width="160" height="38" rx="19" fill="#ffd77a"/>
+  <text x="298" y="755" class="chip">bind-value</text>
+  <rect x="440" y="730" width="160" height="38" rx="19" fill="#ffd77a"/>
+  <text x="474" y="755" class="chip">bind-class</text>
+  <rect x="615" y="730" width="160" height="38" rx="19" fill="#ffd77a"/>
+  <text x="649" y="755" class="chip">bind-style</text>
+  <rect x="790" y="730" width="170" height="38" rx="19" fill="#ffd77a"/>
+  <text x="821" y="755" class="chip">bind-visible</text>
+  <rect x="975" y="730" width="150" height="38" rx="19" fill="#ffd77a"/>
+  <text x="1010" y="755" class="chip">bind-list</text>
+  <rect x="1140" y="730" width="110" height="38" rx="19" fill="#ffd77a"/>
+  <text x="1172" y="755" class="chip">on-*</text>
+
+  <text x="100" y="804" class="light-small">Current limitation: `bind-list` activation re-renders DOM from the recorded template function.</text>
+  <text x="100" y="826" class="light-small">It restores reactive behavior, but it does not yet rebuild a rich child-control tree for every list item during direct DOM reattachment.</text>
+</svg>

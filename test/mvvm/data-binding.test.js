@@ -370,16 +370,16 @@ describe('MVVM Pattern Tests', () => {
         
         it('should bind collections with mapping', (done) => {
             const manager = new BindingManager();
-            const source = new Data_Object({ items: [1, 2, 3] });
+            const source = new Data_Object({ numbers: [1, 2, 3] });
             const target = new Data_Object({ doubles: [] });
             
-            manager.bind_collection(source, 'items', target, 'doubles', {
+            manager.bind_collection(source, 'numbers', target, 'doubles', {
                 map: (v) => v * 2
             });
             
             setTimeout(() => {
                 expect(target.doubles).to.deep.equal([2, 4, 6]);
-                source.items = [3, 4];
+                source.numbers = [3, 4];
                 
                 setTimeout(() => {
                     expect(target.doubles).to.deep.equal([6, 8]);

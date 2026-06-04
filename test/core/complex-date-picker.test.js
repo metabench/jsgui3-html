@@ -4,7 +4,7 @@ const jsgui = require('../../html-core/html-core');
 let Date_Picker, Month_View;
 try {
     Date_Picker = require('../../controls/organised/0-core/0-basic/_complex_date-picker');
-    Month_View = require('../../controls/organised/0-core/0-basic/1-compositional/month-view');
+    Month_View = require('../../controls/organised/0-core/0-basic/1-compositional/Month_View');
 } catch (e) {
     console.warn('Complex Date_Picker not loadable:', e.message);
 }

@@ -3,7 +3,7 @@ const jsgui = require('../../html-core/html-core');
 
 let Month_View;
 try {
-    Month_View = require('../../controls/organised/0-core/0-basic/1-compositional/month-view');
+    Month_View = require('../../controls/organised/0-core/0-basic/1-compositional/Month_View');
 } catch (e) {
     console.warn('Month_View not loadable:', e.message);
 }

@@ -13,7 +13,7 @@ describe('Context_Menu Control', () => {
     let Context_Menu, context;
 
     before(() => {
-        Context_Menu = require('../../controls/organised/0-core/0-basic/1-compositional/context-menu');
+        Context_Menu = require('../../controls/organised/0-core/0-basic/1-compositional/Context_Menu');
     });
 
     beforeEach(() => {

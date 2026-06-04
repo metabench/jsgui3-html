@@ -23,6 +23,8 @@ class Master_Detail extends Control {
         this.add_class('master-detail');
         this.dom.tagName = 'div';
 
+        this.aria_label = spec.aria_label || spec['aria-label'] || 'Items';
+
         ensure_control_models(this, spec);
         this.model = this.data.model;
 
@@ -86,6 +88,8 @@ class Master_Detail extends Control {
 
         const master_ctrl = new Control({ context, tag_name: 'div' });
         master_ctrl.add_class('master-detail-master');
+        master_ctrl.dom.attributes.role = 'listbox';
+        master_ctrl.dom.attributes['aria-label'] = this.aria_label;
 
         const detail_ctrl = new Control({ context, tag_name: 'div' });
         detail_ctrl.add_class('master-detail-detail');
@@ -197,6 +201,8 @@ class Master_Detail extends Control {
             const is_selected = String(item.id) === String(selected_id);
             if (is_selected) item_ctrl.add_class('is-selected');
             item_ctrl.dom.attributes['aria-selected'] = is_selected ? 'true' : 'false';
+            item_ctrl.dom.attributes.role = 'option';
+            item_ctrl.dom.attributes.tabindex = is_selected ? '0' : '-1';
 
             if (typeof this.master_renderer === 'function') {
                 const rendered = this.master_renderer(item, index);
@@ -353,27 +359,32 @@ Master_Detail.css = `
 .master-detail-item {
     text-align: left;
     padding: 8px 10px;
-    border: 1px solid var(--admin-border, #ddd);
+    border: 1px solid var(--j-border, #ddd);
     border-radius: 6px;
-    background: var(--admin-card-bg, #fff);
-    color: var(--admin-text, #1e1e1e);
+    background: var(--j-bg-elevated, #fff);
+    color: var(--j-fg, #1e1e1e);
     cursor: pointer;
     min-height: var(--j-touch-target, 36px);
     transition: background 0.12s, border-color 0.12s;
 }
 .master-detail-item:hover {
-    background: var(--admin-hover-bg, #f0f0f0);
+    background: var(--j-bg-hover, #f0f0f0);
 }
 .master-detail-item.is-selected {
-    border-color: var(--admin-accent, #0078d4);
-    background: var(--admin-selected-bg, #f5f5f5);
+    border-color: var(--j-primary, #0078d4);
+    background: var(--j-bg-selected, #f5f5f5);
+}
+.master-detail-item:focus-visible,
+.master-detail-back:focus-visible {
+    outline: 2px solid var(--j-primary, #0078d4);
+    outline-offset: -2px;
 }
 .master-detail-detail {
     padding: 12px;
-    border: 1px solid var(--admin-border, #eee);
+    border: 1px solid var(--j-border, #eee);
     border-radius: 8px;
-    background: var(--admin-surface, #fafafa);
-    color: var(--admin-text, #1e1e1e);
+    background: var(--j-bg-subtle, #fafafa);
+    color: var(--j-fg, #1e1e1e);
     min-height: 120px;
 }
 
@@ -387,12 +398,12 @@ Master_Detail.css = `
     display: none;
     padding: 8px 12px;
     border: none;
-    background: var(--admin-header-bg, #f8f8f8);
-    border-bottom: 1px solid var(--admin-border, #ddd);
+    background: var(--j-bg-header, #f8f8f8);
+    border-bottom: 1px solid var(--j-border, #ddd);
     cursor: pointer;
     text-align: left;
     font-size: 14px;
-    color: var(--admin-accent, #0078d4);
+    color: var(--j-primary, #0078d4);
     min-height: var(--j-touch-target, 44px);
 }
 .master-detail[data-layout-mode="phone"].showing-detail .master-detail-back {

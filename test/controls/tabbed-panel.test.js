@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const jsgui = require('../../html-core/html-core');
-const Tabbed_Panel = require('../../controls/organised/1-standard/6-layout/tabbed-panel');
+const Tabbed_Panel = require('../../controls/organised/1-standard/6-layout/Tabbed_Panel');
 
 // Setup JSDOM
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');

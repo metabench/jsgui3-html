@@ -19,6 +19,7 @@ class Sidebar_Nav extends Control {
         this.add_class('sidebar-nav');
         this.add_class('jsgui-sidebar-nav');
         this.dom.tagName = 'nav';
+        this.dom.attributes['aria-label'] = spec.aria_label || spec['aria-label'] || 'Sidebar Navigation';
 
         this.items = spec.items || [];
         this.active_id = spec.active_id || null;
@@ -51,20 +52,21 @@ class Sidebar_Nav extends Control {
         this._toggle_btn.add_class('sidebar-toggle');
         this._toggle_btn.dom.attributes.type = 'button';
         this._toggle_btn.dom.attributes['aria-label'] = 'Toggle sidebar';
+        this._toggle_btn.dom.attributes['aria-expanded'] = String(!this.collapsed);
         this._toggle_btn.add('☰');
         this.add(this._toggle_btn);
 
         // Nav list
         this._nav_list = new Control({ context: this.context, tag_name: 'ul' });
         this._nav_list.add_class('sidebar-list');
-        this._nav_list.dom.attributes.role = 'list';
+        this._nav_list.dom.attributes.role = 'tree';
 
         this._render_items(this.items, this._nav_list, 0);
         this.add(this._nav_list);
     }
 
     _render_items(items, parent, depth) {
-        (items || []).forEach(item => {
+        (items || []).forEach((item, index) => {
             const li = new Control({ context: this.context, tag_name: 'li' });
             li.add_class('sidebar-item');
             if (depth > 0) li.add_class('sidebar-item--nested');
@@ -76,22 +78,38 @@ class Sidebar_Nav extends Control {
             const link = new Control({ context: this.context, tag_name: item.href ? 'a' : 'button' });
             link.add_class('sidebar-link');
             link.dom.attributes['data-nav-id'] = item.id;
+            link.dom.attributes.role = 'treeitem';
             if (item.href) {
                 link.dom.attributes.href = item.href;
             } else {
                 link.dom.attributes.type = 'button';
             }
+
+            // Roving tabindex
+            let tabindex = '-1';
+            if (this.active_id) {
+                if (item.id === this.active_id) {
+                    tabindex = '0';
+                }
+            } else if (depth === 0 && index === 0) {
+                tabindex = '0';
+            }
+            link.dom.attributes.tabindex = tabindex;
+
             if (item.id === this.active_id) {
                 link.add_class('is-active');
+                link.dom.attributes['aria-current'] = 'page';
             }
             if (has_children) {
                 link.add_class('has-children');
+                link.dom.attributes['aria-expanded'] = String(this._expanded_groups.has(item.id));
             }
 
             // Icon
             if (item.icon) {
                 const icon_span = new Control({ context: this.context, tag_name: 'span' });
                 icon_span.add_class('sidebar-icon');
+                icon_span.dom.attributes['aria-hidden'] = 'true';
                 icon_span.add(item.icon);
                 link.add(icon_span);
             }
@@ -106,6 +124,7 @@ class Sidebar_Nav extends Control {
             if (is_defined(item.badge)) {
                 const badge_span = new Control({ context: this.context, tag_name: 'span' });
                 badge_span.add_class('sidebar-badge');
+                badge_span.dom.attributes['aria-label'] = `${item.badge} notifications`;
                 badge_span.add(String(item.badge));
                 link.add(badge_span);
             }
@@ -114,6 +133,7 @@ class Sidebar_Nav extends Control {
             if (has_children) {
                 const chevron = new Control({ context: this.context, tag_name: 'span' });
                 chevron.add_class('sidebar-chevron');
+                chevron.dom.attributes['aria-hidden'] = 'true';
                 chevron.add('›');
                 link.add(chevron);
             }
@@ -233,26 +253,40 @@ class Sidebar_Nav extends Control {
         if (this._expanded_groups.has(id)) {
             this._expanded_groups.delete(id);
             li.classList.remove('is-expanded');
+            link_el.setAttribute('aria-expanded', 'false');
         } else {
             this._expanded_groups.add(id);
             li.classList.add('is-expanded');
+            link_el.setAttribute('aria-expanded', 'true');
         }
     }
 
     set_active(id) {
         this.active_id = id;
         if (!this.dom.el) return;
-        this.dom.el.querySelectorAll('.sidebar-link.is-active').forEach(el => {
+        this.dom.el.querySelectorAll('.sidebar-link').forEach(el => {
             el.classList.remove('is-active');
+            el.removeAttribute('aria-current');
+            el.setAttribute('tabindex', '-1');
         });
         const target = this.dom.el.querySelector(`.sidebar-link[data-nav-id="${id}"]`);
-        if (target) target.classList.add('is-active');
+        if (target) {
+            target.classList.add('is-active');
+            target.setAttribute('aria-current', 'page');
+            target.setAttribute('tabindex', '0');
+        }
     }
 
     toggle_collapse(force) {
         this.collapsed = typeof force === 'boolean' ? force : !this.collapsed;
         if (this.dom.el) {
             this.dom.el.classList.toggle('is-collapsed', this.collapsed);
+        }
+        if (this._toggle_btn) {
+            this._toggle_btn.dom.attributes['aria-expanded'] = String(!this.collapsed);
+            if (this._toggle_btn.dom.el) {
+                this._toggle_btn.dom.el.setAttribute('aria-expanded', String(!this.collapsed));
+            }
         }
         this.raise('collapse', { collapsed: this.collapsed });
     }
@@ -280,8 +314,8 @@ Sidebar_Nav.css = `
     display: flex;
     flex-direction: column;
     height: 100%;
-    background: var(--admin-card-bg, #fff);
-    border-right: 1px solid var(--admin-border, #e0e0e0);
+    background: var(--j-bg-surface, #ffffff);
+    border-right: 1px solid var(--j-border, #e0e0e0);
     width: var(--sidebar-width, 240px);
     transition: width 0.2s ease;
     overflow: hidden;
@@ -307,15 +341,15 @@ Sidebar_Nav.css = `
     width: 100%;
     padding: 8px;
     border: none;
-    border-bottom: 1px solid var(--admin-border, #e0e0e0);
-    background: var(--admin-header-bg, #f8f8f8);
+    border-bottom: 1px solid var(--j-border, #e0e0e0);
+    background: var(--j-bg-header, #f8f8f8);
     cursor: pointer;
     min-height: var(--j-touch-target, 36px);
-    color: var(--admin-text, #1e1e1e);
+    color: var(--j-fg, #1e1e1e);
     font-size: 16px;
 }
 .sidebar-toggle:hover {
-    background: var(--admin-hover-bg, #eee);
+    background: var(--j-bg-hover, #eeeeee);
 }
 .sidebar-link {
     display: flex;
@@ -328,17 +362,17 @@ Sidebar_Nav.css = `
     border: none;
     background: none;
     text-align: left;
-    color: var(--admin-text, #333);
+    color: var(--j-fg, #333333);
     min-height: var(--j-touch-target, 36px);
     transition: background 0.1s;
     font-size: 14px;
 }
 .sidebar-link:hover {
-    background: var(--admin-hover-bg, #f0f0f0);
+    background: var(--j-bg-hover, #f0f0f0);
 }
 .sidebar-link.is-active {
-    background: var(--admin-selected-bg, #e8f0fe);
-    color: var(--admin-accent, #0078d4);
+    background: var(--j-bg-selected, #e8f0fe);
+    color: var(--j-primary, #0078d4);
     font-weight: 600;
 }
 .sidebar-icon {
@@ -349,15 +383,15 @@ Sidebar_Nav.css = `
 .sidebar-badge {
     margin-left: auto;
     font-size: 11px;
-    background: var(--admin-accent, #0078d4);
-    color: #fff;
+    background: var(--j-primary, #0078d4);
+    color: var(--j-fg-on-primary, #ffffff);
     padding: 1px 6px;
     border-radius: 10px;
 }
 .sidebar-chevron {
     margin-left: auto;
     transition: transform 0.15s;
-    color: var(--admin-muted, #999);
+    color: var(--j-fg-muted, #999999);
 }
 .sidebar-item.is-expanded > .sidebar-link .sidebar-chevron {
     transform: rotate(90deg);

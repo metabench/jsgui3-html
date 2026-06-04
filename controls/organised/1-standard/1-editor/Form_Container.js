@@ -28,6 +28,7 @@ class Form_Container extends Control {
         super(spec);
         this.add_class('form-container');
         this.dom.tagName = 'form';
+        this.dom.attributes.novalidate = 'novalidate';
 
         ensure_control_models(this, spec);
         this.model = this.data.model;
@@ -193,6 +194,26 @@ class Form_Container extends Control {
     }
 
     /**
+     * Get a summary of all validation errors.
+     * @returns {Array<{field: string, label: string, message: string}>}
+     */
+    get_error_summary() {
+        const summary = [];
+        this.fields.forEach((field, index) => {
+            const field_name = get_field_name(field, index);
+            const err = this.errors.get(field_name);
+            if (err) {
+                summary.push({
+                    field: field_name,
+                    label: get_field_label(field),
+                    message: err
+                });
+            }
+        });
+        return summary;
+    }
+
+    /**
      * Submit the form.
      * @returns {Object}
      */
@@ -201,7 +222,10 @@ class Form_Container extends Control {
         if (validation.valid) {
             this.raise('submit', { values: this.get_values() });
         } else {
-            this.raise('invalid', { errors: validation.errors });
+            this.raise('invalid', {
+                errors: validation.errors,
+                summary: this.get_error_summary()
+            });
         }
         return validation;
     }
@@ -240,6 +264,7 @@ class Form_Container extends Control {
                 status: ''
             });
             message_ctrl.add_class('form-container-message');
+            message_ctrl.dom.attributes.role = 'alert';
 
             let badge_ctrl = null;
             if (this.show_status_badge) {
@@ -563,7 +588,7 @@ Form_Container.css = `
 }
 .form-container-label {
     font-weight: 600;
-    color: var(--admin-text, inherit);
+    color: var(--j-text, inherit);
 }
 .form-container-input {
     min-width: 0;
@@ -586,6 +611,10 @@ Form_Container.css = `
 }
 .field-status-success .form-container-message {
     color: var(--j-success, #1b5e20);
+}
+.form-container-input:focus-visible {
+    outline: 2px solid var(--j-primary, #0d47a1);
+    outline-offset: 2px;
 }
 
 /* ── Phone layout: label stacks above input ── */

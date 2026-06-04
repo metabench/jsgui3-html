@@ -1,7 +1,7 @@
 const assert = require('assert');
 const { JSDOM } = require('jsdom');
 const jsgui = require('../../html-core/html-core');
-const Color_Picker = require('../../controls/organised/0-core/0-basic/1-compositional/color-picker');
+const Color_Picker = require('../../controls/organised/0-core/0-basic/1-compositional/Color_Picker');
 
 // Setup JSDOM
 const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');

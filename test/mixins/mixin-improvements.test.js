@@ -698,16 +698,19 @@ describe('5. pressed-state with dispose', () => {
 //  SUMMARY
 // ═══════════════════════════════════════════════════
 
-console.log('\n' + '═'.repeat(50));
-console.log(`Results: ${passed} passed, ${failed} failed, ${passed + failed} total`);
-
-if (failed > 0) {
-    console.log('\nFailed tests:');
-    for (const { name, error } of errors) {
-        console.log(`  ✗ ${name}: ${error.message}`);
+if (require.main === module) {
+    if (failed > 0) {
+        console.log('\nFailed tests:');
+        for (const { name, error } of errors) {
+            console.log(`  ✗ ${name}: ${error.message}`);
+        }
+        process.exit(1);
+    } else {
+        console.log('All tests passed!');
+        process.exit(0);
     }
-    process.exit(1);
 } else {
-    console.log('All tests passed!');
-    process.exit(0);
+    // Export results if required by another harness
+    module.exports = { passed, failed, errors };
 }
+
