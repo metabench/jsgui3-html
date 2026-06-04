@@ -10,12 +10,14 @@
  */
 
 const jsgui = require('../../../html');
+const bootstrap_client_controls = require('../../client_bootstrap');
 const { Data_Object } = require('lang-tools');
 const { Control, Active_HTML_Document } = jsgui;
 const Data_Model_View_Model_Control = require('../../../html-core/Data_Model_View_Model_Control');
 
 class UserForm extends Data_Model_View_Model_Control {
-    constructor(spec) {
+    constructor(spec = {}) {
+        spec.__type_name = spec.__type_name || 'user_form';
         super(spec);
         
         const { context } = this;
@@ -38,15 +40,66 @@ class UserForm extends Data_Model_View_Model_Control {
         });
         
         this.add_class('user-form');
-        
-        // Create form fields
-        this.createFields();
-        
-        // Setup bindings
+        this._bindings_initialized = false;
+
+        if (!spec.el) {
+            this.createFields();
+            this.initialize_bindings();
+        }
+    }
+
+    initialize_bindings() {
+        if (this._bindings_initialized) return;
         this.setupBindings();
-        
-        // Setup computed properties
         this.setupComputed();
+        this._bindings_initialized = true;
+    }
+
+    sync_model_from_dom() {
+        if (!this.firstNameInput || !this.firstNameInput.dom || !this.firstNameInput.dom.el) return;
+        this.data.model.set({
+            firstName: this.firstNameInput.dom.el.value || '',
+            lastName: this.lastNameInput && this.lastNameInput.dom && this.lastNameInput.dom.el ? this.lastNameInput.dom.el.value || '' : '',
+            email: this.emailInput && this.emailInput.dom && this.emailInput.dom.el ? this.emailInput.dom.el.value || '' : '',
+            website: this.websiteInput && this.websiteInput.dom && this.websiteInput.dom.el ? this.websiteInput.dom.el.value || '' : '',
+            agreeToTerms: !!(this.termsCheckbox && this.termsCheckbox.dom && this.termsCheckbox.dom.el && this.termsCheckbox.dom.el.checked)
+        });
+    }
+
+    sync_error_message_dom(field_name, error) {
+        const error_control_map = {
+            firstName: this.firstNameError,
+            lastName: this.lastNameError,
+            email: this.emailError,
+            website: this.websiteError,
+            agreeToTerms: this.termsError
+        };
+        const error_control = error_control_map[field_name];
+        if (!error_control) return;
+
+        if (error_control.dom && error_control.dom.el) {
+            error_control.dom.el.textContent = error || '';
+        } else {
+            error_control.clear();
+            if (error) {
+                error_control.add(error);
+            }
+        }
+    }
+
+    sync_submit_message_dom() {
+        if (!this.submitMessage) return;
+        const message = this.view.data.model.get('submitMessage') || '';
+        if (this.submitMessage.dom && this.submitMessage.dom.el) {
+            this.submitMessage.dom.el.textContent = message;
+            this.submitMessage.dom.el.classList.toggle('error', this.submitMessage.has_class('error'));
+            this.submitMessage.dom.el.classList.toggle('success', this.submitMessage.has_class('success'));
+        } else {
+            this.submitMessage.clear();
+            if (message) {
+                this.submitMessage.add(message);
+            }
+        }
     }
     
     createFields() {
@@ -62,9 +115,11 @@ class UserForm extends Data_Model_View_Model_Control {
         this.firstNameInput = new Control({ context, tag_name: 'input' });
         this.firstNameInput.dom.attributes.type = 'text';
         this.firstNameInput.dom.attributes.name = 'firstName';
+        this.firstNameInput.dom.attributes['data-jsgui-ctrl'] = 'firstNameInput';
         this.firstNameInput.add_class('form-input');
         
         this.firstNameError = new Control({ context, tag_name: 'div' });
+        this.firstNameError.dom.attributes['data-jsgui-ctrl'] = 'firstNameError';
         this.firstNameError.add_class('error-message');
         
         firstNameGroup.add(firstNameLabel);
@@ -81,9 +136,11 @@ class UserForm extends Data_Model_View_Model_Control {
         this.lastNameInput = new Control({ context, tag_name: 'input' });
         this.lastNameInput.dom.attributes.type = 'text';
         this.lastNameInput.dom.attributes.name = 'lastName';
+        this.lastNameInput.dom.attributes['data-jsgui-ctrl'] = 'lastNameInput';
         this.lastNameInput.add_class('form-input');
         
         this.lastNameError = new Control({ context, tag_name: 'div' });
+        this.lastNameError.dom.attributes['data-jsgui-ctrl'] = 'lastNameError';
         this.lastNameError.add_class('error-message');
         
         lastNameGroup.add(lastNameLabel);
@@ -100,9 +157,11 @@ class UserForm extends Data_Model_View_Model_Control {
         this.emailInput = new Control({ context, tag_name: 'input' });
         this.emailInput.dom.attributes.type = 'email';
         this.emailInput.dom.attributes.name = 'email';
+        this.emailInput.dom.attributes['data-jsgui-ctrl'] = 'emailInput';
         this.emailInput.add_class('form-input');
         
         this.emailError = new Control({ context, tag_name: 'div' });
+        this.emailError.dom.attributes['data-jsgui-ctrl'] = 'emailError';
         this.emailError.add_class('error-message');
         
         emailGroup.add(emailLabel);
@@ -119,9 +178,11 @@ class UserForm extends Data_Model_View_Model_Control {
         this.websiteInput = new Control({ context, tag_name: 'input' });
         this.websiteInput.dom.attributes.type = 'url';
         this.websiteInput.dom.attributes.name = 'website';
+        this.websiteInput.dom.attributes['data-jsgui-ctrl'] = 'websiteInput';
         this.websiteInput.add_class('form-input');
         
         this.websiteError = new Control({ context, tag_name: 'div' });
+        this.websiteError.dom.attributes['data-jsgui-ctrl'] = 'websiteError';
         this.websiteError.add_class('error-message');
         
         websiteGroup.add(websiteLabel);
@@ -136,12 +197,14 @@ class UserForm extends Data_Model_View_Model_Control {
         this.termsCheckbox = new Control({ context, tag_name: 'input' });
         this.termsCheckbox.dom.attributes.type = 'checkbox';
         this.termsCheckbox.dom.attributes.name = 'agreeToTerms';
+        this.termsCheckbox.dom.attributes['data-jsgui-ctrl'] = 'termsCheckbox';
         this.termsCheckbox.add_class('form-checkbox');
         
         const termsLabel = new Control({ context, tag_name: 'label' });
         termsLabel.add('I agree to the Terms and Conditions *');
         
         this.termsError = new Control({ context, tag_name: 'div' });
+        this.termsError.dom.attributes['data-jsgui-ctrl'] = 'termsError';
         this.termsError.add_class('error-message');
         
         termsGroup.add(this.termsCheckbox);
@@ -150,12 +213,14 @@ class UserForm extends Data_Model_View_Model_Control {
         
         // Submit button
         this.submitButton = new Control({ context, tag_name: 'button' });
+        this.submitButton.dom.attributes['data-jsgui-ctrl'] = 'submitButton';
         this.submitButton.add('Register');
         this.submitButton.add_class('submit-button');
         this.submitButton.dom.attributes.type = 'submit';
         
         // Submit message
         this.submitMessage = new Control({ context, tag_name: 'div' });
+        this.submitMessage.dom.attributes['data-jsgui-ctrl'] = 'submitMessage';
         this.submitMessage.add_class('submit-message');
         
         // Add all to form
@@ -240,6 +305,9 @@ class UserForm extends Data_Model_View_Model_Control {
             } else {
                 this.submitButton.add_class('disabled');
             }
+            if (this.submitButton && this.submitButton.dom && this.submitButton.dom.el) {
+                this.submitButton.dom.el.classList.toggle('disabled', !isValid);
+            }
         });
         
         // Watch submitting state to update button content
@@ -253,39 +321,46 @@ class UserForm extends Data_Model_View_Model_Control {
                 this.submitButton.add('Register');
                 this.submitButton.remove_class('submitting');
             }
+            if (this.submitButton && this.submitButton.dom && this.submitButton.dom.el) {
+                this.submitButton.dom.el.textContent = submitting ? 'Submitting...' : 'Register';
+                this.submitButton.dom.el.classList.toggle('submitting', !!submitting);
+            }
         });
     }
     
     validateField(fieldName) {
-        const value = this.data.model.get(fieldName);
+        const raw_value = this.data.model.get(fieldName);
+        const string_value = typeof raw_value === 'string'
+            ? raw_value
+            : (raw_value === undefined || raw_value === null ? '' : String(raw_value));
         let error = null;
         
         switch(fieldName) {
             case 'firstName':
             case 'lastName':
-                if (!value || value.trim() === '') {
+                if (!string_value || string_value.trim() === '') {
                     error = `${fieldName === 'firstName' ? 'First' : 'Last'} name is required`;
-                } else if (value.length < 2 || value.length > 50) {
+                } else if (string_value.length < 2 || string_value.length > 50) {
                     error = 'Name must be 2-50 characters';
                 }
                 break;
                 
             case 'email':
-                if (!value || value.trim() === '') {
+                if (!string_value || string_value.trim() === '') {
                     error = 'Email is required';
-                } else if (!this.validators.email(value)) {
+                } else if (!this.validators.email(string_value)) {
                     error = 'Invalid email address';
                 }
                 break;
                 
             case 'website':
-                if (value && !this.validators.url(value)) {
+                if (string_value && !this.validators.url(string_value)) {
                     error = 'Invalid website URL';
                 }
                 break;
                 
             case 'agreeToTerms':
-                if (!value) {
+                if (!raw_value) {
                     error = 'You must agree to the terms';
                 }
                 break;
@@ -298,6 +373,7 @@ class UserForm extends Data_Model_View_Model_Control {
             delete errors[fieldName];
         }
         this.view.data.model.set('errors', errors);
+        this.sync_error_message_dom(fieldName, error);
         
         return error === null;
     }
@@ -330,6 +406,9 @@ class UserForm extends Data_Model_View_Model_Control {
                 const errors = this.view.data.model.get('errors') || {};
                 Object.assign(errors, result.errors);
                 this.view.data.model.set('errors', errors);
+                Object.entries(result.errors || {}).forEach(([field_name, error]) => {
+                    this.sync_error_message_dom(field_name, error);
+                });
                 return false;
             }
             
@@ -341,10 +420,13 @@ class UserForm extends Data_Model_View_Model_Control {
     }
     
     async handleSubmit() {
+        this.sync_model_from_dom();
+
         // Validate client-side first
         if (!this.validateAll()) {
             this.view.data.model.set('submitMessage', 'Please fix the errors above');
             this.submitMessage.add_class('error');
+            this.sync_submit_message_dom();
             return;
         }
         
@@ -353,6 +435,7 @@ class UserForm extends Data_Model_View_Model_Control {
         this.view.data.model.set('submitMessage', null);
         this.submitMessage.remove_class('error');
         this.submitMessage.remove_class('success');
+        this.sync_submit_message_dom();
         
         // Validate on server
         const serverValid = await this.validateOnServer();
@@ -361,6 +444,7 @@ class UserForm extends Data_Model_View_Model_Control {
             this.view.data.model.set('submitting', false);
             this.view.data.model.set('submitMessage', 'Server validation failed. Please check your input.');
             this.submitMessage.add_class('error');
+            this.sync_submit_message_dom();
             return;
         }
         
@@ -379,6 +463,7 @@ class UserForm extends Data_Model_View_Model_Control {
             if (result.success) {
                 this.view.data.model.set('submitMessage', '✓ Registration successful!');
                 this.submitMessage.add_class('success');
+                this.sync_submit_message_dom();
                 
                 // Reset form after 2 seconds
                 setTimeout(() => {
@@ -391,44 +476,58 @@ class UserForm extends Data_Model_View_Model_Control {
                     });
                     this.view.data.model.set('errors', {});
                     this.view.data.model.set('submitMessage', null);
+                    ['firstName', 'lastName', 'email', 'website', 'agreeToTerms'].forEach(field_name => {
+                        this.sync_error_message_dom(field_name, '');
+                    });
+                    this.sync_submit_message_dom();
                 }, 2000);
             } else {
                 this.view.data.model.set('submitMessage', `Error: ${result.error}`);
                 this.submitMessage.add_class('error');
+                this.sync_submit_message_dom();
             }
         } catch (error) {
             this.view.data.model.set('submitting', false);
             this.view.data.model.set('submitMessage', 'Network error. Please try again.');
             this.submitMessage.add_class('error');
+            this.sync_submit_message_dom();
         }
     }
     
     activate() {
         if (!this.__active) {
             super.activate();
+            this._wire_jsgui_ctrls();
+            this.initialize_bindings();
+            if (!this.firstNameInput || !this.submitButton || !this.submitMessage) return;
             
             // Attach blur handlers for validation
             this.firstNameInput.on('blur', () => {
+                this.sync_model_from_dom();
                 this.view.data.model.set('touched.firstName', true);
                 this.validateField('firstName');
             });
             
             this.lastNameInput.on('blur', () => {
+                this.sync_model_from_dom();
                 this.view.data.model.set('touched.lastName', true);
                 this.validateField('lastName');
             });
             
             this.emailInput.on('blur', () => {
+                this.sync_model_from_dom();
                 this.view.data.model.set('touched.email', true);
                 this.validateField('email');
             });
             
             this.websiteInput.on('blur', () => {
+                this.sync_model_from_dom();
                 this.view.data.model.set('touched.website', true);
                 this.validateField('website');
             });
             
             this.termsCheckbox.on('change', () => {
+                this.sync_model_from_dom();
                 this.validateField('agreeToTerms');
             });
             
@@ -641,5 +740,12 @@ Demo_UI.css = `
 jsgui.controls = jsgui.controls || {};
 jsgui.controls.Demo_UI = Demo_UI;
 jsgui.controls.UserForm = UserForm;
+
+bootstrap_client_controls(jsgui, {
+    user_form: UserForm,
+    user_form_demo_ui: Demo_UI
+}, {
+    bootstrap_key: '__jsgui_user_form_demo_context__'
+});
 
 module.exports = jsgui;

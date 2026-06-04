@@ -9,30 +9,62 @@
 const { expect } = require('chai');
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 const {
-    launch_browser,
-    click_element,
-    type_text,
-    get_text
+    launch_browser
 } = require('./helpers');
 
 const SCREENSHOT_DIR = path.resolve(__dirname, './screenshots');
-const BASE_URL = 'http://localhost:3602';
+const PORT = 52009;
+const BASE_URL = `http://localhost:${PORT}`;
+const SERVER_SCRIPT = path.resolve(__dirname, '..', '..', 'lab', 'property_grid_demo_server.js');
 
 describe('Property Grid E2E', function () {
-    this.timeout(30000);
+    this.timeout(60000);
 
-    let browser, page;
+    let browser, page, server_process;
 
     before(async function () {
         if (!fs.existsSync(SCREENSHOT_DIR)) {
             fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
         }
+
+        server_process = await new Promise((resolve, reject) => {
+            const child = spawn('node', [SERVER_SCRIPT], {
+                env: { ...process.env, PORT: String(PORT) },
+                stdio: ['pipe', 'pipe', 'pipe']
+            });
+
+            const timeout = setTimeout(() => {
+                reject(new Error('Property grid demo server start timeout'));
+            }, 30000);
+
+            child.stdout.on('data', data => {
+                const output = data.toString();
+                if (output.includes(`localhost:${PORT}`) || output.includes('Server running')) {
+                    clearTimeout(timeout);
+                    resolve(child);
+                }
+            });
+
+            child.stderr.on('data', data => {
+                console.error('[property-grid server]', data.toString());
+            });
+
+            child.on('error', err => {
+                clearTimeout(timeout);
+                reject(err);
+            });
+        });
+
         browser = await launch_browser();
     });
 
     after(async function () {
         if (browser) await browser.close();
+        if (server_process) {
+            server_process.kill('SIGTERM');
+        }
     });
 
     beforeEach(async function () {

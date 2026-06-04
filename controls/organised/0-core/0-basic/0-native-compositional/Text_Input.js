@@ -34,6 +34,21 @@ class Text_Input extends Control {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'text_input';
 
+        const dom_mask_type = spec.el && !spec.mask_type && !spec.mask
+            ? spec.el.getAttribute('data-mask-type')
+            : null;
+        const dom_mask_pattern = spec.el && !spec.mask_pattern
+            ? spec.el.getAttribute('data-mask-pattern')
+            : null;
+        const resolved_mask_pattern = spec.mask_pattern || (() => {
+            if (!dom_mask_pattern) return undefined;
+            try {
+                return JSON.parse(dom_mask_pattern);
+            } catch (err) {
+                return undefined;
+            }
+        })();
+
         // Floating/filled variants need a wrapper div; default renders as <input> directly
         const variant = spec.variant || 'default';
         const needs_wrapper = variant === 'floating' || variant === 'filled' || variant === 'underline';
@@ -70,7 +85,10 @@ class Text_Input extends Control {
         this._variant = variant;
         this._label_text = spec.label || '';
 
-        apply_input_mask(this, spec || {});
+        apply_input_mask(this, Object.assign({}, spec, {
+            mask_type: spec.mask_type || spec.mask || dom_mask_type,
+            mask_pattern: resolved_mask_pattern
+        }));
         apply_full_input_api(this, {
             disabled: spec.disabled,
             readonly: spec.readonly,

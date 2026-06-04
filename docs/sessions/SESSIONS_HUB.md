@@ -5,6 +5,8 @@
 ---
 
 ## 🟢 Current Session (Short-term Memory)
+- [2026-03-07-example-health-fixes](./2026-03-07-example-health-fixes/PLAN.md)
+- [2026-03-05-tpl-activation-parity](./2026-03-05-tpl-activation-parity/PLAN.md)
 - [2026-02-12-visual-advancement](./2026-02-12-visual-advancement/PLAN.md)
 - [2026-02-14-showcase-app](./2026-02-14-showcase-app/PLAN.md)
 

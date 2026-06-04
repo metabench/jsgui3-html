@@ -42,7 +42,11 @@ class Page_Context extends Evented_Class {
                 map_new_ids[i] = v + 1;
             })
         }
-        var map_Controls = this.map_Controls = {};
+        const initial_map_controls = Object.assign(
+            {},
+            spec.map_Controls || spec.map_controls || this.constructor.map_Controls || {}
+        );
+        var map_Controls = this.map_Controls = initial_map_controls;
         var map_controls = this.map_controls = {};
         this.map_data_models = this.map_data_models || {};
         this.map_data_model_iids = this.map_data_model_iids || {};

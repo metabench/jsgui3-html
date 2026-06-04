@@ -1,4 +1,5 @@
 const jsgui = require('../../../html');
+const bootstrap_client_controls = require('../../client_bootstrap');
 
 const { Control, Active_HTML_Document } = jsgui;
 const controls = jsgui.controls;
@@ -9,6 +10,11 @@ class Layout_Controls_Demo extends Active_HTML_Document {
         super(spec);
 
         const { context } = this;
+        this.step_definitions = [
+            { title: 'Plan', content: 'Step 1: gather requirements' },
+            { title: 'Build', content: 'Step 2: implement features' },
+            { title: 'Review', content: 'Step 3: validate outputs' }
+        ];
 
         if (typeof this.body.add_class === 'function') {
             this.body.add_class('layout-controls-body');
@@ -114,11 +120,7 @@ class Layout_Controls_Demo extends Active_HTML_Document {
         const stepper_section = create_section('Stepper');
         this.stepper = new controls.Stepper({
             context,
-            steps: [
-                { title: 'Plan', content: 'Step 1: gather requirements' },
-                { title: 'Build', content: 'Step 2: implement features' },
-                { title: 'Review', content: 'Step 3: validate outputs' }
-            ],
+            steps: this.step_definitions,
             current_step: 0
         });
         this.stepper.add_class('demo-stepper');
@@ -170,16 +172,175 @@ class Layout_Controls_Demo extends Active_HTML_Document {
     activate() {
         if (!this.__active) {
             super.activate();
+            const root_el = this.dom && this.dom.el;
+            if (!root_el) return;
 
-            if (this.drawer_button && this.drawer) {
-                this.drawer_button.on('click', () => this.drawer.open());
-            }
-
-            if (this.stepper_next && this.stepper_prev && this.stepper) {
-                this.stepper_next.on('click', () => this.stepper.next());
-                this.stepper_prev.on('click', () => this.stepper.previous());
-            }
+            this.activate_split_pane(root_el);
+            this.activate_accordion(root_el);
+            this.activate_drawer(root_el);
+            this.activate_stepper(root_el);
+            this.activate_tabs(root_el);
         }
+    }
+
+    activate_split_pane(root_el) {
+        const split_el = root_el.querySelector('.demo-split-pane');
+        const handle_el = split_el && split_el.querySelector('.split-pane-handle');
+        const primary_el = split_el && split_el.querySelector('.split-pane-pane-primary');
+        if (!split_el || !handle_el || !primary_el) return;
+
+        let dragging = false;
+        let start_x = 0;
+        let start_width = 0;
+
+        const on_move = event => {
+            if (!dragging) return;
+            const next_width = Math.max(160, Math.min(360, start_width + (event.clientX - start_x)));
+            primary_el.style.flex = `0 0 ${next_width}px`;
+        };
+
+        const on_up = () => {
+            dragging = false;
+            document.removeEventListener('mousemove', on_move);
+            document.removeEventListener('mouseup', on_up);
+        };
+
+        handle_el.addEventListener('mousedown', event => {
+            event.preventDefault();
+            dragging = true;
+            start_x = event.clientX;
+            start_width = primary_el.getBoundingClientRect().width;
+            document.addEventListener('mousemove', on_move);
+            document.addEventListener('mouseup', on_up);
+        });
+    }
+
+    activate_accordion(root_el) {
+        const accordion_el = root_el.querySelector('.demo-accordion');
+        if (!accordion_el) return;
+
+        accordion_el.querySelectorAll('button[data-section-id]').forEach(header_el => {
+            header_el.classList.add('accordion-header');
+            const section_el = header_el.parentElement;
+            if (section_el) {
+                section_el.classList.add('accordion-section');
+                section_el.classList.toggle('is-open', header_el.classList.contains('is-open'));
+            }
+        });
+
+        accordion_el.addEventListener('click', event => {
+            const header_el = event.target.closest('.accordion-header[data-section-id]');
+            if (!header_el) return;
+
+            const target_id = header_el.getAttribute('data-section-id');
+            accordion_el.querySelectorAll('.accordion-header').forEach(el => {
+                el.classList.toggle('is-open', el.getAttribute('data-section-id') === target_id);
+            });
+            accordion_el.querySelectorAll('.accordion-section').forEach(el => {
+                el.classList.toggle('is-open', !!el.querySelector(`.accordion-header[data-section-id="${target_id}"]`));
+            });
+        });
+    }
+
+    activate_drawer(root_el) {
+        const drawer_el = root_el.querySelector('.demo-drawer');
+        const open_button_el = root_el.querySelector('.drawer-open-button');
+        const overlay_el = drawer_el && drawer_el.querySelector('.drawer-overlay');
+        const close_button_el = drawer_el && drawer_el.querySelector('.drawer-close');
+        if (!drawer_el || !open_button_el) return;
+
+        const set_open = open => {
+            drawer_el.classList.toggle('is-open', !!open);
+        };
+
+        open_button_el.addEventListener('click', () => set_open(true));
+        if (overlay_el) {
+            overlay_el.addEventListener('click', () => set_open(false));
+        }
+        if (close_button_el) {
+            close_button_el.addEventListener('click', () => set_open(false));
+        }
+    }
+
+    activate_stepper(root_el) {
+        const stepper_el = root_el.querySelector('.demo-stepper');
+        const prev_button_el = root_el.querySelector('.stepper-prev');
+        const next_button_el = root_el.querySelector('.stepper-next');
+        if (!stepper_el || !prev_button_el || !next_button_el) return;
+
+        const step_els = Array.from(stepper_el.querySelectorAll('.stepper-step'));
+        const body_el = stepper_el.querySelector('.stepper-body');
+        let current_index = Math.max(0, step_els.findIndex(step_el => step_el.classList.contains('is-current')));
+        if (current_index < 0) current_index = 0;
+
+        const set_current_step = index => {
+            current_index = Math.max(0, Math.min(index, step_els.length - 1));
+            step_els.forEach((step_el, step_index) => {
+                const button_el = step_el.querySelector('.stepper-step-button');
+                const is_current = step_index === current_index;
+                step_el.classList.toggle('is-current', is_current);
+                if (button_el) {
+                    button_el.setAttribute('aria-current', is_current ? 'step' : 'false');
+                }
+            });
+            if (body_el && this.step_definitions[current_index]) {
+                body_el.textContent = this.step_definitions[current_index].content;
+            }
+        };
+
+        prev_button_el.addEventListener('click', () => set_current_step(current_index - 1));
+        next_button_el.addEventListener('click', () => set_current_step(current_index + 1));
+    }
+
+    activate_tabs(root_el) {
+        const panel_el = root_el.querySelector('.demo-tabbed-panel');
+        if (!panel_el) return;
+
+        const input_els = Array.from(panel_el.querySelectorAll('.tab-input'));
+        const label_els = Array.from(panel_el.querySelectorAll('.tab-label'));
+        const page_els = Array.from(panel_el.querySelectorAll('.tab-page'));
+        if (!input_els.length || !label_els.length) return;
+
+        const get_visible_labels = () => label_els.filter(label_el => !label_el.classList.contains('tab-label-hidden'));
+
+        const set_active = (index, focus = false) => {
+            const clamped_index = Math.max(0, Math.min(index, input_els.length - 1));
+            input_els.forEach((input_el, tab_index) => {
+                const is_active = tab_index === clamped_index;
+                input_el.checked = is_active;
+                label_els[tab_index].setAttribute('aria-selected', is_active ? 'true' : 'false');
+                label_els[tab_index].setAttribute('tabindex', is_active ? '0' : '-1');
+                if (page_els[tab_index]) {
+                    page_els[tab_index].setAttribute('aria-hidden', is_active ? 'false' : 'true');
+                }
+            });
+            if (focus && label_els[clamped_index]) {
+                label_els[clamped_index].focus();
+            }
+        };
+
+        label_els.forEach((label_el, index) => {
+            label_el.addEventListener('click', () => set_active(index));
+            label_el.addEventListener('keydown', event => {
+                const visible_labels = get_visible_labels();
+                const visible_index = visible_labels.indexOf(label_el);
+                if (visible_index < 0) return;
+
+                if (event.key === 'ArrowDown' || event.key === 'ArrowRight') {
+                    event.preventDefault();
+                    const next_label = visible_labels[(visible_index + 1) % visible_labels.length];
+                    set_active(Number(next_label.getAttribute('data-tab-index')), true);
+                }
+                if (event.key === 'ArrowUp' || event.key === 'ArrowLeft') {
+                    event.preventDefault();
+                    const next_label = visible_labels[(visible_index - 1 + visible_labels.length) % visible_labels.length];
+                    set_active(Number(next_label.getAttribute('data-tab-index')), true);
+                }
+            });
+        });
+
+        const active_index = input_els.findIndex(input_el => input_el.checked);
+        set_active(active_index >= 0 ? active_index : 0);
     }
 }
 
@@ -270,5 +431,11 @@ body {
 `;
 
 jsgui.controls.Layout_Controls_Demo = Layout_Controls_Demo;
+
+bootstrap_client_controls(jsgui, {
+    layout_controls_demo: Layout_Controls_Demo
+}, {
+    bootstrap_key: '__jsgui_layout_controls_demo_context__'
+});
 
 module.exports = jsgui;

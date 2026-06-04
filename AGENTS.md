@@ -57,14 +57,15 @@ Location: `C:\Users\james\.gemini\antigravity\knowledge\`
 
 ### Agent Role System (MCP)
 
-Agents can adopt specialised personas from the `copilot-dl-news` agent library via the `adopt_agent` MCP tool:
+Agents can adopt specialised personas from the local `jsgui3-html` role library via the `adopt_agent` MCP tool:
 
-- **Config**: `.agent/agent-roles.json` — curated roster of available agent roles
+- **Config**: `.agent/agent-roles.json` — curated roster of available local agent roles
+- **Index**: `.github/agents/index.json` — metadata map from role slugs to local `.agent.md` files
 - **Tool**: `adopt_agent` (in `tools/ui/quick-picker/mcp-server.js`) — shows Electron picker, returns selected agent's full `.agent.md` content
 - **UI**: WLILO-themed Electron picker with agent cards (emoji, title, purpose, tags)
 - **Usage**: Call `adopt_agent` → user picks a role → agent receives full role definition and follows its directives
 
-Available roles are cross-referenced from `copilot-dl-news/.github/agents/index.json` for metadata. Edit `.agent/agent-roles.json` to add/remove agents from the roster.
+To add or remove personas, edit both `.agent/agent-roles.json` and `.github/agents/index.json` in this repo.
 
 ---
 

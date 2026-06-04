@@ -13,7 +13,7 @@ const { Data_Object } = require('lang-tools');
 const Data_Model_View_Model_Control = require('../html-core/Data_Model_View_Model_Control');
 
 class SimpleCounter extends Data_Model_View_Model_Control {
-    constructor(spec) {
+    constructor(spec = {}) {
         super(spec);
         
         // Data model - the actual count
@@ -37,13 +37,14 @@ class SimpleCounter extends Data_Model_View_Model_Control {
     }
     
     setupBindings() {
-        // Bind count to display text with formatting
-        this.bind({
-            'count': {
-                to: 'displayText',
-                transform: (count) => `Count: ${count}`
-            }
-        });
+        this.watch(
+            this.data.model,
+            'count',
+            (count) => {
+                this.view.data.model.displayText = `Count: ${count}`;
+            },
+            { immediate: true }
+        );
     }
     
     setupComputed() {
@@ -65,11 +66,11 @@ class SimpleCounter extends Data_Model_View_Model_Control {
     }
     
     increment() {
-        this.data.model.count++;
+        this.data.model.count = Number(this.data.model.count) + 1;
     }
     
     decrement() {
-        this.data.model.count--;
+        this.data.model.count = Number(this.data.model.count) - 1;
     }
     
     reset() {
@@ -118,7 +119,8 @@ class SimpleCounter extends Data_Model_View_Model_Control {
                 } else {
                     display.add_class('odd');
                 }
-            }
+            },
+            { immediate: true }
         );
         
         this.add(display);

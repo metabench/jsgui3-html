@@ -15,6 +15,7 @@ const Checkbox = require('../../0-core/0-basic/0-native-compositional/checkbox')
 
 class Property_Editor extends Panel {
     constructor(options = {}) {
+        options.__type_name = options.__type_name || 'property_editor';
         super(options);
         
         this.add_class('property-editor');
@@ -130,12 +131,21 @@ class Property_Editor extends Panel {
         
         const input = new Text_Input({ context });
         input.add_class('property-input');
-        input.dom.el.value = value;
-        if (read_only) input.dom.el.disabled = true;
+        input.dom.attributes.value = value;
+        if (input.dom.el) {
+            input.dom.el.value = value;
+        }
+        if (read_only) {
+            input.dom.attributes.disabled = 'disabled';
+            if (input.dom.el) {
+                input.dom.el.disabled = true;
+            }
+        }
         
         if (on_change && !read_only) {
             input.on('input', () => {
-                on_change(input.dom.el.value);
+                const next_value = input.dom.el ? input.dom.el.value : input.dom.attributes.value;
+                on_change(next_value);
             });
         }
         
@@ -154,11 +164,17 @@ class Property_Editor extends Panel {
         
         const checkbox = new Checkbox({ context });
         checkbox.add_class('property-checkbox');
-        checkbox.dom.el.checked = checked;
+        if (checked) {
+            checkbox.dom.attributes.checked = 'checked';
+        }
+        if (checkbox.dom.el) {
+            checkbox.dom.el.checked = checked;
+        }
         
         if (on_change) {
             checkbox.on('change', () => {
-                on_change(checkbox.dom.el.checked);
+                const next_checked = checkbox.dom.el ? checkbox.dom.el.checked : !!checkbox.dom.attributes.checked;
+                on_change(next_checked);
             });
         }
         

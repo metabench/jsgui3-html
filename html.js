@@ -16,6 +16,17 @@
  * console.log(btn.html);  // server-rendered HTML string
  */
 const jsgui = require('./html-core/html-core');
+const to_control_type_name = (name) => String(name)
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .toLowerCase();
+
+const register_control = (name, Constructor) => {
+    if (!Constructor) return;
+    const type_name = to_control_type_name(name);
+    jsgui.map_Controls[type_name] = Constructor;
+    jsgui.map_Controls[String(name).toLowerCase()] = Constructor;
+};
+
 jsgui.Router = require('./router/router');
 jsgui.Resource = require('./resource/resource');
 jsgui.Resource_Pool = require('./resource/pool');
@@ -55,6 +66,9 @@ jsgui.Resource.load_compiler = (name, jsfn, options) => {
 jsgui.controls = jsgui.controls || {};
 //jsgui.controls.Active_HTML_Document = jsgui.Active_HTML_Document = require('./controls/organised/1-standard/5-ui/Active_HTML_Document');
 Object.assign(jsgui.controls, require('./controls/controls'));
+Object.keys(jsgui.controls).forEach((name) => {
+    register_control(name, jsgui.controls[name]);
+});
 Object.assign(jsgui, jsgui.controls);
 jsgui.mixins = jsgui.mx = require('./control_mixins/mx');
 module.exports = jsgui;

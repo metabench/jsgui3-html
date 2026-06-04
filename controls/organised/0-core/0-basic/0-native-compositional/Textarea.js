@@ -13,12 +13,31 @@ class Textarea extends Control {
         this.dom.tagName = 'textarea';
         this.enhance_only = !!spec.enhance_only && !!spec.el;
 
-        this.autosize = !!spec.autosize;
+        const dom_autosize = spec.el ? spec.el.getAttribute('data-autosize') === 'true' : false;
+        const dom_mask_type = spec.el && !spec.mask_type && !spec.mask
+            ? spec.el.getAttribute('data-mask-type')
+            : null;
+        const dom_mask_pattern = spec.el && !spec.mask_pattern
+            ? spec.el.getAttribute('data-mask-pattern')
+            : null;
+        const resolved_mask_pattern = spec.mask_pattern || (() => {
+            if (!dom_mask_pattern) return undefined;
+            try {
+                return JSON.parse(dom_mask_pattern);
+            } catch (err) {
+                return undefined;
+            }
+        })();
+
+        this.autosize = !!spec.autosize || dom_autosize;
         this.autosize_line_height = is_defined(spec.autosize_line_height)
             ? Number(spec.autosize_line_height)
             : 20;
 
-        apply_input_mask(this, spec);
+        apply_input_mask(this, Object.assign({}, spec, {
+            mask_type: spec.mask_type || spec.mask || dom_mask_type,
+            mask_pattern: resolved_mask_pattern
+        }));
         apply_full_input_api(this, {
             disabled: spec.disabled,
             readonly: spec.readonly,

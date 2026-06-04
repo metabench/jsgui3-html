@@ -28,6 +28,7 @@ const os = require('os');
 
 const PICKER_PORT = 3333;
 const PICKER_DIR = __dirname;
+const REPO_ROOT = path.resolve(PICKER_DIR, '..', '..', '..');
 
 // ─── Arg Parsing ───
 
@@ -66,8 +67,7 @@ function parseArgs() {
 // ─── Agent Roster Loading (for --adopt) ───
 
 function loadAgentRoster() {
-    const repoRoot = path.resolve(PICKER_DIR, '..', '..', '..');
-    const rosterPath = path.join(repoRoot, '.agent', 'agent-roles.json');
+    const rosterPath = path.join(REPO_ROOT, '.agent', 'agent-roles.json');
     try {
         return JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
     } catch (e) {
@@ -75,8 +75,24 @@ function loadAgentRoster() {
     }
 }
 
-function loadAgentIndex(sourceRepo) {
-    const indexPath = path.join(sourceRepo, '.github', 'agents', 'index.json');
+function resolveAgentSourceRepo(roster) {
+    if (!roster || !roster.source_repo || roster.source_repo === '.') {
+        return REPO_ROOT;
+    }
+    if (path.isAbsolute(roster.source_repo)) {
+        return roster.source_repo;
+    }
+    return path.resolve(REPO_ROOT, roster.source_repo);
+}
+
+function resolveAgentIndexPath(roster) {
+    const sourceRepo = resolveAgentSourceRepo(roster);
+    const relativeIndexPath = (roster && roster.index_path) || '.github/agents/index.json';
+    return path.join(sourceRepo, relativeIndexPath);
+}
+
+function loadAgentIndex(roster) {
+    const indexPath = resolveAgentIndexPath(roster);
     try {
         return JSON.parse(fs.readFileSync(indexPath, 'utf8'));
     } catch (e) {
@@ -94,7 +110,7 @@ function readAgentFile(sourceRepo, agentPath) {
 }
 
 function buildAgentOptions(roster) {
-    const index = loadAgentIndex(roster.source_repo);
+    const index = loadAgentIndex(roster);
     const indexMap = {};
     for (const entry of index) {
         indexMap[entry.doc_slug] = entry;
@@ -277,8 +293,9 @@ async function main() {
             if (args.mode === 'adopt' && result.selection && !result.cancelled) {
                 const selectedOption = agentOptions.find(a => a.value === result.selection);
                 let agentContent = null;
+                const sourceRepo = resolveAgentSourceRepo(roster);
                 if (selectedOption && selectedOption.agentPath) {
-                    agentContent = readAgentFile(roster.source_repo, selectedOption.agentPath);
+                    agentContent = readAgentFile(sourceRepo, selectedOption.agentPath);
                 }
                 result = {
                     adopted: true,
@@ -313,8 +330,9 @@ async function main() {
         if (args.mode === 'adopt' && result.selection && !result.cancelled) {
             const selectedOption = agentOptions.find(a => a.value === result.selection);
             let agentContent = null;
+            const sourceRepo = resolveAgentSourceRepo(roster);
             if (selectedOption && selectedOption.agentPath) {
-                agentContent = readAgentFile(roster.source_repo, selectedOption.agentPath);
+                agentContent = readAgentFile(sourceRepo, selectedOption.agentPath);
             }
             result = {
                 adopted: true,

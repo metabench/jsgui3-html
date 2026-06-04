@@ -24,8 +24,12 @@ const size_to_css = value => {
 
 class Split_Pane extends Control {
     constructor(spec = {}) {
-        spec.__type_name = spec.__type_name || 'split_pane';
-        super(spec);
+        const split_size = is_defined(spec.size) ? spec.size : spec.initial_size;
+        const control_spec = Object.assign({}, spec);
+        control_spec.__type_name = control_spec.__type_name || 'split_pane';
+        delete control_spec.size;
+
+        super(control_spec);
         this.add_class('split-pane');
         this.add_class('jsgui-split-pane');
         this.dom.tagName = 'div';
@@ -37,7 +41,7 @@ class Split_Pane extends Control {
         this.set_primary(spec.primary);
         this.set_min_size(is_defined(spec.min_size) ? spec.min_size : null);
         this.set_max_size(is_defined(spec.max_size) ? spec.max_size : null);
-        this.set_size(is_defined(spec.size) ? spec.size : spec.initial_size);
+        this.set_size(split_size);
         this.handle_size = is_defined(spec.handle_size) ? Number(spec.handle_size) : 6;
 
         // ── Adaptive layout options (all overridable) ──
@@ -70,7 +74,7 @@ class Split_Pane extends Control {
                 this.primary = normalize_primary(value);
             }
             if (name === 'size') {
-                this.size = normalize_size(value);
+                this.split_size = normalize_size(value);
             }
             if (name === 'min_size') {
                 this.min_size = is_defined(value) ? Number(value) : null;
@@ -125,7 +129,7 @@ class Split_Pane extends Control {
     set_size(size) {
         const next = normalize_size(size);
         this.set_model_value('size', next);
-        this.size = next;
+        this.split_size = next;
         this.update_layout();
     }
 
@@ -134,7 +138,7 @@ class Split_Pane extends Control {
      * @returns {number|string}
      */
     get_size() {
-        return this.size;
+        return this.split_size;
     }
 
     /**
@@ -226,7 +230,7 @@ class Split_Pane extends Control {
 
         const primary_pane = this.get_primary_pane();
         const secondary_pane = this.get_secondary_pane();
-        const size_value = size_to_css(this.size);
+        const size_value = size_to_css(this.split_size);
 
         first_pane.remove_class('split-pane-pane-primary');
         first_pane.remove_class('split-pane-pane-secondary');
@@ -256,7 +260,7 @@ class Split_Pane extends Control {
     }
 
     resolve_size_px() {
-        const size = this.size;
+        const size = this.split_size;
         if (typeof size === 'number') return size;
         if (typeof size === 'string') {
             const trimmed = size.trim();
@@ -355,7 +359,7 @@ class Split_Pane extends Control {
                 document.removeEventListener('touchmove', on_move);
                 document.removeEventListener('touchend', on_up);
                 document.removeEventListener('touchcancel', on_up);
-                this.raise('resize', { size: this.size });
+                this.raise('resize', { size: this.split_size });
             };
 
             const on_start = e_down => {

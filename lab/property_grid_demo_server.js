@@ -9,7 +9,7 @@ const http = require('http');
 const jsgui = require('../html-core/html-core');
 const Property_Grid = require('../controls/organised/1-standard/1-editor/Property_Grid');
 
-const PORT = 3602;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3602;
 
 const create_demo_html = () => {
     const context = new jsgui.Page_Context();

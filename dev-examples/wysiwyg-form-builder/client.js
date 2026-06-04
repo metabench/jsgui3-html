@@ -12,6 +12,7 @@
  */
 
 const jsgui = require('../../html');
+const bootstrap_client_controls = require('../client_bootstrap');
 const { Data_Object } = require('lang-tools');
 const { Control, Active_HTML_Document } = jsgui;
 const Data_Model_View_Model_Control = require('../../html-core/Data_Model_View_Model_Control');
@@ -139,7 +140,7 @@ class FormFieldPreview extends Control {
  * Main Form Builder Control
  */
 class FormBuilder extends Data_Model_View_Model_Control {
-    constructor(options) {
+    constructor(options = {}) {
         options.__type_name = options.__type_name || 'form_builder';
         super(options);
         
@@ -166,6 +167,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
         // Top toolbar
         this.toolbar = new Toolbar({ context });
         this.toolbar.add_class('form-builder-toolbar');
+        this.toolbar.dom.attributes['data-jsgui-ctrl'] = 'toolbar';
         
         this.toolbar.addButton({
             icon: '📄',
@@ -203,6 +205,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
             tooltip: 'Toggle preview mode',
             onClick: () => this._togglePreview()
         });
+        this.previewBtn.dom.attributes['data-jsgui-ctrl'] = 'previewBtn';
         
         this.toolbar.addSeparator();
         
@@ -218,11 +221,13 @@ class FormBuilder extends Data_Model_View_Model_Control {
         // Main container
         this.mainContainer = new Control({ context, tag_name: 'div' });
         this.mainContainer.add_class('form-builder-main');
+        this.mainContainer.dom.attributes['data-jsgui-ctrl'] = 'mainContainer';
         this.add(this.mainContainer);
         
         // Left panel - Field palette
         this.palettePanel = new Panel({ context });
         this.palettePanel.add_class('palette-panel');
+        this.palettePanel.dom.attributes['data-jsgui-ctrl'] = 'palettePanel';
         
         const paletteTitle = new Control({ context, tag_name: 'h3' });
         paletteTitle.add('Field Types');
@@ -235,17 +240,20 @@ class FormBuilder extends Data_Model_View_Model_Control {
         // Center panel - Form canvas
         this.canvasPanel = new Panel({ context });
         this.canvasPanel.add_class('canvas-panel');
+        this.canvasPanel.dom.attributes['data-jsgui-ctrl'] = 'canvasPanel';
         
         // Form title editor
         this.formTitleContainer = new Control({ context, tag_name: 'div' });
         this.formTitleContainer.add_class('form-title-container');
+        this.formTitleContainer.dom.attributes['data-jsgui-ctrl'] = 'formTitleContainer';
         
         this.formTitleInput = new Control({ context, tag_name: 'input' });
         this.formTitleInput.add_class('form-title-input');
+        this.formTitleInput.dom.attributes['data-jsgui-ctrl'] = 'formTitleInput';
         this.formTitleInput.dom.attributes.placeholder = 'Form Title';
-        // Set value only if on client (dom.el exists)
+        this.formTitleInput.dom.attributes.value = this._get_model_value('formTitle', 'Untitled Form');
         if (this.formTitleInput.dom.el) {
-            this.formTitleInput.dom.el.value = this.model.get('formTitle');
+            this.formTitleInput.dom.el.value = this._get_model_value('formTitle', 'Untitled Form');
         }
         this.formTitleContainer.add(this.formTitleInput);
         
@@ -254,6 +262,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
         // Form fields container
         this.formCanvas = new Control({ context, tag_name: 'div' });
         this.formCanvas.add_class('form-canvas');
+        this.formCanvas.dom.attributes['data-jsgui-ctrl'] = 'formCanvas';
         
         this.emptyMessage = new Control({ context, tag_name: 'div' });
         this.emptyMessage.add_class('canvas-empty-message');
@@ -267,7 +276,8 @@ class FormBuilder extends Data_Model_View_Model_Control {
         // Right panel - Properties
         this.propertyEditor = new Property_Editor({ context });
         this.propertyEditor.add_class('form-builder-properties');
-        this.propertyEditor.setOnDelete((item) => this._deleteField(item.index));
+        this.propertyEditor.dom.attributes['data-jsgui-ctrl'] = 'propertyEditor';
+        this.propertyEditor.set_on_delete((item) => this._deleteField(item.index));
         
         this.mainContainer.add(this.propertyEditor);
     }
@@ -300,26 +310,99 @@ class FormBuilder extends Data_Model_View_Model_Control {
     activate() {
         if (!this.__active) {
             super.activate();
+            this._wire_jsgui_ctrls();
             
             // Form title change handler
-            this.formTitleInput.on('input', () => {
-                this.model.set('formTitle', this.formTitleInput.dom.el.value);
-                this._saveToStorage();
-            });
+            const form_title_input_el = this.formTitleInput && this.formTitleInput.dom && this.formTitleInput.dom.el;
+            if (form_title_input_el) {
+                form_title_input_el.addEventListener('input', () => {
+                    this.model.set('formTitle', form_title_input_el.value);
+                    this._saveToStorage();
+                });
+            }
+
+            const toolbar_el = this.toolbar && this.toolbar.dom && this.toolbar.dom.el;
+            if (toolbar_el) {
+                toolbar_el.addEventListener('click', (event) => {
+                    const button_el = event.target.closest('button');
+                    if (!button_el) return;
+
+                    const button_text = String(button_el.textContent || '').toLowerCase();
+                    if (button_text.includes('new')) return this._newForm();
+                    if (button_text.includes('save')) return this._saveToStorage();
+                    if (button_text.includes('export')) return this._exportJSON();
+                    if (button_text.includes('import')) return this._importJSON();
+                    if (button_text.includes('preview') || button_text.includes('edit')) return this._togglePreview();
+                    if (button_text.includes('clear')) return this._clearForm();
+                });
+            }
             
             // Palette item click handlers
-            const paletteItems = this.palettePanel.dom.el.querySelectorAll('.palette-item');
+            const palette_panel_el = this.palettePanel && this.palettePanel.dom && this.palettePanel.dom.el;
+            if (!palette_panel_el) {
+                return;
+            }
+            const paletteItems = palette_panel_el.querySelectorAll('.palette-item');
             paletteItems.forEach(item => {
-                item.addEventListener('click', (e) => {
+                item.addEventListener('click', () => {
                     const fieldType = item.getAttribute('data-field-type');
                     this._addField(fieldType);
                 });
             });
         }
     }
+
+    _set_preview_button_label(label) {
+        if (this.previewBtn && this.previewBtn.dom && this.previewBtn.dom.el) {
+            this.previewBtn.dom.el.textContent = label;
+            return;
+        }
+
+        if (this.previewBtn && this.previewBtn.content) {
+            this.previewBtn.content.clear();
+            this.previewBtn.add(label);
+        }
+    }
+
+    _set_form_title_value(value) {
+        if (this.formTitleInput && this.formTitleInput.dom) {
+            this.formTitleInput.dom.attributes.value = value;
+        }
+        if (this.formTitleInput && this.formTitleInput.dom && this.formTitleInput.dom.el) {
+            this.formTitleInput.dom.el.value = value;
+        }
+    }
+
+    _get_model_value(name, fallback) {
+        if (!this.model || typeof this.model.get !== 'function') {
+            return fallback;
+        }
+
+        const value = this.model.get(name);
+        if (value && typeof value.get === 'function' && typeof value.toJSON === 'function') {
+            const raw_value = value.get();
+            return raw_value === undefined ? fallback : raw_value;
+        }
+
+        return value === undefined ? fallback : value;
+    }
+
+    _sync_toolbar_preview_mode(is_preview) {
+        if (!this.palettePanel || !this.propertyEditor || !this.toolbar) return;
+
+        if (is_preview) {
+            this.palettePanel.add_class('hidden');
+            this.propertyEditor.add_class('hidden');
+            this.toolbar.add_class('preview-mode');
+        } else {
+            this.palettePanel.remove_class('hidden');
+            this.propertyEditor.remove_class('hidden');
+            this.toolbar.remove_class('preview-mode');
+        }
+    }
     
     _addField(type) {
-        const fields = this.model.get('fields') || [];
+        const fields = this._get_model_value('fields', []).slice();
         
         const newField = {
             type: type,
@@ -355,8 +438,8 @@ class FormBuilder extends Data_Model_View_Model_Control {
     }
     
     _renderCanvas() {
-        const fields = this.model.get('fields') || [];
-        const mode = this.model.get('mode');
+        const fields = this._get_model_value('fields', []);
+        const mode = this._get_model_value('mode', 'edit');
         
         this.formCanvas.content.clear();
         
@@ -402,7 +485,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
             });
             
             // Highlight if selected
-            if (index === this.model.get('selectedFieldIndex')) {
+            if (index === this._get_model_value('selectedFieldIndex', null)) {
                 fieldPreview.add_class('selected');
             }
             
@@ -427,14 +510,21 @@ class FormBuilder extends Data_Model_View_Model_Control {
             
             // Set width
             if (field.width) {
-                formField.dom.el.style.width = field.width + '%';
+                formField.dom.attributes.style = formField.dom.attributes.style || {};
+                formField.dom.attributes.style.width = field.width + '%';
+                if (formField.dom.el) {
+                    formField.dom.el.style.width = field.width + '%';
+                }
             }
             
             // Add options for select
             if (field.type === 'select' && field.options) {
                 field.options.forEach(opt => {
                     const option = new Control({ context, tag_name: 'option' });
-                    option.dom.el.value = opt;
+                    option.dom.attributes.value = opt;
+                    if (option.dom.el) {
+                        option.dom.el.value = opt;
+                    }
                     option.add(opt);
                     formField.input.add(option);
                 });
@@ -454,11 +544,11 @@ class FormBuilder extends Data_Model_View_Model_Control {
     }
     
     _selectField(index) {
-        const fields = this.model.get('fields') || [];
+        const fields = this._get_model_value('fields', []);
         
         if (index < 0 || index >= fields.length) {
             this.model.set('selectedFieldIndex', null);
-            this.propertyEditor.loadItem(null);
+            this.propertyEditor.load_item(null);
             this._renderCanvas();
             return;
         }
@@ -466,7 +556,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
         this.model.set('selectedFieldIndex', index);
         
         const field = fields[index];
-        this.propertyEditor.loadItem({ properties: field, index }, () => {
+        this.propertyEditor.load_item({ properties: field, index }, () => {
             // On property change, re-render and save
             this._renderCanvas();
             this._saveToStorage();
@@ -476,17 +566,17 @@ class FormBuilder extends Data_Model_View_Model_Control {
     }
     
     _deleteField(index) {
-        const fields = this.model.get('fields') || [];
+        const fields = this._get_model_value('fields', []).slice();
         fields.splice(index, 1);
         this.model.set('fields', fields);
         this.model.set('selectedFieldIndex', null);
-        this.propertyEditor.loadItem(null);
+        this.propertyEditor.load_item(null);
         this._renderCanvas();
         this._saveToStorage();
     }
     
     _moveField(index, direction) {
-        const fields = this.model.get('fields') || [];
+        const fields = this._get_model_value('fields', []).slice();
         const newIndex = index + direction;
         
         if (newIndex < 0 || newIndex >= fields.length) return;
@@ -496,7 +586,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
         this.model.set('fields', fields);
         
         // Update selection
-        const selectedIndex = this.model.get('selectedFieldIndex');
+        const selectedIndex = this._get_model_value('selectedFieldIndex', null);
         if (selectedIndex === index) {
             this.model.set('selectedFieldIndex', newIndex);
         } else if (selectedIndex === newIndex) {
@@ -504,14 +594,21 @@ class FormBuilder extends Data_Model_View_Model_Control {
         }
         
         this._renderCanvas();
-        this._selectField(this.model.get('selectedFieldIndex'));
+        this._selectField(this._get_model_value('selectedFieldIndex', null));
         this._saveToStorage();
     }
     
     _togglePreview() {
-        const currentMode = this.model.get('mode');
+        const currentMode = this._get_model_value('mode', 'edit');
         const newMode = currentMode === 'edit' ? 'preview' : 'edit';
         this.model.set('mode', newMode);
+
+        if (this.previewBtn && this.previewBtn.dom && this.previewBtn.dom.el) {
+            this._set_preview_button_label(newMode === 'preview' ? 'Edit' : 'Preview');
+            this._sync_toolbar_preview_mode(newMode === 'preview');
+            this._renderCanvas();
+            return;
+        }
         
         if (newMode === 'preview') {
             this.previewBtn.content.clear();
@@ -535,8 +632,8 @@ class FormBuilder extends Data_Model_View_Model_Control {
             this.model.set('fields', []);
             this.model.set('selectedFieldIndex', null);
             this.model.set('formTitle', 'Untitled Form');
-            this.formTitleInput.dom.el.value = 'Untitled Form';
-            this.propertyEditor.loadItem(null);
+            this._set_form_title_value('Untitled Form');
+            this.propertyEditor.load_item(null);
             this._renderCanvas();
             this._saveToStorage();
         }
@@ -546,7 +643,7 @@ class FormBuilder extends Data_Model_View_Model_Control {
         if (confirm('Clear all fields?')) {
             this.model.set('fields', []);
             this.model.set('selectedFieldIndex', null);
-            this.propertyEditor.loadItem(null);
+            this.propertyEditor.load_item(null);
             this._renderCanvas();
             this._saveToStorage();
         }
@@ -554,8 +651,8 @@ class FormBuilder extends Data_Model_View_Model_Control {
     
     _exportJSON() {
         const formData = {
-            title: this.model.get('formTitle'),
-            fields: this.model.get('fields')
+            title: this._get_model_value('formTitle', ''),
+            fields: this._get_model_value('fields', [])
         };
         
         const json = JSON.stringify(formData, null, 2);
@@ -586,13 +683,13 @@ class FormBuilder extends Data_Model_View_Model_Control {
                     
                     if (formData.title) {
                         this.model.set('formTitle', formData.title);
-                        this.formTitleInput.dom.el.value = formData.title;
+                        this._set_form_title_value(formData.title);
                     }
                     
                     if (Array.isArray(formData.fields)) {
                         this.model.set('fields', formData.fields);
                         this.model.set('selectedFieldIndex', null);
-                        this.propertyEditor.loadItem(null);
+                        this.propertyEditor.load_item(null);
                         this._renderCanvas();
                         this._saveToStorage();
                     }
@@ -607,34 +704,46 @@ class FormBuilder extends Data_Model_View_Model_Control {
     }
     
     _saveToStorage() {
-        if (typeof localStorage !== 'undefined') {
-            const formData = {
-                title: this.model.get('formTitle'),
-                fields: this.model.get('fields')
-            };
-            localStorage.setItem('formBuilder_currentForm', JSON.stringify(formData));
-        }
+        const storage = this._get_storage();
+        if (!storage) return;
+
+        const formData = {
+            title: this._get_model_value('formTitle', ''),
+            fields: this._get_model_value('fields', [])
+        };
+        storage.setItem('formBuilder_currentForm', JSON.stringify(formData));
     }
     
     _loadFromStorage() {
-        if (typeof localStorage !== 'undefined') {
-            const saved = localStorage.getItem('formBuilder_currentForm');
-            if (saved) {
-                try {
-                    const formData = JSON.parse(saved);
-                    if (formData.title) {
-                        this.model.set('formTitle', formData.title);
-                        this.formTitleInput.dom.el.value = formData.title;
-                    }
-                    if (Array.isArray(formData.fields)) {
-                        this.model.set('fields', formData.fields);
-                        this._renderCanvas();
-                    }
-                } catch (err) {
-                    console.error('Error loading from localStorage:', err);
+        const storage = this._get_storage();
+        if (!storage) return;
+
+        const saved = storage.getItem('formBuilder_currentForm');
+        if (saved) {
+            try {
+                const formData = JSON.parse(saved);
+                if (formData.title) {
+                    this.model.set('formTitle', formData.title);
+                    this._set_form_title_value(formData.title);
                 }
+                if (Array.isArray(formData.fields)) {
+                    this.model.set('fields', formData.fields);
+                    this._renderCanvas();
+                }
+            } catch (err) {
+                console.error('Error loading from localStorage:', err);
             }
         }
+    }
+
+    _get_storage() {
+        if (typeof localStorage === 'undefined' || !localStorage) {
+            return null;
+        }
+        if (typeof localStorage.getItem !== 'function' || typeof localStorage.setItem !== 'function') {
+            return null;
+        }
+        return localStorage;
     }
 }
 
@@ -682,5 +791,20 @@ class Demo_UI extends Active_HTML_Document {
 
 // Export for server
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { Demo_UI, FormBuilder };
+    jsgui.controls = jsgui.controls || {};
+    jsgui.controls.Demo_UI = Demo_UI;
+    jsgui.controls.FormBuilder = FormBuilder;
+    jsgui.Demo_UI = Demo_UI;
+    jsgui.FormBuilder = FormBuilder;
+
+    bootstrap_client_controls(jsgui, {
+        palette_item: PaletteItem,
+        form_field_preview: FormFieldPreview,
+        form_builder: FormBuilder,
+        wysiwyg_demo_ui: Demo_UI
+    }, {
+        bootstrap_key: '__jsgui_wysiwyg_demo_context__'
+    });
+
+    module.exports = jsgui;
 }

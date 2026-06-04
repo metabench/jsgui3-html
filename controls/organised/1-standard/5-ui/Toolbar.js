@@ -21,6 +21,7 @@ const { is_defined } = require('../../../../html-core/html-core');
 
 class Toolbar extends Control {
     constructor(options = {}) {
+        options.__type_name = options.__type_name || 'toolbar';
         super(options);
         
         this.add_class('toolbar');

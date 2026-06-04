@@ -30,6 +30,10 @@ class Object_Editor extends Object_Viewer {
         this.show_key_editor = spec.show_key_editor !== false;
         this.collapsed_keys = Array.isArray(spec.collapsed_keys) ? spec.collapsed_keys.slice() : [];
 
+        if (!spec.el) {
+            this.refresh_internal();
+        }
+
 	}
 	'refresh_internal'() {
 		const value = this.value || {};
@@ -173,6 +177,7 @@ class Object_Editor extends Object_Viewer {
         wrapper.dom.attributes['data-key'] = key;
 
         const type = field_schema && field_schema.type ? field_schema.type : typeof value;
+        const collapsed_keys = Array.isArray(this.collapsed_keys) ? this.collapsed_keys : [];
 
         if (type === 'object' && value && !Array.isArray(value)) {
             const toggle_ctrl = new Control({ context: this.context, tag_name: 'button' });
@@ -180,7 +185,7 @@ class Object_Editor extends Object_Viewer {
             toggle_ctrl.dom.attributes.type = 'button';
             toggle_ctrl.dom.attributes['data-role'] = 'toggle-node';
             toggle_ctrl.dom.attributes['data-key'] = key;
-            const is_collapsed = this.collapsed_keys.includes(String(key));
+            const is_collapsed = collapsed_keys.includes(String(key));
             toggle_ctrl.dom.attributes['aria-expanded'] = is_collapsed ? 'false' : 'true';
             toggle_ctrl.add(is_collapsed ? 'Expand' : 'Collapse');
             wrapper.add(toggle_ctrl);
@@ -196,6 +201,7 @@ class Object_Editor extends Object_Viewer {
             });
             child_ctrl.add_class('object-editor-children');
             if (is_collapsed) {
+                child_ctrl.dom.attributes.style = child_ctrl.dom.attributes.style || {};
                 child_ctrl.dom.attributes.style.display = 'none';
             }
             wrapper.add(child_ctrl);
@@ -208,7 +214,7 @@ class Object_Editor extends Object_Viewer {
             toggle_ctrl.dom.attributes.type = 'button';
             toggle_ctrl.dom.attributes['data-role'] = 'toggle-node';
             toggle_ctrl.dom.attributes['data-key'] = key;
-            const is_collapsed = this.collapsed_keys.includes(String(key));
+            const is_collapsed = collapsed_keys.includes(String(key));
             toggle_ctrl.dom.attributes['aria-expanded'] = is_collapsed ? 'false' : 'true';
             toggle_ctrl.add(is_collapsed ? 'Expand' : 'Collapse');
             wrapper.add(toggle_ctrl);
@@ -219,6 +225,7 @@ class Object_Editor extends Object_Viewer {
             });
             child_ctrl.add_class('object-editor-children');
             if (is_collapsed) {
+                child_ctrl.dom.attributes.style = child_ctrl.dom.attributes.style || {};
                 child_ctrl.dom.attributes.style.display = 'none';
             }
             wrapper.add(child_ctrl);

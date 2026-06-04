@@ -24,7 +24,7 @@ const Page_Context = require('./page-context');
 const Selection_Scope = require('./selection-scope');
 const Control_Data = require('./Control_Data');
 const Control_View = require('./Control_View');
-const {parse_mount, parse} = require('./parse-mount');
+const {parse_mount, parse, tpl} = require('./parse-mount');
 const {str_arr_mapify, get_a_sig, each, prop} = jsgui;
 //const Control = jsgui.Control = require('./control-enh');
 
@@ -33,6 +33,7 @@ jsgui.load_type('control', 'C', item => (item instanceof Control));
 const Evented_Class = jsgui.Evented_Class;
 var tof = jsgui.tof;
 var map_Controls = jsgui.map_Controls = {};
+Page_Context.map_Controls = map_Controls;
 const def = jsgui.is_defined;
 var core_extension = str_arr_mapify(function (tagName) {
     jsgui.controls[tagName] = jsgui[tagName] = class extends Control {
@@ -430,4 +431,6 @@ jsgui.Selection_Scope = Selection_Scope
 jsgui.Intersection_Finder = Intersection_Finder;
 jsgui.parse_mount = parse_mount;
 jsgui.parse = parse;
+jsgui.tpl = tpl;
+jsgui.template = tpl;
 module.exports = jsgui;

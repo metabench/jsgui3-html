@@ -5,14 +5,15 @@
  * Uses jsgui3-server pattern for proper SSR + client-side activation.
  */
 
-const jsgui = require('jsgui3-client');
+const jsgui = require('../html');
+const bootstrap_client_controls = require('../dev-examples/client_bootstrap');
 const { Control, Data_Object } = jsgui;
 const Active_HTML_Document = jsgui.controls.Active_HTML_Document || jsgui.Active_HTML_Document;
 
 // Controls are resolved relative to the repo root via jsgui3-server bundler
-const Month_View = require('../controls/organised/0-core/0-basic/1-compositional/month-view');
+const Month_View = require('../controls/organised/0-core/0-basic/1-compositional/Month_View');
 const Date_Picker = require('../controls/organised/0-core/0-basic/_complex_date-picker');
-const Grid = require('../controls/organised/0-core/0-basic/1-compositional/grid');
+const Grid = require('../controls/organised/0-core/0-basic/1-compositional/Grid');
 
 // Register custom controls with jsgui.controls so the standard
 // update_standard_Controls() mechanism auto-registers them with
@@ -247,5 +248,14 @@ class Date_Controls_Demo extends Active_HTML_Document {
 // Register for framework hydration
 jsgui.controls = jsgui.controls || {};
 jsgui.controls.Date_Controls_Demo = Date_Controls_Demo;
+
+bootstrap_client_controls(jsgui, {
+    date_controls_demo: Date_Controls_Demo,
+    month_view: Month_View,
+    grid: Grid,
+    date_picker: Date_Picker
+}, {
+    bootstrap_key: '__jsgui_date_controls_demo_context__'
+});
 
 module.exports = jsgui;

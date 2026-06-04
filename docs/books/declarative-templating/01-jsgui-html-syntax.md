@@ -1,8 +1,8 @@
-# Chapter 1: jsgui.html Syntax and Usage
+# Chapter 1: `tpl` Syntax and Usage
 
 The `jsgui3-html` platform has evolved significantly from its original imperative roots. Traditionally, building a UI component meant manually instantiating `Control` nodes, setting properties, and composing the tree piece by piece using `this.add()`. 
 
-To streamline component development, the framework introduces a powerful **tagged template literal string parser** exposed as `jsgui.html` (often aliased to `tpl`).
+To streamline component development, the framework introduces a powerful **tagged template literal string parser** exposed as `jsgui.tpl` (typically destructured as `tpl`).
 
 ## The Problem with Traditional HTML Parsing
 
@@ -15,11 +15,22 @@ const html = `<custom_control config=${myObj} />`;
 // Result: <custom_control config="[object Object]"></custom_control>
 ```
 
-## The `jsgui.html` Solution
+## The `tpl` Solution
 
-The `jsgui.html` tagged template evaluates your layout while **preserving variable references**.
+The `tpl` tagged template evaluates your layout while **preserving variable references**.
 
 When the parser extracts your attributes during control instantiation, it links the actual JavaScript object, array, or function directly to the newly constructed `Control.js` instance.
+
+## Public API
+
+The supported public imports are:
+
+```javascript
+const { tpl } = require('jsgui3-html');
+const { tpl: core_tpl, template } = require('jsgui3-html/html-core/html-core');
+```
+
+`template` is a compatibility alias for `tpl`. The symbol `jsgui.html` remains the native `<html>` control class, so `tpl` is the canonical declarative templating entry point.
 
 ### Basic Compilation
 
@@ -83,6 +94,8 @@ this.body_container.add(new jsgui.Control({ text: 'Loaded dynamically!' }));
 
 This acts as a high-performance, robust alternative to runtime DOM queries (like `this.find()`). 
 
+During normal client-side control activation, named child references continue to come from the standard control activation path (`_ctrl_fields` / `pre_activate`). The declarative binding restoration path is focused on reattaching behavior to already-rendered DOM.
+
 ### Contextual Evaluation
 
 The parser is deeply aware of the global `jsgui.controls` registry. Any advanced layout component registered anywhere in your application (e.g. `Color_Picker`, `Drop_Down`, `Data_Grid`) becomes immediately usable as an HTML tag within the `tpl` layout!
@@ -96,3 +109,21 @@ tpl`
     </div>
 `.mount(this);
 ```
+
+## Activation Metadata
+
+When a control using `tpl` is server-rendered, the template engine writes activation metadata into the HTML so client activation can restore behavior without rebuilding the whole DOM subtree.
+
+Key attributes include:
+
+- `data-jsgui-bind-owner`
+- `data-jsgui-bind-text`
+- `data-jsgui-bind-value`
+- `data-jsgui-bind-class`
+- `data-jsgui-bind-style`
+- `data-jsgui-bind-visible`
+- `data-jsgui-bind-list`
+- `data-jsgui-on-*`
+- `data-jsgui-model-state`
+
+The higher-level binding semantics are covered in [Chapter 2](./02-mvvm-data-binding.md).

@@ -286,20 +286,41 @@ class Form_Container extends Control {
         }
 
         const type = field.type || 'text';
+        const apply_input_metadata = input_ctrl => {
+            if (!input_ctrl || !input_ctrl.dom || !input_ctrl.dom.attributes) return input_ctrl;
+
+            input_ctrl.dom.attributes['data-field-type'] = type;
+
+            if (field.mask_type) {
+                input_ctrl.dom.attributes['data-mask-type'] = String(field.mask_type);
+            }
+            if (field.mask_pattern && typeof field.mask_pattern !== 'function') {
+                try {
+                    input_ctrl.dom.attributes['data-mask-pattern'] = JSON.stringify(field.mask_pattern);
+                } catch (err) {
+                }
+            }
+            if (field.autosize) {
+                input_ctrl.dom.attributes['data-autosize'] = 'true';
+            }
+
+            return input_ctrl;
+        };
+
         if (type === 'textarea') {
-            return new Textarea({
+            return apply_input_metadata(new Textarea({
                 context,
                 placeholder: field.placeholder,
                 autosize: field.autosize,
                 mask_type: field.mask_type,
                 mask_pattern: field.mask_pattern
-            });
+            }));
         }
 
         if (type === 'checkbox') {
             const checkbox = new Control({ context, tag_name: 'input' });
             checkbox.dom.attributes.type = 'checkbox';
-            return checkbox;
+            return apply_input_metadata(checkbox);
         }
 
         const input = new Text_Input({
@@ -309,7 +330,7 @@ class Form_Container extends Control {
             mask_pattern: field.mask_pattern
         });
         input.dom.attributes.type = type;
-        return input;
+        return apply_input_metadata(input);
     }
 
     read_field_value(field_ctrl) {
@@ -323,10 +344,100 @@ class Form_Container extends Control {
             if (field_def.type === 'checkbox') return !!input_ctrl.dom.el.checked;
             return input_ctrl.dom.el.value;
         }
+        if (input_ctrl.dom && input_ctrl.dom.attributes) {
+            if (field_def.type === 'checkbox') return !!input_ctrl.dom.attributes.checked;
+            if (is_defined(input_ctrl.dom.attributes.value)) return input_ctrl.dom.attributes.value;
+        }
         if (this.values && typeof this.values.get === 'function') {
             return this.values.get(field_def.name);
         }
         return undefined;
+    }
+
+    hydrate_fields_from_dom() {
+        if (!this.dom || !this.dom.el) return;
+
+        this.field_controls = this.field_controls || {};
+        if (!Array.isArray(this.fields)) {
+            this.fields = [];
+        }
+
+        const wrapper_nodes = this.dom.el.querySelectorAll('.form-container-field[data-field-name]');
+        const hydrated_fields = [];
+
+        wrapper_nodes.forEach(wrapper_el => {
+            const field_name = wrapper_el.getAttribute('data-field-name');
+            if (!field_name) return;
+
+            const input_el = wrapper_el.querySelector('.form-container-input');
+            if (!input_el) return;
+
+            const message_el = wrapper_el.querySelector('.form-container-message');
+            const badge_el = wrapper_el.querySelector('.form-container-badge');
+            const label_el = wrapper_el.querySelector('.form-container-label');
+
+            const wrapper_ctrl = this.context && this.context.map_controls
+                ? this.context.map_controls[wrapper_el.getAttribute('data-jsgui-id')]
+                : null;
+            const input_ctrl = this.context && this.context.map_controls
+                ? this.context.map_controls[input_el.getAttribute('data-jsgui-id')]
+                : null;
+            const message_ctrl = message_el && this.context && this.context.map_controls
+                ? this.context.map_controls[message_el.getAttribute('data-jsgui-id')]
+                : null;
+            const badge_ctrl = badge_el && this.context && this.context.map_controls
+                ? this.context.map_controls[badge_el.getAttribute('data-jsgui-id')]
+                : null;
+
+            const tag_name = input_el.tagName.toLowerCase();
+            const field_type = input_el.getAttribute('data-field-type')
+                || input_el.getAttribute('type')
+                || (tag_name === 'textarea' ? 'textarea' : 'text');
+
+            const field = {
+                name: field_name,
+                label: label_el ? label_el.textContent.trim() : field_name,
+                type: field_type,
+                required: input_el.hasAttribute('required')
+            };
+
+            if (wrapper_ctrl && typeof wrapper_ctrl.set_field_status !== 'function') {
+                apply_field_status(wrapper_ctrl);
+            }
+
+            const mask_type = input_el.getAttribute('data-mask-type');
+            if (mask_type) field.mask_type = mask_type;
+
+            const mask_pattern = input_el.getAttribute('data-mask-pattern');
+            if (mask_pattern) {
+                try {
+                    field.mask_pattern = JSON.parse(mask_pattern);
+                } catch (err) {
+                }
+            }
+
+            if (input_el.getAttribute('data-autosize') === 'true') {
+                field.autosize = true;
+            }
+
+            this.field_controls[field_name] = {
+                field_ctrl: wrapper_ctrl || { dom: { el: wrapper_el } },
+                input_ctrl: input_ctrl || { dom: { el: input_el, attributes: {} } },
+                message_ctrl: message_ctrl || null,
+                badge_ctrl: badge_ctrl || null,
+                field
+            };
+
+            hydrated_fields.push(field);
+
+            if (this.values && typeof this.values.set === 'function') {
+                this.values.set(field_name, this.read_field_value(this.field_controls[field_name]));
+            }
+        });
+
+        if (hydrated_fields.length > 0) {
+            this.fields = hydrated_fields;
+        }
     }
 
     apply_field_value(field_ctrl, value) {
@@ -401,6 +512,8 @@ class Form_Container extends Control {
         if (!this.__active) {
             super.activate();
             if (!this.dom.el) return;
+
+            this.hydrate_fields_from_dom();
 
             // Apply initial layout mode
             this._apply_layout_mode();

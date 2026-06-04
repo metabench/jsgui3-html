@@ -9,14 +9,15 @@
  * and serves it with automatic hydration + activation.
  */
 
-const jsgui = require('jsgui3-client');
+const jsgui = require('../html');
+const bootstrap_client_controls = require('../dev-examples/client_bootstrap');
 
 const { Control, Active_HTML_Document } = jsgui;
 const controls = jsgui.controls;
 
-const Color_Picker = require('../controls/organised/0-core/0-basic/1-compositional/color-picker');
-const Time_Picker = require('../controls/organised/0-core/0-basic/1-compositional/time-picker');
-const DateTime_Picker = require('../controls/organised/0-core/0-basic/1-compositional/datetime-picker');
+const Color_Picker = require('../controls/organised/0-core/0-basic/1-compositional/Color_Picker');
+const Time_Picker = require('../controls/organised/0-core/0-basic/1-compositional/Time_Picker');
+const DateTime_Picker = require('../controls/organised/0-core/0-basic/1-compositional/Datetime_Picker');
 
 class Picker_Demo extends Active_HTML_Document {
     constructor(spec = {}) {
@@ -280,5 +281,14 @@ controls.Picker_Demo = Picker_Demo;
 controls.Color_Picker = Color_Picker;
 controls.Time_Picker = Time_Picker;
 controls.DateTime_Picker = DateTime_Picker;
+
+bootstrap_client_controls(jsgui, {
+    picker_demo: Picker_Demo,
+    color_picker: Color_Picker,
+    time_picker: Time_Picker,
+    datetime_picker: DateTime_Picker
+}, {
+    bootstrap_key: '__jsgui_picker_demo_context__'
+});
 
 module.exports = jsgui;

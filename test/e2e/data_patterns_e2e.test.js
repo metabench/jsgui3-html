@@ -4,6 +4,7 @@
  * Comprehensive Puppeteer tests verifying Data_Object, Data_Value,
  * change events, MVVM sync, and edge cases.
  */
+require('./jest_compat');
 const puppeteer = require('puppeteer');
 const { spawn } = require('child_process');
 const path = require('path');

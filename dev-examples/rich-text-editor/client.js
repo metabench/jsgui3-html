@@ -5,6 +5,7 @@
  */
 
 const jsgui = require('../../html');
+const bootstrap_client_controls = require('../client_bootstrap');
 const { Control, Active_HTML_Document } = jsgui;
 const Rich_Text_Editor = require('../../controls/organised/1-standard/1-editor/Rich_Text_Editor');
 
@@ -25,12 +26,6 @@ class RTE_Demo extends Active_HTML_Document {
                 const title = new Control({ context, tag_name: 'title' });
                 title.add('Rich Text Editor Demo');
                 this.head.add(title);
-                
-                // Add RTE styles
-                const style_link = new Control({ context, tag_name: 'link' });
-                style_link.dom.attributes.rel = 'stylesheet';
-                style_link.dom.attributes.href = '/controls/organised/1-standard/1-editor/rich_text_editor.css';
-                this.head.add(style_link);
             }
             
             const container = new Control({ context, tag_name: 'div' });
@@ -58,6 +53,7 @@ class RTE_Demo extends Active_HTML_Document {
                     this.update_output(html);
                 }
             });
+            this.rte.dom.attributes['data-jsgui-ctrl'] = 'rte';
             
             container.add(this.rte);
             
@@ -71,6 +67,7 @@ class RTE_Demo extends Active_HTML_Document {
             
             this.output_display = new Control({ context, tag_name: 'pre' });
             this.output_display.add_class('output-display');
+            this.output_display.dom.attributes['data-jsgui-ctrl'] = 'output_display';
             output_section.add(this.output_display);
             
             container.add(output_section);
@@ -81,18 +78,22 @@ class RTE_Demo extends Active_HTML_Document {
             
             const get_html_btn = new Control({ context, tag_name: 'button' });
             get_html_btn.add('Get HTML');
+            get_html_btn.dom.attributes['data-jsgui-ctrl'] = 'get_html_btn';
             buttons_container.add(get_html_btn);
             
             const get_text_btn = new Control({ context, tag_name: 'button' });
             get_text_btn.add('Get Plain Text');
+            get_text_btn.dom.attributes['data-jsgui-ctrl'] = 'get_text_btn';
             buttons_container.add(get_text_btn);
             
             const clear_btn = new Control({ context, tag_name: 'button' });
             clear_btn.add('Clear Content');
+            clear_btn.dom.attributes['data-jsgui-ctrl'] = 'clear_btn';
             buttons_container.add(clear_btn);
             
             const readonly_btn = new Control({ context, tag_name: 'button' });
             readonly_btn.add('Toggle Read-Only');
+            readonly_btn.dom.attributes['data-jsgui-ctrl'] = 'readonly_btn';
             buttons_container.add(readonly_btn);
             
             container.add(buttons_container);
@@ -100,6 +101,7 @@ class RTE_Demo extends Active_HTML_Document {
             // Stats display
             this.stats_display = new Control({ context, tag_name: 'div' });
             this.stats_display.add_class('stats-display');
+            this.stats_display.dom.attributes['data-jsgui-ctrl'] = 'stats_display';
             container.add(this.stats_display);
             
             if (this.body) {
@@ -119,6 +121,8 @@ class RTE_Demo extends Active_HTML_Document {
     activate() {
         if (!this.__active) {
             super.activate();
+            this._wire_jsgui_ctrls();
+            if (!this.rte || !this.output_display || !this.stats_display) return;
             
             // Initial output display
             this.update_output(this.rte.get_html());
@@ -147,27 +151,40 @@ class RTE_Demo extends Active_HTML_Document {
     }
     
     update_output(html) {
-        if (this.output_display.dom.el) {
-            // Escape HTML for display
-            const escaped = html
+        if (this.output_display && this.output_display.dom && this.output_display.dom.el) {
+            this.output_display.dom.el.textContent = html || '';
+        } else if (this.output_display) {
+            const escaped = (html || '')
                 .replace(/&/g, '&amp;')
                 .replace(/</g, '&lt;')
                 .replace(/>/g, '&gt;');
-            
-            this.output_display.content.clear();
-            this.output_display.dom.el.innerHTML = escaped;
+            this.output_display.clear();
+            this.output_display.add(escaped);
         }
         
         // Update stats
         const char_count = this.rte.get_character_count();
         const word_count = this.rte.get_word_count();
-        
-        this.stats_display.content.clear();
-        this.stats_display.add(`Characters: ${char_count} | Words: ${word_count}`);
+        const stats_text = `Characters: ${char_count} | Words: ${word_count}`;
+
+        if (this.stats_display && this.stats_display.dom && this.stats_display.dom.el) {
+            this.stats_display.dom.el.textContent = stats_text;
+        } else if (this.stats_display) {
+            this.stats_display.clear();
+            this.stats_display.add(stats_text);
+        }
     }
 }
 
-// Export
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { Demo_UI: RTE_Demo };
-}
+jsgui.controls = jsgui.controls || {};
+jsgui.controls.RTE_Demo = RTE_Demo;
+jsgui.controls.Rich_Text_Editor = Rich_Text_Editor;
+
+bootstrap_client_controls(jsgui, {
+    rte_demo: RTE_Demo,
+    rich_text_editor: Rich_Text_Editor
+}, {
+    bootstrap_key: '__jsgui_rte_demo_context__'
+});
+
+module.exports = { Demo_UI: RTE_Demo, jsgui };

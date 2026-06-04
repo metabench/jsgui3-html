@@ -46,6 +46,179 @@ const map_jsgui_attr_names = {
 
 let __tpl_id = 0;
 
+const resolve_tpl_value = (value, values_map) => {
+    if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (trimmed.startsWith('__JSGUI_VAL_') && trimmed.endsWith('__')) {
+            if (values_map && trimmed in values_map) {
+                return values_map[trimmed];
+            }
+        }
+    }
+    return value;
+};
+
+const get_binding_source = (binding_val) => {
+    let source_model;
+    let source_prop;
+    let transform_fn;
+
+    if (Array.isArray(binding_val) && binding_val.length >= 2) {
+        source_model = binding_val[0];
+        source_prop = binding_val[1];
+        if (binding_val.length >= 3 && typeof binding_val[2] === 'function') {
+            transform_fn = binding_val[2];
+        }
+    } else if (binding_val && typeof binding_val === 'object' && binding_val.model) {
+        source_model = binding_val.model;
+        source_prop = binding_val.prop;
+        if (typeof binding_val.transform === 'function') {
+            transform_fn = binding_val.transform;
+        }
+    }
+
+    return {
+        source_model,
+        source_prop,
+        transform_fn
+    };
+};
+
+const get_tpl_handler_method_name = (handler_fn, owner_ctrl) => {
+    if (typeof handler_fn !== 'function') return null;
+
+    if (handler_fn.name && handler_fn.name.startsWith('bound ')) {
+        const bound_name = handler_fn.name.substring(6);
+        if (owner_ctrl && typeof owner_ctrl[bound_name] === 'function') {
+            return bound_name;
+        }
+    }
+
+    if (handler_fn.name && owner_ctrl && typeof owner_ctrl[handler_fn.name] === 'function') {
+        return handler_fn.name;
+    }
+
+    const fn_str = handler_fn.toString();
+    const method_match = fn_str.match(/this\.(\w+)\s*\(/);
+    if (method_match) {
+        const method_name = method_match[1];
+        if (!owner_ctrl || typeof owner_ctrl[method_name] === 'function') {
+            return method_name;
+        }
+    }
+
+    return null;
+};
+
+const collect_tpl_activation_metadata = (str_content, values_map = {}) => {
+    const res = {
+        bind_lists: []
+    };
+
+    let parse_err;
+    let parsed_dom;
+
+    const handler = new Default_Handler((error, dom) => {
+        parse_err = error;
+        parsed_dom = dom;
+    });
+
+    const parser = new Html_Parser(handler);
+    parser.parse_complete(str_content.trim());
+
+    if (parse_err || !parsed_dom) {
+        return res;
+    }
+
+    const visit = (node) => {
+        if (!node) return;
+
+        if (Array.isArray(node)) {
+            for (let i = 0; i < node.length; i++) {
+                visit(node[i]);
+            }
+            return;
+        }
+
+        if (node.type === 'tag' || node.type === 'script' || node.type === 'style') {
+            const attribs = node.attribs || {};
+            if (attribs['bind-list']) {
+                const binding_val = resolve_tpl_value(attribs['bind-list'], values_map);
+                const template_func = resolve_tpl_value(attribs.template, values_map);
+                const { source_prop } = get_binding_source(binding_val);
+
+                if (source_prop && typeof template_func === 'function') {
+                    res.bind_lists.push({
+                        source_prop,
+                        template_func
+                    });
+                }
+            }
+        }
+
+        if (node.children) {
+            for (let i = 0; i < node.children.length; i++) {
+                visit(node.children[i]);
+            }
+        }
+    };
+
+    visit(parsed_dom);
+    return res;
+};
+
+const to_serializable_model_value = (input, depth = 0) => {
+    const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : v)) : v;
+    const value = unwrap(input);
+
+    if (value === undefined || typeof value === 'function') return undefined;
+    if (value === null) return null;
+
+    const t_value = typeof value;
+    if (t_value === 'string' || t_value === 'number' || t_value === 'boolean') {
+        return value;
+    }
+
+    if (depth > 6) return undefined;
+
+    if (Array.isArray(value)) {
+        const arr = [];
+        for (let i = 0; i < value.length; i++) {
+            const serialized_item = to_serializable_model_value(value[i], depth + 1);
+            if (serialized_item === undefined) return undefined;
+            arr.push(serialized_item);
+        }
+        return arr;
+    }
+
+    if (value && Array.isArray(value._arr)) {
+        return to_serializable_model_value(value._arr, depth + 1);
+    }
+
+    if (value && typeof value.toJSON === 'function') {
+        try {
+            return to_serializable_model_value(value.toJSON(), depth + 1);
+        } catch (err) {
+            return undefined;
+        }
+    }
+
+    if (value && Object.getPrototypeOf(value) === Object.prototype) {
+        const res = {};
+        const keys = Object.keys(value);
+        for (let i = 0; i < keys.length; i++) {
+            const key = keys[i];
+            const serialized_item = to_serializable_model_value(value[key], depth + 1);
+            if (serialized_item !== undefined) {
+                res[key] = serialized_item;
+            }
+        }
+        return res;
+    }
+
+    return undefined;
+};
+
 const tpl = function (strings, ...values) {
     const values_map = {};
     let str_content = '';
@@ -69,6 +242,11 @@ const tpl = function (strings, ...values) {
                 if (typeof target._restore_model_state_from_dom === 'function') {
                     target._restore_model_state_from_dom();
                 }
+                if (typeof target._register_tpl_runtime_metadata === 'function') {
+                    target._register_tpl_runtime_metadata(
+                        collect_tpl_activation_metadata(str_content, values_map)
+                    );
+                }
                 target._needs_tpl_activation = true;
                 return [];
             }
@@ -87,6 +265,7 @@ const tpl = function (strings, ...values) {
             const owner_id = target._id ? target._id() : null;
             if (owner_id) {
                 values_map.__tpl_owner_id__ = owner_id;
+                values_map.__tpl_owner__ = target;
             }
 
             let sync_err, sync_res;
@@ -124,7 +303,17 @@ const tpl = function (strings, ...values) {
                         const attr_keys = Object.keys(attrs);
                         for (let i = 0; i < attr_keys.length; i++) {
                             const k = attr_keys[i];
-                            if (k.startsWith('data-jsgui-bind-') && k !== 'data-jsgui-bind-owner' && k !== 'data-jsgui-bind-class') {
+                            if (k === 'data-jsgui-bind-style') {
+                                const pairs = String(attrs[k]).split(';');
+                                for (let j = 0; j < pairs.length; j++) {
+                                    const sep = pairs[j].indexOf(':');
+                                    if (sep > 0) _bound_props.add(pairs[j].substring(sep + 1));
+                                }
+                            }
+                            if (k === 'data-jsgui-bind-visible' || k === 'data-jsgui-bind-list') {
+                                _bound_props.add(attrs[k]);
+                            }
+                            if (k.startsWith('data-jsgui-bind-') && k !== 'data-jsgui-bind-owner' && k !== 'data-jsgui-bind-class' && k !== 'data-jsgui-bind-style' && k !== 'data-jsgui-bind-visible' && k !== 'data-jsgui-bind-list') {
                                 _bound_props.add(attrs[k]);
                             }
                             if (k === 'data-jsgui-bind-class') {
@@ -146,21 +335,18 @@ const tpl = function (strings, ...values) {
 
                 if (_bound_props.size > 0) {
                     const _state = {};
-                    const _unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : v)) : v;
                     for (const p of _bound_props) {
                         const raw = target.data.model.get ? target.data.model.get(p) : target.data.model[p];
-                        const val = _unwrap(raw);
-                        if (val !== undefined && typeof val !== 'function') {
-                            if (typeof val === 'object' && val !== null) {
-                                // Skip complex objects; only serialize primitives
-                            } else {
-                                _state[p] = val;
-                            }
+                        const serialized_val = to_serializable_model_value(raw);
+                        if (serialized_val !== undefined) {
+                            _state[p] = serialized_val;
                         }
                     }
                     if (Object.keys(_state).length > 0) {
                         // Use &quot; encoding for safe HTML attribute embedding
-                        const json = JSON.stringify(_state).replace(/"/g, '&quot;');
+                        const json = JSON.stringify(_state)
+                            .replace(/&/g, '&amp;')
+                            .replace(/"/g, '&quot;');
                         target.dom.attributes['data-jsgui-model-state'] = json;
                     }
                 }
@@ -296,15 +482,7 @@ const parse = function (str_content, context, control_set, values_map_or_callbac
                         }
 
                         const resolve_val = (v) => {
-                            if (typeof v === 'string') {
-                                const trimmed = v.trim();
-                                if (trimmed.startsWith('__JSGUI_VAL_') && trimmed.endsWith('__')) {
-                                    if (values_map && trimmed in values_map) {
-                                        return values_map[trimmed];
-                                    }
-                                }
-                            }
-                            return v;
+                            return resolve_tpl_value(v, values_map);
                         };
 
                         const arr_dom_attrs = [];
@@ -324,17 +502,7 @@ const parse = function (str_content, context, control_set, values_map_or_callbac
                                     const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
                                     const _bcm_parts = [];
                                     each(value, (binding_val, class_name) => {
-                                        let source_model, source_prop, transform_fn;
-                                        if (Array.isArray(binding_val) && binding_val.length >= 2) {
-                                            source_model = binding_val[0];
-                                            source_prop = binding_val[1];
-                                            if (binding_val.length >= 3 && typeof binding_val[2] === 'function') {
-                                                transform_fn = binding_val[2];
-                                            }
-                                        } else if (binding_val && typeof binding_val === 'object' && binding_val.model) {
-                                            source_model = binding_val.model;
-                                            source_prop = binding_val.prop;
-                                        }
+                                        let { source_model, source_prop, transform_fn } = get_binding_source(binding_val);
 
                                         // Collect for activation serialization
                                         if (source_prop) {
@@ -379,13 +547,12 @@ const parse = function (str_content, context, control_set, values_map_or_callbac
                             if (name === 'bind-style') {
                                 if (value && typeof value === 'object') {
                                     const unwrap = (v) => v ? (typeof v.value === 'function' ? v.value() : (v.value !== undefined ? v.value : (v.get ? v.get() : v))) : v;
+                                    const _bsm_parts = [];
                                     each(value, (binding_val, style_prop) => {
-                                        let source_model, source_prop;
-                                        if (Array.isArray(binding_val) && binding_val.length === 2) {
-                                            [source_model, source_prop] = binding_val;
-                                        } else if (binding_val && typeof binding_val === 'object' && binding_val.model) {
-                                            source_model = binding_val.model;
-                                            source_prop = binding_val.prop;
+                                        let { source_model, source_prop } = get_binding_source(binding_val);
+
+                                        if (source_prop) {
+                                            _bsm_parts.push(style_prop + ':' + source_prop);
                                         }
 
                                         if (source_model && source_prop && ctrl.watch) {
@@ -415,6 +582,12 @@ const parse = function (str_content, context, control_set, values_map_or_callbac
                                             });
                                         }
                                     });
+                                    if (_bsm_parts.length > 0) {
+                                        ctrl.dom.attributes['data-jsgui-bind-style'] = _bsm_parts.join(';');
+                                        if (values_map && values_map.__tpl_owner_id__) {
+                                            ctrl.dom.attributes['data-jsgui-bind-owner'] = values_map.__tpl_owner_id__;
+                                        }
+                                    }
                                 }
                                 return; // Skip standard attribute mapping
                             }
@@ -451,6 +624,11 @@ const parse = function (str_content, context, control_set, values_map_or_callbac
                                     const init_val = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
                                     update_visible(init_val);
 
+                                    ctrl.dom.attributes['data-jsgui-bind-visible'] = source_prop;
+                                    if (values_map && values_map.__tpl_owner_id__) {
+                                        ctrl.dom.attributes['data-jsgui-bind-owner'] = values_map.__tpl_owner_id__;
+                                    }
+
                                     ctrl.watch(source_model, source_prop, (e) => {
                                         update_visible((e && e.value !== undefined) ? e.value : e);
                                     });
@@ -470,6 +648,10 @@ const parse = function (str_content, context, control_set, values_map_or_callbac
                                 }
 
                                 if (source_model && source_prop && template_func) {
+                                    ctrl.dom.attributes['data-jsgui-bind-list'] = source_prop;
+                                    if (values_map && values_map.__tpl_owner_id__) {
+                                        ctrl.dom.attributes['data-jsgui-bind-owner'] = values_map.__tpl_owner_id__;
+                                    }
                                     const render_list = () => {
                                         ctrl.clear();
                                         const list = source_model.get ? source_model.get(source_prop) : source_model[source_prop];
@@ -595,12 +777,11 @@ const parse = function (str_content, context, control_set, values_map_or_callbac
                                 const event_name = name.substring(3);
                                 if (typeof value === 'function') {
                                     ctrl.on(event_name, value);
-                                    // Serialize for activation - extract method name from function source
+                                    // Serialize for activation when the handler can be resolved to an owner method.
                                     if (values_map && values_map.__tpl_owner_id__) {
-                                        const fn_str = value.toString();
-                                        const method_match = fn_str.match(/this\.(\w+)\s*\(/);
-                                        if (method_match) {
-                                            ctrl.dom.attributes['data-jsgui-on-' + event_name] = method_match[1];
+                                        const method_name = get_tpl_handler_method_name(value, values_map.__tpl_owner__);
+                                        if (method_name) {
+                                            ctrl.dom.attributes['data-jsgui-on-' + event_name] = method_name;
                                             ctrl.dom.attributes['data-jsgui-bind-owner'] = values_map.__tpl_owner_id__;
                                         }
                                     }

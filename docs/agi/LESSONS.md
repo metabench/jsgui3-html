@@ -21,3 +21,15 @@ Accumulated learnings from working on this codebase. **All agents should read th
 
 - **CSS custom properties** (`--admin-accent`, `--admin-border`, etc.) are the theming mechanism. New controls must use these, not hardcoded colours.
 - **Static `css` property on classes**: Theme CSS is accessed via `Admin_Theme.css` and `Tabbed_Panel.css` as static class properties. These are string literals, not files.
+
+## Declarative Templating (2026-03-05)
+
+- **Documented framework entry points need root-export tests.** The `tpl` docs drifted until a test exercised the public `html.js` namespace directly.
+- **Declarative SSR features must serialize activation metadata.** If a `tpl` directive is meant to survive server render to client activation, it needs explicit metadata support rather than relying on constructor-time watchers alone.
+
+## Example Demos (2026-03-07)
+
+- **Server-backed demo entries still need explicit client bootstrap.** Bundling `client.js` is not enough; demos that rely on activation must call `bootstrap_client_controls(...)` (or equivalent) in the browser entry.
+- **Hydrated demo controls need stable child hooks.** If a demo `activate()` method depends on child controls after SSR, expose them through `data-jsgui-ctrl` or `_ctrl_fields`; otherwise hydration recreates only generic controls and the demo silently becomes static.
+- **For examples, direct DOM fallbacks are acceptable when binder coverage is partial.** The repo examples are primarily demonstrations, so it is better to keep them interactive with explicit DOM sync than to leave them broken while waiting for deeper framework work.
+- **`Data_Object#get(...)` often returns `Data_Value`, not a raw primitive or array.** Example code that mutates arrays or compares strings should unwrap with `.get()`/normalization first, or client activation will fail on methods like `.push()` and strict string checks.

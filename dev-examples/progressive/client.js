@@ -1,4 +1,5 @@
 const jsgui = require('../../html');
+const bootstrap_client_controls = require('../client_bootstrap');
 
 const { Control, Active_HTML_Document } = jsgui;
 const { enable_auto_enhancement } = require('../../control_mixins/auto_enhance');
@@ -592,5 +593,11 @@ input[type="radio"].jsgui-radio,
 
 jsgui.controls = jsgui.controls || {};
 jsgui.controls.Progressive_Enhancement_Demo = Progressive_Enhancement_Demo;
+
+bootstrap_client_controls(jsgui, {
+    progressive_enhancement_demo: Progressive_Enhancement_Demo
+}, {
+    bootstrap_key: '__jsgui_progressive_demo_context__'
+});
 
 module.exports = jsgui;

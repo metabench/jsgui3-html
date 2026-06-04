@@ -14,12 +14,12 @@ const { Data_Object } = require('lang-tools');
 const Data_Model_View_Model_Control = require('../html-core/Data_Model_View_Model_Control');
 
 class DataGrid extends Data_Model_View_Model_Control {
-    constructor(spec) {
+    constructor(spec = {}) {
         super(spec);
         
         // Data model - raw data
         this.data.model = new Data_Object({
-            items: spec.items || [],
+            rows: spec.items || spec.rows || [],
             columns: spec.columns || []
         });
         
@@ -45,12 +45,12 @@ class DataGrid extends Data_Model_View_Model_Control {
         // Computed: filtered items
         this.computed(
             [this.data.model, this.view.data.model],
-            ['items', 'filterText'],
-            (items, filterText) => {
-                if (!filterText) return items;
+            ['rows', 'filterText'],
+            (rows, filterText) => {
+                if (!filterText) return rows;
                 
                 const searchLower = filterText.toLowerCase();
-                return items.filter(item => {
+                return rows.filter(item => {
                     return Object.values(item).some(value => {
                         return String(value).toLowerCase().includes(searchLower);
                     });
@@ -83,7 +83,10 @@ class DataGrid extends Data_Model_View_Model_Control {
                 
                 return sorted;
             },
-            { propertyName: 'sortedItems' }
+            {
+                propertyName: 'sortedItems',
+                target: this.view.data.model
+            }
         );
         
         // Computed: total pages
@@ -94,7 +97,10 @@ class DataGrid extends Data_Model_View_Model_Control {
                 if (!items) return 0;
                 return Math.ceil(items.length / pageSize);
             },
-            { propertyName: 'totalPages' }
+            {
+                propertyName: 'totalPages',
+                target: this.view.data.model
+            }
         );
         
         // Computed: visible items (paginated)
@@ -106,7 +112,10 @@ class DataGrid extends Data_Model_View_Model_Control {
                 const start = page * pageSize;
                 return items.slice(start, start + pageSize);
             },
-            { propertyName: 'visibleItems' }
+            {
+                propertyName: 'visibleItems',
+                target: this.view.data.model
+            }
         );
         
         // Computed: result info
@@ -122,7 +131,10 @@ class DataGrid extends Data_Model_View_Model_Control {
                 const end = Math.min(start + visible.length - 1, filtered.length);
                 return `Showing ${start}-${end} of ${filtered.length} results`;
             },
-            { propertyName: 'resultInfo' }
+            {
+                propertyName: 'resultInfo',
+                target: this.view.data.model
+            }
         );
     }
     
@@ -132,7 +144,7 @@ class DataGrid extends Data_Model_View_Model_Control {
             this.view.data.model,
             'filterText',
             () => {
-                this.view.data.model.currentPage = 0;
+                this.view.data.model.set('currentPage', 0);
             }
         );
         
@@ -141,32 +153,39 @@ class DataGrid extends Data_Model_View_Model_Control {
             this.view.data.model,
             ['sortColumn', 'sortDirection'],
             () => {
-                this.view.data.model.currentPage = 0;
+                this.view.data.model.set('currentPage', 0);
             }
         );
     }
     
     toggleSort(column) {
-        if (this.view.data.model.sortColumn === column) {
+        const current_sort_column = this.view.data.model.sortColumn;
+        const current_sort_direction = this.view.data.model.sortDirection;
+
+        if (current_sort_column === column) {
             // Toggle direction
-            this.view.data.model.sortDirection = 
-                this.view.data.model.sortDirection === 'asc' ? 'desc' : 'asc';
+            this.view.data.model.set(
+                'sortDirection',
+                current_sort_direction === 'asc' ? 'desc' : 'asc'
+            );
         } else {
             // New column
-            this.view.data.model.sortColumn = column;
-            this.view.data.model.sortDirection = 'asc';
+            this.view.data.model.set('sortColumn', column);
+            this.view.data.model.set('sortDirection', 'asc');
         }
     }
     
     goToPage(page) {
         const totalPages = this.view.data.model.totalPages;
         if (page >= 0 && page < totalPages) {
-            this.view.data.model.currentPage = page;
+            this.view.data.model.set('currentPage', page);
         }
     }
     
     toggleRowSelection(rowIndex) {
-        const selected = this.view.data.model.selectedRows;
+        const selected = Array.isArray(this.view.data.model.selectedRows)
+            ? this.view.data.model.selectedRows.slice()
+            : [];
         const index = selected.indexOf(rowIndex);
         
         if (index >= 0) {
@@ -175,7 +194,7 @@ class DataGrid extends Data_Model_View_Model_Control {
             selected.push(rowIndex);
         }
         
-        this.view.data.model.selectedRows = [...selected];
+        this.view.data.model.set('selectedRows', selected);
     }
     
     compose() {
@@ -198,7 +217,7 @@ class DataGrid extends Data_Model_View_Model_Control {
         });
         
         filterInput.on('input', (e) => {
-            this.view.data.model.filterText = e.target.value;
+            this.view.data.model.set('filterText', e.target.value);
         });
         
         filterContainer.add(filterInput);
@@ -276,7 +295,8 @@ class DataGrid extends Data_Model_View_Model_Control {
             tagName: 'tr'
         });
         
-        this.data.model.columns.forEach(col => {
+        const columns = Array.isArray(this.data.model.columns) ? this.data.model.columns : [];
+        columns.forEach(col => {
             const th = new jsgui.Control({
                 context: this.context,
                 tagName: 'th'
@@ -307,7 +327,10 @@ class DataGrid extends Data_Model_View_Model_Control {
             tagName: 'tbody'
         });
         
-        const items = this.view.data.model.visibleItems || [];
+        const items = Array.isArray(this.view.data.model.visibleItems) ? this.view.data.model.visibleItems : [];
+        const currentPage = this.view.data.model.currentPage;
+        const pageSize = this.view.data.model.pageSize;
+        const selectedRows = Array.isArray(this.view.data.model.selectedRows) ? this.view.data.model.selectedRows : [];
         
         items.forEach((item, idx) => {
             const row = new jsgui.Control({
@@ -315,8 +338,8 @@ class DataGrid extends Data_Model_View_Model_Control {
                 tagName: 'tr'
             });
             
-            const globalIndex = this.view.data.model.currentPage * this.view.data.model.pageSize + idx;
-            const isSelected = this.view.data.model.selectedRows.includes(globalIndex);
+            const globalIndex = currentPage * pageSize + idx;
+            const isSelected = selectedRows.includes(globalIndex);
             
             if (isSelected) {
                 row.add_class('selected');
@@ -324,7 +347,7 @@ class DataGrid extends Data_Model_View_Model_Control {
             
             row.on('click', () => this.toggleRowSelection(globalIndex));
             
-            this.data.model.columns.forEach(col => {
+            columns.forEach(col => {
                 const td = new jsgui.Control({
                     context: this.context,
                     tagName: 'td'
@@ -364,6 +387,7 @@ class DataGrid extends Data_Model_View_Model_Control {
         });
         
         if (currentPage === 0) {
+            prevBtn.dom.attributes.disabled = 'disabled';
             prevBtn.dom.el && (prevBtn.dom.el.disabled = true);
         }
         
@@ -386,6 +410,7 @@ class DataGrid extends Data_Model_View_Model_Control {
         });
         
         if (currentPage >= totalPages - 1) {
+            nextBtn.dom.attributes.disabled = 'disabled';
             nextBtn.dom.el && (nextBtn.dom.el.disabled = true);
         }
         
@@ -438,7 +463,7 @@ function createExample() {
     // Test filtering
     setTimeout(() => {
         console.log('\nFiltering for "Engineering"...');
-        grid.view.data.model.filterText = 'Engineering';
+        grid.view.data.model.set('filterText', 'Engineering');
     }, 100);
     
     // Enable debugging

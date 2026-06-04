@@ -69,6 +69,7 @@ function validateUser(userData) {
 // Only run when executed directly
 if (require.main === module) {
     const { Demo_UI } = jsgui.controls;
+    const port = process.env.PORT ? parseInt(process.env.PORT, 10) : 52001;
     
     // Create the server
     const server = new Server({
@@ -144,7 +145,7 @@ if (require.main === module) {
         console.log('  - /api/getUsers (GET/POST)');
         
         // Start the HTTP server
-        server.start(52001, (err) => {
+        server.start(port, (err) => {
             if (err) {
                 console.error('Failed to start server:', err);
                 throw err;
@@ -156,7 +157,7 @@ if (require.main === module) {
             console.log('================================================');
             console.log('');
             console.log('Open your browser to:');
-            console.log('  http://localhost:52001');
+            console.log(`  http://localhost:${port}`);
             console.log('');
             console.log('Features:');
             console.log('  • Client-side validation on blur');
@@ -172,7 +173,7 @@ if (require.main === module) {
             console.log('  ✓ Valid data - Should register successfully');
             console.log('');
             console.log('Debug API:');
-            console.log('  GET http://localhost:52001/api/getUsers');
+            console.log(`  GET http://localhost:${port}/api/getUsers`);
             console.log('');
             console.log('Press Ctrl+C to stop the server');
             console.log('================================================');

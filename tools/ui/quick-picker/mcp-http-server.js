@@ -15,6 +15,7 @@ const fs = require('fs');
 
 const MCP_PORT = 3334;
 const PICKER_PORT = 3333;
+const REPO_ROOT = path.resolve(__dirname, '..', '..', '..');
 
 // Check if the picker HTTP server is running
 function checkPickerServer() {
@@ -113,8 +114,7 @@ async function sendPrompt(options, theme) {
 
 // Load agent roster from .agent/agent-roles.json
 function loadAgentRoster() {
-    const repoRoot = path.resolve(__dirname, '..', '..', '..');
-    const rosterPath = path.join(repoRoot, '.agent', 'agent-roles.json');
+    const rosterPath = path.join(REPO_ROOT, '.agent', 'agent-roles.json');
     try {
         return JSON.parse(fs.readFileSync(rosterPath, 'utf8'));
     } catch (e) {
@@ -122,9 +122,25 @@ function loadAgentRoster() {
     }
 }
 
-// Load agent index from copilot-dl-news
-function loadAgentIndex(sourceRepo) {
-    const indexPath = path.join(sourceRepo, '.github', 'agents', 'index.json');
+function resolveAgentSourceRepo(roster) {
+    if (!roster || !roster.source_repo || roster.source_repo === '.') {
+        return REPO_ROOT;
+    }
+    if (path.isAbsolute(roster.source_repo)) {
+        return roster.source_repo;
+    }
+    return path.resolve(REPO_ROOT, roster.source_repo);
+}
+
+function resolveAgentIndexPath(roster) {
+    const sourceRepo = resolveAgentSourceRepo(roster);
+    const relativeIndexPath = (roster && roster.index_path) || '.github/agents/index.json';
+    return path.join(sourceRepo, relativeIndexPath);
+}
+
+// Load agent index from configured source
+function loadAgentIndex(roster) {
+    const indexPath = resolveAgentIndexPath(roster);
     try {
         return JSON.parse(fs.readFileSync(indexPath, 'utf8'));
     } catch (e) {
@@ -144,7 +160,7 @@ function readAgentFile(sourceRepo, agentPath) {
 
 // Build enriched agent options for the picker
 function buildAgentOptions(roster) {
-    const index = loadAgentIndex(roster.source_repo);
+    const index = loadAgentIndex(roster);
     const indexMap = {};
     for (const entry of index) {
         indexMap[entry.doc_slug] = entry;
@@ -252,7 +268,7 @@ function createMcpServer() {
                 },
                 {
                     name: 'adopt_agent',
-                    description: 'Show the agent role picker. Displays available agent personas from copilot-dl-news and returns the selected agent\'s full .agent.md content for the caller to adopt.',
+                    description: 'Show the agent role picker. Displays available agent personas from the configured local roster and returns the selected agent\'s full .agent.md content for the caller to adopt.',
                     inputSchema: {
                         type: 'object',
                         properties: {
@@ -332,9 +348,10 @@ function createMcpServer() {
                 const selectedSlug = result.selection;
                 const selectedOption = agentOptions.find(a => a.value === selectedSlug);
                 let agentContent = null;
+                const sourceRepo = resolveAgentSourceRepo(roster);
 
                 if (selectedOption && selectedOption.agentPath) {
-                    agentContent = readAgentFile(roster.source_repo, selectedOption.agentPath);
+                    agentContent = readAgentFile(sourceRepo, selectedOption.agentPath);
                 }
 
                 return {

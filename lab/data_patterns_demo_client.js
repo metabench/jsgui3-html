@@ -13,7 +13,8 @@
  *   6. DOM ↔ model round-trip via activate()
  */
 
-const jsgui = require('jsgui3-client');
+const jsgui = require('../html');
+const bootstrap_client_controls = require('../dev-examples/client_bootstrap');
 const { Control, Data_Object, Data_Value } = jsgui;
 const Active_HTML_Document = jsgui.controls.Active_HTML_Document || jsgui.Active_HTML_Document;
 
@@ -573,5 +574,11 @@ class Data_Patterns_Demo extends Active_HTML_Document {
 // Register for framework hydration
 jsgui.controls = jsgui.controls || {};
 jsgui.controls.Data_Patterns_Demo = Data_Patterns_Demo;
+
+bootstrap_client_controls(jsgui, {
+    data_patterns_demo: Data_Patterns_Demo
+}, {
+    bootstrap_key: '__jsgui_data_patterns_demo_context__'
+});
 
 module.exports = jsgui;

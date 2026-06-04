@@ -1,4 +1,5 @@
 const jsgui = require('../../../html');
+const bootstrap_client_controls = require('../../client_bootstrap');
 
 const { Control, Active_HTML_Document } = jsgui;
 const controls = jsgui.controls;
@@ -1044,5 +1045,11 @@ body.showcase-app-body {
 `;
 
 jsgui.controls.Showcase_App = Showcase_App;
+
+bootstrap_client_controls(jsgui, {
+    showcase_app: Showcase_App
+}, {
+    bootstrap_key: '__jsgui_showcase_app_context__'
+});
 
 module.exports = jsgui;

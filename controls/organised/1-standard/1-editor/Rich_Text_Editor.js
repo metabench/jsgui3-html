@@ -60,8 +60,10 @@ class Rich_Text_Editor extends Control {
         this.allow_markdown = this.config.allow_markdown;
         this.markdown_mode = this.allow_markdown && this.config.markdown_mode;
         this.markdown_text = this.config.initial_markdown || '';
-        this._create_toolbar(context);
-        this._create_editor(context);
+        if (!options.el) {
+            this._create_toolbar(context);
+            this._create_editor(context);
+        }
         this.is_dirty = false;
         this.last_html = this.config.initial_html || '';
         if (this.config.read_only) {
@@ -84,6 +86,8 @@ class Rich_Text_Editor extends Control {
             context,
             buttons: base_buttons
         });
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.toolbar = this.toolbar;
         this.add(this.toolbar);
     }
     _create_editor(context) {
@@ -103,6 +107,10 @@ class Rich_Text_Editor extends Control {
             autosize: false
         });
         this.markdown_editor.add_class('rte-markdown');
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.editor_container = this.editor_container;
+        this._ctrl_fields.editor = this.editor;
+        this._ctrl_fields.markdown_editor = this.markdown_editor;
         this._apply_height_constraints(this.editor);
         this._apply_height_constraints(this.markdown_editor);
         this.editor_container.add(this.editor);
@@ -145,6 +153,12 @@ class Rich_Text_Editor extends Control {
     activate() {
         if (!this.__active) {
             super.activate();
+            if (!this.editor || !this.markdown_editor || !this.toolbar) {
+                return;
+            }
+
+            this._apply_mode_visibility();
+
             if (this.toolbar && this.toolbar.dom.el) {
                 const toolbar_buttons = this.toolbar.dom.el.querySelectorAll('.rte-toolbar-button');
                 toolbar_buttons.forEach(btn => {
@@ -220,6 +234,7 @@ class Rich_Text_Editor extends Control {
                     }
                 });
             }
+            this.last_html = this.get_html();
             this._update_toolbar_states();
         }
     }
@@ -537,7 +552,7 @@ class Rich_Text_Editor extends Control {
      */
     set_read_only(read_only) {
         this.config.read_only = !!read_only;
-        if (this.editor.dom.el) {
+        if (this.editor && this.editor.dom && this.editor.dom.el) {
             this.editor.dom.el.contentEditable = read_only ? 'false' : 'true';
         }
         if (this.markdown_editor && this.markdown_editor.dom.el) {
@@ -545,10 +560,14 @@ class Rich_Text_Editor extends Control {
         }
         if (read_only) {
             this.add_class('read-only');
-            this.toolbar.add_class('disabled');
+            if (this.toolbar) {
+                this.toolbar.add_class('disabled');
+            }
         } else {
             this.remove_class('read-only');
-            this.toolbar.remove_class('disabled');
+            if (this.toolbar) {
+                this.toolbar.remove_class('disabled');
+            }
         }
     }
     /**

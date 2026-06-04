@@ -1,4 +1,5 @@
 const jsgui = require('../../../html');
+const bootstrap_client_controls = require('../../client_bootstrap');
 
 const { Control, Active_HTML_Document } = jsgui;
 const { is_defined } = jsgui;
@@ -14,12 +15,77 @@ const compare_values = (left, right) => {
     return String(left).localeCompare(String(right));
 };
 
+const TABLE_PAGE_SIZE = 3;
+const TABLE_ROWS = [
+    { name: 'Alpha', status: 'open', owner: 'Jasmine' },
+    { name: 'Beta', status: 'closed', owner: 'Chris' },
+    { name: 'Gamma', status: 'open', owner: 'Riley' },
+    { name: 'Delta', status: 'pending', owner: 'Morgan' },
+    { name: 'Epsilon', status: 'open', owner: 'Taylor' },
+    { name: 'Zeta', status: 'closed', owner: 'Drew' },
+    { name: 'Eta', status: 'pending', owner: 'Avery' }
+];
+
+const GRID_ROWS = [
+    { name: 'Oak', category: 'Tree', rating: 4 },
+    { name: 'Pine', category: 'Tree', rating: 3 },
+    { name: 'Rose', category: 'Flower', rating: 5 },
+    { name: 'Tulip', category: 'Flower', rating: 4 },
+    { name: 'Moss', category: 'Plant', rating: 2 }
+];
+
+const VIRTUAL_LIST_ITEMS = Array.from({ length: 60 }, (_, index) => `List item ${index + 1}`);
+
+const TREE_ROWS = [
+    {
+        id: 'group-1',
+        label: 'Group A',
+        value: '3 items',
+        children: [
+            { id: 'a-1', label: 'Alpha', value: 'Ready' },
+            { id: 'a-2', label: 'Beta', value: 'Pending' }
+        ]
+    },
+    {
+        id: 'group-2',
+        label: 'Group B',
+        value: '2 items',
+        children: [
+            { id: 'b-1', label: 'Gamma', value: 'Active' }
+        ]
+    }
+];
+
+const REORDER_ITEMS = ['Alpha', 'Beta', 'Gamma', 'Delta'];
+
+const MASTER_DETAIL_ITEMS = [
+    { id: 'north', label: 'North Region', detail: 'North team coverage.' },
+    { id: 'south', label: 'South Region', detail: 'South team coverage.' },
+    { id: 'west', label: 'West Region', detail: 'West team coverage.' }
+];
+
+const flatten_tree_rows = (rows, expanded_ids, depth = 0, results = []) => {
+    rows.forEach((row) => {
+        results.push({ row, depth });
+        if (Array.isArray(row.children) && expanded_ids.includes(String(row.id))) {
+            flatten_tree_rows(row.children, expanded_ids, depth + 1, results);
+        }
+    });
+    return results;
+};
+
 class Data_Controls_Demo extends Active_HTML_Document {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'data_controls_demo';
         super(spec);
 
         const { context } = this;
+        this.table_filter_value = '';
+        this.table_sort_state = null;
+        this.table_page = 1;
+        this.tree_expanded_ids = ['group-1'];
+        this.reorder_items = REORDER_ITEMS.slice();
+        this.selected_master_detail_id = 'south';
 
         if (typeof this.body.add_class === 'function') {
             this.body.add_class('data-controls-body');
@@ -221,43 +287,269 @@ class Data_Controls_Demo extends Active_HTML_Document {
         });
         this.master_detail.add_class('demo-master-detail');
         master_detail_section.add(this.master_detail);
+
+        this._ctrl_fields = {
+            table_filter_input: this.table_filter_input,
+            data_table: this.data_table,
+            table_pagination: this.table_pagination,
+            data_grid: this.data_grid,
+            grid_selection_output: this.grid_selection_output,
+            virtual_list: this.virtual_list,
+            tree_table: this.tree_table,
+            reorderable_list: this.reorderable_list,
+            reorder_output: this.reorder_output,
+            master_detail: this.master_detail
+        };
+    }
+
+    get_table_visible_rows() {
+        const filter_value = (this.table_filter_value || '').trim().toLowerCase();
+        let rows = TABLE_ROWS.filter((row) => {
+            if (!filter_value) return true;
+            return String(row.status || '').toLowerCase().includes(filter_value);
+        });
+
+        if (this.table_sort_state && this.table_sort_state.key) {
+            const { key, direction } = this.table_sort_state;
+            rows = rows.slice().sort((left, right) => {
+                const cmp = compare_values(left[key], right[key]);
+                return direction === 'desc' ? -cmp : cmp;
+            });
+        }
+
+        const page_count = Math.max(1, Math.ceil(rows.length / TABLE_PAGE_SIZE));
+        this.table_page = Math.max(1, Math.min(this.table_page, page_count));
+
+        return {
+            rows,
+            page_count,
+            visible_rows: rows.slice((this.table_page - 1) * TABLE_PAGE_SIZE, this.table_page * TABLE_PAGE_SIZE)
+        };
+    }
+
+    render_table_dom(root_el) {
+        const table_el = root_el.querySelector('.demo-data-table');
+        const pagination_el = root_el.querySelector('.demo-data-table-pagination');
+        if (!table_el) return;
+
+        const table_state = this.get_table_visible_rows();
+        const tbody_el = table_el.querySelector('tbody');
+        if (tbody_el) {
+            tbody_el.innerHTML = table_state.visible_rows.map((row, index) => `
+                <tr class="data-table-row" data-row-index="${index}" role="row" aria-rowindex="${index + 2}" aria-selected="false">
+                    <td class="data-table-cell" role="gridcell">${row.name}</td>
+                    <td class="data-table-cell" role="gridcell">${row.status}</td>
+                    <td class="data-table-cell" role="gridcell">${row.owner}</td>
+                </tr>
+            `).join('');
+        }
+
+        table_el.querySelectorAll('th[data-column-key]').forEach((header_el) => {
+            const is_active = this.table_sort_state && this.table_sort_state.key === header_el.getAttribute('data-column-key');
+            const aria_sort = is_active
+                ? (this.table_sort_state.direction === 'desc' ? 'descending' : 'ascending')
+                : 'none';
+            header_el.setAttribute('aria-sort', aria_sort);
+        });
+
+        if (pagination_el) {
+            pagination_el.querySelectorAll('.pagination-button[data-page]').forEach((button_el) => {
+                const page = Number(button_el.getAttribute('data-page'));
+                const is_current = page === this.table_page;
+                button_el.classList.toggle('is-current', is_current);
+                button_el.setAttribute('aria-current', is_current ? 'page' : 'false');
+                button_el.disabled = page > table_state.page_count;
+            });
+        }
+    }
+
+    render_grid_selection_dom(root_el, selected_name) {
+        const grid_el = root_el.querySelector('.demo-data-grid');
+        const output_el = root_el.querySelector('.grid-selection-output');
+        if (!grid_el || !output_el) return;
+
+        grid_el.querySelectorAll('tbody tr').forEach((row_el) => {
+            const cell_text = row_el.querySelector('td') ? row_el.querySelector('td').textContent.trim() : '';
+            const is_selected = cell_text === selected_name;
+            row_el.classList.toggle('is-selected', is_selected);
+            row_el.setAttribute('aria-selected', is_selected ? 'true' : 'false');
+        });
+
+        output_el.textContent = selected_name ? `Selected: ${selected_name}` : 'Selected: none';
+    }
+
+    render_virtual_list_dom(root_el, scroll_top = 0) {
+        const viewport_el = root_el.querySelector('.demo-virtual-list .virtual-list-viewport');
+        const spacer_el = root_el.querySelector('.demo-virtual-list .virtual-list-spacer');
+        const items_el = root_el.querySelector('.demo-virtual-list .virtual-list-items');
+        if (!viewport_el || !spacer_el || !items_el) return;
+
+        const item_height = 24;
+        const viewport_height = 160;
+        const buffer = 2;
+        const start_index = Math.max(0, Math.floor(scroll_top / item_height) - buffer);
+        const visible_count = Math.ceil(viewport_height / item_height) + buffer * 2;
+        const end_index = Math.min(VIRTUAL_LIST_ITEMS.length, start_index + visible_count);
+
+        spacer_el.style.height = `${VIRTUAL_LIST_ITEMS.length * item_height}px`;
+        items_el.style.transform = `translateY(${start_index * item_height}px)`;
+        items_el.innerHTML = VIRTUAL_LIST_ITEMS.slice(start_index, end_index).map((item, offset) => `
+            <div class="virtual-list-item" style="height:${item_height}px" data-index="${start_index + offset}">${item}</div>
+        `).join('');
+    }
+
+    render_tree_table_dom(root_el) {
+        const body_el = root_el.querySelector('.demo-tree-table .tree-table-body');
+        if (!body_el) return;
+
+        const flattened_rows = flatten_tree_rows(TREE_ROWS, this.tree_expanded_ids);
+        body_el.innerHTML = flattened_rows.map(({ row, depth }) => {
+            const has_children = Array.isArray(row.children) && row.children.length;
+            const is_expanded = has_children && this.tree_expanded_ids.includes(String(row.id));
+            return `
+                <div class="tree-table-row" data-node-id="${row.id}">
+                    <div class="tree-table-cell">
+                        <span class="tree-table-indent" style="padding-left:${depth * 16}px">
+                            ${has_children ? `<button type="button" class="tree-table-toggle" data-toggle-id="${row.id}" aria-expanded="${is_expanded ? 'true' : 'false'}">${is_expanded ? '-' : '+'}</button>` : ''}
+                            <span class="tree-table-label">${row.label}</span>
+                        </span>
+                    </div>
+                    <div class="tree-table-cell">${row.value || ''}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    render_reorder_list_dom(root_el) {
+        const list_el = root_el.querySelector('.demo-reorderable-list');
+        const output_el = root_el.querySelector('.reorder-output');
+        if (!list_el || !output_el) return;
+
+        list_el.innerHTML = this.reorder_items.map((item, index) => `
+            <li class="reorderable-list-item" data-index="${index}" draggable="true" tabindex="0">${item}</li>
+        `).join('');
+        output_el.textContent = `Order: ${this.reorder_items.join(', ')}`;
+    }
+
+    render_master_detail_dom(root_el) {
+        const master_el = root_el.querySelector('.demo-master-detail .master-detail-master');
+        const detail_el = root_el.querySelector('.demo-master-detail .master-detail-detail');
+        if (!master_el || !detail_el) return;
+
+        master_el.querySelectorAll('.master-detail-item').forEach((item_el) => {
+            const is_selected = item_el.getAttribute('data-item-id') === this.selected_master_detail_id;
+            item_el.classList.toggle('is-selected', is_selected);
+            item_el.setAttribute('aria-selected', is_selected ? 'true' : 'false');
+        });
+
+        const selected_item = MASTER_DETAIL_ITEMS.find((item) => item.id === this.selected_master_detail_id);
+        detail_el.textContent = selected_item ? selected_item.detail : '';
     }
 
     activate() {
         if (!this.__active) {
             super.activate();
+            const root_el = this.dom && this.dom.el;
+            if (!root_el || this._demo_dom_bound) return;
 
-            if (this.table_filter_input && this.table_filter_input.dom.el && this.data_table) {
-                this.table_filter_input.add_dom_event_listener('input', () => {
-                    const value = this.table_filter_input.dom.el.value.trim();
-                    this.data_table.set_filters(value ? { status: value } : null);
-                    this.data_table.set_page(1);
+            this._demo_dom_bound = true;
+            this.render_table_dom(root_el);
+            this.render_grid_selection_dom(root_el, null);
+            this.render_virtual_list_dom(root_el, 0);
+            this.render_tree_table_dom(root_el);
+            this.render_reorder_list_dom(root_el);
+            this.render_master_detail_dom(root_el);
+
+            const filter_input_el = root_el.querySelector('.data-table-filter');
+            if (filter_input_el) {
+                filter_input_el.addEventListener('input', () => {
+                    this.table_filter_value = filter_input_el.value;
+                    this.table_page = 1;
+                    this.render_table_dom(root_el);
                 });
             }
 
-            if (this.table_pagination && this.data_table) {
-                this.table_pagination.on('page_change', e_change => {
-                    this.data_table.set_page(e_change.page);
-                });
-            }
+            root_el.addEventListener('click', (event) => {
+                const sort_header_el = event.target.closest('.demo-data-table th[data-column-key]');
+                if (sort_header_el) {
+                    const column_key = sort_header_el.getAttribute('data-column-key');
+                    const next_direction = this.table_sort_state && this.table_sort_state.key === column_key && this.table_sort_state.direction === 'asc'
+                        ? 'desc'
+                        : 'asc';
+                    this.table_sort_state = { key: column_key, direction: next_direction };
+                    this.render_table_dom(root_el);
+                    return;
+                }
 
-            if (this.data_grid && this.grid_selection_output) {
-                this.data_grid.on('selection_change', e_change => {
-                    const selection = e_change.selection;
-                    this.grid_selection_output.clear();
-                    if (selection && selection.row_data) {
-                        this.grid_selection_output.add(`Selected: ${selection.row_data.name}`);
+                const page_button_el = event.target.closest('.demo-data-table-pagination .pagination-button[data-page]');
+                if (page_button_el) {
+                    this.table_page = Number(page_button_el.getAttribute('data-page')) || 1;
+                    this.render_table_dom(root_el);
+                    return;
+                }
+
+                const grid_row_el = event.target.closest('.demo-data-grid tbody tr');
+                if (grid_row_el) {
+                    const name_cell = grid_row_el.querySelector('td');
+                    this.render_grid_selection_dom(root_el, name_cell ? name_cell.textContent.trim() : null);
+                    return;
+                }
+
+                const toggle_el = event.target.closest('.demo-tree-table .tree-table-toggle[data-toggle-id]');
+                if (toggle_el) {
+                    const toggle_id = toggle_el.getAttribute('data-toggle-id');
+                    if (this.tree_expanded_ids.includes(toggle_id)) {
+                        this.tree_expanded_ids = this.tree_expanded_ids.filter((id) => id !== toggle_id);
                     } else {
-                        this.grid_selection_output.add('Selected: none');
+                        this.tree_expanded_ids = this.tree_expanded_ids.concat(toggle_id);
                     }
-                });
-            }
+                    this.render_tree_table_dom(root_el);
+                    return;
+                }
 
-            if (this.reorderable_list && this.reorder_output) {
-                this.reorderable_list.on('reorder', e_change => {
-                    const items = e_change.items || [];
-                    this.reorder_output.clear();
-                    this.reorder_output.add(`Order: ${items.join(', ')}`);
+                const reorder_item_el = event.target.closest('.demo-reorderable-list .reorderable-list-item[data-index]');
+                if (reorder_item_el) {
+                    this.reorder_active_index = Number(reorder_item_el.getAttribute('data-index'));
+                    if (typeof reorder_item_el.focus === 'function') {
+                        reorder_item_el.focus();
+                    }
+                    return;
+                }
+
+                const master_detail_item_el = event.target.closest('.demo-master-detail .master-detail-item[data-item-id]');
+                if (master_detail_item_el) {
+                    this.selected_master_detail_id = master_detail_item_el.getAttribute('data-item-id');
+                    this.render_master_detail_dom(root_el);
+                }
+            });
+
+            root_el.addEventListener('keydown', (event) => {
+                const reorder_item_el = event.target.closest('.demo-reorderable-list .reorderable-list-item[data-index]');
+                const move_up = (event.key === 'ArrowUp') && (event.altKey || event.ctrlKey);
+                const move_down = (event.key === 'ArrowDown') && (event.altKey || event.ctrlKey);
+                if (!reorder_item_el || (!move_up && !move_down)) return;
+
+                event.preventDefault();
+                const current_index = Number(reorder_item_el.getAttribute('data-index'));
+                const next_index = move_up ? current_index - 1 : current_index + 1;
+                if (next_index < 0 || next_index >= this.reorder_items.length) return;
+
+                const next_items = this.reorder_items.slice();
+                const [moved_item] = next_items.splice(current_index, 1);
+                next_items.splice(next_index, 0, moved_item);
+                this.reorder_items = next_items;
+                this.render_reorder_list_dom(root_el);
+
+                const next_item_el = root_el.querySelector(`.demo-reorderable-list .reorderable-list-item[data-index="${next_index}"]`);
+                if (next_item_el && typeof next_item_el.focus === 'function') {
+                    next_item_el.focus();
+                }
+            });
+
+            const viewport_el = root_el.querySelector('.demo-virtual-list .virtual-list-viewport');
+            if (viewport_el) {
+                viewport_el.addEventListener('scroll', () => {
+                    this.render_virtual_list_dom(root_el, viewport_el.scrollTop || 0);
                 });
             }
         }
@@ -354,5 +646,11 @@ body {
 `;
 
 jsgui.controls.Data_Controls_Demo = Data_Controls_Demo;
+
+bootstrap_client_controls(jsgui, {
+    data_controls_demo: Data_Controls_Demo
+}, {
+    bootstrap_key: '__jsgui_data_controls_demo_context__'
+});
 
 module.exports = jsgui;

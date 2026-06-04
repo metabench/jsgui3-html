@@ -1,4 +1,5 @@
 const jsgui = require('../../../html');
+const bootstrap_client_controls = require('../../client_bootstrap');
 
 const { Control, Active_HTML_Document } = jsgui;
 const { Form_Container, Rich_Text_Editor, Object_Editor } = jsgui;
@@ -197,6 +198,15 @@ class Form_Editor_Features_Demo extends Active_HTML_Document {
             } else {
                 this.add(page);
             }
+
+            this._ctrl_fields = this._ctrl_fields || {};
+            this._ctrl_fields.form_output = this.form_output;
+            this._ctrl_fields.form_container = this.form_container;
+            this._ctrl_fields.rich_text_output = this.rich_text_output;
+            this._ctrl_fields.rich_text_editor = this.rich_text_editor;
+            this._ctrl_fields.object_output = this.object_output;
+            this._ctrl_fields.object_editor = this.object_editor;
+            this._ctrl_fields.object_snapshot_button = this.object_snapshot_button;
         }
     }
 
@@ -204,25 +214,232 @@ class Form_Editor_Features_Demo extends Active_HTML_Document {
         if (!this.__active) {
             super.activate();
 
-            if (this.form_container) {
-                this.form_container.on('submit', event => {
-                    this.update_pre(this.form_output, event.values, 'submit');
-                });
-                this.form_container.on('invalid', event => {
-                    this.update_pre(this.form_output, event.errors, 'invalid');
-                });
-            }
+            this.activate_form_demo();
+            this.activate_rich_text_demo();
 
             if (this.object_snapshot_button) {
                 this.object_snapshot_button.on('click', () => {
                     this.update_pre(this.object_output, this.object_editor.get_value(), 'snapshot');
                 });
             }
-
-            if (this.rich_text_editor) {
-                this.update_pre(this.rich_text_output, this.rich_text_editor.get_html());
-            }
         }
+    }
+
+    activate_form_demo() {
+        const form_el = this.form_container && this.form_container.dom && this.form_container.dom.el;
+        if (!form_el) return;
+
+        const get_value = input_el => {
+            if (!input_el) return '';
+            if (input_el.type === 'checkbox') {
+                return !!input_el.checked;
+            }
+            return input_el.value || '';
+        };
+
+        const set_field_feedback = (field_el, status, message) => {
+            if (!field_el) return;
+            field_el.classList.remove('field-status-error', 'field-status-success');
+            if (status) {
+                field_el.classList.add(`field-status-${status}`);
+            }
+
+            const message_el = field_el.querySelector('.inline-validation-message');
+            const text_el = field_el.querySelector('.inline-validation-text');
+            const icon_el = field_el.querySelector('.inline-validation-icon');
+
+            if (message_el) {
+                message_el.classList.remove(
+                    'inline-validation-message-error',
+                    'inline-validation-message-success',
+                    'inline-validation-message-warn',
+                    'inline-validation-message-info'
+                );
+                if (status) {
+                    message_el.classList.add(`inline-validation-message-${status}`);
+                }
+            }
+
+            if (text_el) {
+                text_el.textContent = message || '';
+            }
+
+            if (icon_el) {
+                icon_el.textContent = '';
+                icon_el.classList.add('hidden');
+            }
+        };
+
+        const collect_values = () => {
+            const values = {};
+            form_el.querySelectorAll('.form-container-field[data-field-name]').forEach(field_el => {
+                const field_name = field_el.getAttribute('data-field-name');
+                const input_el = field_el.querySelector('.form-container-input');
+                if (!field_name || !input_el) return;
+                values[field_name] = get_value(input_el);
+            });
+            return values;
+        };
+
+        const validate_form = () => {
+            const errors = {};
+            form_el.querySelectorAll('.form-container-field[data-field-name]').forEach(field_el => {
+                const field_name = field_el.getAttribute('data-field-name');
+                const input_el = field_el.querySelector('.form-container-input');
+                if (!field_name || !input_el) return;
+
+                const value = get_value(input_el);
+                let message = '';
+
+                if (input_el.hasAttribute('required')) {
+                    if (input_el.type === 'checkbox') {
+                        if (!value) {
+                            message = 'This field is required.';
+                        }
+                    } else if (String(value).trim() === '') {
+                        message = 'This field is required.';
+                    }
+                }
+
+                if (!message && field_name === 'email' && String(value).trim() !== '') {
+                    const validation = validate_email(value);
+                    if (validation !== true) {
+                        message = validation;
+                    }
+                }
+
+                if (message) {
+                    errors[field_name] = message;
+                    set_field_feedback(field_el, 'error', message);
+                } else if (String(value).trim() !== '' || input_el.type === 'checkbox') {
+                    set_field_feedback(field_el, 'success', '');
+                } else {
+                    set_field_feedback(field_el, '', '');
+                }
+            });
+
+            return {
+                valid: Object.keys(errors).length === 0,
+                errors
+            };
+        };
+
+        form_el.setAttribute('novalidate', 'novalidate');
+        form_el.addEventListener('submit', event => {
+            event.preventDefault();
+            const validation = validate_form();
+            if (validation.valid) {
+                this.update_pre(this.form_output, collect_values(), 'submit');
+            } else {
+                this.update_pre(this.form_output, validation.errors, 'invalid');
+            }
+        });
+    }
+
+    _escape_html(value) {
+        return String(value || '')
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+    }
+
+    _apply_inline_markdown(value) {
+        let text = value;
+        text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+        text = text.replace(/`(.+?)`/g, '<code>$1</code>');
+        text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+        return text;
+    }
+
+    _markdown_to_html(markdown) {
+        if (!markdown) return '';
+
+        const lines = String(markdown).split(/\r?\n/);
+        const html_lines = [];
+
+        lines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+
+            if (/^#{1,6}\s+/.test(trimmed)) {
+                const level = trimmed.match(/^#{1,6}/)[0].length;
+                const text = trimmed.replace(/^#{1,6}\s+/, '');
+                html_lines.push(`<h${level}>${this._apply_inline_markdown(this._escape_html(text))}</h${level}>`);
+                return;
+            }
+
+            html_lines.push(`<p>${this._apply_inline_markdown(this._escape_html(trimmed))}</p>`);
+        });
+
+        return html_lines.join('\n');
+    }
+
+    _html_to_markdown(html) {
+        if (!html) return '';
+
+        let markdown = String(html);
+        markdown = markdown.replace(/<br\s*\/?>/gi, '\n');
+        markdown = markdown.replace(/<\/p>\s*<p>/gi, '\n\n');
+        markdown = markdown.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n');
+        markdown = markdown.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n');
+        markdown = markdown.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n');
+        markdown = markdown.replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**');
+        markdown = markdown.replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*');
+        markdown = markdown.replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`');
+        markdown = markdown.replace(/<[^>]+>/g, '');
+        return markdown.trim();
+    }
+
+    activate_rich_text_demo() {
+        const editor_root_el = this.rich_text_editor && this.rich_text_editor.dom && this.rich_text_editor.dom.el;
+        if (!editor_root_el) return;
+
+        const toggle_btn = editor_root_el.querySelector('.rte-toolbar-button[data-command="toggle_markdown"]');
+        const editor_el = editor_root_el.querySelector('.rte-editor');
+        const markdown_el = editor_root_el.querySelector('.rte-markdown');
+
+        if (!toggle_btn || !editor_el || !markdown_el) {
+            return;
+        }
+
+        const render_output = html => {
+            this.update_pre(this.rich_text_output, html || editor_el.innerHTML || '');
+        };
+
+        let markdown_mode = !markdown_el.classList.contains('is-hidden');
+
+        const apply_mode = enabled => {
+            markdown_mode = !!enabled;
+            toggle_btn.classList.toggle('active', markdown_mode);
+            editor_root_el.classList.toggle('markdown-mode', markdown_mode);
+            editor_el.classList.toggle('is-hidden', markdown_mode);
+            markdown_el.classList.toggle('is-hidden', !markdown_mode);
+
+            if (markdown_mode) {
+                markdown_el.value = this._html_to_markdown(editor_el.innerHTML || '');
+            } else {
+                editor_el.innerHTML = this._markdown_to_html(markdown_el.value || '');
+                render_output(editor_el.innerHTML);
+            }
+        };
+
+        toggle_btn.addEventListener('click', event => {
+            event.preventDefault();
+            apply_mode(!markdown_mode);
+        });
+
+        markdown_el.addEventListener('input', () => {
+            if (!markdown_mode) return;
+            render_output(this._markdown_to_html(markdown_el.value || ''));
+        });
+
+        editor_el.addEventListener('input', () => {
+            if (markdown_mode) return;
+            render_output(editor_el.innerHTML || '');
+        });
+
+        apply_mode(markdown_mode);
+        render_output(editor_el.innerHTML || '');
     }
 
     update_pre(control, value, label) {
@@ -323,5 +540,11 @@ body {
 `;
 
 jsgui.controls.Form_Editor_Features_Demo = Form_Editor_Features_Demo;
+
+bootstrap_client_controls(jsgui, {
+    form_editor_features_demo: Form_Editor_Features_Demo
+}, {
+    bootstrap_key: '__jsgui_form_editor_features_demo_context__'
+});
 
 module.exports = jsgui;

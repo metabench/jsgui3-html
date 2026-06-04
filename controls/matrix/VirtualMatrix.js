@@ -4,7 +4,7 @@
  * VirtualMatrixControl
  *
  * A lightweight virtual-scrolling matrix renderer.
- * Ported from copilot-dl-news for generic jsgui3-html usage.
+ * Ported for generic jsgui3-html usage.
  */
 
 const jsgui = require('../../html-core/html-core');

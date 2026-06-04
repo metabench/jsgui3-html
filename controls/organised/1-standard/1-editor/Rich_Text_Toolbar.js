@@ -28,6 +28,7 @@ class Rich_Text_Toolbar extends Control {
         this.dom.tagName = 'div';
 
         this.buttons = Array.isArray(spec.buttons) ? spec.buttons : DEFAULT_BUTTONS;
+        this.button_controls = [];
 
         if (!spec.el) {
             this.compose();
@@ -64,6 +65,18 @@ class Rich_Text_Toolbar extends Control {
             this.button_controls.push(button);
             this.add(button);
         });
+    }
+
+    pre_activate() {
+        super.pre_activate();
+        if (!this.dom || !this.dom.el || !this.context || !this.context.map_controls) return;
+
+        this.button_controls = Array.from(
+            this.dom.el.querySelectorAll('.rte-toolbar-button[data-jsgui-id]')
+        ).map(button_el => {
+            const button_id = button_el.getAttribute('data-jsgui-id');
+            return this.context.map_controls[button_id];
+        }).filter(Boolean);
     }
 }
 

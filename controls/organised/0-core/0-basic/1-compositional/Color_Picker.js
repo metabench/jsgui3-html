@@ -159,12 +159,14 @@ class Color_Picker extends Control {
         if (cfg.show_wheel) {
             this._wheel_wrap = new Control({ context, tag_name: 'div' });
             this._wheel_wrap.add_class('cp-wheel-wrap');
+            this._wheel_wrap.dom.attributes['data-jsgui-ctrl'] = '_wheel_wrap';
 
             // Canvas for the hue ring — rendered via activate()
             this._wheel_canvas = new Control({ context, tag_name: 'canvas' });
             this._wheel_canvas.add_class('cp-wheel-canvas');
             this._wheel_canvas.dom.attributes.width = '180';
             this._wheel_canvas.dom.attributes.height = '180';
+            this._wheel_canvas.dom.attributes['data-jsgui-ctrl'] = '_wheel_canvas';
             this._wheel_wrap.add(this._wheel_canvas);
 
             // SL area inside the ring
@@ -172,16 +174,19 @@ class Color_Picker extends Control {
             this._sl_canvas.add_class('cp-sl-canvas');
             this._sl_canvas.dom.attributes.width = '100';
             this._sl_canvas.dom.attributes.height = '100';
+            this._sl_canvas.dom.attributes['data-jsgui-ctrl'] = '_sl_canvas';
             this._wheel_wrap.add(this._sl_canvas);
 
             // Hue indicator dot
             this._hue_dot = new Control({ context, tag_name: 'div' });
             this._hue_dot.add_class('cp-hue-dot');
+            this._hue_dot.dom.attributes['data-jsgui-ctrl'] = '_hue_dot';
             this._wheel_wrap.add(this._hue_dot);
 
             // SL indicator dot
             this._sl_dot = new Control({ context, tag_name: 'div' });
             this._sl_dot.add_class('cp-sl-dot');
+            this._sl_dot.dom.attributes['data-jsgui-ctrl'] = '_sl_dot';
             this._wheel_wrap.add(this._sl_dot);
 
             this.add(this._wheel_wrap);
@@ -208,11 +213,13 @@ class Color_Picker extends Control {
                 input.dom.attributes.min = String(min);
                 input.dom.attributes.max = String(max);
                 input.dom.attributes.value = String(value);
+                input.dom.attributes['data-jsgui-ctrl'] = `${cls.replace('cp-slider-', '_s')}_input`;
                 row.add(input);
 
                 const val = new Control({ context, tag_name: 'span' });
                 val.add_class('cp-slider-value');
                 val.add(String(value));
+                val.dom.attributes['data-jsgui-ctrl'] = `${cls.replace('cp-slider-', '_s')}_val`;
                 row.add(val);
 
                 this._sliders_wrap.add(row);
@@ -245,6 +252,7 @@ class Color_Picker extends Control {
             this._hex_input.dom.attributes.type = 'text';
             this._hex_input.dom.attributes.maxlength = '7';
             this._hex_input.dom.attributes.value = this._current_hex();
+            this._hex_input.dom.attributes['data-jsgui-ctrl'] = '_hex_input';
             this._hex_row.add(this._hex_input);
 
             this.add(this._hex_row);
@@ -268,6 +276,7 @@ class Color_Picker extends Control {
                 inp.dom.attributes.min = '0';
                 inp.dom.attributes.max = '255';
                 inp.dom.attributes.value = String(value);
+                inp.dom.attributes['data-jsgui-ctrl'] = cls.replace('cp-', '_').replace(/-/g, '_');
                 wrap.add(inp);
                 this._rgb_row.add(wrap);
                 return inp;
@@ -295,6 +304,7 @@ class Color_Picker extends Control {
                 inp.dom.attributes.min = '0';
                 inp.dom.attributes.max = String(max);
                 inp.dom.attributes.value = String(value);
+                inp.dom.attributes['data-jsgui-ctrl'] = cls.replace('cp-', '_').replace(/-/g, '_');
                 wrap.add(inp);
                 this._hsl_row.add(wrap);
                 return inp;
@@ -309,6 +319,7 @@ class Color_Picker extends Control {
         if (cfg.show_palette) {
             this._palette_wrap = new Control({ context, tag_name: 'div' });
             this._palette_wrap.add_class('cp-palette');
+            this._palette_wrap.dom.attributes['data-jsgui-ctrl'] = '_palette_wrap';
 
             let colors;
             if (cfg.palette && Array.isArray(cfg.palette)) {
@@ -345,12 +356,14 @@ class Color_Picker extends Control {
             this._preview_prev.add_class('cp-preview-prev');
             this._preview_prev.dom.attributes.style = `background:${this._prev_hex}`;
             this._preview_prev.dom.attributes.title = 'Previous';
+            this._preview_prev.dom.attributes['data-jsgui-ctrl'] = '_preview_prev';
             this._preview_wrap.add(this._preview_prev);
 
             this._preview_new = new Control({ context, tag_name: 'div' });
             this._preview_new.add_class('cp-preview-new');
             this._preview_new.dom.attributes.style = `background:${this._current_hex()}`;
             this._preview_new.dom.attributes.title = 'Current';
+            this._preview_new.dom.attributes['data-jsgui-ctrl'] = '_preview_new';
             this._preview_wrap.add(this._preview_new);
 
             this.add(this._preview_wrap);

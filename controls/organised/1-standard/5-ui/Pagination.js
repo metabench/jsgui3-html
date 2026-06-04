@@ -52,22 +52,22 @@ class Pagination extends Data_Model_View_Model_Control {
 
         const add_button = (label, page, disabled, is_current) => {
             const current_class = is_current ? 'is-current' : '';
+            const li = new Control({ context: this.context, tag_name: 'li' });
+            li.add_class('pagination-item');
 
-            // Mount the button template onto a temporary fragment, or parse it directly 
-            // 'mount' returns an array of top-level controls instantiated
-            const parsed_controls = tpl`
-                <li class="pagination-item">
-                    <button type="button" data-page="${page}" class="pagination-button ${current_class}">
-                        ${String(label)}
-                    </button>
-                </li>
-            `.mount(list_ctrl);
-
-            const li = parsed_controls[0];
-            const btn = li.content._arr[0]; // Retrieve the nested button
-
+            const btn = new Control({ context: this.context, tag_name: 'button' });
+            btn.dom.attributes.type = 'button';
+            btn.dom.attributes['data-page'] = String(page);
+            btn.add_class('pagination-button');
+            if (current_class) {
+                btn.add_class(current_class);
+            }
+            btn.add(String(label));
             if (disabled) btn.dom.attributes.disabled = 'disabled';
             if (is_current) btn.dom.attributes['aria-current'] = 'page';
+
+            li.add(btn);
+            list_ctrl.add(li);
         };
 
         add_button('Prev', current_page - 1, current_page <= 1, false);

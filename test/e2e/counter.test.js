@@ -14,10 +14,10 @@ const {
     start_server,
     stop_server,
     launch_browser,
+    delay,
     get_text,
     click_element,
-    get_local_storage,
-    clear_local_storage
+    get_local_storage
 } = require('./helpers');
 
 describe('Enhanced Counter E2E Tests', function() {
@@ -26,7 +26,7 @@ describe('Enhanced Counter E2E Tests', function() {
     let browser;
     let page;
     let server;
-    const PORT = 52001;
+    const PORT = 52201;
     
     // Start server and browser before all tests
     before(async function() {
@@ -54,11 +54,14 @@ describe('Enhanced Counter E2E Tests', function() {
     // Create fresh page before each test
     beforeEach(async function() {
         page = await browser.newPage();
+        const storage_session = await page.target().createCDPSession();
+        await storage_session.send('Storage.clearDataForOrigin', {
+            origin: server.url,
+            storageTypes: 'local_storage'
+        });
+        await storage_session.detach();
         await page.goto(server.url, { waitUntil: 'networkidle0' });
-        
-        // Clear localStorage before each test
-        await clear_local_storage(page);
-        
+
         // Wait for counter to be ready
         await page.waitForSelector('.counter', { timeout: 5000 });
     });
@@ -176,7 +179,7 @@ describe('Enhanced Counter E2E Tests', function() {
     describe('Keyboard Shortcuts', function() {
         it('should increment with ArrowUp key', async function() {
             await page.keyboard.press('ArrowUp');
-            await page.waitForTimeout(100);
+            await delay(100);
             
             const count_text = await get_text(page, '.counter-display');
             expect(count_text).to.equal('1');
@@ -184,7 +187,7 @@ describe('Enhanced Counter E2E Tests', function() {
         
         it('should decrement with ArrowDown key', async function() {
             await page.keyboard.press('ArrowDown');
-            await page.waitForTimeout(100);
+            await delay(100);
             
             const count_text = await get_text(page, '.counter-display');
             expect(count_text).to.equal('-1');
@@ -194,7 +197,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await page.keyboard.press('ArrowUp');
             await page.keyboard.press('ArrowUp');
             await page.keyboard.press('KeyR');
-            await page.waitForTimeout(100);
+            await delay(100);
             
             const count_text = await get_text(page, '.counter-display');
             expect(count_text).to.equal('0');
@@ -205,7 +208,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await page.keyboard.press('ArrowUp');
             await page.keyboard.press('ArrowUp');
             await page.keyboard.press('ArrowDown');
-            await page.waitForTimeout(100);
+            await delay(100);
             
             const count_text = await get_text(page, '.counter-display');
             expect(count_text).to.equal('2');
@@ -251,7 +254,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await page.keyboard.down('Control');
             await page.keyboard.press('KeyZ');
             await page.keyboard.up('Control');
-            await page.waitForTimeout(100);
+            await delay(100);
             
             const count_text = await get_text(page, '.counter-display');
             expect(count_text).to.equal('0');
@@ -266,7 +269,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await page.keyboard.down('Control');
             await page.keyboard.press('KeyY');
             await page.keyboard.up('Control');
-            await page.waitForTimeout(100);
+            await delay(100);
             
             const count_text = await get_text(page, '.counter-display');
             expect(count_text).to.equal('1');
@@ -342,7 +345,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await click_element(page, '.increment');
             
             // Wait for debounced save
-            await page.waitForTimeout(600);
+            await delay(600);
             
             const saved_data = await get_local_storage(page, 'counter_state');
             expect(saved_data).to.not.be.null;
@@ -354,7 +357,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await click_element(page, '.increment');
             
             // Wait for debounced save
-            await page.waitForTimeout(600);
+            await delay(600);
             
             const saved_data = await get_local_storage(page, 'counter_state');
             expect(saved_data.history).to.be.an('array');
@@ -369,7 +372,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await click_element(page, '.increment');
             
             // Wait for save
-            await page.waitForTimeout(600);
+            await delay(600);
             
             // Reload page
             await page.reload({ waitUntil: 'networkidle0' });
@@ -386,7 +389,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await click_element(page, '.decrement');
             
             // Wait for save
-            await page.waitForTimeout(600);
+            await delay(600);
             
             // Reload page
             await page.reload({ waitUntil: 'networkidle0' });
@@ -405,7 +408,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await click_element(page, '.undo-btn');
             
             // Wait for save
-            await page.waitForTimeout(600);
+            await delay(600);
             
             // Reload page
             await page.reload({ waitUntil: 'networkidle0' });
@@ -450,7 +453,7 @@ describe('Enhanced Counter E2E Tests', function() {
             await page.keyboard.press('ArrowUp');
             await click_element(page, '.increment');
             await page.keyboard.press('ArrowDown');
-            await page.waitForTimeout(100);
+            await delay(100);
             
             const count_text = await get_text(page, '.counter-display');
             expect(count_text).to.equal('2');

@@ -1,4 +1,5 @@
 const jsgui = require('../../../html');
+const bootstrap_client_controls = require('../../client_bootstrap');
 
 const { Control, Active_HTML_Document } = jsgui;
 const controls = jsgui.controls;
@@ -9,6 +10,9 @@ class Missing_Controls_Demo extends Active_HTML_Document {
         super(spec);
 
         const { context } = this;
+        this.progress_value = 40;
+        this.meter_value = 0.4;
+        this.pagination_page = 1;
 
         if (typeof this.body.add_class === 'function') {
             this.body.add_class('missing-controls-body');
@@ -262,11 +266,102 @@ class Missing_Controls_Demo extends Active_HTML_Document {
         });
         this.alert_banner.add_class('demo-alert-banner');
         add_row(feedback_section, 'Alert banner', this.alert_banner);
+
+        this._ctrl_fields = {
+            number_stepper: this.number_stepper,
+            stepped_slider: this.stepped_slider,
+            progress_control: this.progress_control,
+            meter_control: this.meter_control,
+            progress_button: this.progress_button,
+            toggle_switch: this.toggle_switch,
+            tag_input: this.tag_input,
+            pagination: this.pagination,
+            toast_control: this.toast_control,
+            toast_button: this.toast_button,
+            alert_banner: this.alert_banner
+        };
+    }
+
+    sync_toggle_switch_dom(root_el) {
+        const input_el = root_el.querySelector('.demo-toggle-switch .jsgui-toggle-input');
+        const label_el = root_el.querySelector('.demo-toggle-switch .jsgui-toggle-label');
+        if (!input_el || !label_el) return;
+
+        input_el.classList.add('toggle-switch-input');
+        label_el.classList.add('toggle-switch-label');
+        input_el.setAttribute('aria-checked', input_el.checked ? 'true' : 'false');
+        label_el.textContent = input_el.checked ? 'Enabled' : 'Disabled';
+    }
+
+    add_tag_item_dom(items_el, tag_text) {
+        const item_el = document.createElement('span');
+        item_el.className = 'tag-input-item';
+
+        const text_el = document.createElement('span');
+        text_el.className = 'tag-input-text';
+        text_el.textContent = tag_text;
+
+        const remove_el = document.createElement('button');
+        remove_el.type = 'button';
+        remove_el.className = 'tag-input-remove';
+        remove_el.textContent = 'x';
+
+        item_el.appendChild(text_el);
+        item_el.appendChild(remove_el);
+        items_el.appendChild(item_el);
+    }
+
+    sync_pagination_dom(root_el) {
+        const pagination_el = root_el.querySelector('.demo-pagination');
+        if (!pagination_el) return;
+
+        pagination_el.querySelectorAll('.pagination-button[data-page]').forEach((button_el) => {
+            const page = Number(button_el.getAttribute('data-page'));
+            const is_current = page === this.pagination_page;
+            button_el.classList.toggle('is-current', is_current);
+            button_el.setAttribute('aria-current', is_current ? 'page' : 'false');
+        });
+    }
+
+    sync_feedback_dom(root_el) {
+        const progress_el = root_el.querySelector('.demo-progress-bar');
+        const fill_el = progress_el && progress_el.querySelector('.jsgui-progress-fill');
+        const meter_el = root_el.querySelector('.demo-meter');
+
+        if (progress_el) {
+            progress_el.setAttribute('value', String(this.progress_value));
+            progress_el.setAttribute('aria-valuenow', String(this.progress_value));
+        }
+        if (fill_el) {
+            fill_el.style.width = `${this.progress_value}%`;
+        }
+        if (meter_el) {
+            meter_el.setAttribute('value', String(this.meter_value));
+        }
+    }
+
+    step_number_input(input_el, delta) {
+        const current_value = Number(input_el.value || input_el.getAttribute('value') || 0);
+        const step = Number(input_el.getAttribute('step') || 1) || 1;
+        const min = Number(input_el.getAttribute('min'));
+        const max = Number(input_el.getAttribute('max'));
+        let next_value = current_value + (step * delta);
+        if (Number.isFinite(min)) next_value = Math.max(min, next_value);
+        if (Number.isFinite(max)) next_value = Math.min(max, next_value);
+        input_el.value = String(next_value);
+        input_el.setAttribute('value', String(next_value));
     }
 
     activate() {
         if (!this.__active) {
             super.activate();
+            const root_el = this.dom && this.dom.el;
+            if (!root_el || this._demo_dom_bound) return;
+
+            this._demo_dom_bound = true;
+            this.sync_toggle_switch_dom(root_el);
+            this.sync_pagination_dom(root_el);
+            this.sync_feedback_dom(root_el);
 
             if (this.toast_button && this.toast_control) {
                 this.toast_button.on('click', () => {
@@ -281,6 +376,95 @@ class Missing_Controls_Demo extends Active_HTML_Document {
                     this.progress_control.set_value(next_value > 100 ? 0 : next_value);
                     this.meter_control.set_value(next_meter > 1 ? 0 : next_meter);
                 });
+            }
+
+            const toggle_input_el = root_el.querySelector('.demo-toggle-switch .jsgui-toggle-input');
+            if (toggle_input_el) {
+                toggle_input_el.addEventListener('change', () => {
+                    this.sync_toggle_switch_dom(root_el);
+                });
+            }
+
+            const tag_input_el = root_el.querySelector('.demo-tag-input .tag-input-field');
+            const tag_items_el = root_el.querySelector('.demo-tag-input .tag-input-items');
+            if (tag_input_el && tag_items_el) {
+                tag_input_el.addEventListener('keydown', (event) => {
+                    if (event.key !== 'Enter') return;
+                    event.preventDefault();
+                    const value = tag_input_el.value.trim();
+                    if (!value) return;
+                    this.add_tag_item_dom(tag_items_el, value);
+                    tag_input_el.value = '';
+                });
+
+                tag_items_el.addEventListener('click', (event) => {
+                    const remove_el = event.target.closest('.tag-input-remove');
+                    if (!remove_el) return;
+                    const item_el = remove_el.closest('.tag-input-item');
+                    if (item_el) {
+                        item_el.remove();
+                    }
+                });
+            }
+
+            root_el.querySelectorAll('.demo-pagination .pagination-button[data-page]').forEach((button_el) => {
+                button_el.addEventListener('click', () => {
+                    this.pagination_page = Number(button_el.getAttribute('data-page')) || 1;
+                    this.sync_pagination_dom(root_el);
+                });
+            });
+
+            const tooltip_target_el = root_el.querySelector('.demo-tooltip-target');
+            const tooltip_el = root_el.querySelector('.demo-tooltip');
+            if (tooltip_target_el && tooltip_el) {
+                const show_tooltip = (visible) => {
+                    tooltip_el.classList.toggle('is-visible', visible);
+                    tooltip_el.setAttribute('aria-hidden', visible ? 'false' : 'true');
+                };
+                tooltip_target_el.addEventListener('mouseenter', () => show_tooltip(true));
+                tooltip_target_el.addEventListener('mouseleave', () => show_tooltip(false));
+            }
+
+            const popover_target_el = root_el.querySelector('.demo-popover-target');
+            const popover_el = root_el.querySelector('.demo-popover');
+            if (popover_target_el && popover_el) {
+                const show_popover = (visible) => {
+                    popover_el.classList.toggle('is-visible', visible);
+                    popover_el.setAttribute('aria-hidden', visible ? 'false' : 'true');
+                };
+                popover_target_el.addEventListener('click', () => {
+                    show_popover(!popover_el.classList.contains('is-visible'));
+                });
+                document.addEventListener('mousedown', (event) => {
+                    if (!popover_el.classList.contains('is-visible')) return;
+                    if (popover_el.contains(event.target) || popover_target_el.contains(event.target)) return;
+                    show_popover(false);
+                });
+            }
+
+            const dismiss_alert_el = root_el.querySelector('.demo-alert-banner .alert-banner-dismiss');
+            const alert_banner_el = root_el.querySelector('.demo-alert-banner');
+            if (dismiss_alert_el && alert_banner_el) {
+                dismiss_alert_el.addEventListener('click', () => {
+                    alert_banner_el.style.display = 'none';
+                });
+            }
+
+            const progress_button_el = root_el.querySelector('.demo-progress-button');
+            if (progress_button_el) {
+                progress_button_el.addEventListener('click', () => {
+                    this.progress_value = this.progress_value >= 100 ? 0 : this.progress_value + 10;
+                    this.meter_value = this.meter_value >= 1 ? 0 : Math.round((this.meter_value + 0.1) * 10) / 10;
+                    this.sync_feedback_dom(root_el);
+                });
+            }
+
+            const stepper_input_el = root_el.querySelector('.demo-number-stepper .number-stepper-input');
+            const stepper_inc_el = root_el.querySelector('.demo-number-stepper .number-stepper-increment');
+            const stepper_dec_el = root_el.querySelector('.demo-number-stepper .number-stepper-decrement');
+            if (stepper_input_el && stepper_inc_el && stepper_dec_el) {
+                stepper_inc_el.addEventListener('click', () => this.step_number_input(stepper_input_el, 1));
+                stepper_dec_el.addEventListener('click', () => this.step_number_input(stepper_input_el, -1));
             }
         }
     }
@@ -345,5 +529,11 @@ body {
 `;
 
 jsgui.controls.Missing_Controls_Demo = Missing_Controls_Demo;
+
+bootstrap_client_controls(jsgui, {
+    missing_controls_demo: Missing_Controls_Demo
+}, {
+    bootstrap_key: '__jsgui_missing_controls_demo_context__'
+});
 
 module.exports = jsgui;

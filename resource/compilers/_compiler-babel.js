@@ -2,7 +2,7 @@ const Compiler_Resource = require("../compiler-resource");
 // But don't want it here?
 //  Or want an expanded html jsgui module?
 
-// jsgui.html is powerful, being the HTML processing part, but it's fairly compact too.
+// jsgui.tpl is powerful, being the declarative HTML processing entry point, but it's fairly compact too.
 //  Could load the babel functions later on, not require them here.
 
 

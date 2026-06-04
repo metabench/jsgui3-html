@@ -14,6 +14,7 @@
  * Server: lab/date_controls_e2e_server.js (port 3611)
  */
 
+require('./jest_compat');
 const puppeteer = require('puppeteer');
 const { spawn } = require('child_process');
 const path = require('path');

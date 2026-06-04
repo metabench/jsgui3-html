@@ -257,9 +257,9 @@ const card = new UserCard({
 card.data.model.set('firstName', 'Jane');
 ```
 
-### Step 3: Modern Declarative MVVM Composition (Using `jsgui.html`)
+### Step 3: Modern Declarative MVVM Composition (Using `tpl`)
 
-While manually instantiating controls and mapping bindings via `this.setupBindings()` in `activate()` is fully supported, the modern, recommended approach is to leverage the `jsgui.html` template parser to map UI directly into bindings natively.
+While manually instantiating controls and mapping bindings via `this.setupBindings()` in `activate()` is fully supported, the modern, recommended approach is to leverage the `tpl` template parser to map UI directly into bindings natively.
 
 Using the `tpl` tagged template literal and `this.mbind('property_name')`, you can deeply skip the standard `this.add(new Control(...))` and `this.watch(...)` boilerplate.
 
@@ -310,6 +310,10 @@ class ModernUserCard extends Data_Model_View_Model_Control {
 ```
 
 By leveraging `bind-*` and `on-*`, `jsgui3-html` automatically delegates state to `ModelBinder` and `this.on()` without any lifecycle spaghetti!
+
+For SSR plus client activation, prefer instance-method handlers such as `this.saveProfile.bind(this)` or wrappers like `() => this.saveProfile()`. Those forms can be reattached from the rendered DOM metadata.
+
+The currently supported SSR-to-activation directive set is `bind-text`, `bind-value`, `bind-class`, `bind-style`, `bind-visible`, `bind-list`, and `on-*` for resolvable instance-method handlers.
 
 ### Advanced Declarative Attributes
 

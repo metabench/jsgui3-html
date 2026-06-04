@@ -1,8 +1,10 @@
 const { assert } = require('chai');
-const jsgui = require('../../html-core/html-core');
+const jsgui = require('../../html.js');
 const { Control, Data_Object, tpl } = jsgui;
+const Data_Model_View_Model_Control = require('../../html-core/Data_Model_View_Model_Control');
+const { ensure_control_models } = require('../../html-core/control_model_factory');
 
-describe('Declarative Bindings in jsgui.html', () => {
+describe('Declarative Bindings in tpl', () => {
 
     class MockControl extends Control {
         constructor(spec) {
@@ -22,12 +24,7 @@ describe('Declarative Bindings in jsgui.html', () => {
         }
     }
     jsgui.controls['mockcontrol'] = MockControl;
-    jsgui.controls['input'] = class MockInput extends Control {
-        constructor(spec) {
-            super(spec);
-            this.__type_name = 'input';
-        }
-    };
+    jsgui.controls['input'] = jsgui.input;
 
     let parent;
 
@@ -41,6 +38,11 @@ describe('Declarative Bindings in jsgui.html', () => {
     });
 
     const unwrap = (v) => v && v.value !== undefined ? v.value : v;
+
+    it('should export tpl from the public namespace', () => {
+        assert.strictEqual(typeof tpl, 'function');
+        assert.strictEqual(jsgui.tpl, tpl);
+    });
 
     it('should bind simple tuple using mbind()', () => {
 
@@ -297,6 +299,114 @@ describe('Declarative Bindings in jsgui.html', () => {
             input.raise_event('input', mockEvent);
             assert.strictEqual(unwrap(parent.data.model.get('username')), 'Charlie', 'Should update model on DOM input event');
         }
+    });
+
+    it('should restore SSR declarative bindings during activation', () => {
+        class Activation_Editor extends Data_Model_View_Model_Control {
+            constructor(spec = {}) {
+                spec.__type_name = spec.__type_name || 'activation_editor';
+                super(spec);
+
+                ensure_control_models(this, spec);
+
+                this.data.model.set('first_name', spec.first_name !== undefined ? spec.first_name : 'Jane');
+                this.data.model.set('accent_color', spec.accent_color !== undefined ? spec.accent_color : 'red');
+                this.data.model.set('is_active', spec.is_active !== undefined ? spec.is_active : true);
+                this.data.model.set('is_visible', spec.is_visible !== undefined ? spec.is_visible : true);
+                this.data.model.set('items', spec.items !== undefined ? spec.items : []);
+
+                this.computed(this.data.model, ['first_name'],
+                    first_name => first_name || '',
+                    { propertyName: 'full_name' }
+                );
+
+                this.compose_ui();
+            }
+
+            compose_ui() {
+                tpl`
+                    <div class="card"
+                        bind-class=${{ 'active-card': this.mbind('is_active') }}
+                        bind-style=${{ 'border-color': this.mbind('accent_color') }}
+                        bind-visible=${this.mbind('is_visible')}>
+                        <h2 bind-text=${this.mbind('full_name')}></h2>
+                        <input name="name_input" type="text" bind-value=${this.mbind('first_name')} />
+                        <ul bind-list=${this.mbind('items')} template=${(item) => tpl`<li class="item">${item}</li>`}></ul>
+                        <button name="toggle_btn" on-click=${this.toggle_status.bind(this)}>Toggle</button>
+                    </div>
+                `.mount(this, jsgui.controls);
+            }
+
+            toggle_status() {
+                const is_active = unwrap(this.data.model.get('is_active'));
+                this.data.model.set('is_active', !is_active);
+                this.data.model.set('is_visible', is_active ? false : true);
+            }
+        }
+
+        jsgui.controls.activation_editor = Activation_Editor;
+        jsgui.controls.Activation_Editor = Activation_Editor;
+
+        const ssr_context = new jsgui.Page_Context();
+        const ssr_editor = new Activation_Editor({
+            context: ssr_context,
+            first_name: 'John',
+            accent_color: 'green',
+            is_active: true,
+            is_visible: true,
+            items: ['One', 'Two']
+        });
+
+        const html = ssr_editor.all_html_render();
+        assert.include(html, 'data-jsgui-bind-style="border-color:accent_color"');
+        assert.include(html, 'data-jsgui-bind-visible="is_visible"');
+        assert.include(html, 'data-jsgui-bind-list="items"');
+        assert.include(html, 'data-jsgui-on-click="toggle_status"');
+
+        document.body.innerHTML = html;
+        const root_el = document.body.firstElementChild;
+        const client_context = new jsgui.Page_Context({ document });
+        const client_editor = new Activation_Editor({
+            context: client_context,
+            el: root_el,
+            first_name: 'Wrong',
+            accent_color: 'orange',
+            is_active: false,
+            is_visible: false,
+            items: []
+        });
+
+        client_editor.activate(root_el);
+
+        const card = root_el.querySelector('.card');
+        const heading = root_el.querySelector('h2');
+        const input = root_el.querySelector('input');
+        const list = root_el.querySelector('ul');
+        const button = root_el.querySelector('button');
+
+        assert.strictEqual(heading.textContent, 'John', 'bind-text should restore SSR state');
+        assert.strictEqual(input.value, 'John', 'bind-value should restore SSR state');
+        assert.isTrue(card.classList.contains('active-card'), 'bind-class should restore SSR state');
+        assert.strictEqual(card.style.getPropertyValue('border-color'), 'green', 'bind-style should restore SSR state');
+        assert.strictEqual(card.style.display, '', 'bind-visible should restore SSR state');
+        assert.lengthOf(list.querySelectorAll('li'), 2, 'bind-list should restore SSR state');
+
+        client_editor.data.model.set('first_name', 'Jane');
+        client_editor.data.model.set('accent_color', 'blue');
+        client_editor.data.model.set('items', ['One', 'Two', 'Three']);
+
+        assert.strictEqual(heading.textContent, 'Jane', 'bind-text should update after activation');
+        assert.strictEqual(input.value, 'Jane', 'bind-value should update after activation');
+        assert.strictEqual(card.style.getPropertyValue('border-color'), 'blue', 'bind-style should update after activation');
+        assert.lengthOf(list.querySelectorAll('li'), 3, 'bind-list should update after activation');
+
+        button.click();
+        assert.isFalse(unwrap(client_editor.data.model.get('is_active')), 'bound on-click handler should update the model');
+        assert.isFalse(card.classList.contains('active-card'), 'bind-class should react to activated click handler');
+        assert.strictEqual(card.style.display, 'none', 'bind-visible should react to activated click handler');
+
+        client_editor.data.model.set('is_visible', true);
+        assert.strictEqual(card.style.display, '', 'bind-visible should restore display when visible again');
     });
 
 });

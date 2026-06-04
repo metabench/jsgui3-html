@@ -6,14 +6,14 @@ The core engine of jsgui3-html. This directory contains the base control classes
 
 ```javascript
 const jsgui = require('jsgui3-html/html-core/html-core');
-const { Control, Page_Context } = jsgui;
+const { Control, Page_Context, tpl } = jsgui;
 ```
 
 `html-core.js` bootstraps the framework by:
 1. Loading `lang-tools` (evented classes, data objects, utilities)
 2. Registering the `Control` class (which is actually `Data_Model_View_Model_Control`)
 3. Creating HTML tag constructors (`div`, `span`, `h1`, `label`, `input`, etc.)
-4. Exposing `Page_Context`, `parse_mount`, color palettes, and utility functions
+4. Exposing `Page_Context`, `tpl`, `parse_mount`, color palettes, and utility functions
 
 ## File Map
 
@@ -73,7 +73,7 @@ The default `Control` exported by `html-core.js` is actually `Data_Model_View_Mo
 |------|---------|
 | `html-core.js` | Main entry — bootstraps framework, creates HTML tag constructors |
 | `page-context.js` | `Page_Context` — manages control registry, CSS collection, and rendering context for a page |
-| `parse-mount.js` | `parse_mount` / `parse` — parse HTML strings into control trees; mount controls to existing DOM |
+| `parse-mount.js` | `tpl` / `parse_mount` / `parse` — declarative templating, parse HTML strings into control trees, and mount controls to existing DOM |
 | `text-node.js` | `Text_Node` — represents raw text content in the control tree |
 | `html_parser.js` | HTML parsing utilities |
 | `selection-scope.js` | `Selection_Scope` — manages selection context for controls |
@@ -140,7 +140,10 @@ See [DATA_BINDING.md](DATA_BINDING.md) for the full binding API and [MVVM.md](..
 Parse HTML strings into control trees or mount controls onto existing DOM:
 
 ```javascript
-const { parse_mount, parse } = require('jsgui3-html/html-core/parse-mount');
+const { tpl, parse_mount, parse } = require('jsgui3-html/html-core/parse-mount');
+
+// Declarative template
+tpl`<div class="card"><h2>Hello</h2></div>`.mount(ctrl);
 
 // Parse HTML string into a control
 const ctrl = parse('<div class="card"><h2>Title</h2><p>Body</p></div>', ctx);
@@ -149,10 +152,40 @@ const ctrl = parse('<div class="card"><h2>Title</h2><p>Body</p></div>', ctx);
 parse_mount(document.getElementById('app'), ctrl);
 ```
 
+### Declarative `tpl` Activation
+
+`html-core` now exports `tpl` on the public namespace:
+
+```javascript
+const jsgui = require('jsgui3-html/html-core/html-core');
+const { tpl, template } = jsgui; // `template` is an alias for `tpl`
+```
+
+When `tpl` is used inside a server-rendered control, `parse-mount.js` serializes the activation metadata needed to restore bindings against existing DOM on the client. `Data_Model_View_Model_Control` then uses three internal methods to complete activation:
+
+| Method | Purpose |
+|--------|---------|
+| `_register_tpl_runtime_metadata(meta)` | Stores runtime-only template metadata collected during constructor replay, primarily for `bind-list` |
+| `_restore_model_state_from_dom()` | Restores serializable model state from `data-jsgui-model-state` on the root control |
+| `_activate_tpl_bindings()` | Re-establishes declarative bindings against existing DOM |
+
+Supported SSR-to-activation directives:
+
+- `bind-text`
+- `bind-value`
+- `bind-class`
+- `bind-style`
+- `bind-visible`
+- `bind-list`
+- `on-*` when the handler can be resolved to an instance method, such as `this.save.bind(this)` or `() => this.save()`
+
+`bind-list` activation currently re-renders DOM from the recorded template function. It restores runtime behavior, but it does not rebuild a rich child-control tree for list items during direct DOM reattachment.
+
 ## Related Documentation
 
 - [DATA_BINDING.md](DATA_BINDING.md) — Complete binding API reference
 - [MVVM.md](../MVVM.md) — MVVM architecture analysis and patterns
 - [docs/MVC_MVVM_Developer_Guide.md](../docs/MVC_MVVM_Developer_Guide.md) — Developer-friendly MVVM guide
+- [docs/books/declarative-templating/README.md](../docs/books/declarative-templating/README.md) — Declarative templating guide and activation diagram
 - [controls/README.md](../controls/README.md) — Pre-built control catalog
 - [control_mixins/README.md](../control_mixins/README.md) — Behavior mixins

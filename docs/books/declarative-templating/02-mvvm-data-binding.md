@@ -1,6 +1,6 @@
 # Chapter 2: Native MVVM Data Binding
 
-The true power of `jsgui.html` templating lies in its ability to automatically map reactive data layers and native events entirely inside the markup.
+The true power of `tpl` templating lies in its ability to automatically map reactive data layers and native events entirely inside the markup.
 
 Gone are the days of manually querying DOM layouts (`this.find_controls_by_name()`), manually instantiating `ModelBinder`s, or writing verbose listeners across `data.model` and `view.data.model`.
 
@@ -95,3 +95,42 @@ tpl`
     <month_view on-selection-change=${(e) => this.selectDate(e.value)} />
 `.mount(this);
 ```
+
+## SSR + Activation Support
+
+Declarative bindings are now designed to survive server render plus client activation when they can be represented by HTML metadata.
+
+| Directive | SSR output | Client activation | Notes |
+|-----------|------------|-------------------|-------|
+| `bind-text` | Yes | Yes | Reattaches one-way model-to-text updates |
+| `bind-value` | Yes | Yes | Restores two-way value binding for native inputs and controls with input descendants |
+| `bind-class` | Yes | Yes | Supports the serialized truthy / simple-negation form |
+| `bind-style` | Yes | Yes | Restores inline style updates from model state |
+| `bind-visible` | Yes | Yes | Restores `display: none` toggling from model booleans |
+| `bind-list` | Yes | Yes | Re-renders DOM from the recorded template function |
+| `on-*` | Yes | Yes | Requires a handler that can be resolved to an instance method |
+
+### Handler Serialization Rule
+
+For SSR-to-activation, prefer handlers that point at instance methods:
+
+```javascript
+tpl`
+    <button on-click=${this.save.bind(this)}>Save</button>
+    <button on-click=${() => this.reset()}>Reset</button>
+`.mount(this);
+```
+
+Those forms serialize as `data-jsgui-on-*` metadata and can be restored during activation.
+
+### Activation Internals
+
+`Data_Model_View_Model_Control` uses three internal helpers to restore declarative behavior:
+
+- `_register_tpl_runtime_metadata(meta)` stores runtime-only template data, especially `bind-list` template functions.
+- `_restore_model_state_from_dom()` loads serializable model values from `data-jsgui-model-state`.
+- `_activate_tpl_bindings()` scans descendant DOM nodes owned by the control and reattaches supported directives.
+
+### Current Limitation
+
+`bind-list` activation currently restores DOM behavior rather than rebuilding a full child-control tree for each list item. That is sufficient for reactive DOM updates, but it is not yet a full child-control rehydration mechanism.

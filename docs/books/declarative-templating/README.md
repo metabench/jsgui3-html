@@ -1,12 +1,12 @@
 # Declarative Templating and MVVM Binding in jsgui3
 
-This guide covers the modern, declarative approach to building user interfaces in jsgui3-html using the `jsgui.html` (or `jsgui.tpl`) tagged template literal and the native MVVM binding syntax.
+This guide covers the modern, declarative approach to building user interfaces in jsgui3-html using the public `jsgui.tpl` tagged template literal and the native MVVM binding syntax.
 
 As of recent updates to the `jsgui3-html` platform, developers no longer need to rely purely on imperative DOM composition and manual event wiring. You can now build highly dynamic and reactive components using a syntax that resembles modern frontend frameworks while maintaining the raw performance and deep integration of the `jsgui3` ecosystem.
 
 ## Chapters
 
-1. **[jsgui.html Syntax and Usage](01-jsgui-html-syntax.md)**
+1. **[`tpl` Syntax and Usage](01-jsgui-html-syntax.md)**
    Learn how to use the tagged template literal to declaratively construct control hierarchies, pass context, and manage references.
 2. **[Native MVVM Data Binding](02-mvvm-data-binding.md)**
    Discover the power of `bind-*` and `on-*` attributes, the `mbind()` helper, and bidirectional data synchronization using the `BindingManager`.
@@ -61,3 +61,25 @@ class UserProfile extends Data_Model_View_Model_Control {
 ```
 
 Dive into the chapters above to master the declarative API!
+
+## Activation Overview
+
+Server-rendered `tpl` layouts now carry the metadata needed to restore declarative behavior on the client. The main flow is:
+
+1. `tpl` builds controls during SSR.
+2. `parse-mount.js` serializes `data-jsgui-bind-*`, `data-jsgui-on-*`, and `data-jsgui-model-state` metadata.
+3. `Data_Model_View_Model_Control` restores model state and reattaches bindings during activation.
+
+The current supported SSR-to-activation directive set is:
+
+- `bind-text`
+- `bind-value`
+- `bind-class`
+- `bind-style`
+- `bind-visible`
+- `bind-list`
+- `on-*` for resolvable instance-method handlers
+
+See the flow diagram:
+
+![Tpl Activation Flow](./tpl-activation-flow.svg)

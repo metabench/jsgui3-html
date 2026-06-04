@@ -475,6 +475,27 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
     }
 
     /**
+     * Record runtime-only tpl metadata gathered while the control constructor
+     * replays declarative composition against existing DOM during activation.
+     *
+     * This supplements SSR data attributes for directives that need live
+     * function references on the client, such as `bind-list` templates.
+     *
+     * @param {Object} meta - Runtime tpl metadata.
+     */
+    _register_tpl_runtime_metadata(meta) {
+        if (!meta) return;
+
+        this.__tpl_runtime = this.__tpl_runtime || {
+            bind_lists: []
+        };
+
+        if (Array.isArray(meta.bind_lists) && meta.bind_lists.length > 0) {
+            Array.prototype.push.apply(this.__tpl_runtime.bind_lists, meta.bind_lists);
+        }
+    }
+
+    /**
      * Restore model state from a serialized data-jsgui-model-state DOM attribute.
      * Called during activation (when tpl.mount detects an already-active DOM element).
      */
@@ -513,6 +534,9 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
         const el = this.dom.el;
         const model = this.data && this.data.model;
         if (!model) return;
+        const runtime_bind_lists = this.__tpl_runtime && Array.isArray(this.__tpl_runtime.bind_lists)
+            ? this.__tpl_runtime.bind_lists.slice()
+            : [];
 
         const unwrap = (v) => {
             if (!v) return v;
@@ -520,6 +544,89 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
             if (v.value !== undefined) return v.value;
             if (v.get) return v.get();
             return v;
+        };
+
+        const dequeue_bind_list_config = (prop_name) => {
+            for (let i = 0; i < runtime_bind_lists.length; i++) {
+                if (runtime_bind_lists[i].source_prop === prop_name) {
+                    return runtime_bind_lists.splice(i, 1)[0];
+                }
+            }
+            return null;
+        };
+
+        const apply_dom_style = (target_el, style_prop, value) => {
+            if (!target_el || !target_el.style) return;
+
+            if (value === null || value === undefined || value === false) {
+                if (typeof target_el.style.removeProperty === 'function') {
+                    target_el.style.removeProperty(style_prop);
+                } else {
+                    target_el.style[style_prop] = '';
+                }
+                return;
+            }
+
+            const str_value = String(value);
+            if (typeof target_el.style.setProperty === 'function') {
+                target_el.style.setProperty(style_prop, str_value);
+            } else {
+                target_el.style[style_prop] = str_value;
+            }
+        };
+
+        const render_layout_to_fragment = (layout, doc) => {
+            const fragment = doc.createDocumentFragment();
+            const html_core = require('./html-core');
+
+            const append_markup = (markup) => {
+                const temp_el = doc.createElement('div');
+                temp_el.innerHTML = markup;
+                while (temp_el.firstChild) {
+                    fragment.appendChild(temp_el.firstChild);
+                }
+            };
+
+            const append_item = (item) => {
+                if (item === undefined || item === null || item === false) return;
+
+                if (Array.isArray(item)) {
+                    for (let i = 0; i < item.length; i++) {
+                        append_item(item[i]);
+                    }
+                    return;
+                }
+
+                if (item && item.mount) {
+                    const temp_context = new html_core.Page_Context({ document: doc });
+                    const temp_container = new html_core.controls.div({ context: temp_context });
+                    item.mount(temp_container, html_core.controls);
+
+                    const temp_items = temp_container.content && temp_container.content._arr
+                        ? temp_container.content._arr
+                        : [];
+
+                    for (let i = 0; i < temp_items.length; i++) {
+                        append_item(temp_items[i]);
+                    }
+                    return;
+                }
+
+                if (item && typeof item.all_html_render === 'function') {
+                    append_markup(item.all_html_render());
+                    return;
+                }
+
+                if (item && item.text !== undefined) {
+                    fragment.appendChild(doc.createTextNode(String(item.text)));
+                    return;
+                }
+
+                fragment.appendChild(doc.createTextNode(String(item)));
+            };
+
+            append_item(layout);
+            return fragment;
         };
 
         // Find all descendant elements whose bindings belong to this control
@@ -600,6 +707,90 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                 }
             }
 
+            // ── bind-style: one-way model → DOM style ──
+            const bind_style_str = bound_el.getAttribute('data-jsgui-bind-style');
+            if (bind_style_str) {
+                const pairs = bind_style_str.split(';');
+                for (let p = 0; p < pairs.length; p++) {
+                    const sep_idx = pairs[p].indexOf(':');
+                    if (sep_idx <= 0) continue;
+
+                    const style_prop = pairs[p].substring(0, sep_idx);
+                    const prop = pairs[p].substring(sep_idx + 1);
+
+                    const _update_style = () => {
+                        const val = unwrap(model.get ? model.get(prop) : model[prop]);
+                        apply_dom_style(bound_el, style_prop, val);
+                    };
+
+                    _update_style();
+                    model.on('change', (e) => {
+                        if (e.name === prop) _update_style();
+                    });
+                }
+            }
+
+            // ── bind-visible: one-way model → DOM display ──
+            const bind_visible_prop = bound_el.getAttribute('data-jsgui-bind-visible');
+            if (bind_visible_prop) {
+                const _update_visible = () => {
+                    const val = unwrap(model.get ? model.get(bind_visible_prop) : model[bind_visible_prop]);
+                    bound_el.style.display = val ? '' : 'none';
+                };
+
+                _update_visible();
+                model.on('change', (e) => {
+                    if (e.name === bind_visible_prop) _update_visible();
+                });
+            }
+
+            // ── bind-list: one-way model → DOM children ──
+            const bind_list_prop = bound_el.getAttribute('data-jsgui-bind-list');
+            if (bind_list_prop) {
+                const bind_list_cfg = dequeue_bind_list_config(bind_list_prop);
+                if (bind_list_cfg && typeof bind_list_cfg.template_func === 'function') {
+                    let current_collection = null;
+                    const render_list = () => {
+                        const doc = bound_el.ownerDocument || (this.context && this.context.document) || document;
+                        const list_val = unwrap(model.get ? model.get(bind_list_prop) : model[bind_list_prop]);
+                        const items = Array.isArray(list_val)
+                            ? list_val
+                            : (list_val && typeof list_val.each === 'function' ? (() => {
+                                const arr = [];
+                                list_val.each(item => arr.push(item));
+                                return arr;
+                            })() : []);
+
+                        while (bound_el.firstChild) {
+                            bound_el.removeChild(bound_el.firstChild);
+                        }
+
+                        for (let i = 0; i < items.length; i++) {
+                            const child_layout = bind_list_cfg.template_func(items[i], i);
+                            const fragment = render_layout_to_fragment(child_layout, doc);
+                            bound_el.appendChild(fragment);
+                        }
+                    };
+
+                    const rewire_collection_listener = () => {
+                        const next_collection = unwrap(model.get ? model.get(bind_list_prop) : model[bind_list_prop]);
+                        if (next_collection && next_collection !== current_collection && typeof next_collection.on === 'function') {
+                            next_collection.on('change', () => render_list());
+                        }
+                        current_collection = next_collection;
+                    };
+
+                    render_list();
+                    rewire_collection_listener();
+                    model.on('change', (e) => {
+                        if (e.name === bind_list_prop) {
+                            rewire_collection_listener();
+                            render_list();
+                        }
+                    });
+                }
+            }
+
             // ── on-* event handlers ──
             const attrs = bound_el.attributes;
             for (let a = 0; a < attrs.length; a++) {
@@ -610,7 +801,7 @@ class Data_Model_View_Model_Control extends Ctrl_Enh {
                     if (self[method_name] && typeof self[method_name] === 'function') {
                         (function (_evt, _method) {
                             bound_el.addEventListener(_evt, (e) => {
-                                self[_method]();
+                                self[_method](e);
                             });
                         })(event_name, method_name);
                     }

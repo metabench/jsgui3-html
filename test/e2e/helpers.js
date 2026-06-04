@@ -7,6 +7,7 @@
 const puppeteer = require('puppeteer');
 const { spawn } = require('child_process');
 const path = require('path');
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * Start a dev-examples server
@@ -14,43 +15,11 @@ const path = require('path');
  * @param {number} port - Port to run the server on
  * @returns {Promise<Object>} Server process and URL
  */
-async function start_server(example_name, port = 52000) {
+async function start_server(example_name, port = 52000, options = {}) {
     const example_path = path.join(__dirname, '../../dev-examples/binding', example_name);
-    
-    return new Promise((resolve, reject) => {
-        const server_process = spawn('node', ['server.js'], {
-            cwd: example_path,
-            env: { ...process.env, PORT: port },
-            shell: true
-        });
-        
-        let startup_timeout = setTimeout(() => {
-            server_process.kill();
-            reject(new Error(`Server failed to start within 10 seconds`));
-        }, 10000);
-        
-        server_process.stdout.on('data', (data) => {
-            const output = data.toString();
-            if (output.includes(`listening on port ${port}`) || 
-                output.includes('Server running') ||
-                output.includes('Server Started') ||
-                output.includes(`localhost:${port}`)) {
-                clearTimeout(startup_timeout);
-                resolve({
-                    process: server_process,
-                    url: `http://localhost:${port}`
-                });
-            }
-        });
-        
-        server_process.stderr.on('data', (data) => {
-            console.error(`Server error: ${data}`);
-        });
-        
-        server_process.on('error', (error) => {
-            clearTimeout(startup_timeout);
-            reject(error);
-        });
+    return start_server_from_path(example_path, port, {
+        startup_timeout_ms: 30000,
+        ...options
     });
 }
 
@@ -59,16 +28,16 @@ async function start_server(example_name, port = 52000) {
  * @param {string} example_path - Absolute path to example directory.
  * @param {number} port - Port to run the server on.
  * @param {Object} [options] - Optional settings.
- * @param {number} [options.startup_timeout_ms=10000] - Startup timeout in ms.
+ * @param {number} [options.startup_timeout_ms=30000] - Startup timeout in ms.
  * @returns {Promise<Object>} Server process and URL.
  */
 async function start_server_from_path(example_path, port = 52000, options = {}) {
-    const startup_timeout_ms = Number(options.startup_timeout_ms) || 10000;
+    const startup_timeout_ms = Number(options.startup_timeout_ms) || 30000;
     return new Promise((resolve, reject) => {
         const server_process = spawn('node', ['server.js'], {
             cwd: example_path,
-            env: { ...process.env, PORT: port },
-            shell: true
+            env: { ...process.env, PORT: String(port) },
+            shell: false
         });
 
         let startup_timeout = setTimeout(() => {
@@ -200,6 +169,7 @@ module.exports = {
     start_server_from_path,
     stop_server,
     launch_browser,
+    delay,
     get_text,
     click_element,
     type_text,

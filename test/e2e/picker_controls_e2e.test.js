@@ -15,16 +15,58 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
+const { spawn } = require('child_process');
 
 const BASE_URL = 'http://localhost:3602';
 const SCREENSHOT_DIR = path.join(__dirname, '..', '..', 'lab', 'screenshots');
+const SERVER_SCRIPT = path.join(__dirname, '..', '..', 'lab', 'picker_controls_demo_server.js');
 
-let browser, page;
+let browser, page, server_process;
 let passed = 0, failed = 0;
 const errors = [];
 
+async function start_server() {
+    return new Promise((resolve, reject) => {
+        server_process = spawn('node', [SERVER_SCRIPT], {
+            env: { ...process.env, PORT: '3602' },
+            stdio: ['pipe', 'pipe', 'pipe']
+        });
+
+        let started = false;
+        const timeout = setTimeout(() => {
+            if (!started) {
+                reject(new Error('Picker demo server start timeout'));
+            }
+        }, 90000);
+
+        server_process.stdout.on('data', data => {
+            const output = data.toString();
+            process.stdout.write('[server] ' + output);
+            if (!started && (
+                output.includes('Server running') ||
+                output.includes('localhost:3602') ||
+                output.includes('Picker Controls Demo')
+            )) {
+                started = true;
+                clearTimeout(timeout);
+                setTimeout(resolve, 1000);
+            }
+        });
+
+        server_process.stderr.on('data', data => {
+            process.stderr.write('[server:err] ' + data.toString());
+        });
+
+        server_process.on('error', err => {
+            clearTimeout(timeout);
+            reject(err);
+        });
+    });
+}
+
 async function setup() {
     fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+    await start_server();
 
     browser = await puppeteer.launch({
         headless: 'new',
@@ -54,6 +96,10 @@ async function setup() {
 
 async function teardown() {
     if (browser) await browser.close();
+    if (server_process) {
+        server_process.kill('SIGTERM');
+        server_process = null;
+    }
 }
 
 function assert(condition, msg) {
@@ -63,6 +109,7 @@ function assert(condition, msg) {
     } else {
         console.error(`  ❌ FAIL: ${msg}`);
         failed++;
+        throw new Error(msg);
     }
 }
 
@@ -778,6 +825,7 @@ async function test_final_screenshots() {
 // ═════════════════════════════════════════════════════
 // RUNNER
 // ═════════════════════════════════════════════════════
+if (require.main === module) {
 (async () => {
     try {
         await setup();
@@ -831,3 +879,4 @@ async function test_final_screenshots() {
         await teardown();
     }
 })();
+}

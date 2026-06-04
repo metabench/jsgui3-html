@@ -1,31 +1,39 @@
 {
-    "description": "Agent personas available for Antigravity to adopt from copilot-dl-news",
-    "source_repo": "c:\\Users\\james\\Documents\\repos\\copilot-dl-news",
+    "description": "Local jsgui3-html agent personas for full-stack framework and UI-specialized workflows",
+    "source_repo": ".",
     "index_path": ".github/agents/index.json",
     "agents": [
         {
-            "slug": "memory-agent",
-            "when": "Session continuity, knowledge retrieval, capturing user intent"
+            "slug": "jsgui3-full-stack-steward",
+            "when": "Full-stack jsgui3 coordination across server, client activation, controls, and validation"
         },
         {
-            "slug": "refactor-locksmith",
-            "when": "Surgical refactoring without breaking callers"
+            "slug": "ui-planning-architect",
+            "when": "UI planning, information architecture, composition strategy, and acceptance criteria"
         },
         {
-            "slug": "endurance-brain-agent",
-            "when": "Multi-step execution tasks, preventing suggest-then-stop"
+            "slug": "ui-implementation-engineer",
+            "when": "Implementing controls and UI flows with isomorphic composition and activation safety"
         },
         {
-            "slug": "design-skills-curator",
-            "when": "UI design, theming, WLILO styling, visual quality"
+            "slug": "ui-testing-specialist",
+            "when": "E2E and behavior tests for interactions, keyboard support, and ARIA contracts"
         },
         {
-            "slug": "prof-edge-case",
-            "when": "Edge case hunting, boundary testing, regression guards"
+            "slug": "rendering-auditor",
+            "when": "Rendering checks for SSR/client parity, hydration correctness, and visual fidelity"
         },
         {
-            "slug": "ux-cartographer",
-            "when": "UI flow mapping, E2E design, behaviour invariants"
+            "slug": "regression-guard",
+            "when": "Regression test design, baseline capture, and focused risk-based verification"
+        },
+        {
+            "slug": "mobile-developer",
+            "when": "Device-adaptive layout and responsive behavior across phone, tablet, and desktop"
+        },
+        {
+            "slug": "jsgui3-agi-research-brain",
+            "when": "Full-stack jsgui3 expertise with AGI research, framework improvement, and capability evolution"
         }
     ]
 }

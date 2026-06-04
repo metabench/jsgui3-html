@@ -37,6 +37,14 @@ class Inline_Validation_Message extends Control {
         }
     }
 
+    _get_icon_ctrl() {
+        return this.icon || this._icon_ctrl || (this._ctrl_fields && this._ctrl_fields.icon) || null;
+    }
+
+    _get_text_ctrl() {
+        return this.text || this._text_ctrl || (this._ctrl_fields && this._ctrl_fields.text) || null;
+    }
+
     /**
      * Compose the message structure with icon.
      * @private
@@ -51,6 +59,8 @@ class Inline_Validation_Message extends Control {
         });
         this._icon_ctrl.add_class('inline-validation-icon');
         this._icon_ctrl.dom.attributes['aria-hidden'] = 'true';
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.icon = this.icon = this._icon_ctrl;
         this.add(this._icon_ctrl);
 
         // Text container
@@ -59,6 +69,7 @@ class Inline_Validation_Message extends Control {
             tag_name: 'span'
         });
         this._text_ctrl.add_class('inline-validation-text');
+        this._ctrl_fields.text = this.text = this._text_ctrl;
         this.add(this._text_ctrl);
 
         // Set initial content
@@ -73,14 +84,28 @@ class Inline_Validation_Message extends Control {
      * @private
      */
     _update_icon() {
-        if (!this._icon_ctrl) return;
-        this._icon_ctrl.clear();
+        const icon_ctrl = this._get_icon_ctrl();
+        if (!icon_ctrl) return;
+        icon_ctrl.clear();
 
         if (this.show_icon && this.status && status_icons[this.status]) {
-            this._icon_ctrl.add(status_icons[this.status]);
-            this._icon_ctrl.show();
+            icon_ctrl.add(status_icons[this.status]);
+            icon_ctrl.show();
         } else {
-            this._icon_ctrl.hide();
+            icon_ctrl.hide();
+        }
+
+        if (this.dom && this.dom.el) {
+            const icon_el = this.dom.el.querySelector('.inline-validation-icon');
+            if (icon_el) {
+                if (this.show_icon && this.status && status_icons[this.status]) {
+                    icon_el.textContent = status_icons[this.status];
+                    icon_el.classList.remove('hidden');
+                } else {
+                    icon_el.textContent = '';
+                    icon_el.classList.add('hidden');
+                }
+            }
         }
     }
 
@@ -91,14 +116,20 @@ class Inline_Validation_Message extends Control {
      */
     set_message(message, status) {
         this.message = is_defined(message) ? String(message) : '';
+        const text_ctrl = this._get_text_ctrl();
 
-        if (this._text_ctrl) {
-            this._text_ctrl.clear();
+        if (text_ctrl) {
+            text_ctrl.clear();
             if (this.message) {
-                this._text_ctrl.add(this.message);
+                text_ctrl.add(this.message);
             }
-        } else {
-            this.recompose();
+        }
+
+        if (this.dom && this.dom.el) {
+            const text_el = this.dom.el.querySelector('.inline-validation-text');
+            if (text_el) {
+                text_el.textContent = this.message;
+            }
         }
 
         if (is_defined(status)) {

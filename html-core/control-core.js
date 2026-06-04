@@ -660,6 +660,13 @@ class Control_Core extends Base_Data_Object {
 	}
 	'render_content'() {
 		var content = this.content;
+		if (this.dom && typeof this.dom.innerHTML === 'string') {
+			const has_inner_html = this.dom.innerHTML.length > 0;
+			const has_content = content && typeof content.length === 'function' && content.length() > 0;
+			if (has_inner_html && !has_content) {
+				return this.dom.innerHTML;
+			}
+		}
 		if (tof(content) === 'string') {
 			return content;
 		} else {
