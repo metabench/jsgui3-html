@@ -154,7 +154,8 @@ const controls = {
     Toast: require('./organised/1-standard/5-ui/Toast'),
     Toggle_Switch: require('./organised/0-core/0-basic/1-compositional/Toggle_Switch'),
     Stepped_Slider: require('./organised/0-core/0-basic/1-compositional/Stepped_Slider'),
-    // May be moved to vector?
+    // DEPRECATED: use Date_Range_Picker instead. Kept registered for
+    // backwards compatibility; construction logs a deprecation warning.
     Timespan_Selector: require('./organised/0-core/0-basic/1-compositional/Timespan_Selector'),
     Title_Bar: require('./organised/1-standard/6-layout/Title_Bar'),
     Titled_Panel: require('./organised/1-standard/6-layout/Titled_Panel'),

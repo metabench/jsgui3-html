@@ -24,15 +24,26 @@ const Date_Picker = require('../0-native-compositional/Date_Picker');
 
 
 
-// text alias being title?
+/**
+ * @deprecated Timespan_Selector is deprecated and will be removed in a
+ * future release. Use Date_Range_Picker instead
+ * (controls/organised/0-core/0-basic/_complex_date-range-picker.js /
+ * controls registry key `Date_Range_Picker`): it provides single/dual
+ * calendar popups, optional time inputs, range highlighting, and the full
+ * isomorphic (SSR reattachment) contract — none of which this stub has.
+ */
+let warned_deprecated = false;
+
 class Timespan_Selector extends Control {
-    // fields... text, value, type?
-    //  type could specify some kind of validation, or also 'password'.
-    // single field?
-    //  and can have other fields possibly.
     constructor(spec) {
         spec = spec || {};
         spec.__type_name = spec.__type_name || 'timespan_selector';
+
+        if (!warned_deprecated) {
+            warned_deprecated = true;
+            console.warn('[jsgui3-html] DEPRECATED: Timespan_Selector is deprecated. ' +
+                'Use Date_Range_Picker (controls.Date_Range_Picker) instead.');
+        }
 
         super(spec);
 
