@@ -272,6 +272,13 @@ class Calendar extends Control {
                         this.raise('date-select', { iso: e.iso, events: this.events_on(e.iso) });
                     }
                 });
+
+                // Month paging (PageUp/PageDown in the grid) → caption + badges.
+                this._month_view.on('month-change', (e) => {
+                    const cap = this._caption && this._caption.dom && this._caption.dom.el;
+                    if (cap) cap.textContent = `${e.month_name} ${e.year}`;
+                    this._render_badges_dom();
+                });
             }
         }
     }

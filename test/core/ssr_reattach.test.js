@@ -175,6 +175,71 @@ describe('SSR reattachment (isomorphic contract e2e)', () => {
         });
     });
 
+    describe('Month_View month paging', () => {
+        it('PageDown/PageUp pages months after reattach; Shift pages years', function () {
+            if (!registry) this.skip();
+            const html = server_render(ctx => new registry.Month_View({
+                context: ctx, year: 2026, month: 0, selection_mode: 'single'
+            }));
+
+            const ctx = client_boot(html);
+            const mv = find_ctrl(ctx, 'month_view');
+            const el = mv.dom.el;
+            let changes = [];
+            mv.on('month-change', e => changes.push(e));
+
+            const page = (key, shiftKey) => el.dispatchEvent(new window.KeyboardEvent('keydown', {
+                key, shiftKey: !!shiftKey, bubbles: true, cancelable: true
+            }));
+
+            page('PageDown');                       // Jan → Feb 2026
+            expect(mv.month).to.equal(1);
+            expect(mv.year).to.equal(2026);
+            // The DOM grid actually re-rendered: Feb 2026 has 28 days.
+            const day_texts = [...el.querySelectorAll('.row:not(.header) .cell span')]
+                .map(s => s.textContent.trim()).filter(t => /^\d+$/.test(t)).map(Number);
+            expect(Math.max(...day_texts)).to.equal(28);
+            // Feb 1 2026 is a Sunday → column 7 in Monday-first layout: 6 leading blanks.
+            expect(el.getAttribute('data-month')).to.equal('1');
+
+            page('PageUp');                          // Feb → Jan
+            expect(mv.month).to.equal(0);
+
+            page('PageDown', true);                  // Jan 2026 → Jan 2027 (Shift)
+            expect(mv.year).to.equal(2027);
+            page('PageUp', true);                    // back to 2026
+            expect(mv.year).to.equal(2026);
+
+            expect(changes).to.have.lengthOf(4);
+            expect(changes[0].month_name).to.equal('February');
+
+            // Maps rebuilt: clicking day 21 selects 2026-01-21, not a stale month.
+            let picked = null;
+            mv.on('date-select', e => { picked = e; });
+            click(cell_by_day(el, 21));
+            expect(picked.iso).to.equal('2026-01-21');
+        });
+
+        it('keeps an absolute range highlighted when paging back to its month', function () {
+            if (!registry) this.skip();
+            const html = server_render(ctx => {
+                const mv = new registry.Month_View({
+                    context: ctx, year: 2026, month: 0, selection_mode: 'range'
+                });
+                mv.set_range('2026-01-12', '2026-01-15');
+                return mv;
+            });
+
+            const ctx = client_boot(html);
+            const mv = find_ctrl(ctx, 'month_view');
+            mv.page_month(1);   // Feb: range not visible
+            expect(mv.dom.el.querySelectorAll('.range-start, .range-end').length).to.equal(0);
+            mv.page_month(-1);  // back to Jan: range re-appears
+            expect(cell_by_day(mv.dom.el, 12).classList.contains('range-start')).to.equal(true);
+            expect(cell_by_day(mv.dom.el, 15).classList.contains('range-end')).to.equal(true);
+        });
+    });
+
     describe('Time_Picker config persistence', () => {
         it('recovers step_minutes/use_24h after reattach (keyboard steps correctly)', function () {
             if (!registry) this.skip();

@@ -286,6 +286,115 @@ class Month_View extends Grid {
         return dates; // [Mon, Tue, Wed, Thu, Fri, Sat, Sun]
     }
 
+    // ---- Month paging ----
+
+    // Show the previous/next month (delta in months, may cross years).
+    page_month(delta) {
+        const d = new Date(this.year, this.month + delta, 1);
+        this._page_to(d.getFullYear(), d.getMonth());
+    }
+
+    // Show the same month in the previous/next year.
+    page_year(delta) {
+        this._page_to(this.year + delta, this.month);
+    }
+
+    _page_to(year, month) {
+        // Remember the focused (or selected) day-of-month so the focus ring
+        // lands on the equivalent day in the new month, clamped to its length.
+        const prev_day = this._focused_iso
+            ? from_iso(this._focused_iso).getDate()
+            : null;
+
+        this.year = year;
+        this.month = month;
+
+        const rootEl = this.dom && (this.dom.el || this.el);
+        if (rootEl && typeof document !== 'undefined') {
+            this._refresh_dom_month(rootEl);
+        } else {
+            // Server/VDOM path (pre-activation).
+            this.refresh_month_view();
+        }
+
+        // Re-apply any selection that falls inside the newly displayed month
+        // (range/multi state is stored as absolute ISO dates).
+        this.update_range_highlight();
+
+        // Localized grid label follows the displayed month.
+        if (rootEl && rootEl.setAttribute) {
+            rootEl.setAttribute('aria-label', `${this.month_name()} ${this.year}`);
+        }
+
+        if (prev_day) {
+            const last_day = new Date(this.year, this.month + 1, 0).getDate();
+            const iso = to_iso(new Date(this.year, this.month, Math.min(prev_day, last_day)));
+            if (this._is_date_in_bounds(iso)) this._set_kb_focus(iso);
+        }
+
+        this.raise('month-change', {
+            year: this.year,
+            month: this.month,
+            month_name: this.month_name()
+        });
+    }
+
+    // Client-side twin of refresh_month_view: rewrites the live DOM grid for
+    // the current year/month. (refresh_month_view manipulates VDOM cells and
+    // its span.add() APPENDS, so it must not run against an activated grid.)
+    _refresh_dom_month(rootEl) {
+        const first = new Date(this.year, this.month, 1);
+        const days_in_month = new Date(this.year, this.month + 1, 0).getDate();
+        const start_col = this._js_day_to_column(first.getDay());
+        const today_iso = to_iso(new Date());
+
+        const rows = [...rootEl.querySelectorAll('.row:not(.header)')];
+        let day = 1;
+        rows.forEach((rowEl, row_idx) => {
+            const cells = [...rowEl.querySelectorAll('.cell')].filter(c => !c.classList.contains('week-number'));
+            cells.forEach((cellEl, col) => {
+                const span = cellEl.querySelector('span');
+                const in_month = !(row_idx === 0 && col < start_col) && day <= days_in_month;
+                cellEl.classList.remove('today', 'weekend', 'out-of-bounds', 'selected', 'kb-focus', 'has-events');
+                if (in_month) {
+                    const iso = to_iso(new Date(this.year, this.month, day));
+                    if (span) span.textContent = String(day);
+                    cellEl.style.backgroundColor = '';
+                    const wd = new Date(this.year, this.month, day).getDay();
+                    if (wd === 0 || wd === 6) cellEl.classList.add('weekend');
+                    if (iso === today_iso) cellEl.classList.add('today');
+                    if (!this._is_date_in_bounds(iso)) cellEl.classList.add('out-of-bounds');
+                    cellEl.setAttribute('aria-selected', 'false');
+                    day++;
+                } else {
+                    if (span) span.textContent = '';
+                    cellEl.style.backgroundColor = 'var(--mv-cell-disabled)';
+                    cellEl.removeAttribute('aria-selected');
+                }
+            });
+            // Week-number gutter: recompute from the first in-month cell.
+            const wn = rowEl.querySelector('.cell.week-number span');
+            if (wn) {
+                const first_cell = [...rowEl.querySelectorAll('.cell:not(.week-number) span')]
+                    .map(s => parseInt(s.textContent.trim(), 10)).find(n => !Number.isNaN(n));
+                wn.textContent = first_cell
+                    ? String(iso_week_number(new Date(this.year, this.month, first_cell)))
+                    : '';
+            }
+        });
+
+        // Cell↔date maps are stale for the new month.
+        this._cell_date_map = new Map();
+        this._date_cell_map = new Map();
+        this._build_date_maps();
+
+        // Keep the persisted month/year attributes truthful.
+        this.dom.attrs['data-month'] = String(this.month);
+        this.dom.attrs['data-year'] = String(this.year);
+        rootEl.setAttribute('data-month', String(this.month));
+        rootEl.setAttribute('data-year', String(this.year));
+    }
+
     // ---- Visual highlighting ----
 
     update_range_highlight() {
@@ -543,6 +652,13 @@ class Month_View extends Grid {
     }
 
     activate() {
+        // Guard against double activation: in a real page this method is
+        // reached both via the parent's content activation and the page-level
+        // bootstrap — without the guard every DOM listener wires twice (one
+        // PageDown then pages two months, one click runs the range state
+        // machine twice).
+        if (this._mv_activated) return;
+        this._mv_activated = true;
         super.activate();
 
         const rootEl = this.dom && (this.dom.el || this.el);
@@ -566,6 +682,25 @@ class Month_View extends Grid {
             if (domMode && domMode !== 'single') {
                 this.selection_mode = domMode;
             }
+        }
+
+        // Recover selection STATE from SSR-rendered classes: the classes are
+        // in the mounted HTML but the reattached instance's _range_start /
+        // _selected_dates are empty, so month paging (or any re-highlight)
+        // would silently drop the selection.
+        if (rootEl && !this._range_start) {
+            const start_el = rootEl.querySelector('.cell.range-start');
+            const end_el = rootEl.querySelector('.cell.range-end');
+            if (start_el) {
+                this._range_start = this._iso_from_el(start_el);
+                this._range_end = end_el ? this._iso_from_el(end_el) : this._range_start;
+            }
+        }
+        if (rootEl && this._selected_dates && this._selected_dates.size === 0) {
+            rootEl.querySelectorAll('.cell.multi-selected').forEach(sel_el => {
+                const iso = this._iso_from_el(sel_el);
+                if (iso) this._selected_dates.add(iso);
+            });
         }
 
         const mode = this.selection_mode;
@@ -742,7 +877,15 @@ class Month_View extends Grid {
                 on_activate: () => this._kb_activate_focused()
             });
             this.add_dom_event_listener('keydown', e => {
-                if (e.key === 'Escape') this._kb_escape();
+                if (e.key === 'Escape') {
+                    this._kb_escape();
+                } else if (e.key === 'PageUp') {
+                    e.preventDefault();
+                    if (e.shiftKey) this.page_year(-1); else this.page_month(-1);
+                } else if (e.key === 'PageDown') {
+                    e.preventDefault();
+                    if (e.shiftKey) this.page_year(1); else this.page_month(1);
+                }
             });
         }
     }
