@@ -61,6 +61,11 @@ class Time_Picker extends Control {
 
         this._cfg = cfg;
 
+        // Focusable root so keyboard time adjustment works (see activate()).
+        if (this.dom.attrs.tabindex === undefined) {
+            this.dom.attrs.tabindex = '0';
+        }
+
         // Parse initial time
         const parsed = Time_Picker.parse_time(initial_value);
         this._hours = parsed.hours;
@@ -188,6 +193,11 @@ class Time_Picker extends Control {
         const { context } = this;
         const cfg = this._cfg;
 
+        // ── ARIA: the picker is a labelled group; keyboard adjusts it like a spinbutton ──
+        const a11y = require('../../../../../control_mixins/a11y');
+        a11y.apply_role(this, 'group');
+        a11y.apply_label(this, `Time picker, ${this.display_value}`);
+
         // ── Digital Display ──
         this._display_wrap = new Control({ context, tag_name: 'div' });
         this._display_wrap.add_class('tp-display');
@@ -195,6 +205,7 @@ class Time_Picker extends Control {
         this._display_time = new Control({ context, tag_name: 'span' });
         this._display_time.add_class('tp-display-time');
         this._display_time.dom.attributes['data-jsgui-ctrl'] = '_display_time';
+        this._display_time.dom.attributes['aria-live'] = 'polite';
         this._display_time.add(this.display_value);
         this._display_wrap.add(this._display_time);
 
@@ -204,6 +215,7 @@ class Time_Picker extends Control {
             this._am_pm_btn.add_class('tp-ampm-btn');
             this._am_pm_btn.dom.attributes.type = 'button';
             this._am_pm_btn.dom.attributes['data-jsgui-ctrl'] = '_am_pm_btn';
+            this._am_pm_btn.dom.attributes['aria-label'] = 'Toggle AM/PM';
             this._am_pm_btn.add(this._hours < 12 ? 'AM' : 'PM');
             this._display_wrap.add(this._am_pm_btn);
         }
@@ -222,6 +234,8 @@ class Time_Picker extends Control {
             this._clock_canvas.dom.attributes.width = String(sz);
             this._clock_canvas.dom.attributes.height = String(sz);
             this._clock_canvas.dom.attributes['data-jsgui-ctrl'] = '_clock_canvas';
+            this._clock_canvas.dom.attributes.role = 'img';
+            this._clock_canvas.dom.attributes['aria-label'] = `Analog clock showing ${this.display_value}`;
             this._clock_wrap.add(this._clock_canvas);
 
             this.add(this._clock_wrap);
@@ -232,12 +246,13 @@ class Time_Picker extends Control {
             this._spinners_wrap = new Control({ context, tag_name: 'div' });
             this._spinners_wrap.add_class('tp-spinners');
 
-            const make_spinner = (label, cls, ctrl_prefix) => {
+            const make_spinner = (label, cls, ctrl_prefix, unit_name, max) => {
                 const col = new Control({ context, tag_name: 'div' });
                 col.add_class('tp-spinner-col');
 
                 const lbl = new Control({ context, tag_name: 'span' });
                 lbl.add_class('tp-spinner-label');
+                lbl.dom.attributes['aria-hidden'] = 'true';
                 lbl.add(label);
                 col.add(lbl);
 
@@ -246,6 +261,7 @@ class Time_Picker extends Control {
                 up.add_class(cls + '-up');
                 up.dom.attributes.type = 'button';
                 up.dom.attributes['data-jsgui-ctrl'] = ctrl_prefix + '_up';
+                up.dom.attributes['aria-label'] = `Increase ${unit_name}`;
                 up.add('▲');
                 col.add(up);
 
@@ -253,6 +269,7 @@ class Time_Picker extends Control {
                 val.add_class('tp-spinner-val');
                 val.add_class(cls + '-val');
                 val.dom.attributes['data-jsgui-ctrl'] = ctrl_prefix + '_val';
+                a11y.apply_spinbutton_aria(val, { label: unit_name, min: 0, max });
                 col.add(val);
 
                 const down = new Control({ context, tag_name: 'button' });
@@ -260,6 +277,7 @@ class Time_Picker extends Control {
                 down.add_class(cls + '-down');
                 down.dom.attributes.type = 'button';
                 down.dom.attributes['data-jsgui-ctrl'] = ctrl_prefix + '_down';
+                down.dom.attributes['aria-label'] = `Decrease ${unit_name}`;
                 down.add('▼');
                 col.add(down);
 
@@ -267,10 +285,10 @@ class Time_Picker extends Control {
                 return { up, down, val };
             };
 
-            this._spinner_h = make_spinner('H', 'tp-h', '_sh');
-            this._spinner_m = make_spinner('M', 'tp-m', '_sm');
+            this._spinner_h = make_spinner('H', 'tp-h', '_sh', 'hours', 23);
+            this._spinner_m = make_spinner('M', 'tp-m', '_sm', 'minutes', 59);
             if (cfg.show_seconds) {
-                this._spinner_s = make_spinner('S', 'tp-s', '_ss');
+                this._spinner_s = make_spinner('S', 'tp-s', '_ss', 'seconds', 59);
             }
 
             this.add(this._spinners_wrap);
@@ -408,6 +426,30 @@ class Time_Picker extends Control {
                     this.set_time(now.getHours(), now.getMinutes(), now.getSeconds());
                 } else {
                     this.set_value(time_str);
+                }
+            });
+        }
+
+        // ---- Keyboard time adjustment ----
+        // Up/Down: ± step minutes. Left/Right: ± 1 hour.
+        // PageUp/PageDown: ± 15 minutes. 'a'/'p': AM/PM (12h mode only).
+        const rootEl = this.dom && this.dom.el;
+        if (rootEl && typeof document !== 'undefined') {
+            if (!rootEl.getAttribute('tabindex')) rootEl.setAttribute('tabindex', '0');
+            this.add_dom_event_listener('keydown', (e) => {
+                switch (e.key) {
+                    case 'ArrowUp': e.preventDefault(); this.increment_minutes(); break;
+                    case 'ArrowDown': e.preventDefault(); this.increment_minutes(-this._cfg.step_minutes); break;
+                    case 'ArrowRight': e.preventDefault(); this.increment_hours(1); break;
+                    case 'ArrowLeft': e.preventDefault(); this.increment_hours(-1); break;
+                    case 'PageUp': e.preventDefault(); this.increment_minutes(15); break;
+                    case 'PageDown': e.preventDefault(); this.increment_minutes(-15); break;
+                    case 'a': case 'A':
+                        if (!this._cfg.use_24h && this.is_pm) { this.toggle_am_pm(); }
+                        break;
+                    case 'p': case 'P':
+                        if (!this._cfg.use_24h && this.is_am) { this.toggle_am_pm(); }
+                        break;
                 }
             });
         }

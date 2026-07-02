@@ -25,6 +25,38 @@ const iso_week_number = (date) => {
     return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
 };
 
+// Localized short weekday names, Monday-first (2024-01-01 is a Monday).
+// Returns null when Intl is unavailable or the locale is invalid — callers
+// fall back to the English ALL_DAYS constants.
+const get_locale_day_names = (locale) => {
+    try {
+        if (typeof Intl === 'undefined' || !Intl.DateTimeFormat) return null;
+        const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+        const names = [];
+        for (let i = 0; i < 7; i++) {
+            names.push(fmt.format(new Date(2024, 0, 1 + i)));
+        }
+        return names;
+    } catch (e) {
+        return null;
+    }
+};
+
+// Localized month names (long form), January-first. Same fallback contract.
+const get_locale_month_names = (locale) => {
+    try {
+        if (typeof Intl === 'undefined' || !Intl.DateTimeFormat) return null;
+        const fmt = new Intl.DateTimeFormat(locale, { month: 'long' });
+        const names = [];
+        for (let i = 0; i < 12; i++) {
+            names.push(fmt.format(new Date(2024, i, 1)));
+        }
+        return names;
+    } catch (e) {
+        return null;
+    }
+};
+
 class Month_View extends Grid {
     constructor(spec) {
         // Week numbers add an extra column
@@ -41,12 +73,36 @@ class Month_View extends Grid {
         if (!this.dom.attrs['data-selection-mode']) {
             this.dom.attrs['data-selection-mode'] = this.selection_mode;
         }
+        // Focusable root so arrow-key navigation works (see activate()).
+        if (this.dom.attrs.tabindex === undefined) {
+            this.dom.attrs.tabindex = '0';
+        }
+
+        // Persist the displayed month/year: mx_date defaults them to "now",
+        // so a reattached instance would otherwise map cells to the wrong
+        // month whenever the rendered month is not the current one.
+        if (this.dom.attrs['data-month'] === undefined) {
+            this.dom.attrs['data-month'] = String(this.month);
+        }
+        if (this.dom.attrs['data-year'] === undefined) {
+            this.dom.attrs['data-year'] = String(this.year);
+        }
+
+        // Keyboard focus state (ISO string of the cell the keyboard "cursor" is on)
+        this._focused_iso = null;
 
         // Phase 1 config
         this._first_day = spec.first_day_of_week || 0; // 0=Mon (default), 6=Sun
         this._show_week_numbers = show_week_nums;
         this._min_date = spec.min_date || null; // ISO string
         this._max_date = spec.max_date || null; // ISO string
+
+        // Localization (BCP 47 tag, e.g. 'fr', 'de-DE'). Day headers render via
+        // Intl.DateTimeFormat with English fallback. Persisted for hydration.
+        this._locale = spec.locale || null;
+        if (this._locale && !this.dom.attrs['data-locale']) {
+            this.dom.attrs['data-locale'] = this._locale;
+        }
 
         // Range state
         this._range_start = null;   // ISO string
@@ -86,9 +142,22 @@ class Month_View extends Grid {
         return true;
     }
 
-    // Get rotated day headers based on first_day_of_week
+    get locale() { return this._locale; }
+    set locale(v) { this._locale = v || null; }
+
+    // Get rotated day headers based on first_day_of_week (localized when locale is set)
     _get_day_headers() {
-        return [...ALL_DAYS.slice(this._first_day), ...ALL_DAYS.slice(0, this._first_day)];
+        const base = (this._locale && get_locale_day_names(this._locale)) || ALL_DAYS;
+        return [...base.slice(this._first_day), ...base.slice(0, this._first_day)];
+    }
+
+    // Localized month name for the displayed (or given) month index.
+    month_name(month_index) {
+        const idx = is_defined(month_index) ? month_index : this.month;
+        const names = (this._locale && get_locale_month_names(this._locale))
+            || ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+        return names[idx];
     }
 
     // Convert JS day (0=Sun) to grid column index
@@ -222,12 +291,30 @@ class Month_View extends Grid {
         const re = this._range_end;
         const mode = this.selection_mode;
 
+        const RANGE_CLASSES = ['range-start', 'range-end', 'range-between', 'range-hover', 'multi-selected'];
+
         // Use direct DOM access — after SSR hydration, the jsgui control tree
         // may not have cell.value, so we read day numbers from span text.
         const rootEl = this.dom && (this.dom.el || this.el);
-        if (!rootEl) return;
+        if (!rootEl) {
+            // Server-side render: apply classes to the VDOM cells via the date
+            // map so the initial HTML already shows the configured range.
+            this._cell_date_map.forEach((iso, cell) => {
+                RANGE_CLASSES.forEach(cls => cell.remove_class(cls));
+                let selected = false;
+                if (mode === 'range' && rs && re) {
+                    if (iso === rs) { cell.add_class('range-start'); selected = true; }
+                    if (iso === re) { cell.add_class('range-end'); selected = true; }
+                    if (iso > rs && iso < re) { cell.add_class('range-between'); selected = true; }
+                } else if ((mode === 'multi' || mode === 'week') && this._selected_dates.has(iso)) {
+                    cell.add_class('multi-selected');
+                    selected = true;
+                }
+                cell.dom.attributes['aria-selected'] = selected ? 'true' : 'false';
+            });
+            return;
+        }
 
-        const RANGE_CLASSES = ['range-start', 'range-end', 'range-between', 'range-hover', 'multi-selected'];
         const dataCells = rootEl.querySelectorAll('.row:not(.header) .cell:not(.week-number)');
 
 
@@ -242,22 +329,29 @@ class Month_View extends Grid {
             const day = parseInt(text, 10);
             const iso = to_iso(new Date(this.year, this.month, day));
 
+            let selected = false;
             if (mode === 'range' && rs && re) {
                 if (iso === rs && iso === re) {
                     cellEl.classList.add('range-start');
                     cellEl.classList.add('range-end');
+                    selected = true;
                 } else if (iso === rs) {
                     cellEl.classList.add('range-start');
+                    selected = true;
                 } else if (iso === re) {
                     cellEl.classList.add('range-end');
+                    selected = true;
                 } else if (iso > rs && iso < re) {
                     cellEl.classList.add('range-between');
+                    selected = true;
                 }
             } else if (mode === 'multi' || mode === 'week') {
                 if (this._selected_dates.has(iso)) {
                     cellEl.classList.add('multi-selected');
+                    selected = true;
                 }
             }
+            cellEl.setAttribute('aria-selected', selected ? 'true' : 'false');
         });
 
     }
@@ -297,6 +391,140 @@ class Month_View extends Grid {
         });
     }
 
+    // ---- Keyboard navigation ----
+
+    // Find the DOM cell element displaying the given ISO date (this month only).
+    _kb_el_for_iso(iso) {
+        const rootEl = this.dom && (this.dom.el || this.el);
+        if (!rootEl || !iso) return null;
+        const dataCells = rootEl.querySelectorAll('.row:not(.header) .cell:not(.week-number)');
+        for (const cellEl of dataCells) {
+            if (this._iso_from_el(cellEl) === iso) return cellEl;
+        }
+        return null;
+    }
+
+    // First / last in-bounds ISO date of the displayed month.
+    _month_bound_iso(which) {
+        const last_day = new Date(this.year, this.month + 1, 0).getDate();
+        for (let i = 0; i < last_day; i++) {
+            const day = which === 'first' ? i + 1 : last_day - i;
+            const iso = to_iso(new Date(this.year, this.month, day));
+            if (this._is_date_in_bounds(iso)) return iso;
+        }
+        return null;
+    }
+
+    // Move the keyboard focus ring onto the given ISO date.
+    _set_kb_focus(iso) {
+        const rootEl = this.dom && (this.dom.el || this.el);
+        if (!rootEl || !iso) return;
+        rootEl.querySelectorAll('.cell.kb-focus').forEach(el => el.classList.remove('kb-focus'));
+        const cellEl = this._kb_el_for_iso(iso);
+        if (cellEl) {
+            cellEl.classList.add('kb-focus');
+            this._focused_iso = iso;
+            this.raise('focus-date', { date: iso });
+        }
+    }
+
+    // Move focus by a day delta, staying inside the displayed month and min/max bounds.
+    _move_kb_focus(delta_days) {
+        let base = this._focused_iso;
+        if (!base) {
+            // Sensible starting point: current selection, today (if displayed), or first in-bounds day.
+            base = this._range_start
+                || (this._selected_dates.size ? this.selected_dates[0] : null)
+                || (from_iso(TODAY_ISO).getMonth() === this.month && from_iso(TODAY_ISO).getFullYear() === this.year ? TODAY_ISO : null)
+                || this._month_bound_iso('first');
+            if (base) this._set_kb_focus(base);
+            return;
+        }
+        const d = from_iso(base);
+        d.setDate(d.getDate() + delta_days);
+        // Clamp: keyboard focus stays within the displayed month (month paging is a separate concern).
+        if (d.getMonth() !== this.month || d.getFullYear() !== this.year) return;
+        const next = to_iso(d);
+        if (!this._is_date_in_bounds(next)) return;
+        this._set_kb_focus(next);
+    }
+
+    // Canonical single-mode selection: used by mouse clicks (post-reattach)
+    // and keyboard activation. Applies the .selected class directly to the
+    // DOM (the jsgui selectable-mixin path does not survive reattachment).
+    _select_single(iso) {
+        if (!iso || !this._is_date_in_bounds(iso)) return;
+        const rootEl = this.dom && (this.dom.el || this.el);
+        if (rootEl) {
+            rootEl.querySelectorAll('.cell.selected').forEach(el => el.classList.remove('selected'));
+            const cellEl = this._kb_el_for_iso(iso);
+            if (cellEl) cellEl.classList.add('selected');
+        }
+        this.day = from_iso(iso).getDate();
+        this.raise('date-select', { iso, date: iso });
+    }
+
+    // Enter/Space on the focused date — same semantics as a mouse press in each mode.
+    _kb_activate_focused() {
+        const iso = this._focused_iso;
+        if (!iso || !this._is_date_in_bounds(iso)) return;
+        const mode = this.selection_mode;
+
+        if (mode === 'single') {
+            this._select_single(iso);
+        } else if (mode === 'range') {
+            if (this._range_click_state === 0) {
+                this._range_start = iso;
+                this._range_end = iso;
+                this._anchor_date = iso;
+                this._range_click_state = 1;
+                this.update_range_highlight();
+                this._set_kb_focus(iso); // update_range_highlight cleared the focus class
+                this.raise('range-start-pick', { date: iso });
+            } else {
+                this.set_range(this._range_start, iso);
+                this._range_click_state = 0;
+                this._set_kb_focus(iso);
+            }
+        } else if (mode === 'multi') {
+            if (this._selected_dates.has(iso)) {
+                this._selected_dates.delete(iso);
+            } else {
+                this._selected_dates.add(iso);
+            }
+            this._anchor_date = iso;
+            this.update_range_highlight();
+            this._set_kb_focus(iso);
+            this.raise('selection-change', { dates: this.selected_dates });
+        } else if (mode === 'week') {
+            const week_dates = this._get_week_dates(iso);
+            this._selected_dates.clear();
+            week_dates.forEach(wd => this._selected_dates.add(wd));
+            this._anchor_date = iso;
+            this.update_range_highlight();
+            this._set_kb_focus(iso);
+            this.raise('week-select', {
+                week_number: iso_week_number(from_iso(iso)),
+                start: week_dates[0],
+                end: week_dates[6],
+                dates: [...this._selected_dates].sort()
+            });
+        }
+    }
+
+    // Escape — cancel a half-picked range and drop the focus ring.
+    _kb_escape() {
+        if (this.selection_mode === 'range' && this._range_click_state === 1) {
+            this._range_click_state = 0;
+            this._range_start = null;
+            this._range_end = null;
+            this.update_range_highlight();
+        }
+        const rootEl = this.dom && (this.dom.el || this.el);
+        if (rootEl) rootEl.querySelectorAll('.cell.kb-focus').forEach(el => el.classList.remove('kb-focus'));
+        this._focused_iso = null;
+    }
+
     // ---- Activation (wiring up events) ----
 
     /**
@@ -315,12 +543,22 @@ class Month_View extends Grid {
     activate() {
         super.activate();
 
+        const rootEl = this.dom && (this.dom.el || this.el);
+
+        // Restore displayed month/year BEFORE rebuilding the date maps —
+        // mx_date defaults them to "now", which is wrong for any other month.
+        if (rootEl && rootEl.getAttribute) {
+            const dom_month = rootEl.getAttribute('data-month');
+            const dom_year = rootEl.getAttribute('data-year');
+            if (dom_month !== null && !Number.isNaN(Number(dom_month))) this.month = Number(dom_month);
+            if (dom_year !== null && !Number.isNaN(Number(dom_year))) this.year = Number(dom_year);
+        }
+
         // Rebuild cell→date maps (they were built server-side in compose_month_view
         // but Maps don't survive SSR hydration)
         this._build_date_maps();
 
         // Restore selection_mode from DOM attribute if needed (SSR hydration)
-        const rootEl = this.dom && (this.dom.el || this.el);
         if (rootEl && this.selection_mode === 'single') {
             const domMode = rootEl.getAttribute('data-selection-mode');
             if (domMode && domMode !== 'single') {
@@ -330,7 +568,12 @@ class Month_View extends Grid {
 
         const mode = this.selection_mode;
 
-        // Single mode: use jsgui control tree for the change event
+        // Single mode.
+        // 1. jsgui control-tree path: programmatic cell.selected changes keep
+        //    this.day in sync (same-process composition).
+        // 2. Direct DOM click path: the selectable-mixin chain does NOT
+        //    survive SSR reattachment, so clicks are wired explicitly —
+        //    this is the path that raises date-select for composites.
         if (mode === 'single') {
             let cells = this.$('grid_cell');
             each(cells, cell => {
@@ -340,6 +583,16 @@ class Month_View extends Grid {
                     }
                 });
             });
+
+            if (rootEl) {
+                const dataCells = rootEl.querySelectorAll('.row:not(.header) .cell:not(.week-number)');
+                dataCells.forEach(cellEl => {
+                    cellEl.addEventListener('click', () => {
+                        const iso = this._iso_from_el(cellEl);
+                        if (iso) this._select_single(iso);
+                    });
+                });
+            }
         }
 
         // For range/multi/week modes, bind directly to real DOM elements.
@@ -468,6 +721,28 @@ class Month_View extends Grid {
                 }
             });
         }
+
+        // ---- Keyboard navigation (all modes) ----
+        // Arrow keys move a focus ring by day/week; Enter/Space acts like a
+        // mouse press in the current mode; Home/End jump to month bounds;
+        // Escape cancels a half-picked range.
+        if (rootEl && typeof document !== 'undefined') {
+            if (!rootEl.getAttribute('tabindex')) rootEl.setAttribute('tabindex', '0');
+            const keyboard_navigation = require('../../../../../control_mixins/keyboard_navigation');
+            keyboard_navigation(this, {
+                orientation: 'both',
+                on_left: () => this._move_kb_focus(-1),
+                on_right: () => this._move_kb_focus(1),
+                on_up: () => this._move_kb_focus(-7),
+                on_down: () => this._move_kb_focus(7),
+                on_home: () => { const iso = this._month_bound_iso('first'); if (iso) this._set_kb_focus(iso); },
+                on_end: () => { const iso = this._month_bound_iso('last'); if (iso) this._set_kb_focus(iso); },
+                on_activate: () => this._kb_activate_focused()
+            });
+            this.add_dom_event_listener('keydown', e => {
+                if (e.key === 'Escape') this._kb_escape();
+            });
+        }
     }
 
     // ---- Compose & Refresh ----
@@ -534,6 +809,21 @@ class Month_View extends Grid {
         // Fill week numbers in the gutter
         if (this._show_week_numbers) { this._fill_week_numbers(); }
         this._build_date_maps();
+        this._apply_grid_aria();
+    }
+
+    // ARIA grid semantics: root=grid, rows=row, headers=columnheader, cells=gridcell.
+    _apply_grid_aria() {
+        const a11y = require('../../../../../control_mixins/a11y');
+        a11y.apply_grid_aria(this, { label: `${this.month_name()} ${this.year}` });
+        each(this._arr_rows, (row, y) => {
+            row.dom.attributes.role = row.dom.attributes.role || 'row';
+            each(row.content._arr, cell => {
+                if (!cell || !cell.dom) return;
+                const attrs = cell.dom.attributes;
+                if (!attrs.role) attrs.role = (y === 0) ? 'columnheader' : 'gridcell';
+            });
+        });
     }
 
     refresh_month_view() {
@@ -574,6 +864,15 @@ class Month_View extends Grid {
         });
         if (this._show_week_numbers) { this._fill_week_numbers(); }
         this._build_date_maps();
+
+        // Keep the persisted month/year attributes truthful after navigation.
+        this.dom.attrs['data-month'] = String(this.month);
+        this.dom.attrs['data-year'] = String(this.year);
+        const el = this.dom && this.dom.el;
+        if (el && el.setAttribute) {
+            el.setAttribute('data-month', String(this.month));
+            el.setAttribute('data-year', String(this.year));
+        }
     }
 
     // Fill the week-number gutter cells with ISO week numbers
@@ -696,7 +995,20 @@ Month_View.css = `
 .month-view[data-selection-mode="week"] .row:not(.header):hover {
     background-color: var(--mv-accent-light);
 }
+/* --- Keyboard navigation --- */
+.month-view:focus {
+    outline: 2px solid var(--mv-accent);
+    outline-offset: 2px;
+}
+.month-view .cell.kb-focus {
+    box-shadow: inset 0 0 0 2px var(--mv-accent), inset 0 0 0 4px var(--mv-bg);
+    border-radius: 4px;
+}
 `;
+
+// Locale helpers exposed for composites (date pickers, captions, etc.)
+Month_View.get_locale_day_names = get_locale_day_names;
+Month_View.get_locale_month_names = get_locale_month_names;
 
 Month_View.Tiled = Tile_Slider.wrap(Month_View, spec => {
     spec = clone(spec);
