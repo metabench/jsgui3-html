@@ -175,6 +175,51 @@ describe('SSR reattachment (isomorphic contract e2e)', () => {
         });
     });
 
+    describe('Time_Picker config persistence', () => {
+        it('recovers step_minutes/use_24h after reattach (keyboard steps correctly)', function () {
+            if (!registry) this.skip();
+            const html = server_render(ctx => new registry.Time_Picker({
+                context: ctx, value: '14:30', step_minutes: 5, use_24h: false,
+                min_time: '09:00', max_time: '18:00', show_clock: false
+            }));
+
+            const ctx = client_boot(html);
+            const tp = find_ctrl(ctx, 'time_picker');
+            expect(tp, 'reconstructed Time_Picker').to.exist;
+
+            // Config recovered from data-cfg (defaults are 1 / true / null).
+            expect(tp._cfg.step_minutes).to.equal(5);
+            expect(tp._cfg.use_24h).to.equal(false);
+            expect(tp._cfg.min_time).to.equal('09:00');
+            expect(tp._cfg.max_time).to.equal('18:00');
+
+            // The key behavioral assertion: ArrowUp steps by the configured 5.
+            expect(tp.minutes).to.equal(30);
+            tp.dom.el.dispatchEvent(new window.KeyboardEvent('keydown', {
+                key: 'ArrowUp', bubbles: true, cancelable: true
+            }));
+            expect(tp.minutes, 'ArrowUp advanced by step_minutes').to.equal(35);
+        });
+    });
+
+    describe('DateTime_Picker config persistence', () => {
+        it('recovers use_24h/step_minutes via data-cfg after reattach', function () {
+            if (!registry) this.skip();
+            const html = server_render(ctx => new registry.Datetime_Picker({
+                context: ctx, value: '2026-07-02T14:30', use_24h: false,
+                step_minutes: 15, show_clock: false
+            }));
+
+            const ctx = client_boot(html);
+            const dtp = find_ctrl(ctx, 'datetime_picker');
+            expect(dtp, 'reconstructed DateTime_Picker').to.exist;
+            expect(dtp._cfg.use_24h).to.equal(false);
+            expect(dtp._cfg.step_minutes).to.equal(15);
+            // data-layout stays authoritative for layout.
+            expect(dtp._cfg.layout).to.equal('stacked');
+        });
+    });
+
     describe('Date_Range_Picker (dual)', () => {
         it('recovers mode/dates, shows input values, and opens the popup after reattach', function () {
             if (!registry) this.skip();

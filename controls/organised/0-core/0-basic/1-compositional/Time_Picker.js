@@ -61,6 +61,23 @@ class Time_Picker extends Control {
 
         this._cfg = cfg;
 
+        // Persist the behavior-relevant config subset for SSR reattachment:
+        // the client constructor receives no spec options, so without this a
+        // reattached picker falls back to defaults (e.g. ArrowUp stepping by
+        // 1 minute when the server rendered step_minutes: 5).
+        if (this.dom.attrs['data-cfg'] === undefined) {
+            this.dom.attrs['data-cfg'] = encodeURIComponent(JSON.stringify({
+                use_24h: cfg.use_24h,
+                show_seconds: cfg.show_seconds,
+                step_minutes: cfg.step_minutes,
+                min_time: cfg.min_time,
+                max_time: cfg.max_time,
+                clock_size: cfg.clock_size,
+                clock_style: cfg.clock_style,
+                show_second_hand: cfg.show_second_hand
+            }));
+        }
+
         // Focusable root so keyboard time adjustment works (see activate()).
         if (this.dom.attrs.tabindex === undefined) {
             this.dom.attrs.tabindex = '0';
@@ -354,6 +371,19 @@ class Time_Picker extends Control {
         if (this._activated) return;
         super.activate();
         this._activated = true;
+
+        // Recover persisted config before any wiring: handlers read
+        // this._cfg live, so restoring here fixes step/format/bounds for
+        // every interaction path after SSR reattachment.
+        const root_el = this.dom && (this.dom.el || this.el);
+        if (root_el && root_el.getAttribute) {
+            const raw_cfg = root_el.getAttribute('data-cfg');
+            if (raw_cfg) {
+                try {
+                    Object.assign(this._cfg, JSON.parse(decodeURIComponent(raw_cfg)));
+                } catch (e) { /* keep constructor defaults */ }
+            }
+        }
 
         // Auto-wire component DOM/VDOM tagged with data-jsgui-ctrl
         this._wire_jsgui_ctrls();

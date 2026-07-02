@@ -61,6 +61,18 @@ class DateTime_Picker extends Control {
             this.dom.attrs['data-layout'] = cfg.layout;
         }
 
+        // Persist the rest of the behavior-relevant config for the same
+        // reason (header formatting, set_time stepping, date bounds).
+        if (this.dom.attrs['data-cfg'] === undefined) {
+            this.dom.attrs['data-cfg'] = encodeURIComponent(JSON.stringify({
+                use_24h: cfg.use_24h,
+                show_seconds: cfg.show_seconds,
+                step_minutes: cfg.step_minutes,
+                min_date: cfg.min_date,
+                max_date: cfg.max_date
+            }));
+        }
+
         if (initial_value) {
             const parsed = DateTime_Picker.parse_datetime(initial_value);
             this._date = parsed.date;
@@ -245,13 +257,22 @@ class DateTime_Picker extends Control {
 
         this._wire_jsgui_ctrls();
 
-        // Recover layout persisted at compose time (spec does not survive
-        // SSR reattachment — without this, tabbed wiring never runs client-side).
+        // Recover config persisted at compose time (spec does not survive
+        // SSR reattachment — without this, tabbed wiring never runs
+        // client-side and header/stepping options collapse to defaults).
         const rootEl = this.dom && this.dom.el;
         if (rootEl && rootEl.getAttribute) {
             const dom_layout = rootEl.getAttribute('data-layout');
             if (dom_layout && dom_layout !== this._cfg.layout) {
                 this._cfg.layout = dom_layout;
+            }
+            const raw_cfg = rootEl.getAttribute('data-cfg');
+            if (raw_cfg) {
+                try {
+                    const recovered = JSON.parse(decodeURIComponent(raw_cfg));
+                    delete recovered.layout; // data-layout is authoritative
+                    Object.assign(this._cfg, recovered);
+                } catch (e) { /* keep constructor defaults */ }
             }
         }
 
