@@ -287,8 +287,11 @@ describe('Date_Value_Editor', function () {
 
     it('should render popup as hidden', () => {
         const ed = new Date_Value_Editor({ context });
+        // Hidden via the Popup primitive's `hidden` class (CSS display:none),
+        // no longer via an inline style.
+        expect(ed._popup.has_class('hidden')).to.equal(true);
         const html = ed.all_html_render();
-        expect(html).to.include('display:none');
+        expect(html).to.match(/jsgui-popup[^"]*hidden|hidden[^"]*jsgui-popup/);
     });
 
     it('should show "(no date)" when no value', () => {

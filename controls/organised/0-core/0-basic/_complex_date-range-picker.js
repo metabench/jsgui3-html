@@ -1,18 +1,53 @@
 const jsgui = require('../../../../html-core/html-core');
-const { Control, Control_Data, Control_View, Data_Object } = jsgui;
-const { field } = require('obext');
+const { Control } = jsgui;
 const Month_View = require('./1-compositional/Month_View');
-const { apply_full_input_api } = require('../../../../control_mixins/input_api');
+const Popup = require('../1-advanced/Popup');
 
-// --- Icons ---
-const ICON_CALENDAR = `
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-  <line x1="16" y1="2" x2="16" y2="6"></line>
-  <line x1="8" y1="2" x2="8" y2="6"></line>
-  <line x1="3" y1="10" x2="21" y2="10"></line>
-</svg>`;
+// Build the calendar icon from jsgui svg controls (raw SVG strings passed to
+// .add() are text-escaped by design, so the icon must be composed).
+const make_calendar_icon = (context) => {
+    const svg = new jsgui.controls.svg({ context });
+    const a = svg.dom.attributes;
+    a.width = '16'; a.height = '16'; a.viewBox = '0 0 24 24';
+    a.fill = 'none'; a.stroke = 'currentColor';
+    a['stroke-width'] = '2'; a['stroke-linecap'] = 'round'; a['stroke-linejoin'] = 'round';
 
+    const body = new jsgui.controls.rect({ context });
+    Object.assign(body.dom.attributes, { x: '3', y: '4', width: '18', height: '18', rx: '2', ry: '2' });
+    svg.add(body);
+
+    [['16', '2', '16', '6'], ['8', '2', '8', '6'], ['3', '10', '21', '10']].forEach(([x1, y1, x2, y2]) => {
+        const line = new jsgui.controls.line({ context });
+        Object.assign(line.dom.attributes, { x1, y1, x2, y2 });
+        svg.add(line);
+    });
+    return svg;
+};
+
+const parse_iso_month = (iso) => {
+    if (!iso) return null;
+    const [y, m] = iso.split('-').map(Number);
+    if (!y || !m) return null;
+    return { year: y, month: m - 1 };
+};
+
+/**
+ * Date_Range_Picker — start/end date selection with a calendar popup.
+ *
+ * @param {Object}  spec
+ * @param {string}  [spec.mode='single']   'single' (one calendar) | 'dual' (two, start month + next)
+ * @param {string}  [spec.start]           Initial start date (ISO YYYY-MM-DD)
+ * @param {string}  [spec.end]             Initial end date (ISO YYYY-MM-DD)
+ * @param {boolean} [spec.use_time=false]  Show HH:MM time inputs next to the dates
+ * @param {string}  [spec.start_time='00:00']
+ * @param {string}  [spec.end_time='23:59']
+ *
+ * Events: 'change' {start, end}, 'time-change' {start, end}
+ *
+ * Isomorphic contract: children are tagged with data-jsgui-ctrl (refs restored
+ * by _wire_jsgui_ctrls) and behavior-affecting config is persisted to data-*
+ * attributes and recovered in activate().
+ */
 class Date_Range_Picker extends Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'date_range_picker';
@@ -35,10 +70,16 @@ class Date_Range_Picker extends Control {
         this.start_time = spec.start_time || '00:00';
         this.end_time = spec.end_time || '23:59';
 
-        // Internal state
-        this._popup_open = false;
+        // Persist config for SSR reattachment (V7).
+        const attrs = this.dom.attributes;
+        if (!attrs['data-mode']) attrs['data-mode'] = this.mode;
+        if (this.use_time && !attrs['data-use-time']) attrs['data-use-time'] = 'true';
+        if (this.start_date && !attrs['data-start']) attrs['data-start'] = this.start_date;
+        if (this.end_date && !attrs['data-end']) attrs['data-end'] = this.end_date;
 
-        this.compose_date_range_picker();
+        if (!spec.el) {
+            this.compose_date_range_picker();
+        }
     }
 
     get start_date() { return this._start_date; }
@@ -52,61 +93,59 @@ class Date_Range_Picker extends Control {
         // --- 1. Inputs Row ---
         const inputs_row = new Control({ context });
         inputs_row.add_class('inputs-row');
+        inputs_row.dom.attributes['data-jsgui-ctrl'] = 'inputs_row';
         this.add(inputs_row);
+        this.inputs_row = inputs_row;
 
-        // Start Input Group
-        const start_grp = new Control({ context });
-        start_grp.add_class('input-group start');
-        inputs_row.add(start_grp);
+        const make_input_group = (which, placeholder, date_value, time_value) => {
+            const grp = new Control({ context });
+            grp.add_class('input-group');
+            grp.add_class(which);
+            inputs_row.add(grp);
 
-        const start_icon = new Control({ context, tag_name: 'span' });
-        start_icon.add_class('icon');
-        // start_icon.html = ICON_CALENDAR; // .html assignment might be failing
-        start_icon.add(ICON_CALENDAR); // SVG is just a string, add() handles it
-        start_grp.add(start_icon);
+            const icon = new Control({ context, tag_name: 'span' });
+            icon.add_class('icon');
+            icon.add(make_calendar_icon(context));
+            grp.add(icon);
 
-        this.input_start = new Control({ context, tag_name: 'input' });
-        this.input_start.dom.attrs = { type: 'text', placeholder: 'Start Date', readonly: 'readonly' }; // Readonly for now to force picker use
-        start_grp.add(this.input_start);
+            const input = new Control({ context, tag_name: 'input' });
+            const ia = input.dom.attributes;
+            ia.type = 'text';
+            ia.placeholder = placeholder;
+            ia.readonly = 'readonly';
+            ia['aria-label'] = placeholder;
+            ia['aria-haspopup'] = 'dialog';
+            if (date_value) ia.value = date_value; // SSR shows the value (V2)
+            ia['data-jsgui-ctrl'] = `input_${which}`;
+            grp.add(input);
+            this[`input_${which}`] = input;
 
-        if (this.use_time) {
-            this.input_start_time = new Control({ context, tag_name: 'input' });
-            this.input_start_time.dom.attrs = { type: 'time', value: this.start_time };
-            this.input_start_time.add_class('time-input');
-            start_grp.add(this.input_start_time);
-        }
+            if (this.use_time) {
+                const time_input = new Control({ context, tag_name: 'input' });
+                const ta = time_input.dom.attributes;
+                ta.type = 'time';
+                ta.value = time_value;
+                ta['data-jsgui-ctrl'] = `input_${which}_time`;
+                time_input.add_class('time-input');
+                grp.add(time_input);
+                this[`input_${which}_time`] = time_input;
+            }
+            return grp;
+        };
 
-        // Separator
+        make_input_group('start', 'Start Date', this.start_date, this.start_time);
+
         const sep = new Control({ context, tag_name: 'span' });
         sep.add_class('separator');
         sep.add('—');
         inputs_row.add(sep);
 
-        // End Input Group
-        const end_grp = new Control({ context });
-        end_grp.add_class('input-group end');
-        inputs_row.add(end_grp);
+        make_input_group('end', 'End Date', this.end_date, this.end_time);
 
-        const end_icon = new Control({ context, tag_name: 'span' });
-        end_icon.add_class('icon');
-        // end_icon.html = ICON_CALENDAR;
-        end_icon.add(ICON_CALENDAR);
-        end_grp.add(end_icon);
-
-        this.input_end = new Control({ context, tag_name: 'input' });
-        this.input_end.dom.attrs = { type: 'text', placeholder: 'End Date', readonly: 'readonly' };
-        end_grp.add(this.input_end);
-
-        if (this.use_time) {
-            this.input_end_time = new Control({ context, tag_name: 'input' });
-            this.input_end_time.dom.attrs = { type: 'time', value: this.end_time };
-            this.input_end_time.add_class('time-input');
-            end_grp.add(this.input_end_time);
-        }
-
-        // --- 2. Popup Container ---
-        this.popup = new Control({ context });
-        this.popup.add_class('picker-popup hidden');
+        // --- 2. Popup (reusable primitive) ---
+        this.popup = new Popup({ context, position: 'bottom', offset: { x: 0, y: 8 } });
+        this.popup.add_class('picker-popup');
+        this.popup.dom.attributes['data-jsgui-ctrl'] = 'popup';
         this.add(this.popup);
 
         // --- 3. Calendars ---
@@ -114,178 +153,156 @@ class Date_Range_Picker extends Control {
         calendars_row.add_class('calendars-row');
         this.popup.add(calendars_row);
 
-        if (this.mode === 'single') {
-            this.mv_start = new Month_View({
-                context,
-                selection_mode: 'range',
-                size: [300, 240]
-            });
-            calendars_row.add(this.mv_start);
-        } else {
-            // Dual mode
-            this.mv_start = new Month_View({
-                context,
-                selection_mode: 'range',
-                size: [300, 240]
-            });
-            this.mv_start.add_class('left-view');
-            calendars_row.add(this.mv_start);
+        // Initial months come from the configured range, not "now" (V3).
+        const start_m = parse_iso_month(this.start_date) || (() => {
+            const now = new Date();
+            return { year: now.getFullYear(), month: now.getMonth() };
+        })();
 
-            this.mv_end = new Month_View({
-                context,
-                selection_mode: 'range',
-                size: [300, 240]
-            });
+        const mv_spec = (extra) => Object.assign({
+            context, selection_mode: 'range', size: [300, 240]
+        }, extra);
+
+        this.mv_start = new Month_View(mv_spec({ month: start_m.month, year: start_m.year }));
+        this.mv_start.dom.attributes['data-jsgui-ctrl'] = 'mv_start';
+        if (this.mode === 'dual') this.mv_start.add_class('left-view');
+        calendars_row.add(this.mv_start);
+
+        if (this.mode === 'dual') {
+            // Right view: the end date's month if it differs, else start month + 1.
+            const end_m = parse_iso_month(this.end_date);
+            let right = { year: start_m.year, month: start_m.month + 1 };
+            if (right.month > 11) { right.month = 0; right.year++; }
+            if (end_m && (end_m.year !== start_m.year || end_m.month !== start_m.month)) {
+                right = end_m;
+            }
+            this.mv_end = new Month_View(mv_spec({ month: right.month, year: right.year }));
+            this.mv_end.dom.attributes['data-jsgui-ctrl'] = 'mv_end';
             this.mv_end.add_class('right-view');
-
-            // Set initial months
-            let now = new Date();
-            this.mv_start.month = now.getMonth();
-            this.mv_start.year = now.getFullYear();
-
-            // Next month for right view
-            let next_m = now.getMonth() + 1;
-            let next_y = now.getFullYear();
-            if (next_m > 11) { next_m = 0; next_y++; }
-            this.mv_end.month = next_m;
-            this.mv_end.year = next_y;
-
             calendars_row.add(this.mv_end);
         }
 
         // --- Init State (sync initial values to calendar views) ---
         if (this.start_date || this.end_date) {
-            if (this.mv_start) {
-                this.mv_start.range_start = this.start_date;
-                this.mv_start.range_end = this.end_date;
-                this.mv_start.update_range_highlight();
-            }
-            if (this.mv_end) {
-                this.mv_end.range_start = this.start_date;
-                this.mv_end.range_end = this.end_date;
-                this.mv_end.update_range_highlight();
-            }
+            [this.mv_start, this.mv_end].forEach(mv => {
+                if (!mv) return;
+                mv.range_start = this.start_date;
+                mv.range_end = this.end_date;
+                mv.update_range_highlight();
+            });
         }
     }
 
+    // Recover configuration persisted at compose time (SSR reattachment, V7).
+    _recover_config_from_dom() {
+        const el = this.dom && this.dom.el;
+        if (!el || !el.getAttribute) return;
+        const mode = el.getAttribute('data-mode');
+        if (mode) this.mode = mode;
+        if (el.getAttribute('data-use-time') === 'true') this.use_time = true;
+        const start = el.getAttribute('data-start');
+        const end = el.getAttribute('data-end');
+        if (start && !this.start_date) this.start_date = start;
+        if (end && !this.end_date) this.end_date = end;
+    }
+
     activate() {
-        if (this._active) return;
-        super.activate();
-        this._active = true;
+        if (!this.__active) {
+            super.activate();
 
-        // --- Event Handlers ---
+            this._recover_config_from_dom();
+            this._wire_jsgui_ctrls();
 
-        const toggle_popup = (e) => {
-            e.stopPropagation(); // prevent document listener from closing immediately
-            if (this.popup.has_class('hidden')) {
-                this.popup.remove_class('hidden');
-                this.add_class('open');
-                this._popup_open = true;
-            } else {
-                this.close_popup();
-            }
-        };
+            const input_el = (ref) => ref && ref.dom && ref.dom.el;
 
-        this.close_popup = () => {
-            if (!this.popup.has_class('hidden')) {
-                this.popup.add_class('hidden');
-                this.remove_class('open');
-                this._popup_open = false;
-            }
-        };
-
-        // Bind click to input groups
-        // Note: we need to find the DOM elements if they were rendered server-side
-        // But for now assuming client-side activation of components
-        if (this.input_start.dom.el) {
-            this.input_start.dom.el.addEventListener('click', toggle_popup);
-        }
-        if (this.input_end.dom.el) {
-            this.input_end.dom.el.addEventListener('click', toggle_popup);
-        }
-
-        // Handle input group container clicks too for better UX
-        // (requires finding them via DOM or having stored refs to groups)
-
-        // --- Range Logic ---
-
-        const update_inputs = (start, end) => {
-            if (this.input_start.dom.el) this.input_start.dom.el.value = start || '';
-            if (this.input_end.dom.el) this.input_end.dom.el.value = end || '';
-        };
-
-        const sync_dual_highlights = (source_mv) => {
-            if (this.mode !== 'dual') return;
-            const other = source_mv === this.mv_start ? this.mv_end : this.mv_start;
-
-            // Sync range state
-            other.range_start = this.start_date;
-            other.range_end = this.end_date;
-            other.update_range_highlight();
-        };
-
-        const handle_range_change = (e) => {
-            console.log('handle_range_change fired:', e);
-            const { start, end } = e;
-            this.start_date = start;
-            this.end_date = end;
-
-            update_inputs(start, end);
-
-            if (this.mode === 'dual') {
-                sync_dual_highlights(e.target);
-            }
-
-            // Raise public event
-            this.raise('change', { start, end });
-        };
-
-        // Attach listeners to Month_Views
-        // (We need to capture them from the jsgui event system)
-
-        const attach_mv_listeners = (mv) => {
-            mv.on('range-change', handle_range_change);
-            // Also listen for hover to sync preview
-            mv.on('date-hover', (e) => {
-                if (this.mode === 'dual') {
-                    const other = mv === this.mv_start ? this.mv_end : this.mv_start;
-                    // Manually trigger hover logic on other view? 
-                    // Month_View might need public API for this, or we just set internal state
-                    other._highlight_hover(e.date);
+            // --- Inputs open/close the popup ---
+            const toggle = (e) => {
+                e.stopPropagation();
+                if (this.popup && this.popup.toggle) {
+                    const anchor = input_el(this.inputs_row) || (this.dom && this.dom.el);
+                    this.popup.toggle(anchor);
+                    if (this.popup.is_open) this.add_class('open');
+                    else this.remove_class('open');
                 }
+            };
+            if (this.popup && this.popup.on) {
+                this.popup.on('close', () => this.remove_class('open'));
+            }
+            [this.input_start, this.input_end].forEach(inp => {
+                const el = input_el(inp);
+                if (el) el.addEventListener('click', toggle);
             });
-        };
 
-        if (this.mv_start) attach_mv_listeners(this.mv_start);
-        if (this.mv_end) attach_mv_listeners(this.mv_end);
-
-        // --- Time Logic ---
-        if (this.use_time) {
-            const handle_time_change = () => {
-                if (this.input_start_time.dom.el) this.start_time = this.input_start_time.dom.el.value;
-                if (this.input_end_time.dom.el) this.end_time = this.input_end_time.dom.el.value;
-                this.raise('time-change', { start: this.start_time, end: this.end_time });
+            // --- Range logic ---
+            const update_inputs = (start, end) => {
+                const se = input_el(this.input_start), ee = input_el(this.input_end);
+                if (se) { se.value = start || ''; se.setAttribute('value', start || ''); }
+                if (ee) { ee.value = end || ''; ee.setAttribute('value', end || ''); }
+                // Keep persisted config current so re-hydration sees the latest range.
+                const root = this.dom && this.dom.el;
+                if (root) {
+                    if (start) root.setAttribute('data-start', start);
+                    if (end) root.setAttribute('data-end', end);
+                }
             };
 
-            if (this.input_start_time.dom.el) {
-                this.input_start_time.dom.el.addEventListener('change', handle_time_change);
-            }
-            if (this.input_end_time.dom.el) {
-                this.input_end_time.dom.el.addEventListener('change', handle_time_change);
-            }
-        }
+            const sync_dual_highlights = (source_mv) => {
+                if (this.mode !== 'dual') return;
+                const other = source_mv === this.mv_start ? this.mv_end : this.mv_start;
+                if (!other) return;
+                other.range_start = this.start_date;
+                other.range_end = this.end_date;
+                other.update_range_highlight();
+            };
 
-        // --- Document Click (Close Popup) ---
-        // Use a slight delay or check logic to avoid immediate close on toggle
-        document.addEventListener('click', (e) => {
-            if (this._popup_open && this.dom.el && !this.dom.el.contains(e.target)) {
-                this.close_popup();
-            }
-        });
+            const handle_range_change = (e) => {
+                const { start, end } = e;
+                this.start_date = start;
+                this.end_date = end;
+                update_inputs(start, end);
+                if (this.mode === 'dual') sync_dual_highlights(e.target);
+                this.raise('change', { start, end });
+            };
 
-        // --- Init State (sync inputs on activation) ---
-        if (this.start_date || this.end_date) {
-            update_inputs(this.start_date, this.end_date);
+            const attach_mv_listeners = (mv) => {
+                if (!mv || !mv.on) return;
+                mv.on('range-change', handle_range_change);
+                mv.on('date-hover', (e) => {
+                    if (this.mode === 'dual') {
+                        const other = mv === this.mv_start ? this.mv_end : this.mv_start;
+                        if (other && other._highlight_hover) other._highlight_hover(e.date);
+                    }
+                });
+            };
+            attach_mv_listeners(this.mv_start);
+            attach_mv_listeners(this.mv_end);
+
+            // --- Time logic ---
+            if (this.use_time) {
+                const handle_time_change = () => {
+                    const se = input_el(this.input_start_time), ee = input_el(this.input_end_time);
+                    if (se) this.start_time = se.value;
+                    if (ee) this.end_time = ee.value;
+                    this.raise('time-change', { start: this.start_time, end: this.end_time });
+                };
+                [this.input_start_time, this.input_end_time].forEach(inp => {
+                    const el = input_el(inp);
+                    if (el) el.addEventListener('change', handle_time_change);
+                });
+            }
+
+            // --- Init: reflect state into the inputs and calendars ---
+            if (this.start_date || this.end_date) {
+                update_inputs(this.start_date, this.end_date);
+                // Re-push the configured range into the calendar views: their
+                // internal state does not survive SSR reattachment.
+                [this.mv_start, this.mv_end].forEach(mv => {
+                    if (!mv || !mv.update_range_highlight) return;
+                    mv.range_start = this.start_date;
+                    mv.range_end = this.end_date;
+                    mv.update_range_highlight();
+                });
+            }
         }
     }
 }
@@ -345,7 +362,7 @@ Date_Range_Picker.css = `
     border-color: #cbd5e1;
 }
 .date-range-picker .icon {
-    display: flex; 
+    display: flex;
     align-items: center;
 }
 .date-range-picker .icon svg {
@@ -359,35 +376,26 @@ Date_Range_Picker.css = `
     font-weight: 300;
 }
 
-/* Popup */
-.date-range-picker .picker-popup {
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    background: #fff;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-    z-index: 1000;
+/* Popup content (positioning is handled by the Popup primitive) */
+.picker-popup.jsgui-popup {
     padding: 20px;
-    animation: slideDown 0.15s ease-out;
 }
-@keyframes slideDown {
+.picker-popup:not(.hidden) {
+    animation: drpSlideDown 0.15s ease-out;
+}
+@keyframes drpSlideDown {
     from { opacity: 0; transform: translateY(-5px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.date-range-picker .picker-popup.hidden {
-    display: none;
-}
-.date-range-picker .calendars-row {
+.picker-popup .calendars-row {
     display: flex;
     gap: 24px;
 }
 /* Divider line in dual mode */
-.date-range-picker .calendars-row:has(.right-view) {
+.picker-popup .calendars-row:has(.right-view) {
     position: relative;
 }
-.date-range-picker .calendars-row:has(.right-view)::after {
+.picker-popup .calendars-row:has(.right-view)::after {
     content: '';
     position: absolute;
     left: 50%;
@@ -397,8 +405,7 @@ Date_Range_Picker.css = `
     background: #f1f5f9;
     transform: translateX(-50%);
 }
-
-.date-range-picker .month-view {
+.picker-popup .month-view {
     border: none;
     background: transparent;
 }
