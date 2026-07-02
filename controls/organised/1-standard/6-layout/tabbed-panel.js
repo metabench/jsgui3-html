@@ -4,8 +4,8 @@ const mx_selectable = require('./../../../../control_mixins/selectable');
 const { each, is_array, tof } = jsgui;
 const Panel = require('./Panel');
 const List = require('../../0-core/0-basic/1-compositional/List');
-const Radio_Button_Group = require('../../0-core/0-basic/1-compositional/radio-button-group');
-const Radio_Button = require('../../0-core/0-basic/0-native-compositional/radio-button');
+const Radio_Button_Group = require('../../0-core/0-basic/1-compositional/Radio_Button_Group');
+const Radio_Button = require('../../0-core/0-basic/0-native-compositional/Radio_Button');
 const keyboard_navigation = require('../../../../control_mixins/keyboard_navigation');
 const {
     apply_focus_ring,
