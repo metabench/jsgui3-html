@@ -140,4 +140,64 @@ describe('Popup primitive', () => {
         p.activate();
         expect(p._position).to.equal('top');
     });
+
+    describe('focus management', () => {
+        it('moves focus into the popup on open (tabindex=-1 applied)', function () {
+            if (!Popup) this.skip();
+            const p = new Popup({ context });
+            const el = mount(p);
+            const anchor = make_anchor();
+            anchor.setAttribute('tabindex', '0');
+            anchor.focus();
+            expect(document.activeElement).to.equal(anchor);
+
+            p.open(anchor);
+            expect(el.getAttribute('tabindex')).to.equal('-1');
+            expect(document.activeElement, 'focus moved into popup').to.equal(el);
+            p.close();
+        });
+
+        it('returns focus to the anchor on close', function () {
+            if (!Popup) this.skip();
+            const p = new Popup({ context });
+            const el = mount(p);
+            const anchor = make_anchor();
+            anchor.setAttribute('tabindex', '0');
+            anchor.focus();
+
+            p.open(anchor);
+            expect(document.activeElement).to.equal(el);
+            p.close();
+            expect(document.activeElement, 'focus returned to anchor').to.equal(anchor);
+        });
+
+        it('does not steal focus on close if the user focused elsewhere', function () {
+            if (!Popup) this.skip();
+            const p = new Popup({ context });
+            mount(p);
+            const anchor = make_anchor();
+            anchor.setAttribute('tabindex', '0');
+            const other = document.createElement('button');
+            document.body.appendChild(other);
+
+            p.open(anchor);
+            other.focus();           // user moved on
+            p.close();
+            expect(document.activeElement, 'focus left with the user').to.equal(other);
+        });
+
+        it('Escape closes and restores focus to the anchor', function () {
+            if (!Popup) this.skip();
+            const p = new Popup({ context });
+            const el = mount(p);
+            const anchor = make_anchor();
+            anchor.setAttribute('tabindex', '0');
+            anchor.focus();
+
+            p.open(anchor);
+            document.dispatchEvent(new window.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+            expect(p.is_open).to.equal(false);
+            expect(document.activeElement).to.equal(anchor);
+        });
+    });
 });

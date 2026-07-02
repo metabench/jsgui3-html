@@ -63,6 +63,15 @@ class Popup extends Control {
         if (typeof document !== 'undefined') {
             this._reposition();
             this._wire_open_listeners();
+
+            // Focus management: remember where focus was, then move it into
+            // the popup so Escape and arrow keys land here immediately.
+            const el = this.dom && this.dom.el;
+            if (el) {
+                this._prev_focus_el = document.activeElement || this._anchor_el || null;
+                if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '-1');
+                if (el.focus) el.focus();
+            }
         }
         this.raise('open', { anchor_el: this._anchor_el });
     }
@@ -72,6 +81,18 @@ class Popup extends Control {
         this.add_class('hidden');
         if (typeof document !== 'undefined') {
             this._unwire_open_listeners();
+
+            // Return focus to where it was (usually the anchor) — but only
+            // if focus is still inside the popup, so we never steal focus
+            // from something the user has since clicked.
+            const el = this.dom && this.dom.el;
+            const target = this._prev_focus_el && this._prev_focus_el.focus
+                ? this._prev_focus_el
+                : (this._anchor_el && this._anchor_el.focus ? this._anchor_el : null);
+            if (target && el && (el.contains(document.activeElement) || document.activeElement === document.body)) {
+                target.focus();
+            }
+            this._prev_focus_el = null;
         }
         this.raise('close', {});
     }
