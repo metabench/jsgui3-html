@@ -1689,6 +1689,11 @@ For detailed control improvement planning and checklists, see:
 - `docs/jsgui3_html_improvement_priorities.md`
 - `docs/improvement_checklists/INDEX.md`
 
+For the date & time control suite (Month_View, Date_Picker, Time_Picker,
+DateTime_Picker, Date_Range_Picker, Calendar, Popup) — including keyboard,
+locale, ARIA and the SSR reattachment contract every composite must follow:
+- `docs/date-controls-guide.md`
+
 ### Version 2.x (Current)
 - ✅ Core control system with isomorphic rendering
 - ✅ Basic mixins (selectable, dragable, press events)
