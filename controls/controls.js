@@ -68,6 +68,8 @@ const controls = {
     Data_Row: require('./organised/1-standard/4-data/Data_Row'),
     Data_Table: require('./organised/1-standard/4-data/Data_Table'),
     Date_Picker: require('./organised/0-core/0-basic/0-native-compositional/Date_Picker'),
+    Date_Range_Picker: require('./organised/0-core/0-basic/_complex_date-range-picker'),
+    Popup: require('./organised/0-core/1-advanced/Popup'),
     Dropdown_List: require('./organised/0-core/0-basic/0-native-compositional/Dropdown_List'),
     Email_Input: require('./organised/0-core/0-basic/0-native-compositional/Email_Input'),
     // Exclude the connected ones for the moment. Moment passed.
