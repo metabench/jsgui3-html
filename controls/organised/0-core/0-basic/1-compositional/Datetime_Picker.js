@@ -55,6 +55,12 @@ class DateTime_Picker extends Control {
 
         this._cfg = cfg;
 
+        // Persist layout so tab wiring survives SSR reattachment: the spec is
+        // not available client-side, so activate() recovers it from the DOM.
+        if (!this.dom.attrs['data-layout']) {
+            this.dom.attrs['data-layout'] = cfg.layout;
+        }
+
         if (initial_value) {
             const parsed = DateTime_Picker.parse_datetime(initial_value);
             this._date = parsed.date;
@@ -176,12 +182,16 @@ class DateTime_Picker extends Control {
         if (cfg.layout === 'tabbed') {
             this._tabs = new Control({ context, tag_name: 'div' });
             this._tabs.add_class('dtp-tabs');
+            this._tabs.dom.attributes.role = 'tablist';
+            this._tabs.dom.attributes['aria-label'] = 'Date or time selection';
 
             this._tab_date = new Control({ context, tag_name: 'button' });
             this._tab_date.add_class('dtp-tab');
             this._tab_date.add_class('dtp-tab-active');
             this._tab_date.dom.attributes.type = 'button';
             this._tab_date.dom.attributes['data-jsgui-ctrl'] = '_tab_date';
+            this._tab_date.dom.attributes.role = 'tab';
+            this._tab_date.dom.attributes['aria-selected'] = 'true';
             this._tab_date.add('Date');
             this._tabs.add(this._tab_date);
 
@@ -189,6 +199,8 @@ class DateTime_Picker extends Control {
             this._tab_time.add_class('dtp-tab');
             this._tab_time.dom.attributes.type = 'button';
             this._tab_time.dom.attributes['data-jsgui-ctrl'] = '_tab_time';
+            this._tab_time.dom.attributes.role = 'tab';
+            this._tab_time.dom.attributes['aria-selected'] = 'false';
             this._tab_time.add('Time');
             this._tabs.add(this._tab_time);
 
@@ -233,6 +245,16 @@ class DateTime_Picker extends Control {
 
         this._wire_jsgui_ctrls();
 
+        // Recover layout persisted at compose time (spec does not survive
+        // SSR reattachment — without this, tabbed wiring never runs client-side).
+        const rootEl = this.dom && this.dom.el;
+        if (rootEl && rootEl.getAttribute) {
+            const dom_layout = rootEl.getAttribute('data-layout');
+            if (dom_layout && dom_layout !== this._cfg.layout) {
+                this._cfg.layout = dom_layout;
+            }
+        }
+
         if (this._month_view) {
             this._month_view.on('date-select', (e) => {
                 if (e.iso) {
@@ -263,6 +285,8 @@ class DateTime_Picker extends Control {
                 if (time_picker_el) time_picker_el.style.display = 'none';
                 this._tab_date.dom.el.classList.add('dtp-tab-active');
                 this._tab_time.dom.el.classList.remove('dtp-tab-active');
+                this._tab_date.dom.el.setAttribute('aria-selected', 'true');
+                this._tab_time.dom.el.setAttribute('aria-selected', 'false');
             });
 
             this._tab_time.dom.el.addEventListener('click', () => {
@@ -270,6 +294,8 @@ class DateTime_Picker extends Control {
                 if (time_picker_el) time_picker_el.style.display = '';
                 this._tab_time.dom.el.classList.add('dtp-tab-active');
                 this._tab_date.dom.el.classList.remove('dtp-tab-active');
+                this._tab_time.dom.el.setAttribute('aria-selected', 'true');
+                this._tab_date.dom.el.setAttribute('aria-selected', 'false');
             });
         }
     }
