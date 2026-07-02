@@ -8,8 +8,8 @@
 
 const http = require('http');
 const jsgui = require('../html-core/html-core');
-const Grid = require('../controls/organised/0-core/0-basic/1-compositional/grid');
-const Month_View = require('../controls/organised/0-core/0-basic/1-compositional/month-view');
+const Grid = require('../controls/organised/0-core/0-basic/1-compositional/Grid');
+const Month_View = require('../controls/organised/0-core/0-basic/1-compositional/Month_View');
 const Date_Picker = require('../controls/organised/0-core/0-basic/_complex_date-picker');
 
 const PORT = 3601;

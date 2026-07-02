@@ -13,7 +13,8 @@
 const http = require('http');
 const jsgui = require('../html-core/html-core');
 const Date_Range_Picker = require('../controls/organised/0-core/0-basic/_complex_date-range-picker');
-const Month_View = require('../controls/organised/0-core/0-basic/1-compositional/month-view');
+const Month_View = require('../controls/organised/0-core/0-basic/1-compositional/Month_View');
+const Grid = require('../controls/organised/0-core/0-basic/1-compositional/Grid');
 
 const PORT = 3602;
 
@@ -97,6 +98,7 @@ const create_demo_html = () => {
 
     // Get component CSS
     let component_css = '';
+    if (Grid.css) component_css += Grid.css;
     if (Month_View.css) component_css += Month_View.css;
     if (Date_Range_Picker.css) component_css += Date_Range_Picker.css;
 
@@ -167,33 +169,10 @@ const server = http.createServer((req, res) => {
 <body>
     ${html}
     <script>
-       // Client-side activation
-       // In a real app this would be handled by the client-side framework activation
-       
-       // Just to make sure we don't have JS errors:
-       console.log('Date Range Picker demo loaded');
-       
-       // Note: Since we are rendering SSG-style here without the full client-side activation stack, 
-       // interactivity relies on the inline event handlers or we'd need to bundle the client-side code.
-       // However, for this lab, we just check the structure.
-       // To verify interactivity, we need to inspect if listeners are attached.
-       
-       // Wait, `Date_Range_Picker.activate()` attaches listeners.
-       // But that code runs on the SERVER in this script to generate HTML?
-       // No, `activate()` is usually a client-side lifecycle method.
-       // 
-       // For this demo to be interactive, we would need to package it for the browser.
-       // But since this is a jsgui server-side render, we can't easily "click" things unless
-       // we bundle the client logic.
-       
-       // CRITICAL: The `activate()` logic I wrote in the control class MUST run in the browser.
-       // Since I cannot easily run a bundler here, the demo might be static HTML.
-       // I'll add a script block to manually instantiate/activate for demo purposes if possible,
-       // OR I must rely on the user understanding this limitation.
-       
-       // Actually, jsgui3 acts as an isomorphic framework. 
-       // But typically we need to `require()` the control client-side.
-       
+       // NOTE: this lab server renders static SSR HTML only. There is no client
+       // bundle, so control activate() never runs in the browser and the popup
+       // is not interactive here. Use a full jsgui3-server app for interactivity.
+       console.log('Date Range Picker demo loaded (static SSR, no activation)');
     </script>
 </body>
 </html>`;
