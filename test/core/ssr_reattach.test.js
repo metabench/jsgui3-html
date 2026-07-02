@@ -267,6 +267,35 @@ describe('SSR reattachment (isomorphic contract e2e)', () => {
         });
     });
 
+    describe('Time_Picker clock touch', () => {
+        it('touchstart on the clock face sets the time after reattach', function () {
+            if (!registry) this.skip();
+            const html = server_render(ctx => new registry.Time_Picker({
+                context: ctx, value: '14:30', show_clock: true, clock_size: 200
+            }));
+
+            const ctx = client_boot(html);
+            const tp = find_ctrl(ctx, 'time_picker');
+            const canvas = tp._clock_canvas && tp._clock_canvas.dom.el;
+            expect(canvas, 'clock canvas wired').to.exist;
+
+            // jsdom rects are all zeros, so the face center is (100, 100) for
+            // clock_size 200. A touch at (100, 60) is 40px above center —
+            // inside the inner (hour) zone, pointing at 12.
+            const ev = new window.Event('touchstart', { bubbles: true, cancelable: true });
+            ev.touches = [{ clientX: 100, clientY: 60 }];
+            canvas.dispatchEvent(ev);
+            // Was 14 (afternoon): touching "12" keeps the PM half → noon.
+            expect(tp.hours, 'touch at 12 o\'clock sets noon').to.equal(12);
+
+            // Outer zone at 3 o'clock: (170, 100) → minutes 15.
+            const ev2 = new window.Event('touchmove', { bubbles: true, cancelable: true });
+            ev2.touches = [{ clientX: 170, clientY: 100 }];
+            canvas.dispatchEvent(ev2);
+            expect(tp.minutes, 'touch-drag to 3 o\'clock sets minutes 15').to.equal(15);
+        });
+    });
+
     describe('DateTime_Picker config persistence', () => {
         it('recovers use_24h/step_minutes via data-cfg after reattach', function () {
             if (!registry) this.skip();

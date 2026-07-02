@@ -418,6 +418,22 @@ class Time_Picker extends Control {
             this._clock_canvas.dom.el.addEventListener('click', (e) => {
                 this._handle_clock_click(e);
             });
+
+            // Touch: tap sets, drag adjusts live. preventDefault stops the
+            // page scrolling/zooming while the finger is on the clock face
+            // (requires passive: false).
+            const touch_point = (e) => {
+                const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+                if (t) this._handle_clock_point(t.clientX, t.clientY);
+            };
+            this._clock_canvas.dom.el.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                touch_point(e);
+            }, { passive: false });
+            this._clock_canvas.dom.el.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                touch_point(e);
+            }, { passive: false });
         }
 
         // AM/PM toggle
@@ -490,7 +506,9 @@ class Time_Picker extends Control {
     _draw_clock() {
         const canvas = this._clock_canvas.dom.el;
         if (!canvas || !canvas.getContext) return;
-        const ctx = canvas.getContext('2d');
+        let ctx = null;
+        try { ctx = canvas.getContext('2d'); } catch (e) { /* jsdom without canvas */ }
+        if (!ctx) return;
         const cfg = this._cfg;
         const sz = cfg.clock_size;
         const cx = sz / 2, cy = sz / 2;
@@ -587,13 +605,19 @@ class Time_Picker extends Control {
     }
 
     _handle_clock_click(e) {
+        this._handle_clock_point(e.clientX, e.clientY);
+    }
+
+    // Shared by mouse clicks and touch events: map a viewport point on the
+    // clock face to an hour (inner zone) or minute (outer zone) change.
+    _handle_clock_point(clientX, clientY) {
         const canvas = this._clock_canvas.dom.el;
         if (!canvas) return;
         const rect = canvas.getBoundingClientRect();
         const sz = this._cfg.clock_size;
         const cx = sz / 2, cy = sz / 2;
-        const x = e.clientX - rect.left - cx;
-        const y = e.clientY - rect.top - cy;
+        const x = clientX - rect.left - cx;
+        const y = clientY - rect.top - cy;
         const dist = Math.sqrt(x * x + y * y);
         const r = sz / 2 - 8;
 
