@@ -34,9 +34,10 @@ class Calendar extends Control {
         this._show_event_list = spec.show_event_list !== false;
         this._locale = spec.locale || null;
 
-        // Persist config for SSR reattachment. NOTE: the framework does not
-        // HTML-escape attribute values, so raw JSON (with double quotes)
-        // would break the markup — URI-encode the payload.
+        // Persist config for SSR reattachment. The payload is URI-encoded:
+        // the renderer now HTML-escapes attribute values, but the encoding is
+        // kept so this control also reattaches against HTML rendered by
+        // pre-escaping builds (and it keeps the attribute compact/safe).
         const attrs = this.dom.attributes;
         if (this._events.length && !attrs['data-events']) {
             attrs['data-events'] = encodeURIComponent(JSON.stringify(this._events));

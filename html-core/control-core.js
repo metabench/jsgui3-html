@@ -501,6 +501,15 @@ class Control_Core extends Base_Data_Object {
 					arr.push(' data-jsgui-type="' + this.__type_name + '"');
 				}
 			}
+			// Escape attribute values so quotes/ampersands/angle brackets in a
+			// value cannot terminate the attribute or inject markup. Runtime
+			// setAttribute is unaffected (the DOM escapes natively) — this is
+			// only about SSR string rendering.
+			const escape_attr = (s) => String(s)
+				.replace(/&/g, '&amp;')
+				.replace(/"/g, '&quot;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;');
 			var dom_attrs_keys = Object.keys(dom_attrs);
 			var key, item;
 			for (var c = 0, l = dom_attrs_keys.length; c < l; c++) {
@@ -520,7 +529,7 @@ class Control_Core extends Base_Data_Object {
 										}
 									}
 								});
-								if (sprops.length > 0) arr.push(' ', key, '="', sprops.join(';'), '"');
+								if (sprops.length > 0) arr.push(' ', key, '="', escape_attr(sprops.join(';')), '"');
 							} else {
 								let s_obj;
 								try {
@@ -533,14 +542,17 @@ class Control_Core extends Base_Data_Object {
 									}
 								}
 								if (s_obj && s_obj.length > 0) {
+									// Legacy quote->apostrophe replacement retained for
+									// object values (consumers may rely on the shape);
+									// escape_attr then handles & < >.
 									s_obj = s_obj.replace(/\"/g, "'")
-									arr.push(' ', key, '="', s_obj, '"');
+									arr.push(' ', key, '="', escape_attr(s_obj), '"');
 								}
 							}
 						} else {
 							let is = item.toString();
 							if (!item.__empty && is.length > 0) {
-								arr.push(' ', key, '="', is, '"');
+								arr.push(' ', key, '="', escape_attr(is), '"');
 							}
 						}
 					}
@@ -556,10 +568,10 @@ class Control_Core extends Base_Data_Object {
 							}
 							if (s_obj && s_obj.length > 0) {
 								s_obj = s_obj.replace(/\"/g, "'")
-								arr.push(' ', key, '="', s_obj, '"');
+								arr.push(' ', key, '="', escape_attr(s_obj), '"');
 							}
 						} else {
-							arr.push(' ', key, '="', item.toString(), '"');
+							arr.push(' ', key, '="', escape_attr(item.toString()), '"');
 						}
 					}
 				}

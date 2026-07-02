@@ -343,11 +343,10 @@ const tpl = function (strings, ...values) {
                         }
                     }
                     if (Object.keys(_state).length > 0) {
-                        // Use &quot; encoding for safe HTML attribute embedding
-                        const json = JSON.stringify(_state)
-                            .replace(/&/g, '&amp;')
-                            .replace(/"/g, '&quot;');
-                        target.dom.attributes['data-jsgui-model-state'] = json;
+                        // Plain JSON: renderDomAttributes HTML-escapes attribute
+                        // values at render time (pre-escaping here would
+                        // double-escape and break JSON.parse on restore).
+                        target.dom.attributes['data-jsgui-model-state'] = JSON.stringify(_state);
                     }
                 }
             }
