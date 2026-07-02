@@ -22,7 +22,7 @@
  *   18. Edge cases
  */
 
-const Group_Box = require('../group_box');
+const Group_Box = require('../Group_Box');
 const jsgui = require('../../../../../html-core/html-core');
 const Page_Context = jsgui.Page_Context;
 const { Control } = jsgui;

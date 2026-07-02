@@ -21,7 +21,7 @@
  *   17. Combination: filled + lg + toggle + pressed + tooltip
  */
 
-const Icon_Button = require('../icon_button');
+const Icon_Button = require('../Icon_Button');
 const jsgui = require('../../../../../html-core/html-core');
 const Page_Context = jsgui.Page_Context;
 

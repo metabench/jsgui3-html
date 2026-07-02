@@ -7,7 +7,7 @@
  function(jsgui, Array_Viewer, factory) {
  */
 var jsgui = require('../../../../html-core/html-core');
-var Array_Viewer = require('../0-viewer/array');
+var Array_Viewer = require('../0-viewer/Array');
 var factory = require('./factory');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;

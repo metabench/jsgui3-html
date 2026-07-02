@@ -44,7 +44,7 @@ const { stringify, each, tof, def, Control } = jsgui;
 
 
 
-const Panel = require('./../6-layout/panel');
+const Panel = require('./../6-layout/Panel');
 const Title_Bar = require('./../6-layout/Title_Bar');
 const Tree_Node = require('./Tree_Node');
 const keyboard_navigation = require('../../../../control_mixins/keyboard_navigation');

@@ -11,7 +11,7 @@
  */
 
 const Control = require('../../../../html-core/control');
-const Button = require('../../0-core/0-basic/0-native-compositional/button');
+const Button = require('../../0-core/0-basic/0-native-compositional/Button');
 const {
     apply_focus_ring,
     apply_label,

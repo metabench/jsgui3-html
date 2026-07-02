@@ -29,7 +29,7 @@
  *   25. Edge cases
  */
 
-const Filter_Chips = require('../filter_chips');
+const Filter_Chips = require('../Filter_Chips');
 const jsgui = require('../../../../../html-core/html-core');
 const Page_Context = jsgui.Page_Context;
 

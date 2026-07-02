@@ -23,7 +23,7 @@ const { create_mixin_cleanup } = require('./mixin_cleanup');
 
 let Tooltip;
 try {
-    Tooltip = require('../controls/organised/1-standard/5-ui/tooltip');
+    Tooltip = require('../controls/organised/1-standard/5-ui/Tooltip');
 } catch (e) {
     Tooltip = null;
 }

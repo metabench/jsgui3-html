@@ -2,7 +2,7 @@ const jsgui = require('../../../../../html-core/html-core');
 
 const { Control } = jsgui;
 const { is_defined } = jsgui;
-const Number_Input = require('../0-native-compositional/number_input');
+const Number_Input = require('../0-native-compositional/Number_Input');
 
 const normalize_number_value = value => {
     if (!is_defined(value)) return '';

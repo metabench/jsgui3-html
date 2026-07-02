@@ -8,10 +8,10 @@
  * - Type-specific editors
  */
 
-const Panel = require('../6-layout/panel');
+const Panel = require('../6-layout/Panel');
 const Control = require('../../../../html-core/control');
 const Text_Input = require('../../0-core/0-basic/0-native-compositional/Text_Input');
-const Checkbox = require('../../0-core/0-basic/0-native-compositional/checkbox');
+const Checkbox = require('../../0-core/0-basic/0-native-compositional/Checkbox');
 
 class Property_Editor extends Panel {
     constructor(options = {}) {

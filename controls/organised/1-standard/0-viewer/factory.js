@@ -5,14 +5,14 @@
  var define = require('amdefine')(module);
  }; */
 
-//define(["require", "../../../jsgui-html-enh"/*, "./object", "./array", "./basic/string", "./basic/number" */],
+//define(["require", "../../../jsgui-html-enh"/*, "./Object", "./Array", "./basic/string", "./basic/number" */],
 //function(require, jsgui /*, Object_Viewer, Array_Viewer, String_Viewer, Number_Viewer */) {
 
 var jsgui = require('../../../../html-core/html-core');
-var Object_Viewer = require('./object');
-var Array_Viewer = require('./array');
-var String_Viewer = require('./string');
-var Number_Viewer = require('./number');
+var Object_Viewer = require('./Object');
+var Array_Viewer = require('./Array');
+var String_Viewer = require('./String');
+var Number_Viewer = require('./Number');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
@@ -35,8 +35,8 @@ var that = this;
 
 // Can't do circular reference like that.
 /*
- var Object_Viewer = require('./object');
- var Array_Viewer = require('./array');
+ var Object_Viewer = require('./Object');
+ var Array_Viewer = require('./Array');
  var String_Viewer = require('./basic/string');
  var Number_Viewer = require('./basic/number');
  */
@@ -81,8 +81,8 @@ var that = this;
 // Need more trickery with the module path...
 
 /*
- var Object_Viewer = sideload('./object');
- var Array_Viewer = sideload('./array');
+ var Object_Viewer = sideload('./Object');
+ var Array_Viewer = sideload('./Array');
  var String_Viewer = sideload('./basic/string');
  var Number_Viewer = sideload('./basic/number');
  */
@@ -94,7 +94,7 @@ var create = function(obj, context) {
     //console.log('factory tobj ' + tobj);
     //console.log('factory obj ', obj);
     if (tobj == 'object') {
-        //var Object_Viewer = require('./object');
+        //var Object_Viewer = require('./Object');
         var res = new Object_Viewer({
             'context': context,
             'value': obj
@@ -102,7 +102,7 @@ var create = function(obj, context) {
         return res;
     }
     if (tobj == 'array') {
-        //var Array_Viewer = require('./array');
+        //var Array_Viewer = require('./Array');
         var res = new Array_Viewer({
             'context': context,
             'value': obj

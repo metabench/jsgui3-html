@@ -5,14 +5,14 @@
 //    var define = require('amdefine')(module);
 //};
 
-//define(["require", "../../../jsgui-html-enh"/*, "./object", "./array", "./basic/string", "./basic/number" */],
+//define(["require", "../../../jsgui-html-enh"/*, "./Object", "./Array", "./basic/string", "./basic/number" */],
 //	function(require, jsgui /*, Object_Editor, Array_Editor, String_Editor, Number_Editor */) {
 
 var jsgui = require('../../../../html-core/html-core');
-var Object_Editor = require('./object');
-var Array_Editor = require('./array');
-var String_Editor = require('./string');
-var Number_Editor = require('./number');
+var Object_Editor = require('./Object');
+var Array_Editor = require('./Array');
+var String_Editor = require('./String');
+var Number_Editor = require('./Number');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
@@ -30,7 +30,7 @@ var create = function(obj, context) {
     var tobj = tof(obj);
     //console.log('tobj ' + tobj);
     if (tobj == 'object') {
-        //var Object_Editor = require('./object');
+        //var Object_Editor = require('./Object');
         var res = new Object_Editor({
             'context': context,
             'value': obj
@@ -38,7 +38,7 @@ var create = function(obj, context) {
         return res;
     }
     if (tobj == 'array') {
-        //var Array_Editor = require('./array');
+        //var Array_Editor = require('./Array');
         var res = new Array_Editor({
             'context': context,
             'value': obj

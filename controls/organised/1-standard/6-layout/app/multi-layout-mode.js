@@ -35,7 +35,7 @@ define(["../../jsgui-html", "./panel"],
 // An app layout / full app layout
 
 var jsgui = require('./../../../../../html-core/html-core');
-var Panel = require('../panel');
+var Panel = require('../Panel');
 var Tabbed_Panel = require('../Tabbed_Panel');
 
 var stringify = jsgui.stringify,

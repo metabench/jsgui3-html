@@ -16,7 +16,7 @@ define(["../../../../jsgui-html-enh", "../../viewer/basic/string"],
 
 
 var jsgui = require('../../../../html-core/html-core');
-var String_Viewer = require('../0-viewer/string');
+var String_Viewer = require('../0-viewer/String');
 
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;

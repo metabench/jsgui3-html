@@ -30,7 +30,7 @@ define(["../../../../jsgui-html-enh", "../../viewer/basic/number"],
 
 
 var jsgui = require('../../../../html-core/html-core');
-var Number_Viewer = require('../0-viewer/number');
+var Number_Viewer = require('../0-viewer/Number');
 var stringify = jsgui.stringify, each = jsgui.each, tof = jsgui.tof, is_defined = jsgui.is_defined;
 var Control = jsgui.Control;
 

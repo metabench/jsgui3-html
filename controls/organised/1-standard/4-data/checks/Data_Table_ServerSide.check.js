@@ -14,7 +14,7 @@
  *   10. server_side getter
  */
 
-const Data_Table = require('../data_table');
+const Data_Table = require('../Data_Table');
 const jsgui = require('../../../../_core');
 const Page_Context = jsgui.Page_Context;
 

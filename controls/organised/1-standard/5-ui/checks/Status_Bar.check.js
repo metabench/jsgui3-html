@@ -25,7 +25,7 @@
  *   21. Combination tests
  */
 
-const Status_Bar = require('../status_bar');
+const Status_Bar = require('../Status_Bar');
 const jsgui = require('../../../../../html-core/html-core');
 const Page_Context = jsgui.Page_Context;
 

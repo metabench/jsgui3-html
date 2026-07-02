@@ -1,6 +1,6 @@
 var jsgui = require('./../../../../html-core/html-core');
 var Horizontal_Menu = require('./../../../organised/1-standard/5-ui/Horizontal_Menu');
-const Button = require('./../../../organised/0-core/0-basic/0-native-compositional/button');
+const Button = require('./../../../organised/0-core/0-basic/0-native-compositional/Button');
 const { def, each } = jsgui;
 var Control = jsgui.Control;
 var fields = {

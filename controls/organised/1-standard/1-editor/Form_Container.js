@@ -4,10 +4,10 @@ const { Control, Data_Object } = jsgui;
 const { is_defined } = jsgui;
 const { ensure_control_models } = require('../../../../html-core/control_model_factory');
 const apply_field_status = require('../../../../control_mixins/field_status').apply_field_status;
-const Inline_Validation_Message = require('./inline_validation_message');
-const Badge = require('../../0-core/0-basic/1-compositional/badge');
+const Inline_Validation_Message = require('./Inline_Validation_Message');
+const Badge = require('../../0-core/0-basic/1-compositional/Badge');
 const Text_Input = require('../../0-core/0-basic/0-native-compositional/Text_Input');
-const Textarea = require('../../0-core/0-basic/0-native-compositional/textarea');
+const Textarea = require('../../0-core/0-basic/0-native-compositional/Textarea');
 
 const normalize_fields = fields => (Array.isArray(fields) ? fields.slice() : []);
 

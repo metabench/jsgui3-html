@@ -24,7 +24,7 @@
  *   20. Combination: vertical + dashed + inset
  */
 
-const Separator = require('../separator');
+const Separator = require('../Separator');
 const jsgui = require('../../../../../../html-core/html-core');
 const Page_Context = jsgui.Page_Context;
 

@@ -23,7 +23,7 @@
  *   19. Edge cases
  */
 
-const Split_Button = require('../split_button');
+const Split_Button = require('../Split_Button');
 const jsgui = require('../../../../../html-core/html-core');
 const Page_Context = jsgui.Page_Context;
 

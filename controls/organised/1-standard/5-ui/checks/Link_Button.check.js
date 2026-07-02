@@ -18,7 +18,7 @@
  *   14. Edge cases (empty text, null values)
  */
 
-const Link_Button = require('../link_button');
+const Link_Button = require('../Link_Button');
 const jsgui = require('../../../../../html-core/html-core');
 const Page_Context = jsgui.Page_Context;
 
