@@ -4,7 +4,9 @@ const each = jsgui.each, is_defined = jsgui.is_defined;
 const Grid = require('./Grid');
 const Tile_Slider = require('../../../1-standard/6-layout/Tile_Slide');
 const ALL_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-let bgc_disabled = '#DDDDDD';
+// Disabled/filler cells use the theme variable (defaults to light gray in
+// Month_View.css) so dark-panel hosts like DateTime_Picker can restyle them.
+let bgc_disabled = 'var(--mv-cell-disabled)';
 let bgc_enabled = 'inherit';
 const mx_date = require(`../../../../../control_mixins/typed_data/date`);
 const { prop } = require('obext');

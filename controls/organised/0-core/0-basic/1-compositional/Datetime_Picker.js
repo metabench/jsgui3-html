@@ -371,6 +371,33 @@ DateTime_Picker.css = `
 .dtp-body {
     padding: 10px;
 }
+
+/* The picker panel is always dark: retheme the embedded Month_View via its
+   CSS custom properties (day numbers were near-invisible dark-on-dark). */
+.datetime-picker .month-view {
+    --mv-bg: #1e293b;
+    --mv-cell-bg: #1e293b;
+    --mv-cell-disabled: #16202f;
+    --mv-text: #e5e7eb;
+    --mv-header-text: #94a3b8;
+    --mv-accent: #60a5fa;
+    --mv-accent-light: #1e3a8a;
+    --mv-accent-mid: #2563eb;
+    --mv-today-ring: #93c5fd;
+    --mv-weekend-text: #64748b;
+}
+.datetime-picker .month-view .cell span {
+    color: var(--mv-text);
+}
+.datetime-picker .month-view .row.header .cell {
+    background-color: #0f172a !important;
+}
+.datetime-picker .month-view .row.header .cell span {
+    color: var(--mv-header-text);
+}
+.datetime-picker .month-view .cell.weekend span {
+    color: var(--mv-weekend-text);
+}
 .dtp-layout-stacked .dtp-body {
     display: flex;
     flex-direction: column;
