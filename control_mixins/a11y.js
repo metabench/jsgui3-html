@@ -86,9 +86,80 @@ const ensure_sr_text = (ctrl, sr_text, options = {}) => {
     ctrl.add(sr_span);
 };
 
+/**
+ * Apply grid semantics (role=grid + label) to a container control.
+ * Callers are responsible for row/gridcell roles on descendants.
+ * @param {Control} ctrl - Control to update.
+ * @param {Object} [options] - {label, force}
+ */
+const apply_grid_aria = (ctrl, options = {}) => {
+    apply_role(ctrl, 'grid', options);
+    if (options.label) apply_label(ctrl, options.label, options);
+};
+
+/**
+ * Apply spinbutton semantics to a control (e.g. a time component stepper).
+ * @param {Control} ctrl - Control to update.
+ * @param {Object} [options] - {label, min, max, now, force}
+ */
+const apply_spinbutton_aria = (ctrl, options = {}) => {
+    apply_role(ctrl, 'spinbutton', options);
+    if (options.label) apply_label(ctrl, options.label, options);
+    const attributes = ensure_dom_attributes(ctrl);
+    if (!attributes) return;
+    if (options.min !== undefined && (attributes['aria-valuemin'] === undefined || options.force)) {
+        attributes['aria-valuemin'] = String(options.min);
+    }
+    if (options.max !== undefined && (attributes['aria-valuemax'] === undefined || options.force)) {
+        attributes['aria-valuemax'] = String(options.max);
+    }
+    if (options.now !== undefined && (attributes['aria-valuenow'] === undefined || options.force)) {
+        attributes['aria-valuenow'] = String(options.now);
+    }
+};
+
+/**
+ * Update aria-valuenow/aria-valuetext at runtime (activated controls).
+ * Falls back to VDOM attributes when no DOM element is connected.
+ * @param {Control} ctrl - Control to update.
+ * @param {number|string} now - Current value.
+ * @param {string} [text] - Human-readable value text.
+ */
+const update_aria_now = (ctrl, now, text) => {
+    if (!ctrl) return;
+    const el = ctrl.dom && ctrl.dom.el;
+    if (el && el.setAttribute) {
+        el.setAttribute('aria-valuenow', String(now));
+        if (text !== undefined) el.setAttribute('aria-valuetext', String(text));
+    } else {
+        const attributes = ensure_dom_attributes(ctrl);
+        if (!attributes) return;
+        attributes['aria-valuenow'] = String(now);
+        if (text !== undefined) attributes['aria-valuetext'] = String(text);
+    }
+};
+
+/**
+ * Apply dialog semantics to a popup/overlay control.
+ * @param {Control} ctrl - Control to update.
+ * @param {Object} [options] - {label, modal, force}
+ */
+const apply_dialog_aria = (ctrl, options = {}) => {
+    apply_role(ctrl, 'dialog', options);
+    if (options.label) apply_label(ctrl, options.label, options);
+    const attributes = ensure_dom_attributes(ctrl);
+    if (attributes && (attributes['aria-modal'] === undefined || options.force)) {
+        attributes['aria-modal'] = options.modal ? 'true' : 'false';
+    }
+};
+
 module.exports = {
     apply_role,
     apply_label,
     apply_focus_ring,
-    ensure_sr_text
+    ensure_sr_text,
+    apply_grid_aria,
+    apply_spinbutton_aria,
+    update_aria_now,
+    apply_dialog_aria
 };

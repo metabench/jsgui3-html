@@ -15,6 +15,12 @@
     },
     "./control_mixins/*": {
       "default": "./control_mixins/*.js"
+    },
+    "./html-core/*": {
+      "default": "./html-core/*.js"
+    },
+    "./controls/*": {
+      "default": "./controls/*.js"
     }
   },
   "scripts": {
