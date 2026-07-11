@@ -229,6 +229,50 @@ const THEMES = {
         '--admin-cell-padding': '4px 8px',
     },
 
+    // ─── VS 2005 (Visual Studio 2005 / Windows XP "Luna" light) ────────
+    // The classic mid-2000s IDE look: warm tan chrome (#ECE9D8), Tahoma at
+    // 11px, square-ish corners, subtle vertical gradients on tool-window
+    // headers, and Luna-blue (#316AC5) selection/hover accents.
+    'vs-2005': {
+        '--admin-bg': '#ECE9D8',
+        '--admin-card-bg': '#F5F4EA',
+        '--admin-border': '#ACA899',
+        '--admin-border-accent': '#316AC5',
+
+        '--admin-text': '#000000',
+        '--admin-text-secondary': '#444437',
+        '--admin-text-muted': '#7F7D6F',
+
+        '--admin-font': "'Tahoma', 'MS Shell Dlg 2', 'Segoe UI', sans-serif",
+        '--admin-font-mono': "'Courier New', 'Lucida Console', monospace",
+        '--admin-font-size': '11px',
+
+        '--admin-header-bg': 'linear-gradient(to bottom, #FDFCF9 0%, #EBE8DA 55%, #DCD8C6 100%)',
+        '--admin-header-text': '#33322A',
+        '--admin-stripe-bg': '#F7F6EF',
+        '--admin-hover-bg': '#DFE7F5',
+        '--admin-select-bg': '#C1D2EE',
+
+        '--admin-accent': '#316AC5',
+        '--admin-success': '#2C7D2C',
+        '--admin-warning': '#B8860B',
+        '--admin-danger': '#C43C35',
+        '--admin-info': '#316AC5',
+
+        '--admin-success-bg': '#E3F0DE',
+        '--admin-warning-bg': '#FFF7DB',
+        '--admin-danger-bg': '#F8DFDD',
+        '--admin-info-bg': '#DFE9F7',
+
+        '--admin-radius': '2px',
+        '--admin-radius-lg': '3px',
+        '--admin-shadow': '0 1px 2px rgba(90, 86, 68, 0.18)',
+        '--admin-shadow-lg': '0 2px 6px rgba(90, 86, 68, 0.25)',
+
+        '--admin-row-height': '24px',
+        '--admin-cell-padding': '3px 7px',
+    },
+
     // ─── Warm ──────────────────────────────────────────────────────────
     'warm': {
         '--admin-bg': '#fefce8',
