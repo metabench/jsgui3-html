@@ -682,6 +682,12 @@ class Control_Core extends Base_Data_Object {
 		if (tof(content) === 'string') {
 			return content;
 		} else {
+			// Text inside raw text elements (<style>/<script>) must render
+			// unescaped — entity references are not decoded there by
+			// browsers. See Text_Node.render_raw_text.
+			const raw_text_tag = this.dom && Text_Node.is_raw_text_tag(this.dom.tagName)
+				? this.dom.tagName
+				: null;
 			var contentLength = content.length();
 			var res = new Array(contentLength);
 			var tn, output;
@@ -699,6 +705,8 @@ class Control_Core extends Base_Data_Object {
 					const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
 					if (string_processor) {
 						res.push(string_processor(n));
+					} else if (raw_text_tag) {
+						res.push(Text_Node.render_raw_text(n, raw_text_tag));
 					} else {
 						res.push(new Text_Node(n).all_html_render());
 					}
@@ -726,6 +734,8 @@ class Control_Core extends Base_Data_Object {
 					const string_processor = jsgui.output_processors && jsgui.output_processors['string'];
 					if (string_processor) {
 						res.push(string_processor(s_val));
+					} else if (raw_text_tag) {
+						res.push(Text_Node.render_raw_text(s_val, raw_text_tag));
 					} else {
 						res.push(new Text_Node(s_val).all_html_render());
 					}
@@ -738,6 +748,8 @@ class Control_Core extends Base_Data_Object {
 					const fallback = '' + n;
 					if (string_processor) {
 						res.push(string_processor(fallback));
+					} else if (raw_text_tag) {
+						res.push(Text_Node.render_raw_text(fallback, raw_text_tag));
 					} else {
 						res.push(new Text_Node(fallback).all_html_render());
 					}

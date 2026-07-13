@@ -34,6 +34,33 @@ const escape_html = (str) => {
     return str;
 };
 
+// ── Raw text elements (HTML spec) ────────────────────────────────────
+// <style> and <script> contents are RAW TEXT: browsers never decode
+// entity references inside them, so entity-escaping corrupts CSS/JS
+// (e.g. /* comments */ became &#x2F;*…*&#x2F; and CSS error recovery
+// silently discarded the rule after every comment). Text children of
+// these elements must render UNESCAPED. The only injection risk in a raw
+// text element is the closing-tag sequence ("</style", "</script"),
+// which could end the element early — neutralize it with a backslash
+// ("<\/style"), the standard escape inside JS strings and harmless in
+// CSS (the sequence is invalid CSS either way).
+const RAW_TEXT_TAGS = { style: true, script: true };
+
+const is_raw_text_tag = (tagName) =>
+    !!(tagName && RAW_TEXT_TAGS[String(tagName).toLowerCase()]);
+
+const render_raw_text = (str, tagName) => {
+    if (str === null || typeof str === 'undefined') return '';
+    if (tof(str) == 'data_value') str = str.get();
+    str = String(str);
+    const tag = String(tagName || '').toLowerCase();
+    if (tag === 'style' || tag === 'script') {
+        const re = new RegExp('<\\/(' + tag + ')', 'gi');
+        str = str.replace(re, '<\\/$1');
+    }
+    return str;
+};
+
 // Want to be able to change the text of an active text node.
 //  So, the text node will have an 'el'. Maybe dom.node?
 
@@ -133,12 +160,25 @@ class textNode extends Evented_Class {
     }
     'all_html_render'() {
         // nx = no escape
-        return this.nx ? this._text || '' : escape_html(this._text || '') || '';
+        if (this.nx) return this._text || '';
+        // Text inside a raw text element (<style>/<script>) must not be
+        // entity-escaped — see render_raw_text above.
+        const parent_tag = this.parent && this.parent.dom && this.parent.dom.tagName;
+        if (is_raw_text_tag(parent_tag)) {
+            return render_raw_text(this._text || '', parent_tag);
+        }
+        return escape_html(this._text || '') || '';
     }
 
     // getter and setter for the text itself?
     //  A variety of properties will use getters and setters so that the updates get noted.
 
 };
+
+// Static helpers so the control renderer (control-core render_content)
+// can apply the same raw-text-element rules to inline strings.
+textNode.escape_html = escape_html;
+textNode.is_raw_text_tag = is_raw_text_tag;
+textNode.render_raw_text = render_raw_text;
 
 module.exports = textNode;
