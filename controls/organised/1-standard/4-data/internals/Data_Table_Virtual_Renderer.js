@@ -80,6 +80,14 @@ class Data_Table_Virtual_Renderer {
         }
     }
 
+    detach_scroll_listener() {
+        if (this._scroll_handler && this.body_ctrl && this.body_ctrl.dom.el) {
+            this.body_ctrl.dom.el.removeEventListener('scroll', this._scroll_handler);
+        }
+        this._scroll_handler = null;
+        this._scroll_ticking = false;
+    }
+
     _on_scroll() {
         if (!this.body_ctrl || !this.body_ctrl.dom.el) return;
 

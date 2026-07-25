@@ -713,20 +713,29 @@ class Control extends Control_Core {
 							itemDomEl = context.map_els[item._id()];
 						}
 					}
-					if (!itemDomEl) {
-						var item_tag_name = 'div';
-						var dv_tag_name = item.dom.tagName;
-						if (dv_tag_name) {
-							item_tag_name = dv_tag_name;
-						}
-						var temp_el;
-						if (item_tag_name === 'circle' || item_tag_name === 'line' || item_tag_name === 'polyline') {
-							var temp_svg_container = e_change.item.context.document.createElement('div');
-							temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + e_change.item.all_html_render() + '</svg>';
-							itemDomEl = temp_svg_container.childNodes[0].childNodes[0];
-						} else {
-							temp_el = e_change.item.context.document.createElement('div');
-							temp_el.innerHTML = e_change.item.all_html_render();
+						if (!itemDomEl) {
+							var item_tag_name = 'div';
+							var dv_tag_name = item.dom.tagName;
+							if (dv_tag_name) {
+								item_tag_name = dv_tag_name;
+							}
+							var temp_el;
+							if (item_tag_name === 'circle' || item_tag_name === 'line' || item_tag_name === 'polyline') {
+								var temp_svg_container = e_change.item.context.document.createElement('div');
+								temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + e_change.item.all_html_render() + '</svg>';
+								itemDomEl = temp_svg_container.childNodes[0].childNodes[0];
+							} else if (el && /^(TABLE|THEAD|TBODY|TFOOT|TR)$/.test(el.tagName)
+								&& e_change.item.context.document.createRange) {
+								// A <tr> or <td> parsed inside a generic <div> is
+								// discarded by the HTML parser. Use the live
+								// table parent as the parsing context.
+								const range = e_change.item.context.document.createRange();
+								range.selectNodeContents(el);
+								const fragment = range.createContextualFragment(e_change.item.all_html_render());
+								itemDomEl = fragment.firstChild;
+							} else {
+								temp_el = e_change.item.context.document.createElement('div');
+								temp_el.innerHTML = e_change.item.all_html_render();
 							itemDomEl = temp_el.childNodes[0];
 						}
 						item.dom.el = itemDomEl;
@@ -771,6 +780,12 @@ class Control extends Control_Core {
 									const temp_svg_container = context.document.createElement('div');
 									temp_svg_container.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" version="1.1">' + item.all_html_render() + '</svg>';
 									item_dom_el = temp_svg_container.childNodes[0].childNodes[0];
+								} else if (el && /^(TABLE|THEAD|TBODY|TFOOT|TR)$/.test(el.tagName)
+									&& context.document.createRange) {
+									const range = context.document.createRange();
+									range.selectNodeContents(el);
+									const fragment = range.createContextualFragment(item.all_html_render());
+									item_dom_el = fragment.firstChild;
 								} else {
 									temp_el = context.document.createElement('div');
 									temp_el.innerHTML = item.all_html_render();

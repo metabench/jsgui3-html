@@ -50,7 +50,7 @@ const async_data_source = (ctrl, options = {}) => {
      * @param {Object} extra_params - additional params to merge
      */
     ctrl.load_data = async (extra_params = {}) => {
-        if (!ctrl._data_source) return;
+        if (!ctrl._data_source || ctrl._destroyed) return;
 
         const load_id = ++ctrl._load_id;
 
@@ -69,7 +69,7 @@ const async_data_source = (ctrl, options = {}) => {
             const result = await ctrl._data_source(params);
 
             // Ignore stale responses
-            if (load_id !== ctrl._load_id) return;
+            if (ctrl._destroyed || load_id !== ctrl._load_id) return;
 
             if (result && Array.isArray(result.rows)) {
                 ctrl._total_rows = result.total || result.rows.length;
@@ -83,10 +83,10 @@ const async_data_source = (ctrl, options = {}) => {
                 });
             }
         } catch (err) {
-            if (load_id !== ctrl._load_id) return;
+            if (ctrl._destroyed || load_id !== ctrl._load_id) return;
             ctrl.raise('data_error', { error: err, params: params });
         } finally {
-            if (load_id === ctrl._load_id) {
+            if (!ctrl._destroyed && load_id === ctrl._load_id) {
                 ctrl._set_loading(false);
             }
         }
@@ -96,6 +96,7 @@ const async_data_source = (ctrl, options = {}) => {
      * Set loading state and update UI.
      */
     ctrl._set_loading = (is_loading) => {
+        if (ctrl._destroyed) return;
         ctrl._loading = is_loading;
 
         if (is_loading) {

@@ -6,7 +6,7 @@
  * Adds keyboard-driven row navigation to a grid/table control.
  * Depends on: grid_selection (for select_row, toggle_row, etc.)
  * 
- * Handles: ArrowUp/Down, Space (toggle), Ctrl+A (select all)
+ * Handles: ArrowUp/Down, Home/End, Space (toggle), Ctrl+A (select all)
  * 
  * Usage:
  *   const grid_keyboard_nav = require('./grid_keyboard_nav');
@@ -72,6 +72,21 @@ const grid_keyboard_nav = (ctrl, options = {}) => {
         }
     };
 
+    ctrl._move_selection_to = (row_index) => {
+        const visible_count = ctrl.visible_rows ? ctrl.visible_rows.length : 0;
+        if (visible_count === 0) return;
+        const next = Math.max(0, Math.min(visible_count - 1, Number(row_index) || 0));
+        ctrl.selected_rows.clear();
+        ctrl.select_row(next);
+        ctrl._selection_anchor = next;
+        if (ctrl.render_table) ctrl.render_table();
+
+        if (ctrl.dom && ctrl.dom.el) {
+            const row_el = ctrl.dom.el.querySelector(`tr[data-row-index="${next}"]`);
+            if (row_el) row_el.scrollIntoView({ block: 'nearest' });
+        }
+    };
+
     /**
      * Keydown handler for grid navigation.
      * Should be called from the control's activate() keydown listener.
@@ -85,6 +100,10 @@ const grid_keyboard_nav = (ctrl, options = {}) => {
             e_key.preventDefault();
             const delta = key === 'ArrowDown' ? 1 : -1;
             ctrl._move_selection(delta, e_key);
+            return true;
+        } else if (key === 'Home' || key === 'End') {
+            e_key.preventDefault();
+            ctrl._move_selection_to(key === 'Home' ? 0 : (ctrl.visible_rows.length - 1));
             return true;
         } else if ((key === 'a' || key === 'A') && (e_key.ctrlKey || e_key.metaKey)) {
             e_key.preventDefault();

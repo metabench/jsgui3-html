@@ -65,10 +65,34 @@ jsgui.Resource.load_compiler = (name, jsfn, options) => {
 }
 jsgui.controls = jsgui.controls || {};
 //jsgui.controls.Active_HTML_Document = jsgui.Active_HTML_Document = require('./controls/organised/1-standard/5-ui/Active_HTML_Document');
-Object.assign(jsgui.controls, require('./controls/controls'));
-Object.keys(jsgui.controls).forEach((name) => {
-    register_control(name, jsgui.controls[name]);
+const controls_registry = require('./controls/controls');
+const deprecated_alias_names = new Set(['FormField', 'PropertyEditor']);
+const registry_names = Object.keys(controls_registry).filter(name => !deprecated_alias_names.has(name));
+
+registry_names.forEach(name => {
+    jsgui.controls[name] = controls_registry[name];
 });
-Object.assign(jsgui, jsgui.controls);
+Object.keys(jsgui.controls).forEach((name) => {
+    if (typeof jsgui.controls[name] === 'function') {
+        register_control(name, jsgui.controls[name]);
+    }
+});
+registry_names.forEach(name => {
+    jsgui[name] = jsgui.controls[name];
+});
+
+// Keep aggregate legacy aliases available without making routine control-map
+// enumeration count as deprecated usage.
+deprecated_alias_names.forEach(name => {
+    const descriptor = {
+        configurable: true,
+        enumerable: false,
+        get() {
+            return controls_registry[name];
+        }
+    };
+    Object.defineProperty(jsgui.controls, name, descriptor);
+    Object.defineProperty(jsgui, name, descriptor);
+});
 jsgui.mixins = jsgui.mx = require('./control_mixins/mx');
 module.exports = jsgui;

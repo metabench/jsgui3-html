@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Test suite for jsgui3-html framework",
   "scripts": {
-    "test": "mocha core/**/*.test.js mvvm/**/*.test.js mixins/**/*.test.js integration/**/*.test.js router/**/*.test.js *.test.js --timeout 5000",
+    "test": "mocha core/**/*.test.js controls/**/*.test.js mvvm/**/*.test.js mixins/**/*.test.js integration/**/*.test.js router/**/*.test.js *.test.js --timeout 5000",
     "test:watch": "mocha core/**/*.test.js mvvm/**/*.test.js mixins/**/*.test.js integration/**/*.test.js router/**/*.test.js *.test.js --watch --timeout 5000",
     "test:core": "mocha core/**/*.test.js",
+    "test:data-grid": "mocha core/data_grid_activation_state.test.js core/data_grid_binding_contract.test.js --timeout 15000 --exit",
     "test:mvvm": "mocha mvvm/**/*.test.js",
     "test:mixins": "mocha mixins/**/*.test.js",
     "test:integration": "mocha integration/**/*.test.js",

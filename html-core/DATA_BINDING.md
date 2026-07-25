@@ -26,6 +26,21 @@ This separation allows for:
 - Flexible UI representations (multiple views of the same data)
 - Easier testing (test business logic independently of UI)
 
+### Source of truth
+
+Choose one authoritative model for each piece of state and treat rendered
+controls as projections of it. For the tabular controls:
+
+- `Data_Table.model` owns rows, columns, visible rows, sort, filters, paging,
+  totals, and selected visible-row indices.
+- `Data_Grid.model` owns the connected data source, query state, and singular
+  selection metadata; its inner table is a projection.
+- Fresh SSR reconstruction is a one-time exception: valid bounded table state
+  seeds the grid, after which the grid resumes ownership.
+
+Use public setters or `model.set()`. Avoid mutating a state object or array in
+place, because no change event can be guaranteed from an unobserved mutation.
+
 ## Key Components
 
 ### 1. ModelBinder
@@ -88,6 +103,11 @@ const watcher = new PropertyWatcher(
     }
 );
 ```
+
+`BindingManager#inspect()` reports computed properties under
+`property_name`. Watchers expose both `properties` (always an array) and the
+backward-compatible `property` field (a string for one property, otherwise an
+array). These names are intended for diagnostics and tests.
 
 ### 4. Transformations Library
 
@@ -451,6 +471,12 @@ class MyControl extends Data_Model_View_Model_Control {
 }
 ```
 
+`super.destroy()` cleans up bindings created through `bind`, `computed`, and
+`watch`. A control that calls `model.on()` or installs DOM/window/document
+listeners directly must retain those exact handler references and remove them
+in its own idempotent `destroy()`. Pending async work should also be invalidated
+so it cannot mutate a destroyed control.
+
 ### Throttling Updates
 
 For high-frequency changes, use custom watchers with throttling:
@@ -546,6 +572,6 @@ See individual class documentation:
 
 See the `examples/` directory for complete working examples:
 - [Simple Form Binding](../examples/binding_simple_form.js)
-- [Data Grid with Sorting](../examples/binding_data_grid.js)
+- [Production Data_Filter → Data_Grid binding](../examples/binding_data_grid.js)
 - [Complex Validation](../examples/binding_validation.js)
 - [Master-Detail View](../examples/binding_master_detail.js)

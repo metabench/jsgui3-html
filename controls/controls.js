@@ -228,15 +228,28 @@ controls.experimental = {};
 // They emit deprecation warnings when used.
 // See docs/migrations/naming_normalization.md for migration guide.
 
-controls.deprecated = {
-    // Legacy camelCase names - use Camel_Case versions instead
-    FormField: require('./organised/1-standard/1-editor/FormField'),
-    PropertyEditor: require('./organised/1-standard/1-editor/PropertyEditor')
+const { deprecation_warning } = require('../utils/deprecation');
+controls.deprecated = {};
+
+const define_deprecated_alias = (target, old_name, new_name, enumerable = true) => {
+    Object.defineProperty(target, old_name, {
+        enumerable,
+        configurable: true,
+        get() {
+            deprecation_warning(old_name, new_name, '1.0.0');
+            return controls[new_name];
+        }
+    });
 };
 
-// Also export at top level for backwards compatibility
-// (will emit deprecation warnings)
-controls.FormField = controls.deprecated.FormField;
-controls.PropertyEditor = controls.deprecated.PropertyEditor;
+// Resolve legacy names lazily. Loading the complete registry is a normal
+// bootstrap operation and should not claim that an application used an alias.
+define_deprecated_alias(controls.deprecated, 'FormField', 'Form_Field');
+define_deprecated_alias(controls.deprecated, 'PropertyEditor', 'Property_Editor');
+
+// Also export at top level for backwards compatibility. Access (rather than
+// registry loading) emits the one-time deprecation warning.
+define_deprecated_alias(controls, 'FormField', 'Form_Field', false);
+define_deprecated_alias(controls, 'PropertyEditor', 'Property_Editor', false);
 
 module.exports = controls;

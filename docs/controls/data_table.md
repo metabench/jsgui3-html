@@ -1,47 +1,57 @@
-# Data Table Control
+# Data Table
 
-The `Data_Table` control renders tabular data with sorting, filtering, and pagination hooks.
-
-## Usage
+`Data_Table` is the model-driven rendering engine used by `Data_Grid`. Use it
+directly when the application already owns its rows and query state.
 
 ```javascript
-const data_table = new controls.Data_Table({
+const table = new controls.Data_Table({
     context,
     columns: [
         { key: 'name', label: 'Name' },
         { key: 'status', label: 'Status' }
     ],
-    rows: [
-        { name: 'Alpha', status: 'open' },
-        { name: 'Beta', status: 'closed' }
-    ],
-    page_size: 5,
-    page: 1
+    rows,
+    filters: { status: { op: 'equals', value: 'open' } },
+    page: 1,
+    page_size: 25,
+    selection_mode: 'single'
 });
 ```
 
-## Public API
+`table.model` is the source of truth for columns, rows, sort, filters, paging,
+visible rows, totals, and `selected_row_indices`. Setters update that model and
+the computed filter → sort → page pipeline updates the view.
 
-- `set_rows(rows)` - Set the table rows.
-- `set_columns(columns)` - Set the column definitions.
-- `set_sort_state(sort_state)` - Set `{ key, direction }`.
-- `set_filters(filters)` - Set filter object or null.
-- `set_page(page)` - Set the current page.
-- `set_page_size(page_size)` - Set the page size.
-- `get_visible_rows()` - Get the rows after sort/filter/paging.
+## Filtering and paging
 
-## Events
+`set_filters()` accepts predicate functions, legacy scalar substring values,
+and the structured operators documented in [Data Grid](data_grid.md). Multiple
+keys combine with AND. `set_sort_state()` and `set_filters()` reset page to 1.
+`set_page()` normalizes values to a 1-based integer.
 
-- `row_click` - Raised with `{ row_index, row_data }`.
-- `sort_change` - Raised when the user changes sort state.
+Set `server_side: true` when `rows` is already the requested server page. The
+table then bypasses local query processing and uses `total_count` for ARIA and
+page totals.
 
-## Notes
+## Selection and interaction
 
-- Column definitions may include `accessor(row)` or `render(value, row)`.
-- Header buttons are keyboard-focusable and set `aria-sort`.
-- Provide stable column keys for consistent sorting.
+Selection modes are `none`, `single`, and `multiple`. Selected indices are
+zero-based indices in `visible_rows`, exposed through `get_selected_rows()`.
+Rows use `.is-selected` and `aria-selected`.
 
-## Tests
+Sortable headers support click and Enter. Rows support pointer selection and
+the grid keyboard-navigation mixin. Relevant events are `sort_change`,
+`page_change`, `row_click`, `selection_change`, and `column_resize`.
 
-- `test/core/data_collection_controls.test.js`
-- `test/e2e/data-controls.test.js`
+## Rendering and lifecycle
+
+The table supports standard/virtual rendering, density variants, frozen and
+resizable columns, and adaptive layout. `aria-rowindex` includes the page
+offset; `aria-rowcount` reflects total data rows plus the header.
+
+`destroy()` is idempotent. It removes root, window, document, virtual-scroll,
+and resize-drag listeners and invalidates pending async-mixin work.
+
+The opt-in `persist_activation_state` behavior, limits, security implications,
+and reconstruction contract are documented under
+[Data Grid: Opt-in fresh activation state](data_grid.md#opt-in-fresh-activation-state).

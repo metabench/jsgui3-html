@@ -115,8 +115,14 @@ catch-error*.js
 test_rs_tpl.js
 parse-mount-old.js
 
+# Visual harness output (tools/visual/batch.js)
+tools/visual/output/
+
 # Root-level screenshots from E2E / lab runs
 *.png
+
+# ...but tracked visual-regression baselines are allowed
+!tools/visual/baselines/*.png
 
 # Root-level analysis / error outputs
 a11y_violations.json

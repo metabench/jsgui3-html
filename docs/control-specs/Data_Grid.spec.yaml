@@ -6,17 +6,18 @@ control:
   category: connected
   priority: P0
   target_tier: T4
-  proposed_file: controls/connected/data-grid.js
+  proposed_file: controls/connected/Data_Grid.js
   dependencies: [Control, Data_Table, Data_Filter]
 
 status:
   implemented: true
   notes: >
-    330-line implementation with async data source support, {rows, total_count}
-    response handling, loading/error states, auto server_side delegation to
-    Data_Table, refresh() alias, CSS spinner overlay. Current tier ~T2.
-    Missing: empty state, exhaustive JSDoc, density forwarding, pagination UI,
-    debounced refresh on rapid param changes, retry on error.
+    Implemented with static, adapter, and async data sources; newest-request
+    handling; loading/error/empty states; server_side delegation; direct
+    Data_Filter operator-map compatibility; synchronized selection and paging;
+    lifecycle cleanup; and opt-in bounded fresh-activation state. Pagination UI,
+    density forwarding, debounced refresh, retry UI, and stable row-key
+    selection remain outside the current contract.
 
 purpose:
   summary: >
@@ -81,22 +82,29 @@ api:
       type: "object|null"
       required: false
       default: null
-      description: Filter map {column_key: filter_value_or_{op,value}}.
+      description: "Filter map {column_key: filter_value_or_{op,value}}."
     - name: selection
       type: "object|null"
       required: false
       default: null
-      description: Current selection state {row_index, row_data}.
+      description: "Current selection state {row_index, row_data}."
+    - name: selection_mode
+      type: "'none'|'single'|'multiple'"
+      required: false
+      default: "none"
+      description: Selection behavior forwarded to the inner Data_Table.
+    - name: persist_activation_state
+      type: boolean
+      required: false
+      default: false
+      description: >
+        Opt in to bounded JSON-safe static state in rendered HTML for fresh
+        browser reconstruction. Not supported for functions or async adapters.
     - name: empty_text
       type: string
       required: false
       default: "No data available"
       description: Message shown when data source returns 0 rows.
-    - name: retry_text
-      type: string
-      required: false
-      default: "Retry"
-      description: Button text shown in error state.
   events:
     - name: selection_change
       payload: "{selection: {row_index:number, row_data:object}}"
@@ -105,8 +113,8 @@ api:
       payload: "{sort_state: {key:string, direction:string}}"
       when: Sort state changes (forwarded from Data_Table header click).
     - name: page_change
-      payload: "{page:number}"
-      when: Page navigation occurs.
+      payload: "{page:number, previous_page:number, reason?:'sort'|'filter'}"
+      when: Effective page changes, including an implicit sort/filter reset.
     - name: error
       payload: "{message:string, error:Error}"
       when: Data source promise rejects.
@@ -156,7 +164,6 @@ interaction:
   pointer:
     - Click header to sort (delegated to Data_Table).
     - Click row to select and emit selection_change.
-    - Click retry button in error state to refresh.
 
 accessibility:
   roles:
@@ -168,7 +175,6 @@ accessibility:
     - aria-label="Data grid" on root
   focus:
     - Root not focusable; focus managed by inner Data_Table.
-    - Retry button focusable in error state.
 
 styling:
   css_classes:
@@ -187,16 +193,15 @@ styling:
     - --j-fg-muted
     - --j-bg-surface
     - --j-text-sm
-  density_support: [comfortable, compact, dense]
+  density_support: []
 
 acceptance:
   e2e:
     - Static array data source renders all rows correctly.
     - Async data source shows loading class during pending promise.
     - Loading class and spinner removed after resolve.
-    - "{rows, total_count}" response stores total_count and sets server_side.
+    - '"{rows, total_count}" response stores total_count and sets server_side.'
     - Error state shows error message when promise rejects.
-    - Retry button in error state re-invokes refresh.
     - Empty state shown when resolved rows array is empty.
     - sort_change event propagated when header clicked.
     - selection_change event emitted when row clicked.
@@ -210,5 +215,5 @@ acceptance:
     - All loading/error/empty states render correctly.
     - Server-side mode auto-detected from total_count.
     - CSS spinner, error, and empty state visually verified.
-    - Full Puppeteer E2E suite passing.
+    - Focused unit/reconstruction and activated Playwright browser gates passing.
     - JSDoc on all public methods and events.

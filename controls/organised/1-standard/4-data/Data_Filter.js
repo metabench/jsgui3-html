@@ -22,6 +22,27 @@
  */
 const Control = require('../../../../html-core/control');
 
+const FILTER_STATE_ATTRIBUTE = 'data-jsgui-filter-state';
+const MAX_FILTER_STATE_CHARACTERS = 32768;
+const MAX_FILTER_FIELDS = 64;
+const MAX_FILTER_ROWS = 64;
+
+const is_json_safe = (value, seen = new Set(), depth = 0) => {
+    if (depth > 20) return false;
+    if (value === null || typeof value === 'string' || typeof value === 'boolean') return true;
+    if (typeof value === 'number') return Number.isFinite(value);
+    if (typeof value !== 'object' || seen.has(value)) return false;
+    if (!Array.isArray(value)) {
+        const prototype = Object.getPrototypeOf(value);
+        if (prototype !== Object.prototype && prototype !== null) return false;
+    }
+    seen.add(value);
+    const values = Array.isArray(value) ? value : Object.keys(value).map(key => value[key]);
+    const safe = values.every(item => is_json_safe(item, seen, depth + 1));
+    seen.delete(value);
+    return safe;
+};
+
 const DEFAULT_OPERATORS = {
     string: [
         { value: 'contains', label: 'contains' },
@@ -43,13 +64,32 @@ const DEFAULT_OPERATORS = {
     ]
 };
 
+const read_filter_state = element => {
+    if (!element || typeof element.getAttribute !== 'function') return null;
+    const json = element.getAttribute(FILTER_STATE_ATTRIBUTE);
+    if (!json || json.length > MAX_FILTER_STATE_CHARACTERS) return null;
+    try {
+        const state = JSON.parse(json);
+        if (!state || state.version !== 1
+            || !Array.isArray(state.fields) || state.fields.length > MAX_FILTER_FIELDS
+            || !Array.isArray(state.filters) || state.filters.length > MAX_FILTER_ROWS) {
+            return null;
+        }
+        return state;
+    } catch (error) {
+        return null;
+    }
+};
+
 class Data_Filter extends Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'data_filter';
-        const cfg_fields = spec.fields || [];
-        const cfg_filters = spec.filters || [];
-        const cfg_operators = spec.operators || null;
+        const restored_state = read_filter_state(spec.el);
+        const cfg_fields = spec.fields || (restored_state && restored_state.fields) || [];
+        const cfg_filters = spec.filters || (restored_state && restored_state.filters) || [];
+        const cfg_operators = spec.operators || (restored_state && restored_state.operators) || null;
         super(spec);
+        this._persist_activation_state = spec.persist_activation_state === true || !!restored_state;
         this.add_class('jsgui-data-filter');
         this.dom.tagName = 'div';
 
@@ -65,7 +105,14 @@ class Data_Filter extends Control {
             }
         );
         this._operators = cfg_operators || DEFAULT_OPERATORS;
-        this._filter_rows = [];
+        this._filter_rows = spec.el
+            ? cfg_filters.map(filter => ({
+                field: filter.field || '',
+                operator: filter.operator || 'contains',
+                value: filter.value == null ? '' : String(filter.value),
+                el: null
+            }))
+            : [];
         this._row_container = null;
 
         if (spec.theme) {
@@ -78,6 +125,7 @@ class Data_Filter extends Control {
             if (cfg_filters.length > 0) {
                 cfg_filters.forEach(f => this._add_filter_row(f));
             }
+            this._sync_activation_state_attribute();
         }
     }
 
@@ -103,6 +151,8 @@ class Data_Filter extends Control {
         header.add(add_btn);
 
         this._add_btn = add_btn;
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.add_btn = add_btn;
         this.add(header);
     }
 
@@ -110,6 +160,8 @@ class Data_Filter extends Control {
         const container = new Control({ context: this.context, tag_name: 'div' });
         container.add_class('data-filter-rows');
         this._row_container = container;
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._ctrl_fields.row_container = container;
         this.add(container);
 
         // Empty state
@@ -117,13 +169,15 @@ class Data_Filter extends Control {
         empty.add_class('data-filter-empty');
         empty.add('No filters applied');
         this._empty_msg = empty;
+        this._ctrl_fields.empty_msg = empty;
         container.add(empty);
     }
 
     // ── Public API ──
 
     add_filter() {
-        this._add_filter_row({});
+        const row_data = this._add_filter_row({});
+        if (this.__active) this._activate_row(row_data);
         this._fire_change();
     }
 
@@ -131,6 +185,7 @@ class Data_Filter extends Control {
         if (index >= 0 && index < this._filter_rows.length) {
             const row = this._filter_rows[index];
             if (row.el) {
+                this._deactivate_row(row);
                 this._row_container.remove(row.el);
             }
             this._filter_rows.splice(index, 1);
@@ -164,7 +219,10 @@ class Data_Filter extends Control {
     clear() {
         while (this._filter_rows.length > 0) {
             const row = this._filter_rows.pop();
-            if (row.el) this._row_container.remove(row.el);
+            if (row.el) {
+                this._deactivate_row(row);
+                this._row_container.remove(row.el);
+            }
         }
         this._update_empty_state();
         this._fire_change();
@@ -212,15 +270,8 @@ class Data_Filter extends Control {
         const op_sel = new Control({ context: this.context, tag_name: 'select' });
         op_sel.add_class('data-filter-operator');
         op_sel.dom.attributes['aria-label'] = 'Filter operator';
-        const field_type = this._get_field_type(row_data.field);
-        const ops = this._operators[field_type] || this._operators.string || [];
-        ops.forEach(o => {
-            const opt = new Control({ context: this.context, tag_name: 'option' });
-            opt.dom.attributes.value = o.value;
-            if (o.value === row_data.operator) opt.dom.attributes.selected = 'selected';
-            opt.add(o.label);
-            op_sel.add(opt);
-        });
+        row_data._op_sel = op_sel;
+        this._populate_operator_select(row_data);
         row.add(op_sel);
 
         // Value input
@@ -242,18 +293,37 @@ class Data_Filter extends Control {
 
         // Store refs for activation
         row_data._field_sel = field_sel;
-        row_data._op_sel = op_sel;
         row_data._val_input = val_input;
         row_data._rm_btn = rm_btn;
 
         this._filter_rows.push(row_data);
         this._row_container.add(row);
         this._update_empty_state();
+        return row_data;
     }
 
     _get_field_type(name) {
         const f = this._fields.find(f => f.name === name);
         return f ? f.type : 'string';
+    }
+
+    _populate_operator_select(row_data) {
+        const op_sel = row_data && row_data._op_sel;
+        if (!op_sel) return;
+        const field_type = this._get_field_type(row_data.field);
+        const ops = this._operators[field_type] || this._operators.string || [];
+        if (!ops.some(operator => operator.value === row_data.operator)) {
+            row_data.operator = ops.length ? ops[0].value : '';
+        }
+        op_sel.clear();
+        ops.forEach(operator => {
+            const option = new Control({ context: this.context, tag_name: 'option' });
+            option.dom.attributes.value = operator.value;
+            if (operator.value === row_data.operator) option.dom.attributes.selected = 'selected';
+            option.add(operator.label);
+            op_sel.add(option);
+        });
+        if (op_sel.dom.el) op_sel.dom.el.value = row_data.operator;
     }
 
     _update_empty_state() {
@@ -271,6 +341,38 @@ class Data_Filter extends Control {
         const filter_map = this.get_filter_map();
         this.raise('change', { filters });
         this.raise('filter_change', { filters: filter_map });
+        this._sync_activation_state_attribute();
+    }
+
+    _sync_activation_state_attribute() {
+        if (!this._persist_activation_state) return;
+        const state = {
+            version: 1,
+            fields: this._fields.map(field => ({
+                name: field.name,
+                label: field.label,
+                type: field.type
+            })),
+            filters: this.get_filters(),
+            operators: this._operators
+        };
+        let json = null;
+        try {
+            if (this._fields.length <= MAX_FILTER_FIELDS
+                && this._filter_rows.length <= MAX_FILTER_ROWS
+                && is_json_safe(state)) {
+                json = JSON.stringify(state);
+            }
+        } catch (error) {
+            json = null;
+        }
+        if (!json || json.length > MAX_FILTER_STATE_CHARACTERS) {
+            delete this.dom.attributes[FILTER_STATE_ATTRIBUTE];
+            if (this.dom.el) this.dom.el.removeAttribute(FILTER_STATE_ATTRIBUTE);
+            return;
+        }
+        this.dom.attributes[FILTER_STATE_ATTRIBUTE] = json;
+        if (this.dom.el) this.dom.el.setAttribute(FILTER_STATE_ATTRIBUTE, json);
     }
 
     _match(item, filter) {
@@ -294,12 +396,46 @@ class Data_Filter extends Control {
     }
 
     activate() {
+        if (this.__active) return;
         super.activate();
         const that = this;
 
+        this._ctrl_fields = this._ctrl_fields || {};
+        this._add_btn = this._ctrl_fields.add_btn || this.add_btn || this._add_btn;
+        this._row_container = this._ctrl_fields.row_container || this.row_container || this._row_container;
+        this._empty_msg = this._ctrl_fields.empty_msg || this.empty_msg || this._empty_msg;
+
+        const find_control = element => {
+            if (!element || !this.context || !this.context.map_controls) return null;
+            const id = element.getAttribute('data-jsgui-id');
+            return id ? this.context.map_controls[id] : null;
+        };
+        if (this.dom.el) {
+            const row_elements = Array.from(this.dom.el.querySelectorAll('.data-filter-row'));
+            this._filter_rows = row_elements.map((row_element, index) => {
+                const existing = this._filter_rows[index] || {};
+                const field_element = row_element.querySelector('.data-filter-field');
+                const operator_element = row_element.querySelector('.data-filter-operator');
+                const value_element = row_element.querySelector('.data-filter-value');
+                return {
+                    field: existing.field || (field_element ? field_element.value : ''),
+                    operator: existing.operator || (operator_element ? operator_element.value : 'contains'),
+                    value: existing.value == null
+                        ? (value_element ? value_element.value : '')
+                        : String(existing.value),
+                    el: find_control(row_element),
+                    _field_sel: find_control(field_element),
+                    _op_sel: find_control(operator_element),
+                    _val_input: find_control(value_element),
+                    _rm_btn: find_control(row_element.querySelector('.data-filter-remove-btn'))
+                };
+            });
+        }
+
         // Add filter button
         if (this._add_btn) {
-            this._add_btn.on('click', () => that.add_filter());
+            this._add_handler = () => that.add_filter();
+            this._add_btn.on('click', this._add_handler);
         }
 
         // Wire up existing rows
@@ -309,35 +445,74 @@ class Data_Filter extends Control {
     }
 
     _activate_row(row_data, idx) {
+        if (!row_data || row_data._handlers_bound) return;
         const that = this;
+        row_data._handlers_bound = true;
 
         if (row_data._field_sel) {
-            row_data._field_sel.on('change', function (e) {
+            row_data._field_handler = function () {
                 const el = row_data._field_sel.dom.el;
                 if (el) row_data.field = el.value;
+                that._populate_operator_select(row_data);
                 that._fire_change();
-            });
+            };
+            row_data._field_sel.on('change', row_data._field_handler);
         }
         if (row_data._op_sel) {
-            row_data._op_sel.on('change', function (e) {
+            row_data._operator_handler = function () {
                 const el = row_data._op_sel.dom.el;
                 if (el) row_data.operator = el.value;
                 that._fire_change();
-            });
+            };
+            row_data._op_sel.on('change', row_data._operator_handler);
         }
         if (row_data._val_input) {
-            row_data._val_input.on('input', function (e) {
+            row_data._value_handler = function () {
                 const el = row_data._val_input.dom.el;
                 if (el) row_data.value = el.value;
                 that._fire_change();
-            });
+            };
+            row_data._val_input.add_dom_event_listener('input', row_data._value_handler);
         }
         if (row_data._rm_btn) {
-            row_data._rm_btn.on('click', function () {
+            row_data._remove_handler = function () {
                 const current_idx = that._filter_rows.indexOf(row_data);
                 if (current_idx >= 0) that.remove_filter(current_idx);
-            });
+            };
+            row_data._rm_btn.on('click', row_data._remove_handler);
         }
+    }
+
+    _deactivate_row(row_data) {
+        if (!row_data || !row_data._handlers_bound) return;
+        if (row_data._field_sel && row_data._field_handler) {
+            row_data._field_sel.off('change', row_data._field_handler);
+        }
+        if (row_data._op_sel && row_data._operator_handler) {
+            row_data._op_sel.off('change', row_data._operator_handler);
+        }
+        if (row_data._val_input && row_data._value_handler) {
+            row_data._val_input.remove_dom_event_listener('input', row_data._value_handler);
+        }
+        if (row_data._rm_btn && row_data._remove_handler) {
+            row_data._rm_btn.off('click', row_data._remove_handler);
+        }
+        row_data._field_handler = null;
+        row_data._operator_handler = null;
+        row_data._value_handler = null;
+        row_data._remove_handler = null;
+        row_data._handlers_bound = false;
+    }
+
+    destroy() {
+        if (this._destroyed) return;
+        this._destroyed = true;
+        if (this._add_btn && this._add_handler) {
+            this._add_btn.off('click', this._add_handler);
+        }
+        this._add_handler = null;
+        this._filter_rows.forEach(row_data => this._deactivate_row(row_data));
+        if (typeof super.destroy === 'function') super.destroy();
     }
 }
 

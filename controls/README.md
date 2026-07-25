@@ -37,17 +37,18 @@ controls/
 ## Usage
 
 ```javascript
-const controls = require('jsgui3-html/controls/controls');
+const jsgui = require('jsgui3-html');
+const { Page_Context, controls } = jsgui;
 const { Button, Modal, Data_Table, Tabbed_Panel } = controls;
 
-const ctx = new jsgui.Page_Context();
+const ctx = new Page_Context();
 const btn = new Button({ context: ctx, text: 'Click me' });
 ```
 
 Or import individual controls directly:
 
 ```javascript
-const Modal = require('jsgui3-html/controls/organised/1-standard/6-layout/modal');
+const Modal = require('jsgui3-html/controls/organised/1-standard/6-layout/Modal');
 ```
 
 ## Control Tiers
@@ -220,7 +221,7 @@ Layout containers and structural components:
 
 ## Adaptive Layout
 
-Most standard controls support device-adaptive layout with these common properties:
+A focused set of standard controls supports the device-adaptive layout contract with these common properties:
 
 ```javascript
 const modal = new Modal({
@@ -237,11 +238,13 @@ Controls with adaptive support: `Master_Detail`, `Split_Pane`, `Form_Container`,
 
 ## Stability
 
-Controls exported from `controls.js` are organized by stability:
+Controls exported from `controls.js` span different maturity levels. The registry is broad and actively developed, so confirm the dedicated guide, tests, and example coverage for the control you plan to ship:
 
-- **Stable** — the main `controls` object: safe for production
+- **Main registry** — canonical public names, with maturity assessed per control
 - **Experimental** — `controls.experimental`: API may change
 - **Deprecated** — `controls.deprecated`: use canonical names instead (e.g., `Form_Field` not `FormField`)
+
+The ecosystem is pre-1.0. A main-registry export is a supported discovery and import surface, not a blanket production-readiness guarantee for every control.
 
 ## Related Documentation
 
@@ -250,8 +253,6 @@ Controls exported from `controls.js` are organized by stability:
 - [docs/books/device-adaptive-composition/](../docs/books/device-adaptive-composition/) — Multi-device composition book
 - [docs/theming_and_styling_system.md](../docs/theming_and_styling_system.md) — Theme tokens and styling
 - [control_mixins/README.md](../control_mixins/README.md) — Behavior mixins catalog
-
-
 
 
 

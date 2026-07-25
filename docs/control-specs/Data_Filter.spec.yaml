@@ -6,7 +6,7 @@ control:
   category: 1-standard/4-data
   priority: P1
   target_tier: T4
-  proposed_file: controls/organised/1-standard/4-data/data-filter.js
+  proposed_file: controls/organised/1-standard/4-data/Data_Filter.js
   dependencies: [Control]
 
 status:
@@ -15,7 +15,9 @@ status:
     460-line implementation with dynamic filter rows (field selector, operator
     selector, value input, remove button), add/remove/clear API, apply() for
     client-side filtering, filter_change event with map-format payload,
-    get_filter_map() for Data_Grid integration. Current tier ~T1.
+    get_filter_map() for verified Data_Grid integration, fresh reconstruction,
+    field-type operator rebuilding, and bounded JSON-safe activation metadata.
+    Current tier remains provisional pending broader consumer adoption.
     Missing: theme token usage (uses --admin-* instead of --j-*), date range
     picker, select/dropdown filter type, compose() pattern modernization,
     ensure_control_models, ARIA improvements, keyboard nav between rows,
@@ -55,9 +57,8 @@ api:
       description: >
         Filterable field definitions. String shorthand auto-creates
         {name, label, type:'string'}. type determines operator set and
-        input widget: 'string' (text input), 'number' (number input),
-        'boolean' (checkbox/select), 'select' (dropdown with options),
-        'date' (date picker), 'date_range' (dual date pickers).
+        operator list. Current inputs remain text inputs for string, number,
+        and boolean field types.
     - name: filters
       type: "array<{field:string, operator:string, value:string}>"
       required: false
@@ -71,25 +72,17 @@ api:
         Custom operator map keyed by field type. Default provides operators
         for string (contains, equals, starts_with, ends_with, not_equals),
         number (equals, not_equals, >, <, >=, <=), and boolean (equals).
-    - name: filter_types
-      type: "object"
-      required: false
-      default: null
-      description: >
-        Map of field names to input types. Overrides the field's type
-        for specific fields. E.g. {role: 'select', joined: 'date_range'}.
-    - name: columns
-      type: "array"
-      required: false
-      default: null
-      description: >
-        Alternative to fields — accepts Data_Table column format. Columns
-        with options get 'select' type; others get type based on first
-        row value detection.
     - name: theme
       type: string
       required: false
       description: Admin theme name (data-admin-theme attribute).
+    - name: persist_activation_state
+      type: boolean
+      required: false
+      default: false
+      description: >
+        Opt in to bounded JSON-safe fields, filters, and operator descriptions
+        in rendered HTML for fresh browser reconstruction.
   events:
     - name: change
       payload: "{filters: array<{field, operator, value}>}"
@@ -129,12 +122,6 @@ interaction:
       behavior: Move between field, operator, value, and remove button within a row.
     - key: Shift+Tab
       behavior: Reverse tab within row.
-    - key: Enter
-      behavior: In value input, fires change (apply filter).
-    - key: Escape
-      behavior: Clear value input in focused row.
-    - key: ArrowUp / ArrowDown
-      behavior: Navigate between filter rows (when focus on row-level).
   pointer:
     - Click "+ Add Filter" to add a new row.
     - Click "×" to remove a row.
@@ -151,11 +138,10 @@ accessibility:
     - aria-label="Filter value" on value input
     - aria-label="Remove filter" on remove button
     - aria-label="Add filter" on add button
-    - aria-live="polite" on filter count / empty state
   focus:
     - All interactive elements focusable via Tab.
     - Focus ring on active element.
-    - New row receives focus after add_filter().
+    - Browser-default focus follows row insertion.
 
 styling:
   css_classes:
@@ -203,12 +189,11 @@ acceptance:
     - Multiple filter conditions combine with AND logic.
     - Keyboard Tab navigates through row fields correctly.
     - ARIA labels present on all interactive elements.
-    - CSS uses --j-* tokens (not --admin-*).
-    - Compact variant reduces padding.
+    - Fresh activation restores fields, filters, and handlers.
+    - Unsafe or oversized activation state is omitted/ignored.
   done_definition:
     - All operator types tested (contains, equals, starts_with, etc.).
     - Integration with Data_Grid.set_filters() verified end-to-end.
-    - Theme token migration from --admin-* to --j-* complete.
-    - Full Puppeteer E2E suite passing.
+    - Activated Playwright Filter-to-Grid integration passing.
     - Complete JSDoc on all public methods and events.
     - Visual verification screenshots for empty/populated/compact states.

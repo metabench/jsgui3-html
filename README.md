@@ -999,7 +999,8 @@ The framework is actively developed with focus on:
 - Better debugging and development tools
 - Comprehensive testing coverage
 
-For detailed implementation plans, see [MVVM.md](./MVVM.md).
+For the current architecture guide, see
+[MVC/MVVM Developer Guide](docs/MVC_MVVM_Developer_Guide.md).
 
 ## Installation
 
@@ -1593,7 +1594,8 @@ For detailed information and quick starts:
 - **[DEV_EXAMPLES_SUMMARY.md](DEV_EXAMPLES_SUMMARY.md)** - Summary of isomorphic patterns and examples
 - **[test/README.md](test/README.md)** - Testing guide and best practices
 - **[html-core/DATA_BINDING.md](html-core/DATA_BINDING.md)** - Complete data binding API reference
-- **[MVVM.md](MVVM.md)** - MVVM architecture analysis and enhancements
+- **[MVC/MVVM Developer Guide](docs/MVC_MVVM_Developer_Guide.md)** - Current model/view architecture
+- **[Data Grid](docs/controls/data_grid.md)** - Connected tabular data, filtering, activation, and lifecycle contract
 
 ### New in Dev Examples
 
@@ -1624,11 +1626,13 @@ The dev-examples directory now includes three comprehensive examples:
 
 Three new controls added to the framework:
 
-- **`FormField`** - Composite control combining label + input + validation indicator
+- **`Form_Field`** - Composite control combining label + input + validation indicator
 - **`Toolbar`** - Flexible button container with icons, tooltips, separators
-- **`PropertyEditor`** - Dynamic property editing panel that adapts to item type
+- **`Property_Editor`** - Dynamic property editing panel that adapts to item type
 
-All available via: `const { FormField, Toolbar, PropertyEditor } = require('jsgui3-html');`
+All available via:
+`const { Form_Field, Toolbar, Property_Editor } = require('jsgui3-html');`.
+The historical `FormField` and `PropertyEditor` names are deprecated aliases.
 
 ## Contributing
 
@@ -1642,22 +1646,20 @@ cd jsgui3-html
 npm install
 
 # Install test dependencies
-cd test && npm install
+npm --prefix test install
 
 # Run all tests
 npm test
 
 # Run specific test suites
 npm run test:core          # Core control tests
-npm run test:mvvm          # MVVM and binding tests
-npm run test:integration   # Integration tests
-
-# Run linter
-npm run lint
+npm run test:binding       # MVVM and binding tests
+npm run test:data-controls # Data Grid / Table / Filter contract
+npm run test:data-controls:browser # Real activated Chromium flow
 ```
 
 ### Code Style Guidelines
-- Use camelCase for JavaScript variables and methods
+- Use `snake_case` for variables and methods, and `Camel_Case` for control classes.
 - Use PascalCase for class names
 - Use snake_case for file names
 - Include JSDoc comments for public methods
@@ -1885,4 +1887,3 @@ This repository is a core component of the **jsgui3 ecosystem**.
 
 For cross-repo architecture maps, coding standards, coordination workflows, and orientation guides, see the ecosystem coordination headquarters:
 👉 **[jsgui3-ecosystem](https://github.com/metabench/jsgui3-ecosystem)**
-

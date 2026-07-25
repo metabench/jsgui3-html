@@ -424,6 +424,24 @@ describe('MVVM Pattern Tests', () => {
                 target: 'display'
             });
         });
+
+        it('should report computed and watcher property names accurately', () => {
+            const manager = new BindingManager();
+            const model = new Data_Object({ left: 2, right: 3 });
+            manager.create_computed(
+                model,
+                ['left', 'right'],
+                (left, right) => left + right,
+                { propertyName: 'sum' }
+            );
+            manager.watch(model, ['left', 'right'], () => {});
+
+            const report = manager.inspect();
+            expect(report.computed[0].property_name).to.equal('sum');
+            expect(report.watchers[0].property).to.deep.equal(['left', 'right']);
+            expect(report.watchers[0].properties).to.deep.equal(['left', 'right']);
+            manager.cleanup();
+        });
     });
     
     describe('MVVM Control Integration', () => {

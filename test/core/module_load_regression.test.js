@@ -105,4 +105,18 @@ describe('Module Load Regression Tests', () => {
         expect(result.status).to.equal(0);
         expect(result.stderr || '').to.not.include('TRACE_CALLED');
     });
+
+    it('should not emit deprecation warnings during routine registry load', function () {
+        this.timeout(20000);
+
+        const repo_root_path = path.resolve(__dirname, '..', '..');
+        const result = spawnSync(process.execPath, ['-e', "require('./html.js');"], {
+            cwd: repo_root_path,
+            encoding: 'utf8',
+            timeout: 15000
+        });
+
+        expect(result.status).to.equal(0);
+        expect(result.stderr || '').to.not.include('DEPRECATED');
+    });
 });

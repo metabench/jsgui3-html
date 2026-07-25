@@ -5,8 +5,8 @@
  * raw HTML, respecting the platform's content escaping rules.
  *
  * Supports: headings, bold, italic, inline code, code blocks,
- * links, images, blockquotes, unordered/ordered lists, horizontal
- * rules, and paragraphs.
+ * links, images, blockquotes, unordered/ordered lists, tables,
+ * horizontal rules, and paragraphs.
  *
  * Options:
  *   markdown   — Markdown source string
@@ -18,13 +18,102 @@ const Control = require('../../../../html-core/control');
 
 // ── Markdown → jsgui Control tree ───────────────────
 
+function split_table_row(line) {
+    const source = String(line || '').trim();
+    if (!source.includes('|')) return null;
+
+    const cells = [];
+    let cell = '';
+    let escaped = false;
+    let in_code = false;
+    for (const character of source) {
+        if (escaped) {
+            cell += character;
+            escaped = false;
+            continue;
+        }
+        if (character === '\\') {
+            escaped = true;
+            cell += character;
+            continue;
+        }
+        if (character === '`') {
+            in_code = !in_code;
+            cell += character;
+            continue;
+        }
+        if (character === '|' && !in_code) {
+            cells.push(cell.trim());
+            cell = '';
+            continue;
+        }
+        cell += character;
+    }
+    cells.push(cell.trim());
+
+    if (source.startsWith('|')) cells.shift();
+    if (source.endsWith('|')) cells.pop();
+    return cells.length > 0 ? cells : null;
+}
+
+function parse_table_delimiter(line, expected_count) {
+    const cells = split_table_row(line);
+    if (!cells || cells.length !== expected_count) return null;
+    const alignments = [];
+    for (const cell of cells) {
+        const delimiter = cell.replace(/\s/g, '');
+        if (!/^:?-{3,}:?$/.test(delimiter)) return null;
+        const left = delimiter.startsWith(':');
+        const right = delimiter.endsWith(':');
+        alignments.push(left && right ? 'center' : (right ? 'right' : 'left'));
+    }
+    return alignments;
+}
+
+function compose_table_row(ctx, cell_values, cell_tag, alignments) {
+    const row = new Control({ context: ctx, tag_name: 'tr' });
+    for (let cell_index = 0; cell_index < cell_values.length; cell_index++) {
+        const cell = new Control({ context: ctx, tag_name: cell_tag });
+        const alignment = alignments[cell_index] || 'left';
+        cell.add_class('md-align-' + alignment);
+        if (cell_tag === 'th') cell.dom.attributes.scope = 'col';
+        add_inline_content(cell, cell_values[cell_index], ctx);
+        row.add(cell);
+    }
+    return row;
+}
+
+function compose_table(ctx, header_cells, alignments, body_rows) {
+    const scroll = new Control({ context: ctx, tag_name: 'div' });
+    scroll.add_class('md-table-scroll');
+    const table = new Control({ context: ctx, tag_name: 'table' });
+    table.add_class('md-table');
+
+    const thead = new Control({ context: ctx, tag_name: 'thead' });
+    thead.add(compose_table_row(ctx, header_cells, 'th', alignments));
+    table.add(thead);
+
+    if (body_rows.length > 0) {
+        const tbody = new Control({ context: ctx, tag_name: 'tbody' });
+        for (const body_row of body_rows) {
+            tbody.add(compose_table_row(ctx, body_row, 'td', alignments));
+        }
+        table.add(tbody);
+    }
+
+    scroll.add(table);
+    return scroll;
+}
+
 /**
  * Parse a markdown string and return an array of jsgui Controls.
  */
 function md_to_controls(md, ctx) {
     if (!md) return [];
     const controls = [];
-    const lines = md.split('\n');
+    // Normalise line endings once so block recognisers see the same input for
+    // Markdown read from LF and CRLF repositories.
+    const lines = md.replace(/\r\n?/g, '\n').split('\n');
     let i = 0;
 
     while (i < lines.length) {
@@ -78,13 +167,44 @@ function md_to_controls(md, ctx) {
         }
 
         // Blockquote
-        const bq_match = line.match(/^>\s+(.+)$/);
+        // Accept empty blockquote lines as well as lines with content. Empty
+        // quote lines are common Markdown paragraph separators ("> "). The
+        // paragraph scanner already treats them as special, so failing to
+        // consume one here would leave `i` unchanged and lock the parser.
+        const bq_match = line.match(/^>\s?(.*)$/);
         if (bq_match) {
-            const bq = new Control({ context: ctx, tag_name: 'blockquote' });
-            add_inline_content(bq, bq_match[1], ctx);
-            controls.push(bq);
+            if (bq_match[1].trim() !== '') {
+                const bq = new Control({ context: ctx, tag_name: 'blockquote' });
+                add_inline_content(bq, bq_match[1], ctx);
+                controls.push(bq);
+            }
             i++;
             continue;
+        }
+
+        // GitHub-style table. A pipe-containing header is only treated as a
+        // table when the next line is a valid delimiter row. That strict
+        // two-line signature keeps ordinary prose containing `|` intact.
+        if (i + 1 < lines.length) {
+            const header_cells = split_table_row(line);
+            const alignments = header_cells
+                ? parse_table_delimiter(lines[i + 1], header_cells.length)
+                : null;
+            if (header_cells && alignments) {
+                const body_rows = [];
+                i += 2;
+                while (i < lines.length && lines[i].trim() !== '') {
+                    const row_cells = split_table_row(lines[i]);
+                    if (!row_cells) break;
+                    const normalised_cells = header_cells.map((unused, cell_index) => {
+                        return row_cells[cell_index] || '';
+                    });
+                    body_rows.push(normalised_cells);
+                    i++;
+                }
+                controls.push(compose_table(ctx, header_cells, alignments, body_rows));
+                continue;
+            }
         }
 
         // Unordered list
@@ -132,6 +252,11 @@ function md_to_controls(md, ctx) {
             const p = new Control({ context: ctx, tag_name: 'p' });
             add_inline_content(p, para_lines.join(' '), ctx);
             controls.push(p);
+        } else {
+            // Defensive progress invariant: every loop iteration must consume
+            // a line, even if a future special-line recogniser and its parser
+            // branch become inconsistent.
+            i++;
         }
     }
 
@@ -219,7 +344,7 @@ function tokenise_inline(text) {
 // Keep the old HTML parser for client-side use
 function md_to_html(md) {
     if (!md) return '';
-    let html = md;
+    let html = render_tables_to_html(md);
     html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
         const escaped = esc(code.trim());
         return `<pre class="md-code-block"><code class="lang-${lang || 'text'}">${escaped}</code></pre>`;
@@ -255,7 +380,58 @@ function md_to_html(md) {
     html = html.replace(/(<\/ul>)<\/p>/g, '$1');
     html = html.replace(/<p>(<blockquote>)/g, '$1');
     html = html.replace(/(<\/blockquote>)<\/p>/g, '$1');
+    html = html.replace(/<p>(<div class="md-table-scroll">)/g, '$1');
+    html = html.replace(/(<\/div>)<\/p>/g, '$1');
     return html;
+}
+
+function render_tables_to_html(md) {
+    const lines = String(md || '').replace(/\r\n?/g, '\n').split('\n');
+    const rendered = [];
+    let line_index = 0;
+    let in_fence = false;
+
+    while (line_index < lines.length) {
+        const line = lines[line_index];
+        if (/^```/.test(line)) {
+            in_fence = !in_fence;
+            rendered.push(line);
+            line_index++;
+            continue;
+        }
+        if (!in_fence && line_index + 1 < lines.length) {
+            const header_cells = split_table_row(line);
+            const alignments = header_cells
+                ? parse_table_delimiter(lines[line_index + 1], header_cells.length)
+                : null;
+            if (header_cells && alignments) {
+                const body_rows = [];
+                line_index += 2;
+                while (line_index < lines.length && lines[line_index].trim() !== '') {
+                    const row_cells = split_table_row(lines[line_index]);
+                    if (!row_cells) break;
+                    body_rows.push(header_cells.map((unused, cell_index) => row_cells[cell_index] || ''));
+                    line_index++;
+                }
+                const header_html = header_cells.map((cell, cell_index) => {
+                    return `<th scope="col" class="md-align-${alignments[cell_index]}">${cell}</th>`;
+                }).join('');
+                const body_html = body_rows.map((row) => {
+                    return '<tr>' + row.map((cell, cell_index) => {
+                        return `<td class="md-align-${alignments[cell_index]}">${cell}</td>`;
+                    }).join('') + '</tr>';
+                }).join('');
+                rendered.push('<div class="md-table-scroll"><table class="md-table"><thead><tr>'
+                    + header_html + '</tr></thead>'
+                    + (body_html ? `<tbody>${body_html}</tbody>` : '')
+                    + '</table></div>');
+                continue;
+            }
+        }
+        rendered.push(line);
+        line_index++;
+    }
+    return rendered.join('\n');
 }
 
 function esc(str) {
@@ -315,6 +491,33 @@ Markdown_Viewer.css = `
 .md-code-block {
     overflow-x: auto;
 }
+.md-table-scroll {
+    max-width: 100%;
+    margin: 1.25rem 0;
+    overflow-x: auto;
+}
+.md-table {
+    width: 100%;
+    min-width: 34rem;
+    border-collapse: collapse;
+    font-size: 0.92em;
+}
+.md-table th,
+.md-table td {
+    padding: 0.7em 0.85em;
+    border: 1px solid var(--md-table-border, #d0d7de);
+    vertical-align: top;
+}
+.md-table th {
+    background: var(--md-table-header-bg, #f6f8fa);
+    font-weight: 650;
+}
+.md-table tbody tr:nth-child(even) {
+    background: var(--md-table-stripe-bg, rgba(208, 215, 222, 0.18));
+}
+.md-align-left { text-align: left; }
+.md-align-center { text-align: center; }
+.md-align-right { text-align: right; }
 `;
 
 // Export parsers for testing

@@ -571,12 +571,13 @@ class BindingManager {
         return {
             binders: this.binders.map(b => b.inspect()),
             computed: this.computed.map(c => ({
-                property_name: c.options.property_name,
+                property_name: c.options.property_name || c.options.propertyName || 'computed',
                 dependencies: c.dependencies,
                 value: c.value
             })),
             watchers: this.watchers.map(w => ({
-                property: w.property,
+                property: w.properties.length === 1 ? w.properties[0] : w.properties.slice(),
+                properties: w.properties.slice(),
                 active: w._active
             }))
         };

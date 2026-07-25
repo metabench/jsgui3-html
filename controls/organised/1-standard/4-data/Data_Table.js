@@ -17,6 +17,11 @@ const async_data_source = require('../../../../control_mixins/async_data_source'
 
 // Internal renderers
 const Data_Table_Virtual_Renderer = require('./internals/Data_Table_Virtual_Renderer');
+const {
+    TABULAR_STATE_ATTRIBUTE,
+    serialize_tabular_state,
+    read_tabular_state
+} = require('./tabular_activation_state');
 
 // ── Utility functions ──
 
@@ -35,10 +40,10 @@ const normalize_columns = columns => {
             const col = {
                 key,
                 label: is_defined(column.label) ? column.label : String(key),
-                sortable: column.sortable !== false,
-                accessor: column.accessor,
-                render: column.render
+                sortable: column.sortable !== false
             };
+            if (is_defined(column.accessor)) col.accessor = column.accessor;
+            if (is_defined(column.render)) col.render = column.render;
             // Preserve T4 properties
             if (is_defined(column.width)) col.width = column.width;
             if (is_defined(column.resizable)) col.resizable = column.resizable;
@@ -78,6 +83,38 @@ const compare_values = (left, right) => {
     return String(left).localeCompare(String(right));
 };
 
+const matches_operator_filter = (cell_value, filter) => {
+    const operator = filter && (filter.op || filter.operator) || 'contains';
+    const filter_value = filter && is_defined(filter.value) ? filter.value : '';
+    if (filter_value === '') return true;
+    if (!is_defined(cell_value)) return false;
+
+    const cell_text = String(cell_value);
+    const filter_text = String(filter_value);
+    switch (operator) {
+        case 'contains':
+            return cell_text.toLowerCase().includes(filter_text.toLowerCase());
+        case 'equals':
+            return cell_text === filter_text;
+        case 'not_equals':
+            return cell_text !== filter_text;
+        case 'starts_with':
+            return cell_text.toLowerCase().startsWith(filter_text.toLowerCase());
+        case 'ends_with':
+            return cell_text.toLowerCase().endsWith(filter_text.toLowerCase());
+        case 'greater_than':
+            return Number(cell_value) > Number(filter_value);
+        case 'less_than':
+            return Number(cell_value) < Number(filter_value);
+        case 'greater_or_eq':
+            return Number(cell_value) >= Number(filter_value);
+        case 'less_or_eq':
+            return Number(cell_value) <= Number(filter_value);
+        default:
+            return true;
+    }
+};
+
 // ══════════════════════════════════════════════════════════════════
 // Data_Table — Facade
 //
@@ -109,8 +146,15 @@ const compare_values = (left, right) => {
  */
 class Data_Table extends Data_Model_View_Model_Control {
     constructor(spec = {}) {
+        const restored_state = read_tabular_state(spec.el);
+        if (restored_state) {
+            spec = Object.assign({}, restored_state, spec, {
+                persist_activation_state: true
+            });
+        }
         spec.__type_name = spec.__type_name || 'data_table';
         super(spec);
+        this._destroyed = false;
         this.add_class('data-table');
         this.add_class('jsgui-data-table');
         this.dom.tagName = 'table';
@@ -162,13 +206,47 @@ class Data_Table extends Data_Model_View_Model_Control {
             });
             this.model.set('column_widths', initial_widths);
             // Selection state in model
-            this.model.set('selected_row_indices', []);
+            this.model.set(
+                'selected_row_indices',
+                Array.isArray(spec.selected_row_indices) ? spec.selected_row_indices.slice() : []
+            );
         });
+
+        this._persist_activation_state = spec.persist_activation_state === true;
+        if (this._persist_activation_state && !spec.el) {
+            const serialized_state = serialize_tabular_state({
+                columns: spec.columns || [],
+                rows: Array.isArray(spec.rows) ? spec.rows : [],
+                sort_state: spec.sort_state || null,
+                filters: spec.filters || null,
+                page: is_defined(spec.page) ? spec.page : 1,
+                page_size: spec.page_size || null,
+                selection_mode: spec.selection_mode || 'none',
+                selected_row_indices: spec.selected_row_indices || [],
+                aria_label: spec.aria_label || 'Data table',
+                density: this._density
+            });
+            if (serialized_state) {
+                this.dom.attributes[TABULAR_STATE_ATTRIBUTE] = serialized_state;
+            }
+        }
 
         // ── Apply Mixins (Facade pattern) ──
 
         // Selection (Phase 1)
         grid_selection(this, { mode: spec.selection_mode || 'none' });
+        if (Array.isArray(spec.selected_row_indices) && this.selection_mode !== 'none') {
+            this.selected_rows = new Set(spec.selected_row_indices.map(index => String(index)));
+            this.last_selected_index = spec.selected_row_indices.length
+                ? Number(spec.selected_row_indices[spec.selected_row_indices.length - 1])
+                : null;
+            this._selection_anchor = this.last_selected_index;
+        }
+        const set_selection_mode = this.set_selection_mode;
+        this.set_selection_mode = new_mode => {
+            set_selection_mode(new_mode);
+            this._sync_activation_state_attribute();
+        };
 
         // Keyboard navigation (Phase 1) — depends on grid_selection
         grid_keyboard_nav(this);
@@ -299,10 +377,20 @@ class Data_Table extends Data_Model_View_Model_Control {
             this.render_table();
         });
 
+        this.watch(this.model, 'total_rows', () => {
+            this._sync_aria_counts();
+        });
+
         // Watch: when rows change, update render mode (auto-detection)
         this.watch(this.model, 'rows', () => {
             if (this._update_render_mode) this._update_render_mode();
         });
+
+        this.watch(
+            this.model,
+            ['columns', 'rows', 'sort_state', 'filters', 'page', 'page_size', 'selected_row_indices'],
+            () => this._sync_activation_state_attribute()
+        );
 
         // Watch: sync selection state to model when mixin fires selection_change
         this.on('selection_change', (e) => {
@@ -356,6 +444,7 @@ class Data_Table extends Data_Model_View_Model_Control {
             this.set_model_value('sort_state', sort_state ? { ...sort_state } : null);
             this.set_model_value('page', 1); // Reset to page 1 on sort change
         });
+        this._sync_sort_aria();
     }
 
     /**
@@ -373,8 +462,13 @@ class Data_Table extends Data_Model_View_Model_Control {
      * Navigate to a specific page (1-based).
      * @param {number} page - Page number.
      */
-    set_page(page) {
-        this.set_model_value('page', Number(page) || 1);
+    set_page(page, options = {}) {
+        const previous_page = Math.max(1, Math.trunc(Number(this.page)) || 1);
+        const next_page = Math.max(1, Math.trunc(Number(page)) || 1);
+        this.set_model_value('page', next_page);
+        if (next_page !== previous_page && options.silent !== true) {
+            this.raise('page_change', { page: next_page, previous_page });
+        }
     }
 
     /**
@@ -428,9 +522,40 @@ class Data_Table extends Data_Model_View_Model_Control {
                 }
                 if (!is_defined(filter_value) || filter_value === '') return true;
                 const cell_value = row && typeof row === 'object' ? row[key] : undefined;
-                return String(cell_value || '').includes(String(filter_value));
+                if (filter_value && typeof filter_value === 'object' && !Array.isArray(filter_value)) {
+                    return matches_operator_filter(cell_value, filter_value);
+                }
+                return String(is_defined(cell_value) ? cell_value : '').includes(String(filter_value));
             });
         });
+    }
+
+    _sync_activation_state_attribute() {
+        if (!this._persist_activation_state) return;
+        const serialized_state = serialize_tabular_state({
+            columns: this.columns || [],
+            rows: this.rows || [],
+            sort_state: this.sort_state || null,
+            filters: this.filters || null,
+            page: this.page || 1,
+            page_size: this.page_size || null,
+            selection_mode: this.selection_mode || 'none',
+            selected_row_indices: this.get_selected_rows ? this.get_selected_rows() : [],
+            aria_label: this.dom.attributes['aria-label'] || 'Data table',
+            density: this._density
+        });
+
+        if (serialized_state) {
+            this.dom.attributes[TABULAR_STATE_ATTRIBUTE] = serialized_state;
+            if (this.dom.el && typeof this.dom.el.setAttribute === 'function') {
+                this.dom.el.setAttribute(TABULAR_STATE_ATTRIBUTE, serialized_state);
+            }
+        } else {
+            delete this.dom.attributes[TABULAR_STATE_ATTRIBUTE];
+            if (this.dom.el && typeof this.dom.el.removeAttribute === 'function') {
+                this.dom.el.removeAttribute(TABULAR_STATE_ATTRIBUTE);
+            }
+        }
     }
 
     _compute_sorted_rows(rows, sort_state, columns) {
@@ -474,7 +599,10 @@ class Data_Table extends Data_Model_View_Model_Control {
         tr_ctrl.add_class('data-table-row');
         tr_ctrl.dom.attributes['data-row-index'] = String(row_index);
         tr_ctrl.dom.attributes.role = 'row';
-        tr_ctrl.dom.attributes['aria-rowindex'] = String(row_index + 2); // +2: 1-based, row 1 is header
+        const page_offset = this.page_size
+            ? (Math.max(1, this.page || 1) - 1) * this.page_size
+            : 0;
+        tr_ctrl.dom.attributes['aria-rowindex'] = String(page_offset + row_index + 2);
 
         const is_selected = this.selected_rows.has(String(row_index));
         if (is_selected) {
@@ -508,6 +636,33 @@ class Data_Table extends Data_Model_View_Model_Control {
     }
 
     // ── Rendering (delegates based on mode) ──
+
+    _sync_aria_counts() {
+        const columns = this.columns || [];
+        this.dom.attributes['aria-colcount'] = String(columns.length);
+        this.dom.attributes['aria-rowcount'] = String((this.total_rows || 0) + 1);
+        if (this.dom.el && typeof this.dom.el.setAttribute === 'function') {
+            this.dom.el.setAttribute('aria-colcount', this.dom.attributes['aria-colcount']);
+            this.dom.el.setAttribute('aria-rowcount', this.dom.attributes['aria-rowcount']);
+        }
+    }
+
+    _sync_sort_aria() {
+        if (!this.dom || !this.dom.el) return;
+        const active_sort = this.sort_state;
+        this.dom.el.querySelectorAll('th[data-column-key]').forEach(header_element => {
+            const key = header_element.getAttribute('data-column-key');
+            const direction = active_sort && String(active_sort.key) === key
+                ? active_sort.direction
+                : 'none';
+            header_element.setAttribute(
+                'aria-sort',
+                direction === 'asc' ? 'ascending'
+                    : direction === 'desc' ? 'descending'
+                        : 'none'
+            );
+        });
+    }
 
     render_table() {
         const head_ctrl = this._ctrl_fields && this._ctrl_fields.head;
@@ -562,11 +717,10 @@ class Data_Table extends Data_Model_View_Model_Control {
         });
 
         head_ctrl.add(header_row);
+        this._sync_sort_aria();
 
         // ── ARIA grid counts ──
-        const all_rows = this.model ? (this.model.rows || []) : [];
-        this.dom.attributes['aria-colcount'] = String(columns.length);
-        this.dom.attributes['aria-rowcount'] = String(all_rows.length + 1); // +1 for header
+        this._sync_aria_counts();
 
         // ── Render Body (delegates to active renderer) ──
 
@@ -637,6 +791,13 @@ class Data_Table extends Data_Model_View_Model_Control {
 
             if (!this.dom.el) return;
 
+            // Fresh client reconstruction restores named child references as
+            // properties during pre_activate(). Rebuild the private lookup
+            // used by subsequent targeted table renders.
+            this._ctrl_fields = this._ctrl_fields || {};
+            if (!this._ctrl_fields.head && this.head) this._ctrl_fields.head = this.head;
+            if (!this._ctrl_fields.body && this.body) this._ctrl_fields.body = this.body;
+
             // Apply initial layout mode
             this._apply_layout_mode();
 
@@ -665,7 +826,7 @@ class Data_Table extends Data_Model_View_Model_Control {
             };
 
             // Click: sort headers + row selection (via mixin)
-            this.add_dom_event_listener('click', e_click => {
+            this._table_click_handler = e_click => {
                 const header_el = find_header_el(e_click.target);
                 if (header_el) {
                     const column_key = header_el.getAttribute('data-column-key');
@@ -690,10 +851,11 @@ class Data_Table extends Data_Model_View_Model_Control {
                         this.raise('row_click', { row_index, row_data, original_event: e_click });
                     }
                 }
-            });
+            };
+            this.add_dom_event_listener('click', this._table_click_handler);
 
             // Keydown: header sort + grid navigation (via mixin)
-            this.add_dom_event_listener('keydown', e_key => {
+            this._table_keydown_handler = e_key => {
                 // Header sorting
                 const header_el = find_header_el(e_key.target);
                 if (header_el) {
@@ -715,7 +877,8 @@ class Data_Table extends Data_Model_View_Model_Control {
 
                 // Delegates to grid_keyboard_nav mixin
                 this._handle_grid_keydown(e_key);
-            });
+            };
+            this.add_dom_event_listener('keydown', this._table_keydown_handler);
 
             // Virtual scroll listener
             if (this.get_render_mode() === 'virtual') {
@@ -727,6 +890,39 @@ class Data_Table extends Data_Model_View_Model_Control {
                 this.load_data();
             }
         }
+    }
+
+    destroy() {
+        if (this._destroyed) return;
+        this._destroyed = true;
+        this._load_id = (this._load_id || 0) + 1;
+        if (this._resize_handler && typeof window !== 'undefined') {
+            window.removeEventListener('resize', this._resize_handler);
+            this._resize_handler = null;
+        }
+        if (this._table_click_handler) {
+            this.remove_dom_event_listener('click', this._table_click_handler);
+            this._table_click_handler = null;
+        }
+        if (this._table_keydown_handler) {
+            this.remove_dom_event_listener('keydown', this._table_keydown_handler);
+            this._table_keydown_handler = null;
+        }
+        if (this._virtual_renderer && typeof this._virtual_renderer.detach_scroll_listener === 'function') {
+            this._virtual_renderer.detach_scroll_listener();
+        }
+        if (typeof document !== 'undefined') {
+            if (this._resize_move_handler) {
+                document.removeEventListener('mousemove', this._resize_move_handler);
+            }
+            if (this._resize_end_handler) {
+                document.removeEventListener('mouseup', this._resize_end_handler);
+            }
+        }
+        this._resizing = null;
+        this._resize_move_handler = null;
+        this._resize_end_handler = null;
+        if (typeof super.destroy === 'function') super.destroy();
     }
 }
 
@@ -772,31 +968,39 @@ Data_Table.css = `
 
 /* Sort indicators */
 .data-table-header[aria-sort="ascending"]::after {
-    content: ' ▲';
-    font-size: 9px;
-    color: var(--j-primary, #5b9bd5);
+    content: '';
+    width: 0;
+    height: 0;
+    border-right: 4px solid transparent;
+    border-bottom: 6px solid var(--j-primary, #5b9bd5);
+    border-left: 4px solid transparent;
     position: absolute;
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
 }
 .data-table-header[aria-sort="descending"]::after {
-    content: ' ▼';
-    font-size: 9px;
-    color: var(--j-primary, #5b9bd5);
+    content: '';
+    width: 0;
+    height: 0;
+    border-top: 6px solid var(--j-primary, #5b9bd5);
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
     position: absolute;
     right: 8px;
     top: 50%;
     transform: translateY(-50%);
 }
 .data-table-header[aria-sort="none"]::after {
-    content: ' ⇅';
-    font-size: 9px;
-    color: var(--j-fg-muted, #666);
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-right: 1px solid var(--j-fg-muted, #666);
+    border-bottom: 1px solid var(--j-fg-muted, #666);
     position: absolute;
     right: 8px;
     top: 50%;
-    transform: translateY(-50%);
+    transform: translateY(-65%) rotate(45deg);
     opacity: 0;
     transition: opacity 120ms ease-out;
 }

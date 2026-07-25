@@ -57,6 +57,7 @@
     --j-bg-subtle: #f8f9fa;
     --j-bg-muted: #f1f3f5;
     --j-bg-elevated: #ffffff;
+    --j-bg-surface: #ffffff;
 
     --j-fg: #1a1a2e;
     --j-fg-muted: #6c757d;
@@ -118,6 +119,7 @@
     --j-bg-subtle: #1a1a2e;
     --j-bg-muted: #252540;
     --j-bg-elevated: #1e1e35;
+    --j-bg-surface: #1a1a2e;
 
     --j-fg: #e8e8f0;
     --j-fg-muted: #9ca3af;

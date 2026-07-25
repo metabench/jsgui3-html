@@ -5,6 +5,9 @@
 ---
 
 ## 🟢 Current Session (Short-term Memory)
+- [2026-07-25-data-grid-binding-hardening](./2026-07-25-data-grid-binding-hardening/PLAN.md)
+- [2026-07-25-docs-viewer-grid-activation](./2026-07-25-docs-viewer-grid-activation/PLAN.md)
+- [2026-07-19-markdown-viewer-tables](./2026-07-19-markdown-viewer-tables/PLAN.md)
 - [2026-03-07-example-health-fixes](./2026-03-07-example-health-fixes/PLAN.md)
 - [2026-03-05-tpl-activation-parity](./2026-03-05-tpl-activation-parity/PLAN.md)
 - [2026-02-12-visual-advancement](./2026-02-12-visual-advancement/PLAN.md)

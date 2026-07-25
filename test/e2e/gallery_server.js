@@ -530,7 +530,6 @@ function render_control_page(control_name, spec, theme, show_grid) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>${control_name} – Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/jsgui.css">
     <style>
         @layer jsgui-legacy {
@@ -648,7 +647,6 @@ function render_index() {
 <head>
     <meta charset="utf-8">
     <title>jsgui3-html Control Gallery</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/jsgui.css">
     <style>
         *, *::before, *::after { box-sizing: border-box; }
@@ -783,5 +781,8 @@ module.exports = {
     stop: () => new Promise(resolve => server.close(resolve)),
     render_control_page,
     render_index,
+    get_default_spec,
+    get_control_names,
+    GALLERY_SKIP_LIST,
     PORT
 };
