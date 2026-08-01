@@ -1,17 +1,21 @@
-# DateTime_Picker
+# Datetime_Picker
 
 Composite control combining Month_View (date selection) + Time_Picker (time selection) in one unified control.
 
 ## Usage
 
 ```js
-const DateTime_Picker = require('controls/organised/0-core/0-basic/1-compositional/datetime-picker');
+const { controls } = require('jsgui3-html');
+const { Datetime_Picker } = controls;
+
+// Or by direct path — note the exact casing, which is load-bearing:
+// require('jsgui3-html/controls/organised/0-core/0-basic/1-compositional/Datetime_Picker')
 
 // Minimal — calendar + clock, stacked
-const dtp = new DateTime_Picker({ context });
+const dtp = new Datetime_Picker({ context });
 
 // Custom — specific datetime, side-by-side layout
-const dtp2 = new DateTime_Picker({
+const dtp2 = new Datetime_Picker({
     context,
     value: '2026-02-11T14:30',
     layout: 'side-by-side',

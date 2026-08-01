@@ -188,11 +188,23 @@ class My_Control extends Control {
 
 ### MVVM Pattern
 
-Use `Data_Model_View_Model_Control` for data-bound controls:
+Use `Data_Model_View_Model_Control` for data-bound controls.
+
+**Imports — both verified 2026-08-01 against 0.0.189 (`49385e6`):**
 
 ```javascript
-const { Data_Object } = require('lang-tools');
+// Data_Object comes from jsgui3-html, which re-exports it (along with Data_Value
+// and Collection). Do NOT require('lang-tools') directly: it is a dependency of
+// jsgui3-html, not of jsgui3-client, so that require throws MODULE_NOT_FOUND for
+// consumers. Verified from jsgui3-client.
+const { Data_Object } = require('jsgui3-html');
 
+// Data_Model_View_Model_Control is NOT on the package main. It is reachable only
+// by subpath, which the package exports map allows:
+const Data_Model_View_Model_Control = require('jsgui3-html/html-core/Data_Model_View_Model_Control');
+```
+
+```javascript
 class My_Data_Control extends Data_Model_View_Model_Control {
     constructor(spec = {}) {
         spec.__type_name = spec.__type_name || 'my_data_control';
