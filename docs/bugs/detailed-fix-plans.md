@@ -1,5 +1,10 @@
 # Detailed Bug Fix Plans for jsgui3-html Controls
 
+> **Status:** SUPERSEDED — companion to `control-rendering-bugs.md`, which is also superseded.
+> **Checked against:** jsgui3-html 0.0.189 (`6dabe6c`) on 2026-08-01.
+> **Why:** it plans fixes for the same findings, at least one of which is already implemented.
+> Re-verify any item here against current source before starting work on it.
+
 This document provides comprehensive analysis, diagnostic testing, and detailed fix plans for the critical bugs identified in the control rendering tests.
 
 ## Overview

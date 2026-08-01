@@ -1,5 +1,16 @@
 # Control Rendering Bugs Documentation
 
+> **Status:** SUPERSEDED — do not act on this document without re-verifying.
+> **Checked against:** jsgui3-html 0.0.189 (`6dabe6c`) on 2026-08-01.
+> **Why:** its findings are pinned to line numbers and file paths that have since moved, and at
+> least one bug is already fixed. Bug 1 (Text_Input value not set in DOM attributes) is
+> **resolved** — `Text_Input.js:185` does `target.dom.attributes.value = spec.value`, exactly the
+> fix prescribed below. A separate finding cites `Text_Field.js`, which no longer exists at the
+> path given.
+> **Lesson:** findings written as prose with bare line numbers rot silently. Findings written as
+> tests announce their own obsolescence by failing. New findings belong in
+> `jsgui3-ecosystem/docs/reviews/` with commit SHAs, and preferably as a failing test.
+
 This document details bugs discovered during rendering tests of jsgui3-html controls. These bugs prevent controls from rendering correctly and need to be fixed for proper functionality.
 
 ## Bugs Found
