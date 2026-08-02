@@ -34,13 +34,20 @@ lab/
 dir lab\experiments
 
 # Read an experiment's README
-type lab\experiments\001-example\README.md
+type lab\experiments\001-data-grid-reattach\README.md
 ```
 
 ### 2. Run an Experiment
 ```bash
-# Run check.js
-node lab/experiments/001-example/check.js
+# Run check.js — this is the one experiment that currently exists
+node lab/experiments/001-data-grid-reattach/check.js
+```
+
+Or via the registered-experiment runner, which is separate from the `lab/experiments/` folders:
+
+```bash
+npm run lab:list
+npm run lab:run control_render_smoke
 ```
 
 ### 3. Create New Experiment

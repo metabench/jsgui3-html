@@ -23,10 +23,15 @@ Use this skill for **reliable, agent-friendly UI inspection**:
 
 ### A) Visual Inspection (Browser Tool)
 
-1. **Start server** (if needed):
+1. **Start server** (if needed). This package defines no `dev` script — use one of the nine lab
+   demo servers, matching the control family you are inspecting:
    ```bash
-   npm run dev
+   node lab/date_controls_demo_server.js
    ```
+   Available: `admin`, `chart`, `color_controls`, `data_patterns`, `date_controls`,
+   `date_range`, `function_graph`, `picker_controls`, `property_grid` — each as
+   `lab/<name>_demo_server.js`. This matches the `browser-verification` skill, which uses the
+   same pattern. For batch screenshots without a browser session, `npm run visual:smoke`.
 
 2. **Navigate to URL** using browser subagent.
 
