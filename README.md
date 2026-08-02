@@ -85,11 +85,20 @@ Data_Model_View_Model_Control (extends Control)
 ### 1. Construction
 ```javascript
 const button = new Control({
-    tagName: 'button',
-    text: 'Click me',
+    context,
+    tag_name: 'button',
+    content: 'Click me',
     class: 'primary-btn'
 });
+
+// or, equivalently
+const button2 = new Control({ context, tag_name: 'button', class: 'primary-btn' });
+button2.add('Click me');
 ```
+
+> `spec.text` does **not** set element content — it renders an empty element with no warning.
+> Use `spec.content` or `.add(...)`. `tag_name` and `tagName` both work; `tag_name` matches the
+> repo's snake_case convention. Verified 2026-08-01 against 0.0.189.
 
 ### 2. Composition
 Controls build their internal structure:
